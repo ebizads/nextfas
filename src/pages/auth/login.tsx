@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { InputField } from "../../components/common/InputField";
 
-//, isSubmitting TODO input validations
+// TODO input validations
 const Login = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);

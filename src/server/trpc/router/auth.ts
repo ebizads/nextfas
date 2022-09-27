@@ -1,20 +1,21 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { t } from "../trpc";
+import bcrypt from "bcrypt";
 
 export const authRouter = t.router({
   getSession: t.procedure.query(({ ctx }) => ctx.session),
   register: t.procedure
     .input(
       z.object({
-        name: z.string(),
-        email: z.string(),
-        password: z.string(),
+        name: z.string().min(1),
+        email: z.string().min(1),
+        password: z.string().min(1),
         user_type: z.string().nullish(),
         image: z.string().nullish(),
         profile: z.object({
-          first_name: z.string(),
-          last_name: z.string(),
+          first_name: z.string().min(1),
+          last_name: z.string().min(1),
           middle_name: z.string().nullish(),
           suffix: z.string().nullish(),
           date_of_birth: z.date().nullish(),
@@ -33,12 +34,13 @@ export const authRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const password = await bcrypt.hash(input.password, 10);
       try {
         await ctx.prisma.user.create({
           data: {
             name: input.name,
             email: input.email,
-            password: input.password,
+            password,
             image: input.image,
             user_type: input.user_type,
             username: (

@@ -2,11 +2,9 @@ import type { NextPage } from "next";
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
-  const { data: protectedData } = trpc.protected.useQuery();
 
   return (
     <>
@@ -19,9 +17,7 @@ const Home: NextPage = () => {
         <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold text-gray-700">
           FAS <span className="text-amber-300">development</span> server
         </h1>
-        <p className="text-gray-700">
-          {protectedData} {session?.user?.name}
-        </p>
+        <p className="text-gray-700">{session?.user?.name}</p>
         {session ? (
           <button
             className="px-4 py-1 bg-amber-300 text-white rounded my-2"

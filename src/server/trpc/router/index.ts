@@ -1,10 +1,11 @@
 // src/server/trpc/router/index.ts
-import { authedProcedure, t } from "../trpc";
+import { t } from "../trpc";
+import { assetRouter } from "./asset";
 import { authRouter } from "./auth";
 
 export const appRouter = t.router({
   auth: authRouter,
-  protected: authedProcedure.query(() => "Hello World!"),
+  asset: assetRouter,
 });
 
 // export type definition of API

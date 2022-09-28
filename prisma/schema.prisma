@@ -87,7 +87,8 @@ model asset {
 
     location       location?
     depreciation   depreciation?
-    type           type?
+    type           type?         @relation(fields: [typeId], references: [id])
+    typeId         Int?
     model          model?
     transfers      transfer[]
     category       category?     @relation(fields: [categoryId], references: [id])
@@ -107,11 +108,10 @@ model asset {
 }
 
 model location {
-    id         Int       @id @default(autoincrement())
+    id         Int     @id @default(autoincrement())
     department String?
     floor      String?
     class      String?
-    date       DateTime?
 
     asset   asset @relation(fields: [assetId], references: [id])
     assetId Int   @unique
@@ -151,8 +151,7 @@ model type {
     id   Int    @id @default(autoincrement())
     name String
 
-    asset     asset?    @relation(fields: [assetId], references: [id])
-    assetId   Int?      @unique
+    assets    asset[]
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
@@ -262,6 +261,7 @@ model disposal {
     sales_amount    Float?
     sales_invoice   String?
     reason          String?
+    method          String?
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -285,20 +285,22 @@ model profile {
 }
 
 model address {
-    id             Int           @id @default(autoincrement())
-    street         String?
-    city           String?
-    state          String?
-    zip            String?
-    country        String?
-    userId         Int?          @unique
-    user           user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt      DateTime      @default(now())
-    updatedAt      DateTime      @updatedAt
-    deletedAt      DateTime?
-    deleted        Boolean       @default(false)
-    supplier       supplier?     @relation(fields: [supplierId], references: [id])
-    supplierId     Int?          @unique
-    manufacturer   manufacturer? @relation(fields: [manufacturerId], references: [id])
-    manufacturerId Int?          @unique
+    id               Int           @id @default(autoincrement())
+    street           String?
+    city             String?
+    state            String?
+    zip              String?
+    country          String?
+    shipping_address String?
+    billing_address  String?
+    userId           Int?          @unique
+    user             user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt        DateTime      @default(now())
+    updatedAt        DateTime      @updatedAt
+    deletedAt        DateTime?
+    deleted          Boolean       @default(false)
+    supplier         supplier?     @relation(fields: [supplierId], references: [id])
+    supplierId       Int?          @unique
+    manufacturer     manufacturer? @relation(fields: [manufacturerId], references: [id])
+    manufacturerId   Int?          @unique
 }

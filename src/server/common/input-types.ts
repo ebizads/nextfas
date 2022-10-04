@@ -1,7 +1,7 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const RegisterUserInput = z.object({
-  name: z.string({ required_error: "Name is required" }).min(1).nullish(),
+  name: z.string({ required_error: "Name is required" }).min(1),
   email: z.string({ required_error: "Email is required" }).email().min(1),
   password: z
     .string()
@@ -36,7 +36,7 @@ export const RegisterUserInput = z.object({
       billing_address: z.string().nullish(),
     })
     .nullish(),
-})
+});
 
 export const EditUserInput = z.object({
   id: z.number(),
@@ -65,7 +65,7 @@ export const EditUserInput = z.object({
       billing_address: z.string().optional(),
     })
     .optional(),
-})
+});
 
 export const AssetCreateInput = z.object({
   name: z.string(),
@@ -99,7 +99,7 @@ export const AssetCreateInput = z.object({
     .nullish(),
   manufacturerId: z.number().nullish(),
   supplierId: z.number().nullish(),
-})
+});
 
 export const AssetEditInput = z.object({
   id: z.number(),
@@ -134,25 +134,25 @@ export const AssetEditInput = z.object({
     .optional(),
   manufacturerId: z.number().optional(),
   supplierId: z.number().optional(),
-})
+});
 
 export const CategoryCreateInput = z.object({
   name: z.string(),
-})
+});
 
 export const CategoryEditInput = z.object({
   id: z.number(),
   name: z.string().optional(),
-})
+});
 
 export const TypeCreateInput = z.object({
   name: z.string(),
-})
+});
 
 export const TypeEditInput = z.object({
   id: z.number(),
   name: z.string().optional(),
-})
+});
 
 export const ManufacturerCreateInput = z.object({
   name: z.string(),
@@ -175,7 +175,7 @@ export const ManufacturerCreateInput = z.object({
       billing_address: z.string().nullish(),
     })
     .nullish(),
-})
+});
 
 export const ManufacturerEditInput = z.object({
   id: z.number(),
@@ -199,7 +199,7 @@ export const ManufacturerEditInput = z.object({
       billing_address: z.string().optional(),
     })
     .optional(),
-})
+});
 
 export const SupplierCreateInput = z.object({
   name: z.string(),
@@ -222,7 +222,7 @@ export const SupplierCreateInput = z.object({
       billing_address: z.string().nullish(),
     })
     .nullish(),
-})
+});
 
 export const SupplierEditInput = z.object({
   id: z.number(),
@@ -246,4 +246,4 @@ export const SupplierEditInput = z.object({
       billing_address: z.string().optional(),
     })
     .optional(),
-})
+});

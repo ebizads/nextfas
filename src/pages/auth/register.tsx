@@ -1,27 +1,29 @@
-import Head from "next/head"
-import Link from "next/link"
-import React from "react"
-import { z } from "zod"
-import { InputField } from "../../components/common/InputField"
-import { trpc } from "../../utils/trpc"
-import { RegisterUserInput } from "../../server/common/input-types"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import AlertInput from "../../components/common/AlertInput"
+import Head from "next/head";
+import Link from "next/link";
+import React from "react";
+import { z } from "zod";
+import { InputField } from "../../components/common/InputField";
+import { trpc } from "../../utils/trpc";
+import { RegisterUserInput } from "../../server/common/input-types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import AlertInput from "../../components/common/AlertInput";
+import { Alert } from "./login";
 
 // TODO input validations
-type User = z.infer<typeof RegisterUserInput>
+type User = z.infer<typeof RegisterUserInput>;
 
 const Register = () => {
-  const { mutate, isLoading, error } = trpc.auth.register.useMutation()
+  const { mutate, isLoading, error } = trpc.auth.register.useMutation();
   const {
     register,
     handleSubmit,
     clearErrors,
-    formState: { errors, isSubmitting, isSubmitted, isDirty, isValid },
+    formState: { errors },
   } = useForm<User>({
     resolver: zodResolver(RegisterUserInput), // Configuration the validation with the zod schema.
     defaultValues: {
+      name: "",
       profile: {
         first_name: "",
         last_name: "",
@@ -29,7 +31,7 @@ const Register = () => {
       email: "",
       password: "",
     },
-  })
+  });
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
@@ -42,8 +44,8 @@ const Register = () => {
         first_name: user.profile.first_name,
         last_name: user.profile.last_name,
       },
-    })
-  }
+    });
+  };
 
   return (
     <>
@@ -56,6 +58,9 @@ const Register = () => {
         <h3 className="text-xl md:text-[2rem] leading-normal font-bold text-gray-700 mb-2">
           Register
         </h3>
+        {Boolean(Object.keys(errors)?.length) && (
+          <Alert clearErrors={clearErrors}>There are errors in the form.</Alert>
+        )}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col space-y-4"
@@ -86,7 +91,8 @@ const Register = () => {
           <AlertInput>{errors?.password?.message}</AlertInput>
           <button
             type="submit"
-            className="px-4 py-1 bg-amber-300 hover:bg-amber-400 text-white rounded"
+            className="px-4 py-1 bg-tangerine-500 hover:bg-tangerine-400 duration-150 text-white rounded font-medium disabled:bg-gray-300 disabled:text-gray-500"
+            disabled={isLoading}
           >
             {isLoading ? "Loading..." : "Register"}
           </button>
@@ -103,7 +109,7 @@ const Register = () => {
         </Link>
       </main>
     </>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

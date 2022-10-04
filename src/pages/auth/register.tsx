@@ -34,6 +34,8 @@ const Register = () => {
                 last_name: data.last_name as string,
               },
             });
+
+            e.currentTarget.reset();
           }}
           className="flex flex-col space-y-4"
         >

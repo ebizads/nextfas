@@ -61,6 +61,25 @@ model user {
     sessions           Session[]
 }
 
+model employee {
+    id                 Int            @id @default(autoincrement())
+    name               String
+    email              String         @unique
+    password           String
+    recovery_email     String?
+    username           String?
+    user_type          String?
+    created_at         DateTime       @default(now())
+    updated_at         DateTime       @updatedAt
+    address            address?
+    profile            profile?
+    emailVerified      DateTime?
+    image              String?
+    owned_assets       asset[]
+    asset_depreciation depreciation[]
+    asset_disposal     disposal[]
+}
+
 model VerificationToken {
     identifier String
     token      String   @unique
@@ -101,10 +120,12 @@ model asset {
     manufacturer   manufacturer? @relation(fields: [manufacturerId], references: [id])
     manufacturerId Int?
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    deleted   Boolean   @default(false)
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+    deletedAt  DateTime?
+    deleted    Boolean   @default(false)
+    employee   employee? @relation(fields: [employeeId], references: [id])
+    employeeId Int?
 }
 
 model location {
@@ -140,11 +161,13 @@ model depreciation {
     start_date  DateTime?
     end_date    DateTime?
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    deleted   Boolean   @default(false)
-    userId    Int?
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+    deletedAt  DateTime?
+    deleted    Boolean   @default(false)
+    userId     Int?
+    employee   employee? @relation(fields: [employeeId], references: [id])
+    employeeId Int?
 }
 
 model type {
@@ -227,7 +250,6 @@ model manufacturer {
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
     deleted   Boolean   @default(false)
-    addressId Int?
 }
 
 model transfer {
@@ -263,11 +285,13 @@ model disposal {
     reason          String?
     method          String?
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    deleted   Boolean   @default(false)
-    userId    Int?
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+    deletedAt  DateTime?
+    deleted    Boolean   @default(false)
+    userId     Int?
+    employee   employee? @relation(fields: [employeeId], references: [id])
+    employeeId Int?
 }
 
 model profile {
@@ -282,6 +306,8 @@ model profile {
     image         String?
     userId        Int?      @unique
     user          user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    employee      employee? @relation(fields: [employeeId], references: [id])
+    employeeId    Int?      @unique
 }
 
 model address {
@@ -303,4 +329,6 @@ model address {
     supplierId       Int?          @unique
     manufacturer     manufacturer? @relation(fields: [manufacturerId], references: [id])
     manufacturerId   Int?          @unique
+    employee         employee?     @relation(fields: [employeeId], references: [id])
+    employeeId       Int?          @unique
 }

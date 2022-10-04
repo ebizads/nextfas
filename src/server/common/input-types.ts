@@ -1,14 +1,24 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const RegisterUserInput = z.object({
-  name: z.string().min(1),
-  email: z.string().min(1),
-  password: z.string().min(1),
+  name: z.string({ required_error: "Name is required" }).min(1).nullish(),
+  email: z.string({ required_error: "Email is required" }).email().min(1),
+  password: z
+    .string()
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{1,}$/,
+      {
+        message:
+          "Password should contain 12 characters and not more than 20 characters, at least one uppercase letter, one lowercase letter, one number and one special character",
+      }
+    )
+    .min(12, { message: "Password should be at least 12 characters" })
+    .max(20, { message: "Password should not be more than 20 characters" }),
   user_type: z.string().nullish(),
   image: z.string().nullish(),
   profile: z.object({
-    first_name: z.string().min(1),
-    last_name: z.string().min(1),
+    first_name: z.string({ required_error: "First Name is required" }).min(1),
+    last_name: z.string({ required_error: "Last Name is required" }).min(1),
     middle_name: z.string().nullish(),
     suffix: z.string().nullish(),
     date_of_birth: z.date().nullish(),
@@ -26,7 +36,7 @@ export const RegisterUserInput = z.object({
       billing_address: z.string().nullish(),
     })
     .nullish(),
-});
+})
 
 export const EditUserInput = z.object({
   id: z.number(),
@@ -55,7 +65,7 @@ export const EditUserInput = z.object({
       billing_address: z.string().optional(),
     })
     .optional(),
-});
+})
 
 export const AssetCreateInput = z.object({
   name: z.string(),
@@ -89,7 +99,7 @@ export const AssetCreateInput = z.object({
     .nullish(),
   manufacturerId: z.number().nullish(),
   supplierId: z.number().nullish(),
-});
+})
 
 export const AssetEditInput = z.object({
   id: z.number(),
@@ -124,25 +134,25 @@ export const AssetEditInput = z.object({
     .optional(),
   manufacturerId: z.number().optional(),
   supplierId: z.number().optional(),
-});
+})
 
 export const CategoryCreateInput = z.object({
   name: z.string(),
-});
+})
 
 export const CategoryEditInput = z.object({
   id: z.number(),
   name: z.string().optional(),
-});
+})
 
 export const TypeCreateInput = z.object({
   name: z.string(),
-});
+})
 
 export const TypeEditInput = z.object({
   id: z.number(),
   name: z.string().optional(),
-});
+})
 
 export const ManufacturerCreateInput = z.object({
   name: z.string(),
@@ -165,7 +175,7 @@ export const ManufacturerCreateInput = z.object({
       billing_address: z.string().nullish(),
     })
     .nullish(),
-});
+})
 
 export const ManufacturerEditInput = z.object({
   id: z.number(),
@@ -189,7 +199,7 @@ export const ManufacturerEditInput = z.object({
       billing_address: z.string().optional(),
     })
     .optional(),
-});
+})
 
 export const SupplierCreateInput = z.object({
   name: z.string(),
@@ -212,7 +222,7 @@ export const SupplierCreateInput = z.object({
       billing_address: z.string().nullish(),
     })
     .nullish(),
-});
+})
 
 export const SupplierEditInput = z.object({
   id: z.number(),
@@ -236,4 +246,4 @@ export const SupplierEditInput = z.object({
       billing_address: z.string().optional(),
     })
     .optional(),
-});
+})

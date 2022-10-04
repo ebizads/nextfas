@@ -1,338 +1,316 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading: 
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
-    id                String  @id @default(cuid())
-    userId            Int
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
-    user              user    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              user    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       Int
-    expires      DateTime
-    user         user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         user     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model user {
-    id                 Int            @id @default(autoincrement())
-    name               String
-    email              String         @unique
-    password           String
-    recovery_email     String?
-    username           String?
-    user_type          String?
-    created_at         DateTime       @default(now())
-    updated_at         DateTime       @updatedAt
-    address            address?
-    profile            profile?
-    emailVerified      DateTime?
-    image              String?
-    deletedAt          DateTime?
-    deleted            Boolean        @default(false)
-    owned_assets       asset[]
-    asset_depreciation depreciation[]
-    asset_disposal     disposal[]
-    accounts           Account[]
-    sessions           Session[]
+  id                 Int            @id @default(autoincrement())
+  name               String
+  email              String         @unique
+  recovery_email     String?
+  username           String?        @unique
+  password           String
+  user_type          String?
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+  emailVerified      DateTime?
+  image              String?
+  deleted            Boolean        @default(false)
+  deletedAt          DateTime?
+  accounts           Account[]
+  sessions           Session[]
+  address            address?
+  owned_assets       asset[]
+  asset_depreciation depreciation[]
+  asset_disposal     disposal[]
+  profile            profile?
 }
 
 model employee {
-    id                 Int            @id @default(autoincrement())
-    name               String
-    email              String         @unique
-    password           String
-    recovery_email     String?
-    username           String?
-    user_type          String?
-    created_at         DateTime       @default(now())
-    updated_at         DateTime       @updatedAt
-    address            address?
-    profile            profile?
-    emailVerified      DateTime?
-    image              String?
-    deletedAt          DateTime?
-    deleted            Boolean        @default(false)
-    owned_assets       asset[]
-    asset_depreciation depreciation[]
-    asset_disposal     disposal[]
+  id                 Int            @id @default(autoincrement())
+  name               String
+  email              String         @unique
+  password           String
+  recovery_email     String?
+  username           String?
+  user_type          String?
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+  emailVerified      DateTime?
+  image              String?
+  deleted            Boolean        @default(false)
+  deletedAt          DateTime?
+  address            address?
+  owned_assets       asset[]
+  asset_depreciation depreciation[]
+  asset_disposal     disposal[]
+  profile            profile?
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
 
 model asset {
-    id                        Int     @id @default(autoincrement())
-    name                      String
-    number                    String  @unique
-    description               String?
-    serial_no                 String?
-    alt_serial_no             String?
-    project                   String?
-    original_cost             Float?
-    current_cost              Float?
-    residual_value            Float?
-    residual_value_percentage Float?
-    status                    String?
-    lifetime                  Int?
-    netbook_value             Float?
-
-    location       location?
-    depreciation   depreciation?
-    type           type?         @relation(fields: [typeId], references: [id])
-    typeId         Int?
-    model          model?
-    transfers      transfer[]
-    category       category?     @relation(fields: [categoryId], references: [id])
-    categoryId     Int?
-    disposal       disposal?
-    owner          user?         @relation(fields: [userId], references: [id])
-    userId         Int?
-    supplier       supplier?     @relation(fields: [supplierId], references: [id])
-    supplierId     Int?
-    manufacturer   manufacturer? @relation(fields: [manufacturerId], references: [id])
-    manufacturerId Int?
-
-    createdAt  DateTime  @default(now())
-    updatedAt  DateTime  @updatedAt
-    deletedAt  DateTime?
-    deleted    Boolean   @default(false)
-    employee   employee? @relation(fields: [employeeId], references: [id])
-    employeeId Int?
+  id                        Int           @id @default(autoincrement())
+  name                      String
+  number                    String        @unique
+  description               String?
+  serial_no                 String?
+  alt_serial_no             String?
+  project                   String?
+  original_cost             Float?
+  current_cost              Float?
+  residual_value            Float?
+  residual_value_percentage Float?
+  status                    String?
+  lifetime                  Int?
+  netbook_value             Float?
+  categoryId                Int?
+  userId                    Int?
+  supplierId                Int?
+  manufacturerId            Int?
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+  deletedAt                 DateTime?
+  deleted                   Boolean       @default(false)
+  typeId                    Int?
+  employeeId                Int?
+  category                  category?     @relation(fields: [categoryId], references: [id])
+  employee                  employee?     @relation(fields: [employeeId], references: [id])
+  manufacturer              manufacturer? @relation(fields: [manufacturerId], references: [id])
+  supplier                  supplier?     @relation(fields: [supplierId], references: [id])
+  type                      type?         @relation(fields: [typeId], references: [id])
+  owner                     user?         @relation(fields: [userId], references: [id])
+  depreciation              depreciation?
+  disposal                  disposal?
+  location                  location?
+  model                     model?
+  transfers                 transfer[]
 }
 
 model location {
-    id         Int     @id @default(autoincrement())
-    department String?
-    floor      String?
-    class      String?
-
-    asset   asset @relation(fields: [assetId], references: [id])
-    assetId Int   @unique
-
-    createdAt     DateTime   @default(now())
-    updatedAt     DateTime   @updatedAt
-    deletedAt     DateTime?
-    deleted       Boolean    @default(false)
-    transfer_from transfer[] @relation("transfer_from")
-    transfer_to   transfer[] @relation("transfer_to")
+  id            Int        @id @default(autoincrement())
+  department    String?
+  floor         String?
+  class         String?
+  assetId       Int        @unique
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+  deleted       Boolean    @default(false)
+  asset         asset      @relation(fields: [assetId], references: [id])
+  transfer_from transfer[] @relation("transfer_from")
+  transfer_to   transfer[] @relation("transfer_to")
 }
 
 model depreciation {
-    id      Int   @id @default(autoincrement())
-    asset   asset @relation(fields: [assetId], references: [id])
-    assetId Int   @unique
-
-    subsidiary  String?
-    custodian   user?     @relation(fields: [userId], references: [id])
-    period      Int?
-    reference   String?
-    cumulative  Float?
-    last_amount Float?
-    last_period Int?
-    method      String?
-    start_date  DateTime?
-    end_date    DateTime?
-
-    createdAt  DateTime  @default(now())
-    updatedAt  DateTime  @updatedAt
-    deletedAt  DateTime?
-    deleted    Boolean   @default(false)
-    userId     Int?
-    employee   employee? @relation(fields: [employeeId], references: [id])
-    employeeId Int?
+  id          Int       @id @default(autoincrement())
+  assetId     Int       @unique
+  subsidiary  String?
+  period      Int?
+  reference   String?
+  cumulative  Float?
+  last_amount Float?
+  last_period Int?
+  method      String?
+  start_date  DateTime?
+  end_date    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deleted     Boolean   @default(false)
+  userId      Int?
+  employeeId  Int?
+  asset       asset     @relation(fields: [assetId], references: [id])
+  employee    employee? @relation(fields: [employeeId], references: [id])
+  custodian   user?     @relation(fields: [userId], references: [id])
 }
 
 model type {
-    id   Int    @id @default(autoincrement())
-    name String
-
-    assets    asset[]
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    deleted   Boolean   @default(false)
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+  assets    asset[]
 }
 
 model model {
-    id     Int     @id @default(autoincrement())
-    name   String
-    brand  String?
-    number String?
-
-    asset     asset?    @relation(fields: [assetId], references: [id])
-    assetId   Int?      @unique
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    deleted   Boolean   @default(false)
+  id        Int       @id @default(autoincrement())
+  name      String
+  brand     String?
+  number    String?
+  assetId   Int?      @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+  asset     asset?    @relation(fields: [assetId], references: [id])
 }
 
 model category {
-    id   Int    @id @default(autoincrement())
-    name String
-
-    createdAt     DateTime       @default(now())
-    updatedAt     DateTime       @updatedAt
-    deletedAt     DateTime?
-    deleted       Boolean        @default(false)
-    assets        asset[]
-    suppliers     supplier[]
-    manufacturers manufacturer[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  deleted       Boolean        @default(false)
+  assets        asset[]
+  manufacturers manufacturer[]
+  suppliers     supplier[]
 }
 
 model supplier {
-    id               Int       @id @default(autoincrement())
-    name             String
-    vendor           String?
-    type             String?
-    url              String?
-    category         category? @relation(fields: [categoryId], references: [id])
-    categoryId       Int?
-    image            String?
-    email            String?   @unique
-    phone_number     String?
-    alt_phone_number String?
-    fax_number       String?
-    address          address?
-    assets           asset[]
-
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    deleted   Boolean   @default(false)
+  id               Int       @id @default(autoincrement())
+  name             String
+  vendor           String?
+  type             String?
+  url              String?
+  categoryId       Int?
+  image            String?
+  email            String?   @unique
+  phone_number     String?
+  alt_phone_number String?
+  fax_number       String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+  deleted          Boolean   @default(false)
+  category         category? @relation(fields: [categoryId], references: [id])
+  address          address?
+  assets           asset[]
 }
 
 model manufacturer {
-    id               Int       @id @default(autoincrement())
-    name             String
-    vendor           String?
-    type             String?
-    url              String?
-    category         category? @relation(fields: [categoryId], references: [id])
-    categoryId       Int?
-    image            String?
-    email            String?   @unique
-    phone_number     String?
-    alt_phone_number String?
-    fax_number       String?
-    address          address?
-    assets           asset[]
-
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    deleted   Boolean   @default(false)
+  id               Int       @id @default(autoincrement())
+  name             String
+  vendor           String?
+  type             String?
+  url              String?
+  categoryId       Int?
+  image            String?
+  email            String?   @unique
+  phone_number     String?
+  alt_phone_number String?
+  fax_number       String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+  deleted          Boolean   @default(false)
+  category         category? @relation(fields: [categoryId], references: [id])
+  address          address?
+  assets           asset[]
 }
 
 model transfer {
-    id      Int   @id @default(autoincrement())
-    asset   asset @relation(fields: [assetId], references: [id])
-    assetId Int
-
-    from      location? @relation(name: "transfer_from", fields: [fromId], references: [id])
-    fromId    Int?
-    to        location? @relation(name: "transfer_to", fields: [toId], references: [id])
-    toId      Int?
-    date      DateTime?
-    reason    String?
-    custodian String?
-
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    deleted   Boolean   @default(false)
+  id        Int       @id @default(autoincrement())
+  assetId   Int
+  fromId    Int?
+  toId      Int?
+  date      DateTime?
+  reason    String?
+  custodian String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+  asset     asset     @relation(fields: [assetId], references: [id])
+  from      location? @relation("transfer_from", fields: [fromId], references: [id])
+  to        location? @relation("transfer_to", fields: [toId], references: [id])
 }
 
 model disposal {
-    id      Int   @id @default(autoincrement())
-    asset   asset @relation(fields: [assetId], references: [id])
-    assetId Int   @unique
-
-    date            DateTime?
-    department_code String?
-    custodian       user?     @relation(fields: [userId], references: [id])
-    type            String?
-    sales_amount    Float?
-    sales_invoice   String?
-    reason          String?
-    method          String?
-
-    createdAt  DateTime  @default(now())
-    updatedAt  DateTime  @updatedAt
-    deletedAt  DateTime?
-    deleted    Boolean   @default(false)
-    userId     Int?
-    employee   employee? @relation(fields: [employeeId], references: [id])
-    employeeId Int?
+  id              Int       @id @default(autoincrement())
+  assetId         Int       @unique
+  date            DateTime?
+  department_code String?
+  type            String?
+  sales_amount    Float?
+  sales_invoice   String?
+  reason          String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+  deleted         Boolean   @default(false)
+  userId          Int?
+  method          String?
+  employeeId      Int?
+  asset           asset     @relation(fields: [assetId], references: [id])
+  employee        employee? @relation(fields: [employeeId], references: [id])
+  custodian       user?     @relation(fields: [userId], references: [id])
 }
 
 model profile {
-    id            Int       @id @default(autoincrement())
-    phone_no      String?
-    first_name    String
-    middle_name   String?
-    last_name     String
-    suffix        String?
-    gender        String?
-    date_of_birth DateTime?
-    image         String?
-    userId        Int?      @unique
-    user          user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    employee      employee? @relation(fields: [employeeId], references: [id])
-    employeeId    Int?      @unique
+  id            Int       @id @default(autoincrement())
+  phone_no      String?
+  first_name    String
+  middle_name   String?
+  last_name     String
+  suffix        String?
+  gender        String?
+  image         String?
+  userId        Int?      @unique
+  date_of_birth DateTime?
+  employeeId    Int?      @unique
+  employee      employee? @relation(fields: [employeeId], references: [id])
+  user          user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model address {
-    id               Int           @id @default(autoincrement())
-    street           String?
-    city             String?
-    state            String?
-    zip              String?
-    country          String?
-    shipping_address String?
-    billing_address  String?
-    userId           Int?          @unique
-    user             user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt        DateTime      @default(now())
-    updatedAt        DateTime      @updatedAt
-    deletedAt        DateTime?
-    deleted          Boolean       @default(false)
-    supplier         supplier?     @relation(fields: [supplierId], references: [id])
-    supplierId       Int?          @unique
-    manufacturer     manufacturer? @relation(fields: [manufacturerId], references: [id])
-    manufacturerId   Int?          @unique
-    employee         employee?     @relation(fields: [employeeId], references: [id])
-    employeeId       Int?          @unique
+  id               Int           @id @default(autoincrement())
+  street           String?
+  city             String?
+  state            String?
+  zip              String?
+  country          String?
+  userId           Int?          @unique
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+  deleted          Boolean       @default(false)
+  supplierId       Int?          @unique
+  manufacturerId   Int?          @unique
+  billing_address  String?
+  shipping_address String?
+  employeeId       Int?          @unique
+  employee         employee?     @relation(fields: [employeeId], references: [id])
+  manufacturer     manufacturer? @relation(fields: [manufacturerId], references: [id])
+  supplier         supplier?     @relation(fields: [supplierId], references: [id])
+  user             user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

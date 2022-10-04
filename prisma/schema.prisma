@@ -54,6 +54,8 @@ model user {
     profile            profile?
     emailVerified      DateTime?
     image              String?
+    deletedAt          DateTime?
+    deleted            Boolean        @default(false)
     owned_assets       asset[]
     asset_depreciation depreciation[]
     asset_disposal     disposal[]
@@ -75,6 +77,8 @@ model employee {
     profile            profile?
     emailVerified      DateTime?
     image              String?
+    deletedAt          DateTime?
+    deleted            Boolean        @default(false)
     owned_assets       asset[]
     asset_depreciation depreciation[]
     asset_disposal     disposal[]

@@ -29,13 +29,14 @@ export const userRouter = t.router({
         },
       });
     }),
-  delete: authedProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+  delete: authedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
     return await ctx.prisma.user.update({
       where: {
         id: input,
       },
       data: {
         deleted: true,
+        deletedAt: new Date(),
       },
     });
   }),

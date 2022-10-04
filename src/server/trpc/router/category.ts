@@ -63,6 +63,7 @@ export const categoryRouter = t.router({
         },
         data: {
           deleted: true,
+          deletedAt: new Date(),
         },
       });
       return "Category successfully deleted";

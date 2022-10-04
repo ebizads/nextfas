@@ -73,6 +73,7 @@ export const supplierRouter = t.router({
         },
         data: {
           deleted: true,
+          deletedAt: new Date(),
         },
       });
       return "Supplier successfully deleted";

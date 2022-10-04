@@ -73,6 +73,7 @@ export const manufacturerRouter = t.router({
         },
         data: {
           deleted: true,
+          deletedAt: new Date(),
         },
       });
       return "Manufacturer successfully deleted";

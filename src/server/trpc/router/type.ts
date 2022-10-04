@@ -60,6 +60,7 @@ export const typeRouter = t.router({
         },
         data: {
           deleted: true,
+          deletedAt: new Date(),
         },
       });
       return "Type successfully deleted";

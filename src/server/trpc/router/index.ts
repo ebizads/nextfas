@@ -3,6 +3,7 @@ import { t } from "../trpc";
 import { assetRouter } from "./asset";
 import { authRouter } from "./auth";
 import { categoryRouter } from "./category";
+import { employeeRouter } from "./employee";
 import { manufacturerRouter } from "./manufacturer";
 import { supplierRouter } from "./supplier";
 import { typeRouter } from "./type";
@@ -16,6 +17,7 @@ export const appRouter = t.router({
   manufacturer: manufacturerRouter,
   supplier: supplierRouter,
   user: userRouter,
+  employee: employeeRouter,
 });
 
 // export type definition of API

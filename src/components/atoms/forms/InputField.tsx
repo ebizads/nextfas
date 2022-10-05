@@ -1,15 +1,15 @@
-import { useState } from "react"
-import type { UseFormRegister } from "react-hook-form/dist/types"
+import { useState } from "react";
+import type { UseFormRegister } from "react-hook-form/dist/types";
 
 type InputFieldType = {
-  label: string
-  name: string
-  type?: string
-  className?: string
-  withIcon?: string
-  isPassword?: boolean
-  register: UseFormRegister<any>
-}
+  label: string;
+  name: string;
+  type?: string;
+  className?: string;
+  withIcon?: string;
+  isPassword?: boolean;
+  register: UseFormRegister<any>;
+};
 
 export function InputField({
   label,
@@ -20,7 +20,7 @@ export function InputField({
   isPassword,
   register,
 }: InputFieldType) {
-  const [inputType, setInputType] = useState<string>(type ?? "text")
+  const [inputType, setInputType] = useState<string>(type ?? "text");
 
   return (
     <div className="text-gray-700">
@@ -45,10 +45,10 @@ export function InputField({
             {label}
           </label>
           <div
-            className="peer-focus:text-tangerine-500 cursor-pointer text-gray-400 absolute bottom-1 right-0"
+            className="peer-focus:text-tangerine-500 cursor-pointer text-gray-400 absolute bottom-2 right-0"
             onClick={() => {
               if (isPassword) {
-                setInputType((prev) => (prev === "text" ? "password" : "text"))
+                setInputType((prev) => (prev === "text" ? "password" : "text"));
               }
             }}
           >
@@ -61,5 +61,5 @@ export function InputField({
         </div>
       </div>
     </div>
-  )
+  );
 }

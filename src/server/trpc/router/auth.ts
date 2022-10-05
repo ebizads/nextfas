@@ -9,14 +9,32 @@ export const authRouter = t.router({
     .input(RegisterUserInput)
     .mutation(async ({ input, ctx }) => {
       const { address, profile, password, ...rest } = input;
+      let username = (profile.first_name[0] + profile.last_name)
+        .replace(" ", "")
+        .toLowerCase();
 
       const encryptedPassword = await bcrypt.hash(password, 10);
       try {
+        const user = await ctx.prisma.user.findMany({
+          where: {
+            username: {
+              contains: username,
+            },
+          },
+        });
+
+        if (user.length !== 0) {
+          username = username + user.length;
+        }
+
+        console.log(username);
+
         await ctx.prisma.user.create({
           data: {
             ...rest,
             password: encryptedPassword,
-            username: (profile.first_name[0] + profile.last_name).toLowerCase(),
+            email: username + "@omsim.com",
+            username,
             profile: {
               create: profile ?? undefined,
             },

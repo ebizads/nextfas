@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       transitionProperty: {
         width: "width",
+        height: "max-height",
       },
       colors: {
         tangerine: {
@@ -58,4 +59,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};

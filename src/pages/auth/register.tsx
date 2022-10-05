@@ -1,53 +1,52 @@
-import Head from "next/head"
-import Link from "next/link"
-import React from "react"
-import { z } from "zod"
-import { InputField } from "../../components/atoms/forms/InputField"
-import { trpc } from "../../utils/trpc"
-import { RegisterUserInput } from "../../server/common/input-types"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import AlertInput from "../../components/atoms/forms/AlertInput"
-import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
-import { Alert } from "./login"
+import Head from "next/head";
+import Link from "next/link";
+import React from "react";
+import { z } from "zod";
+import { InputField } from "../../components/atoms/forms/InputField";
+import { trpc } from "../../utils/trpc";
+import { RegisterUserInput } from "../../server/common/input-types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import AlertInput from "../../components/atoms/forms/AlertInput";
+import PasswordChecker from "../../components/atoms/forms/PasswordChecker";
+import { Alert } from "./login";
 
 // TODO input validations
-type User = z.infer<typeof RegisterUserInput>
+type User = z.infer<typeof RegisterUserInput>;
 
 const Register = () => {
-  const { mutate, isLoading, error } = trpc.auth.register.useMutation()
+  const { mutate, isLoading, error } = trpc.auth.register.useMutation();
   const {
     register,
     handleSubmit,
-    clearErrors,
     watch,
+    reset,
     formState: { errors },
   } = useForm<User>({
     resolver: zodResolver(RegisterUserInput), // Configuration the validation with the zod schema.
     defaultValues: {
-      name: "",
+      name: "amogus",
       profile: {
         first_name: "",
         last_name: "",
       },
-      email: "",
       password: "",
     },
-  })
+  });
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
     // Register function
     mutate({
-      email: user.email,
       password: user.password,
       name: `${user.profile.first_name} ${user.profile.last_name}`,
       profile: {
         first_name: user.profile.first_name,
         last_name: user.profile.last_name,
       },
-    })
-  }
+    });
+    reset();
+  };
 
   return (
     <>
@@ -60,12 +59,10 @@ const Register = () => {
         <h3 className="text-xl md:text-[2rem] leading-normal font-bold text-gray-700 mb-2">
           Register
         </h3>
-        {Boolean(Object.keys(errors)?.length) && (
-          <Alert clearErrors={clearErrors}>There are errors in the form.</Alert>
-        )}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col space-y-4"
+          noValidate
         >
           <InputField
             register={register}
@@ -82,14 +79,6 @@ const Register = () => {
             className="border-b"
           />
           <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
-
-          <InputField
-            label="Email"
-            name="email"
-            register={register}
-            className="border-b"
-          />
-          <AlertInput>{errors?.email?.message}</AlertInput>
 
           <InputField
             label="Password"
@@ -123,7 +112,7 @@ const Register = () => {
         </Link>
       </main>
     </>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

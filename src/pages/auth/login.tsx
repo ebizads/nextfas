@@ -1,17 +1,16 @@
-import { Checkbox } from "@mantine/core"
-import { signIn } from "next-auth/react"
-import Head from "next/head"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/router"
-import React, { useState } from "react"
-import { InputField } from "../../components/atoms/forms/InputField"
+import { Checkbox } from "@mantine/core";
+import { signIn } from "next-auth/react";
+import Head from "next/head";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { InputField } from "../../components/atoms/forms/InputField";
 
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { z } from "zod"
-import { useForm, UseFormClearErrors } from "react-hook-form"
-import AlertInput from "../../components/atoms/forms/AlertInput"
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import AlertInput from "../../components/atoms/forms/AlertInput";
 
 // TODO input validations
 // Describe the correctness of data's form.
@@ -21,18 +20,18 @@ const userSchema = z.object({
     .string()
     .min(1, { message: "The password is invalid" })
     .max(20, { message: "The password is invalid" }),
-})
+});
 
 // Infer the TS type according to the zod schema.
-type User = z.infer<typeof userSchema>
+type User = z.infer<typeof userSchema>;
 
 // Global Alert div.
 export function Alert({
   children,
   clearErrors,
 }: {
-  children: string
-  clearErrors: () => void
+  children: string;
+  clearErrors: () => void;
 }) {
   return (
     <div className="rounded-lg p-4 border-2 border-red-200 bg-red-100 text-sm text-red-500 flex gap-2 justify-between items-center">
@@ -42,12 +41,12 @@ export function Alert({
         onClick={() => clearErrors()}
       />
     </div>
-  )
+  );
 }
 
 function LoginForm() {
-  const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -60,7 +59,7 @@ function LoginForm() {
       username: "",
       password: "",
     },
-  })
+  });
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
@@ -71,14 +70,14 @@ function LoginForm() {
       username: user.username,
       password: user.password,
       callbackUrl: "/",
-    })
+    });
 
     if (res?.error) {
-      setError(res.error)
+      setError(res.error);
     } else {
-      router.push(res?.url as string)
+      router.push(res?.url as string);
     }
-  }
+  };
 
   return (
     <div className="flex w-full h-full justify-center items-center">
@@ -110,7 +109,8 @@ function LoginForm() {
               name="password"
               type="password"
               className="border-b"
-              withIcon="fa-solid fa-lock"
+              withIcon="fa-solid fa-eye"
+              isPassword
             />
             <AlertInput>{errors?.password?.message}</AlertInput>
           </div>
@@ -146,7 +146,7 @@ function LoginForm() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 const Login = () => {
@@ -177,7 +177,7 @@ const Login = () => {
         </Link> */}
       </main>
     </>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

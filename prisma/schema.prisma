@@ -34,47 +34,40 @@ model Session {
 }
 
 model user {
-  id                 Int            @id @default(autoincrement())
-  name               String
-  email              String         @unique
-  recovery_email     String?
-  username           String?        @unique
-  password           String
-  user_type          String?
-  created_at         DateTime       @default(now())
-  updated_at         DateTime       @updatedAt
-  emailVerified      DateTime?
-  image              String?
-  deleted            Boolean        @default(false)
-  deletedAt          DateTime?
-  accounts           Account[]
-  sessions           Session[]
-  address            address?
-  owned_assets       asset[]
-  asset_depreciation depreciation[]
-  asset_disposal     disposal[]
-  profile            profile?
+  id             Int       @id @default(autoincrement())
+  name           String
+  email          String    @unique
+  recovery_email String?
+  username       String?   @unique
+  password       String
+  user_type      String?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  emailVerified  DateTime?
+  image          String?
+  deleted        Boolean   @default(false)
+  deletedAt      DateTime?
+  accounts       Account[]
+  sessions       Session[]
+  address        address?
+  profile        profile?
 }
 
 model employee {
-  id                 Int            @id @default(autoincrement())
-  name               String
-  email              String         @unique
-  password           String
-  recovery_email     String?
-  username           String?
-  user_type          String?
-  created_at         DateTime       @default(now())
-  updated_at         DateTime       @updatedAt
-  emailVerified      DateTime?
-  image              String?
-  deleted            Boolean        @default(false)
-  deletedAt          DateTime?
-  address            address?
-  owned_assets       asset[]
-  asset_depreciation depreciation[]
-  asset_disposal     disposal[]
-  profile            profile?
+  id    Int     @id @default(autoincrement())
+  name  String
+  email String  @unique
+  image String?
+
+  address address?
+  profile profile?
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted    Boolean   @default(false)
+  deletedAt  DateTime?
+
+  owned_assets asset[]
 }
 
 model VerificationToken {
@@ -83,197 +76,6 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model asset {
-  id                        Int           @id @default(autoincrement())
-  name                      String
-  number                    String        @unique
-  description               String?
-  serial_no                 String?
-  alt_serial_no             String?
-  project                   String?
-  original_cost             Float?
-  current_cost              Float?
-  residual_value            Float?
-  residual_value_percentage Float?
-  status                    String?
-  lifetime                  Int?
-  netbook_value             Float?
-  categoryId                Int?
-  userId                    Int?
-  supplierId                Int?
-  manufacturerId            Int?
-  createdAt                 DateTime      @default(now())
-  updatedAt                 DateTime      @updatedAt
-  deletedAt                 DateTime?
-  deleted                   Boolean       @default(false)
-  typeId                    Int?
-  employeeId                Int?
-  category                  category?     @relation(fields: [categoryId], references: [id])
-  employee                  employee?     @relation(fields: [employeeId], references: [id])
-  manufacturer              manufacturer? @relation(fields: [manufacturerId], references: [id])
-  supplier                  supplier?     @relation(fields: [supplierId], references: [id])
-  type                      type?         @relation(fields: [typeId], references: [id])
-  owner                     user?         @relation(fields: [userId], references: [id])
-  depreciation              depreciation?
-  disposal                  disposal?
-  location                  location?
-  model                     model?
-  transfers                 transfer[]
-}
-
-model location {
-  id            Int        @id @default(autoincrement())
-  department    String?
-  floor         String?
-  class         String?
-  assetId       Int        @unique
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  deletedAt     DateTime?
-  deleted       Boolean    @default(false)
-  asset         asset      @relation(fields: [assetId], references: [id])
-  transfer_from transfer[] @relation("transfer_from")
-  transfer_to   transfer[] @relation("transfer_to")
-}
-
-model depreciation {
-  id          Int       @id @default(autoincrement())
-  assetId     Int       @unique
-  subsidiary  String?
-  period      Int?
-  reference   String?
-  cumulative  Float?
-  last_amount Float?
-  last_period Int?
-  method      String?
-  start_date  DateTime?
-  end_date    DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  deleted     Boolean   @default(false)
-  userId      Int?
-  employeeId  Int?
-  asset       asset     @relation(fields: [assetId], references: [id])
-  employee    employee? @relation(fields: [employeeId], references: [id])
-  custodian   user?     @relation(fields: [userId], references: [id])
-}
-
-model type {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
-  assets    asset[]
-}
-
-model model {
-  id        Int       @id @default(autoincrement())
-  name      String
-  brand     String?
-  number    String?
-  assetId   Int?      @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
-  asset     asset?    @relation(fields: [assetId], references: [id])
-}
-
-model category {
-  id            Int            @id @default(autoincrement())
-  name          String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  deletedAt     DateTime?
-  deleted       Boolean        @default(false)
-  assets        asset[]
-  manufacturers manufacturer[]
-  suppliers     supplier[]
-}
-
-model supplier {
-  id               Int       @id @default(autoincrement())
-  name             String
-  vendor           String?
-  type             String?
-  url              String?
-  categoryId       Int?
-  image            String?
-  email            String?   @unique
-  phone_number     String?
-  alt_phone_number String?
-  fax_number       String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  deletedAt        DateTime?
-  deleted          Boolean   @default(false)
-  category         category? @relation(fields: [categoryId], references: [id])
-  address          address?
-  assets           asset[]
-}
-
-model manufacturer {
-  id               Int       @id @default(autoincrement())
-  name             String
-  vendor           String?
-  type             String?
-  url              String?
-  categoryId       Int?
-  image            String?
-  email            String?   @unique
-  phone_number     String?
-  alt_phone_number String?
-  fax_number       String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  deletedAt        DateTime?
-  deleted          Boolean   @default(false)
-  category         category? @relation(fields: [categoryId], references: [id])
-  address          address?
-  assets           asset[]
-}
-
-model transfer {
-  id        Int       @id @default(autoincrement())
-  assetId   Int
-  fromId    Int?
-  toId      Int?
-  date      DateTime?
-  reason    String?
-  custodian String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
-  asset     asset     @relation(fields: [assetId], references: [id])
-  from      location? @relation("transfer_from", fields: [fromId], references: [id])
-  to        location? @relation("transfer_to", fields: [toId], references: [id])
-}
-
-model disposal {
-  id              Int       @id @default(autoincrement())
-  assetId         Int       @unique
-  date            DateTime?
-  department_code String?
-  type            String?
-  sales_amount    Float?
-  sales_invoice   String?
-  reason          String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  deletedAt       DateTime?
-  deleted         Boolean   @default(false)
-  userId          Int?
-  method          String?
-  employeeId      Int?
-  asset           asset     @relation(fields: [assetId], references: [id])
-  employee        employee? @relation(fields: [employeeId], references: [id])
-  custodian       user?     @relation(fields: [userId], references: [id])
 }
 
 model profile {
@@ -293,24 +95,339 @@ model profile {
 }
 
 model address {
-  id               Int           @id @default(autoincrement())
+  id               Int     @id @default(autoincrement())
   street           String?
   city             String?
   state            String?
   zip              String?
   country          String?
-  userId           Int?          @unique
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  deletedAt        DateTime?
-  deleted          Boolean       @default(false)
-  supplierId       Int?          @unique
-  manufacturerId   Int?          @unique
-  billing_address  String?
   shipping_address String?
-  employeeId       Int?          @unique
-  employee         employee?     @relation(fields: [employeeId], references: [id])
-  manufacturer     manufacturer? @relation(fields: [manufacturerId], references: [id])
-  supplier         supplier?     @relation(fields: [supplierId], references: [id])
-  user             user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  billing_address  String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
+
+  supplier       supplier?     @relation(fields: [supplierId], references: [id])
+  supplierId     Int?          @unique
+  manufacturer   manufacturer? @relation(fields: [manufacturerId], references: [id])
+  manufacturerId Int?          @unique
+  vendor         vendor?       @relation(fields: [vendorId], references: [id])
+  vendorId       Int?          @unique
+
+  userId     Int?      @unique
+  user       user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId Int?      @unique
+  employee   employee? @relation(fields: [employeeId], references: [id])
+}
+
+model location {
+  id         Int       @id @default(autoincrement())
+  department String?
+  floor      String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  deleted    Boolean   @default(false)
+
+  asset asset[]
+}
+
+model type {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  assets asset[]
+}
+
+model asset_class {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  assets asset[]
+}
+
+model model {
+  id        Int       @id @default(autoincrement())
+  name      String
+  brand     String?
+  number    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  assets asset[]
+}
+
+model category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  assets asset[]
+}
+
+model supplier {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  phone_no  String?
+  address   address?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  assets asset[]
+}
+
+model manufacturer {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  phone_no  String?
+  address   address?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  assets asset[]
+}
+
+model vendor {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  phone_no  String?
+  address   address?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  assets asset[]
+}
+
+model asset {
+  id                    Int     @id @default(autoincrement())
+  // properties
+  name                  String
+  number                String  @unique
+  description           String?
+  serial_number         String?
+  original_cost         Float?
+  current_netbook_value Float?
+  current_cost          Float?
+
+  // dates
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  // relations id
+  locationId     Int? @unique
+  custodianId    Int? @unique
+  typeId         Int?
+  modelId        Int?
+  classId        Int?
+  categoryId     Int?
+  manufacturerId Int?
+  supplierId     Int?
+  veondorId      Int?
+
+  // relations table
+  location     location?     @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  custodian    employee?     @relation(fields: [custodianId], references: [id])
+  class        asset_class?  @relation(fields: [classId], references: [id])
+  type         type?         @relation(fields: [typeId], references: [id], onDelete: SetNull)
+  model        model?        @relation(fields: [modelId], references: [id], onDelete: SetNull)
+  category     category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  manufacturer manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
+  supplier     supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  vendor       vendor?       @relation(fields: [veondorId], references: [id], onDelete: SetNull)
+}
+
+model general {
+  id Int @id @default(autoincrement())
+
+  // properties
+  subsidiary           String?
+  currency             String?
+  rev_current_period   Int?
+  rev_remaining_life   String?
+  financial_year_start DateTime?
+  annual_method_entry  String?
+  convention           String?
+  period_convention    String?
+  prior_year_nbv       String?
+  allow_override       Boolean?
+  add_alternate_method Boolean?
+  store_history        String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
+model lease {
+  id Int @id @default(autoincrement())
+
+  // properties
+  proposal            String?
+  company             String?
+  contact_no          String?
+  startAt             DateTime?
+  endAt               DateTime?
+  finance_lease       Int?
+  rental_frequency    String?
+  least_term          String?
+  annual_interest     Float?
+  total_interest      Float?
+  total_npv           String?
+  total_lease_payment String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
+model insurance {
+  id Int @id @default(autoincrement())
+
+  // properties
+  company           String?
+  policy_no         String?
+  startAt           DateTime?
+  endAt             DateTime?
+  date              DateTime?
+  payment_frequency String?
+  payment_account   Float?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
+model maintenance {
+  id Int @id @default(autoincrement())
+
+  // properties
+  company             String?
+  contact_no          String?
+  inspection_interval String?
+  last_inspection     DateTime?
+  next_inspection     DateTime?
+  warranty_no         String?
+  warranty_start      DateTime?
+  warranty_end        DateTime?
+  quantity            Int?
+  units_measurement   String?
+  quantity_disposed   Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
+model disposal {
+  id Int @id @default(autoincrement())
+
+  // properties
+  date         DateTime?
+  type         String?
+  item         String?
+  customer     String?
+  sale_amount  Float?
+  sale_invoice String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
+model usage {
+  id Int @id @default(autoincrement())
+
+  // properties
+  date       DateTime?
+  period     String?
+  units_used Int?
+  comments   String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
+model depreciation {
+  id Int @id @default(autoincrement())
+
+  // properties
+  method                    String?
+  startAt                   DateTime?
+  endAt                     DateTime?
+  period                    String?
+  lifetime_usage            Int?
+  residual_value            Float?
+  residual_value_percentage Float?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
+model depreciation_history {
+  id Int @id @default(autoincrement())
+
+  // properties
+  asset_life                Int?
+  financial_year_start      DateTime?
+  period_convention         String?
+  subsidiary                String?
+  original_cost             Float?
+  residual_value            Float?
+  residual_value_percentage Float?
+  netbook_value             Float?
+  cumulative_depreciation   Float?
+  asset_status              String?
+  last_depreciation_date    DateTime?
+  last_depreciation_amount  Float?
+  last_depreciation_period  String?
+  depreciation_status       String?
+  revision_rules            String[]
+  annual_method_entry       String?
+  convention                String?
+  prior_year_nbv            String?
+  convention_asset_life     String?
+  convention_period         String?
+  group_depreciation        String?
+  group_master              String?
+  allow_override            Boolean?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
 }

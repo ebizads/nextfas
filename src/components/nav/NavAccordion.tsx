@@ -105,6 +105,7 @@ const NavAccordion = (props: {
     <div>
       {!props.minimize ? (
         <Accordion
+          variant="filled"
           defaultValue={props.paths[0]?.toUpperCase()}
           transitionDuration={420}
         >

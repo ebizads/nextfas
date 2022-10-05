@@ -57,7 +57,7 @@ const SideBar = () => {
             asset info
           </p>
         )}
-        <div className="py-4 border-b px-2">
+        <div className="py-4 px-2">
           <Link href={"/assets"}>
             <div
               className={`flex items-center ${

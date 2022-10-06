@@ -5,10 +5,39 @@ import { AssetCreateInput, AssetEditInput } from "../../common/input-types";
 import { authedProcedure, t } from "../trpc";
 
 export const assetRouter = t.router({
-  findAll: authedProcedure.query(async ({ ctx }) => {
-    const assets = await ctx.prisma.asset.findMany();
-    return assets;
-  }),
+  findAll: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const [assets, assetsCount] = await ctx.prisma.$transaction(
+        [
+          ctx.prisma.asset.findMany({
+            orderBy: {
+              createdAt: "desc",
+            },
+            skip: input?.page
+              ? (input.page - 1) * (input.limit ?? 10)
+              : undefined,
+            take: input?.limit ?? 10,
+          }),
+          ctx.prisma.asset.count(),
+        ],
+        {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        }
+      );
+
+      return {
+        assets,
+        pages: Math.ceil(assetsCount / (input?.limit ?? 10)),
+      };
+    }),
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const asset = await ctx.prisma.asset.findUnique({
       where: {

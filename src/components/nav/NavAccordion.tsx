@@ -91,8 +91,6 @@ const NavAccordion = (props: {
                               ]?.toUpperCase() === type.name.toUpperCase()
                                 ? "bg-tangerine-100"
                                 : ""
-                            } ${
-                              idx !== page.subType!.length - 1 ? "border-b" : ""
                             } py-1 hover:bg-tangerine-50 hover:text-tangerine-600 duration-150`}
                           >
                             {type.name}
@@ -109,7 +107,7 @@ const NavAccordion = (props: {
         <div className="flex flex-col">
           {navigations.map((page, idx) => (
             <button
-              className={`py-4 border-b w-full text-center ${
+              className={`py-4  w-full text-center ${
                 props.paths[0]?.toUpperCase() === page.name.toUpperCase()
                   ? "text-tangerine-500 bg-tangerine-50"
                   : "text-light-secondary"

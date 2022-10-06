@@ -8,7 +8,7 @@ const TopBar = () => {
   }, [pathname])
 
   return (
-    <div className="min-h-[7vh] max-h-[7vh] flex-1 px-4 border-b flex justify-between items-center">
+    <div className="min-h-[7vh] max-h-[7vh] px-4 border-b flex justify-between items-center">
       <div className="flex gap-4 text-light-secondary">
         <h5>{paths[0] === "dashboard" ? "Home" : "Info"}</h5>
         {paths.map((path, idx) => (

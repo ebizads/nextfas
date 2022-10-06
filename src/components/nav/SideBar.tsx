@@ -2,7 +2,8 @@ import { Accordion } from "@mantine/core"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import React, { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
+import { useMinimizeStore } from "../../store/useStore"
 import NavAccordion, { NavType } from "./NavAccordion"
 
 const navigations = [
@@ -34,29 +35,22 @@ const SideBar = () => {
     return pathname.split("/").filter((item, idx) => idx !== 0)
   }, [pathname])
 
-  const [minimize, setMinimize] = useState<boolean>(false)
+  const { minimize, setMinimize } = useMinimizeStore()
 
   return (
     <div
       className={`max-w-md duration-300 ${
-        minimize ? "w-[10vw]" : "w-[30vw] xl:w-[20vw]"
+        minimize
+          ? "min-w-[10vw] w-[10vw]"
+          : "min-w-[25vw] w-[25vw] xl:w-[20vw] xl:min-w-[20vw]"
       } px-2 py-4 flex flex-col border-r min-h-screen space-y-4 overflow-hidden`}
     >
       <div
         className="relative flex flex-col w-full px-2 pb-2"
         onClick={() => {
-          setMinimize((prev) => !prev)
+          setMinimize(({ prev }: { prev: boolean }) => !prev)
         }}
       >
-        {/* <h1
-          className="text-center cursor-pointer text-xl font-bold truncate"
-          onClick={() => {
-            setMinimize((prev) => !prev)
-          }}
-        >
-          {minimize ? "FAS" : "Fixed Asset System"}
-        </h1> */}
-
         <Image
           src={"/FASlogo.svg"}
           alt="This is a FAS Logo"
@@ -105,7 +99,7 @@ const SideBar = () => {
                   minimize ? "fa-regular text-2xl" : "fa-light"
                 } text-left`}
               />
-              {!minimize && <p>Dashboard</p>}
+              {!minimize && <p className="text-light-primary">Dashboard</p>}
             </div>
           </Link>
         </div>
@@ -120,18 +114,14 @@ const SideBar = () => {
           className={`py-4 px-2 ${
             paths[paths.length - 1] === "assets"
               ? "text-tangerine-500 font-medium bg-tangerine-50"
-              : ""
+              : "text-light-secondary"
           }`}
         >
           <Link href={"/assets"}>
             <div
               className={`flex items-center ${
                 minimize ? "justify-center" : "pl-2 justify-start"
-              } gap-2 pl-2 cursor-pointer ${
-                paths[paths.length - 1] === "assets"
-                  ? "text-tangerine-500 font-medium bg-tangerine-50"
-                  : "text-light-secondary"
-              }`}
+              } gap-2 pl-2 cursor-pointer`}
             >
               <i
                 className={`fa-cubes w-8 ${

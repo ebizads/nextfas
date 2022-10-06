@@ -1,18 +1,18 @@
-import { Accordion } from "@mantine/core"
-import Link from "next/link"
-import React from "react"
+import { Accordion } from "@mantine/core";
+import Link from "next/link";
+import React from "react";
 
 type SubNavType = {
-  name: string
-  icon?: string
-  link: string
-}
+  name: string;
+  icon?: string;
+  link: string;
+};
 
 interface NavType {
-  name: string
-  icon: string
-  link: string
-  subType?: SubNavType[]
+  name: string;
+  icon: string;
+  link: string;
+  subType: SubNavType[];
 }
 
 const navigations = [
@@ -94,12 +94,12 @@ const navigations = [
       { name: "Issuance", link: "/transactions/issuance" },
     ],
   },
-] as NavType[]
+] as NavType[];
 
 const NavAccordion = (props: {
-  paths: string[]
-  minimize: boolean
-  setMinimize: Function
+  paths: string[];
+  minimize: boolean;
+  setMinimize: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
     <div>
@@ -138,7 +138,7 @@ const NavAccordion = (props: {
                                 ? "bg-tangerine-100"
                                 : ""
                             } ${
-                              idx !== page.subType!.length - 1 ? "border-b" : ""
+                              idx !== page.subType.length - 1 ? "border-b" : ""
                             } py-1 hover:bg-tangerine-50 hover:text-tangerine-600 duration-150`}
                           >
                             {type.name}
@@ -155,13 +155,14 @@ const NavAccordion = (props: {
         <div className="flex flex-col">
           {navigations.map((page, idx) => (
             <button
+              key={idx}
               className={`py-4 border-b w-full text-center ${
                 props.paths[0]?.toUpperCase() === page.name.toUpperCase()
                   ? "text-tangerine-500"
                   : ""
               }`}
               onClick={() => {
-                props.setMinimize(false)
+                props.setMinimize(false);
               }}
             >
               <i className={page.icon + " text-xl fa-regular"} />
@@ -170,6 +171,6 @@ const NavAccordion = (props: {
         </div>
       )}
     </div>
-  )
-}
-export default NavAccordion
+  );
+};
+export default NavAccordion;

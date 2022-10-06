@@ -1,16 +1,15 @@
-import { Accordion } from "@mantine/core"
-import Link from "next/link"
-import { useRouter } from "next/router"
-import React, { useMemo, useState } from "react"
-import NavAccordion from "./NavAccordion"
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useMemo, useState } from "react";
+import NavAccordion from "./NavAccordion";
 
 const SideBar = () => {
-  const { pathname } = useRouter()
+  const { pathname } = useRouter();
   const paths = useMemo(() => {
-    return pathname.split("/").filter((item, idx) => idx !== 0)
-  }, [pathname])
+    return pathname.split("/").filter((item, idx) => idx !== 0);
+  }, [pathname]);
 
-  const [minimize, setMinimize] = useState<boolean>(false)
+  const [minimize, setMinimize] = useState<boolean>(false);
 
   return (
     <div
@@ -22,7 +21,7 @@ const SideBar = () => {
         <h1
           className="text-center cursor-pointer text-xl font-bold truncate"
           onClick={() => {
-            setMinimize((prev) => !prev)
+            setMinimize((prev) => !prev);
           }}
         >
           {minimize ? "FAS" : "Fixed Asset System"}
@@ -84,7 +83,7 @@ const SideBar = () => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SideBar
+export default SideBar;

@@ -1,11 +1,11 @@
-import { useRouter } from "next/router"
-import React, { useEffect, useMemo } from "react"
+import { useRouter } from "next/router";
+import React, { useMemo } from "react";
 
 const TopBar = () => {
-  const { pathname } = useRouter()
+  const { pathname } = useRouter();
   const paths = useMemo(() => {
-    return pathname.split("/").filter((item, idx) => idx !== 0)
-  }, [pathname])
+    return pathname.split("/").filter((_, idx) => idx !== 0);
+  }, [pathname]);
 
   return (
     <div className="min-h-[7vh] max-h-[7vh] flex-1 px-4 border-b flex justify-between items-center">
@@ -30,7 +30,7 @@ const TopBar = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TopBar
+export default TopBar;

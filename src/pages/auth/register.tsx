@@ -9,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import AlertInput from "../../components/atoms/forms/AlertInput";
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker";
-import { Alert } from "./login";
 
 // TODO input validations
 type User = z.infer<typeof RegisterUserInput>;

@@ -112,7 +112,7 @@ const NavAccordion = (props: {
               className={`py-4 border-b w-full text-center ${
                 props.paths[0]?.toUpperCase() === page.name.toUpperCase()
                   ? "text-tangerine-500 bg-tangerine-50"
-                  : ""
+                  : "text-light-secondary"
               }`}
               onClick={() => {
                 props.setMinimize(false)

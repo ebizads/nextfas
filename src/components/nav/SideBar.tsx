@@ -91,7 +91,7 @@ const SideBar = () => {
           className={`py-4 px-2 ${
             paths[paths.length - 1] === "dashboard"
               ? "text-tangerine-500 font-medium bg-tangerine-50"
-              : ""
+              : "text-light-secondary"
           }`}
         >
           <Link href={"/dashboard"}>
@@ -101,7 +101,7 @@ const SideBar = () => {
               } gap-2 pl-2 cursor-pointer`}
             >
               <i
-                className={`fa-cubes w-8 ${
+                className={`fa-house-blank w-8 ${
                   minimize ? "fa-regular text-2xl" : "fa-light"
                 } text-left`}
               />
@@ -130,7 +130,7 @@ const SideBar = () => {
               } gap-2 pl-2 cursor-pointer ${
                 paths[paths.length - 1] === "assets"
                   ? "text-tangerine-500 font-medium bg-tangerine-50"
-                  : ""
+                  : "text-light-secondary"
               }`}
             >
               <i
@@ -138,7 +138,7 @@ const SideBar = () => {
                   minimize ? "fa-regular text-2xl" : "fa-light"
                 } text-left`}
               />
-              {!minimize && <p>Assets</p>}
+              {!minimize && <p className="text-light-primary">Assets</p>}
             </div>
           </Link>
         </div>

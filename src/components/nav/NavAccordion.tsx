@@ -8,7 +8,7 @@ type SubNavType = {
   link: string
 }
 
-interface NavType {
+export interface NavType {
   name: string
   icon: string
   link: string
@@ -42,58 +42,6 @@ const navigations = [
       { name: "Issuance", link: "/transactions/issuance" },
     ],
   },
-  {
-    name: "Employees",
-    icon: "fa-light fa-users",
-    link: "#",
-    subType: [
-      { name: "Transfer", link: "/transactions/transfer" },
-      { name: "Split", link: "/transactions/split" },
-      { name: "Depreciation", link: "/transactions/depreciation" },
-      { name: "Disposal", link: "/transactions/disposal" },
-      { name: "Repair", link: "/transactions/repair" },
-      { name: "Issuance", link: "/transactions/issuance" },
-    ],
-  },
-  {
-    name: "Accounting",
-    icon: "fa-light fa-calculator-simple",
-    link: "#",
-    subType: [
-      { name: "Transfer", link: "/transactions/transfer" },
-      { name: "Split", link: "/transactions/split" },
-      { name: "Depreciation", link: "/transactions/depreciation" },
-      { name: "Disposal", link: "/transactions/disposal" },
-      { name: "Repair", link: "/transactions/repair" },
-      { name: "Issuance", link: "/transactions/issuance" },
-    ],
-  },
-  {
-    name: "Vendors",
-    icon: "fa-light fa-store",
-    link: "#",
-    subType: [
-      { name: "Transfer", link: "/transactions/transfer" },
-      { name: "Split", link: "/transactions/split" },
-      { name: "Depreciation", link: "/transactions/depreciation" },
-      { name: "Disposal", link: "/transactions/disposal" },
-      { name: "Repair", link: "/transactions/repair" },
-      { name: "Issuance", link: "/transactions/issuance" },
-    ],
-  },
-  {
-    name: "Inventory",
-    icon: "fa-light fa-folders",
-    link: "#",
-    subType: [
-      { name: "Transfer", link: "/transactions/transfer" },
-      { name: "Split", link: "/transactions/split" },
-      { name: "Depreciation", link: "/transactions/depreciation" },
-      { name: "Disposal", link: "/transactions/disposal" },
-      { name: "Repair", link: "/transactions/repair" },
-      { name: "Issuance", link: "/transactions/issuance" },
-    ],
-  },
 ] as NavType[]
 
 const NavAccordion = (props: {
@@ -113,16 +61,22 @@ const NavAccordion = (props: {
             // .filter((item) => item.subType)
             .map((page, idx) => (
               <Accordion.Item key={idx} value={page.name.toUpperCase()}>
-                <Accordion.Control>
+                <Accordion.Control
+                  className={`m-0 py-4 px-4 ${
+                    props.paths[0]?.toUpperCase() === page.name.toUpperCase()
+                      ? "text-tangerine-500 font-medium bg-tangerine-50"
+                      : "text-light-secondary"
+                  }`}
+                >
                   <div
                     className={`flex gap-2 items-center ${
-                      props.paths[0]?.toUpperCase() === page.name.toUpperCase()
-                        ? "text-tangerine-500 font-medium"
-                        : ""
-                    } ${props.minimize ? "justify-center" : ""}`}
+                      props.minimize ? "justify-center" : ""
+                    }`}
                   >
                     <i className={page.icon + " w-8 text-left "} />
-                    <p className=" text-base font-sans">{page.name}</p>
+                    <p className=" text-base font-sans text-light-primary">
+                      {page.name}
+                    </p>
                   </div>
                 </Accordion.Control>
                 {page.subType && (
@@ -157,7 +111,7 @@ const NavAccordion = (props: {
             <button
               className={`py-4 border-b w-full text-center ${
                 props.paths[0]?.toUpperCase() === page.name.toUpperCase()
-                  ? "text-tangerine-500"
+                  ? "text-tangerine-500 bg-tangerine-50"
                   : ""
               }`}
               onClick={() => {

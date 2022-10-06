@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { AssetCreateInput, AssetEditInput } from "../../common/input-types";
@@ -27,16 +28,32 @@ export const assetRouter = t.router({
   create: authedProcedure
     .input(AssetCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { model, location, ...rest } = input;
+      const { model, ...rest } = input;
 
       try {
-        await ctx.prisma.asset.create({
-          data: {
-            ...rest,
-            model: { create: model ?? undefined },
-            location: { create: location ?? undefined },
-          },
-        });
+        await ctx.prisma.$transaction(
+          [
+            ctx.prisma.asset.create({
+              data: {
+                ...rest,
+              },
+            }),
+            ctx.prisma.asset.update({
+              where: {
+                number: rest.number,
+              },
+              data: {
+                model: {
+                  create: model ?? undefined,
+                },
+              },
+            }),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        );
+
         return "Asset successfully created";
       } catch (error) {
         throw new TRPCError({
@@ -48,19 +65,35 @@ export const assetRouter = t.router({
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { model, location, id, ...rest } = input;
+      const { model, id, ...rest } = input;
 
       try {
-        await ctx.prisma.asset.update({
-          where: {
-            id,
-          },
-          data: {
-            ...rest,
-            model: { create: model ?? undefined },
-            location: { create: location ?? undefined },
-          },
-        });
+        await ctx.prisma.$transaction(
+          [
+            ctx.prisma.asset.update({
+              where: {
+                id,
+              },
+              data: {
+                ...rest,
+              },
+            }),
+            ctx.prisma.asset.update({
+              where: {
+                id,
+              },
+              data: {
+                model: {
+                  create: {
+                    ...model,
+                    name: model?.name ?? "",
+                  },
+                },
+              },
+            }),
+          ],
+          {}
+        );
         return "Asset successfully edited";
       } catch (error) {
         throw new TRPCError({

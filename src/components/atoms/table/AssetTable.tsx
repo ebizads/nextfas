@@ -6,6 +6,7 @@ import { Checkbox } from "@mantine/core"
 const AssetTable = (props: {
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  filterBy: string[]
   rows: RowType[]
   columns: ColumnType[]
 }) => {
@@ -15,12 +16,6 @@ const AssetTable = (props: {
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
       props.setCheckboxes([-1])
-
-      //returns all asset id
-      // const id_array = props.rows.map((asset) => asset.id)
-
-      //toggle all checkboxes to true
-      // props.setCheckboxes(id_array)
     } else {
       props.setCheckboxes([])
     }
@@ -28,11 +23,17 @@ const AssetTable = (props: {
 
   const toggleCheckbox = async (id: number) => {
     if (props.checkboxes.includes(id)) {
+      // removes id if not selected
       props.setCheckboxes((prev) => prev.filter((e) => e !== id))
       return
     }
-
+    // adds id
     props.setCheckboxes((prev) => [...prev, id])
+  }
+
+  const getProperty = (filter: string, asset: RowType) => {
+    //get object property
+    return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value"
   }
 
   return (
@@ -49,7 +50,6 @@ const AssetTable = (props: {
                 <Checkbox
                   color={"orange"}
                   onChange={() => {
-                    // setCheckAll((prev) => !prev)
                     selectAllCheckboxes()
                   }}
                   checked={props.checkboxes.length > 0 ? true : false}
@@ -60,19 +60,17 @@ const AssetTable = (props: {
                 />
               </div>
             </th>
-            {props.columns
-              .filter((col) => !col.filtered)
-              .map((col) => (
-                <th
-                  key={col.name}
-                  scope="col"
-                  className="px-6 duration-150 max-w-[10rem] truncate"
-                >
-                  {col.name}
-                </th>
-              ))}
+            {props.columns.map((col) => (
+              <th
+                key={col.name}
+                scope="col"
+                className="px-6 duration-150 max-w-[10rem] truncate"
+              >
+                {col.name}
+              </th>
+            ))}
 
-            <th scope="col" className="p-4">
+            <th scope="col" className="p-4 text-center">
               Action
             </th>
           </tr>
@@ -102,28 +100,12 @@ const AssetTable = (props: {
                   />
                 </div>
               </td>
-              <td
-                scope="row"
-                className="py-2 px-6 whitespace-nowrap max-w-[10rem] truncate"
-              >
-                {row.serial_no}
-              </td>
-              <td className="py-2 px-6 max-w-[10rem] truncate">
-                {row.bar_code}
-              </td>
-              <td className="py-2 px-6 max-w-[10rem] truncate">{row.type}</td>
-              <td className="py-2 px-6 max-w-[10rem] truncate">
-                {row.category}
-              </td>
-              <td className="py-2 px-6 max-w-[10rem] truncate">{row.name}</td>
-              <td className="py-2 px-6 max-w-[10rem] truncate">
-                {row.description}
-              </td>
-              <td className="py-2 px-6 max-w-[10rem] truncate">{row.owner}</td>
-              <td className="py-2 px-6 max-w-[10rem] truncate">
-                {row.added_date}
-              </td>
 
+              {props.filterBy.map((filter) => (
+                <td key={filter} className="py-2 px-6 max-w-[10rem] truncate">
+                  {getProperty(filter, row)}
+                </td>
+              ))}
               <td className="space-x-2 text-center max-w-[10rem]">
                 <i className="fa-light fa-pen-to-square" />
                 <i className="text-red-500 fa-light fa-trash-can" />{" "}

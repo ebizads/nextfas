@@ -1,6 +1,6 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import DashboardLayout from "../layouts/DashboardLayout"
-import { Select } from "@mantine/core"
+import { Select, Popover, Checkbox } from "@mantine/core"
 import { ColumnType, RowType } from "../types/table"
 import AssetTable from "../components/atoms/table/AssetTable"
 
@@ -65,18 +65,22 @@ const assets = [
 ] as RowType[]
 
 const columns = [
-  { name: "Serial No.", filtered: false },
-  { name: "Bar Code", filtered: false },
-  { name: "Type", filtered: false },
-  { name: "Category", filtered: false },
-  { name: "Name", filtered: false },
-  { name: "Description", filtered: false },
-  { name: "Owner", filtered: false },
-  { name: "Added Date", filtered: false },
+  { value: "serial_no", name: "Serial No." },
+  { value: "bar_code", name: "Bar Code" },
+  { value: "type", name: "Type" },
+  { value: "category", name: "Category" },
+  { value: "name", name: "Name" },
+  { value: "description", name: "Description" },
+  { value: "owner", name: "Owner" },
+  { value: "added_date", name: "Added Date" },
 ] as ColumnType[]
 
 const Assets = () => {
   const [checkboxes, setCheckboxes] = useState<number[]>([])
+  const [openPopover, setOpenPopover] = useState<boolean>(false)
+  const [filterBy, setFilterBy] = useState<string[]>([
+    ...columns.map((i) => i.value),
+  ])
 
   return (
     <DashboardLayout>
@@ -94,10 +98,63 @@ const Assets = () => {
                   ]}
                 />
               </div>
-              <button className="bg-tangerine-500 p-2 focus:outline-none group w-7 hover:w-16 duration-200 transition-width  outline-none hover:bg-tangerine-400 text-neutral-50 flex gap-2 rounded-md text-xs">
-                <i className="fa-regular fa-bars-filter text-xs" />
-                <span className="invisible group-hover:visible">Filter</span>
-              </button>
+
+              <Popover
+                opened={openPopover}
+                onClose={() => setOpenPopover(false)}
+                trapFocus={false}
+                position="bottom"
+                zIndex={10}
+                classNames={{
+                  dropdown: "p-0 w-80 rounded-md shadow-lg",
+                }}
+              >
+                <Popover.Target>
+                  <button
+                    onClick={() => {
+                      setOpenPopover(!openPopover)
+                    }}
+                    className="bg-tangerine-500 p-2 focus:outline-none group w-7 hover:w-16 duration-200 transition-width  outline-none hover:bg-tangerine-400 text-neutral-50 flex gap-2 rounded-md text-xs"
+                  >
+                    <i className="fa-regular fa-bars-filter text-xs" />
+                    <span className="invisible group-hover:visible">
+                      Filter
+                    </span>
+                  </button>
+                </Popover.Target>{" "}
+                <Popover.Dropdown>
+                  <div className="h-2 rounded-t-md bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500"></div>
+                  <div className="px-4 py-2">
+                    <Checkbox.Group
+                      orientation="vertical"
+                      description="Filter by"
+                      value={filterBy}
+                      onChange={setFilterBy}
+                    >
+                      <div className="grid grid-cols-2">
+                        {columns.map((col, idx) => (
+                          <Checkbox
+                            color={"orange"}
+                            key={col.name}
+                            disabled={
+                              filterBy.length === 1 &&
+                              filterBy.includes(col.value)
+                                ? true
+                                : false
+                            }
+                            value={col.value}
+                            label={col.name}
+                            classNames={{
+                              input:
+                                "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </Checkbox.Group>
+                  </div>
+                </Popover.Dropdown>
+              </Popover>
             </div>
             {checkboxes.length > 0 && (
               <button className="p-2 focus:outline-none outline-none text-red-500 underline underline-offset-4  font-medium flex gap-2 rounded-md text-xs">
@@ -123,7 +180,8 @@ const Assets = () => {
           checkboxes={checkboxes}
           setCheckboxes={setCheckboxes}
           rows={assets}
-          columns={columns}
+          filterBy={filterBy}
+          columns={columns.filter((col) => filterBy.includes(col.value))}
         />
       </div>
     </DashboardLayout>

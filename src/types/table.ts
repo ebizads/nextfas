@@ -1,6 +1,6 @@
 export type ColumnType = {
   name: string
-  filtered: boolean
+  value: string
 }
 
 export type RowType = {

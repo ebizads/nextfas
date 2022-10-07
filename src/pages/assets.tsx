@@ -62,6 +62,30 @@ const assets = [
     owner: "Johnny Allen",
     added_date: "08/19/22 (11:05 pm)",
   },
+  {
+    id: 4,
+    serial_no: "omsim696",
+    bar_code: "ediwowhaha",
+    type: "Water Dispenser",
+    category: "Office Items",
+    name: "Super Tubig",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium nostrum nemo, iste quas fuga totam, incidunt qui repudiandae placeat facilis atque animi eligendi exercitationem sequi inventore vel et laudantium omnis.",
+    owner: "Franz Arvae",
+    added_date: "08/10/22 (12:05 pm)",
+  },
+  {
+    id: 5,
+    serial_no: "omsim420",
+    bar_code: "opopoopopopop",
+    type: "Coffee Maker",
+    category: "Office Items",
+    name: "Bitter Coffee",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium nostrum nemo, iste quas fuga totam, incidunt qui repudiandae placeat facilis atque animi eligendi exercitationem sequi inventore vel et laudantium omnis.",
+    owner: "Franz Arvae",
+    added_date: "08/15/22 (1:05 pm)",
+  },
 ] as RowType[]
 
 const columns = [

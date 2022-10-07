@@ -101,11 +101,21 @@ const AssetTable = (props: {
                 </div>
               </td>
 
-              {props.filterBy.map((filter) => (
+              {/* {props.filterBy.map((filter) => (
                 <td key={filter} className="py-2 px-6 max-w-[10rem] truncate">
                   {getProperty(filter, row)}
                 </td>
-              ))}
+              ))} */}
+              {Object.keys(row).map((key) => {
+                return (
+                  props.filterBy.includes(key) && (
+                    <td className="py-2 px-6 max-w-[10rem] truncate">
+                      {getProperty(key, row)}
+                    </td>
+                  )
+                )
+              })}
+
               <td className="space-x-2 text-center max-w-[10rem]">
                 <i className="fa-light fa-pen-to-square" />
                 <i className="text-red-500 fa-light fa-trash-can" />{" "}

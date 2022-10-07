@@ -139,6 +139,7 @@ const SideBar = () => {
         />
         {navigations.map((page, idx) => (
           <div
+            key={idx}
             className={`py-4 px-2 ${
               paths[paths.length - 1]?.toUpperCase() === page.name.toUpperCase()
                 ? "text-tangerine-500 font-medium bg-tangerine-50"

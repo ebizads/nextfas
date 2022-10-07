@@ -107,6 +107,7 @@ const NavAccordion = (props: {
         <div className="flex flex-col">
           {navigations.map((page, idx) => (
             <button
+              key={idx}
               className={`py-4  w-full text-center ${
                 props.paths[0]?.toUpperCase() === page.name.toUpperCase()
                   ? "text-tangerine-500 bg-tangerine-50"

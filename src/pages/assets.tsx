@@ -86,6 +86,66 @@ const assets = [
     owner: "Franz Arvae",
     added_date: "08/15/22 (1:05 pm)",
   },
+  {
+    id: 1,
+    serial_no: "omsim123",
+    bar_code: "qweqweqweqweqweqweqweqwe",
+    type: "Laptop",
+    category: "Gadget",
+    name: "Mac OS",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium nostrum nemo, iste quas fuga totam, incidunt qui repudiandae placeat facilis atque animi eligendi exercitationem sequi inventore vel et laudantium omnis.",
+    owner: "Kevin the Rat",
+    added_date: "08/22/22 (9:05 am)",
+  },
+  {
+    id: 2,
+    serial_no: "omsim345",
+    bar_code: "wawawawawawa",
+    type: "Printer",
+    category: "Office Items",
+    name: "Expensive Printer",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium nostrum nemo, iste quas fuga totam, incidunt qui repudiandae placeat facilis atque animi eligendi exercitationem sequi inventore vel et laudantium omnis.",
+    owner: "Klarky Wahaha",
+    added_date: "08/23/22 (10:06 am)",
+  },
+  {
+    id: 3,
+    serial_no: "omsim678",
+    bar_code: "bwahahahahahaha",
+    type: "Office Chair",
+    category: "Office Items",
+    name: "Wheel Chair",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium nostrum nemo, iste quas fuga totam, incidunt qui repudiandae placeat facilis atque animi eligendi exercitationem sequi inventore vel et laudantium omnis.",
+    owner: "Johnny Allen",
+    added_date: "08/19/22 (11:05 pm)",
+  },
+  {
+    id: 4,
+    serial_no: "omsim696",
+    bar_code: "ediwowhaha",
+    type: "Water Dispenser",
+    category: "Office Items",
+    name: "Super Tubig",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium nostrum nemo, iste quas fuga totam, incidunt qui repudiandae placeat facilis atque animi eligendi exercitationem sequi inventore vel et laudantium omnis.",
+    owner: "Franz Arvae",
+    added_date: "08/10/22 (12:05 pm)",
+  },
+  {
+    id: 5,
+    serial_no: "omsim420",
+    bar_code: "opopoopopopop",
+    type: "Coffee Maker",
+    category: "Office Items",
+    name: "Bitter Coffee",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium nostrum nemo, iste quas fuga totam, incidunt qui repudiandae placeat facilis atque animi eligendi exercitationem sequi inventore vel et laudantium omnis.",
+    owner: "Franz Arvae",
+    added_date: "08/15/22 (1:05 pm)",
+  },
 ] as RowType[]
 
 const columns = [
@@ -99,7 +159,12 @@ const columns = [
   { value: "added_date", name: "Added Date" },
 ] as ColumnType[]
 
-function FilterPopover(props) {
+const FilterPopover = (props: {
+  openPopover: boolean
+  setOpenPopover: Function
+  filterBy: string[]
+  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>
+}) => {
   return (
     <Popover
       opened={props.openPopover}

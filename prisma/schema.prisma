@@ -260,6 +260,8 @@ model asset {
   manufacturer manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
   supplier     supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   vendor       vendor?       @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+
+  @@index([name, number, serial_number, typeId, categoryId, classId])
 }
 
 model general {

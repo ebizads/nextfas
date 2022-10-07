@@ -11,32 +11,74 @@ export const assetRouter = t.router({
         .object({
           page: z.number().optional(),
           limit: z.number().optional(),
+          search: z
+            .object({
+              name: z.string().optional(),
+              number: z.string().optional(),
+              serial_number: z.string().optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              typeId: z.number().optional(),
+              classId: z.number().optional(),
+              categoryId: z.number().optional(),
+            })
+            .optional(),
         })
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      const [assets, assetsCount] = await ctx.prisma.$transaction(
-        [
-          ctx.prisma.asset.findMany({
-            orderBy: {
-              createdAt: "desc",
-            },
-            skip: input?.page
-              ? (input.page - 1) * (input.limit ?? 10)
-              : undefined,
-            take: input?.limit ?? 10,
-          }),
-          ctx.prisma.asset.count(),
-        ],
-        {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        }
-      );
+      try {
+        const [assets, assetsCount] = await ctx.prisma.$transaction(
+          [
+            ctx.prisma.asset.findMany({
+              orderBy: {
+                createdAt: "desc",
+              },
+              include: {
+                category: true,
+                class: true,
+                type: true,
+                supplier: true,
+                manufacturer: true,
+                vendor: true,
+                model: true,
+                location: true,
+                custodian: true,
+              },
+              where: {
+                name: { contains: input?.search?.name },
+                number: { contains: input?.search?.number },
+                serial_number: { contains: input?.search?.serial_number },
+                typeId: input?.filter?.typeId,
+                classId: input?.filter?.classId,
+                categoryId: input?.filter?.categoryId,
+              },
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+              take: input?.limit ?? 10,
+            }),
+            ctx.prisma.asset.count(),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        );
 
-      return {
-        assets,
-        pages: Math.ceil(assetsCount / (input?.limit ?? 10)),
-      };
+        return {
+          assets,
+          pages: Math.ceil(assetsCount / (input?.limit ?? 10)),
+        };
+      } catch (error) {
+        console.log(error);
+
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        });
+      }
     }),
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const asset = await ctx.prisma.asset.findUnique({
@@ -45,11 +87,14 @@ export const assetRouter = t.router({
       },
       include: {
         category: true,
-        location: true,
-        model: true,
+        class: true,
         type: true,
-        manufacturer: true,
         supplier: true,
+        manufacturer: true,
+        vendor: true,
+        model: true,
+        location: true,
+        custodian: true,
       },
     });
     return asset;

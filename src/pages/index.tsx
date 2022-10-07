@@ -6,7 +6,10 @@ import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
-  const { data } = trpc.asset.findAll.useQuery({ page: 1, limit: 1 });
+  const { data } = trpc.asset.findAll.useQuery({
+    page: 1,
+    limit: 1,
+  });
 
   return (
     <>
@@ -15,8 +18,8 @@ const Home: NextPage = () => {
         <meta name="description" content="Fixed Asset System server" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container flex flex-col items-center justify-center min-h-screen p-4 mx-auto">
-        <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold text-gray-700">
+      <main className="mx-auto flex min-h-screen flex-col items-center justify-center p-4">
+        <h1 className="text-5xl font-extrabold leading-normal text-gray-700 md:text-[5rem]">
           FAS <span className="text-amber-300">development</span> server
         </h1>
         <pre>
@@ -30,14 +33,14 @@ const Home: NextPage = () => {
         <p className="text-gray-700">{session?.user?.name}</p>
         {session ? (
           <button
-            className="px-4 py-1 bg-amber-300 text-white rounded my-2"
+            className="my-2 rounded bg-amber-300 px-4 py-1 text-white"
             onClick={() => signOut()}
           >
             Sign out
           </button>
         ) : (
           <Link href="/auth/login">
-            <a className="px-4 py-1 bg-amber-300 text-white rounded my-2">
+            <a className="my-2 rounded bg-amber-300 px-4 py-1 text-white">
               Sign in
             </a>
           </Link>

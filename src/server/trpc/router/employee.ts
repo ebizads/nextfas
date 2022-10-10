@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
@@ -7,16 +8,72 @@ import {
 import { authedProcedure, t } from "../trpc";
 
 export const employeeRouter = t.router({
-  findAll: authedProcedure.query(async ({ ctx }) => {
-    const employees = await ctx.prisma.employee.findMany();
-    return employees;
-  }),
+  findAll: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              name: z.string().optional(),
+              employee_id: z.string().optional(),
+              email: z.string().optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              hired_date: z.date().optional(),
+              subsidiary: z.number().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const [employees, employeesCount] = await ctx.prisma.$transaction(
+          [
+            ctx.prisma.employee.findMany({
+              orderBy: {
+                created_at: "desc",
+              },
+              include: {
+                address: true,
+                profile: true,
+                owned_assets: true,
+              },
+              where: {
+                name: { contains: input?.search?.name },
+                employee_id: { contains: input?.search?.employee_id },
+                email: { contains: input?.search?.email },
+              },
+            }),
+            ctx.prisma.employee.count(),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        );
+
+        return {
+          employees,
+          pages: Math.ceil(employeesCount / (input?.limit ?? 10)),
+        };
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        });
+      }
+    }),
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const employee = await ctx.prisma.employee.findUnique({
       where: {
         id: input,
       },
       include: {
+        address: true,
         profile: true,
       },
     });
@@ -90,4 +147,27 @@ export const employeeRouter = t.router({
       });
     }
   }),
+  deleteMany: authedProcedure
+    .input(z.array(z.number()))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.employee.updateMany({
+          where: {
+            id: {
+              in: input,
+            },
+          },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+          },
+        });
+        return "Employees successfully deleted";
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        });
+      }
+    }),
 });

@@ -128,8 +128,8 @@ export const AssetEditInput = z.object({
   model: z
     .object({
       name: z.string(),
-      number: z.string().optional(),
-      brand: z.string().optional(),
+      number: z.string().nullish(),
+      brand: z.string().nullish(),
     })
     .optional(),
 });

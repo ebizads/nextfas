@@ -70,6 +70,7 @@ export const assetRouter = t.router({
         return {
           assets,
           pages: Math.ceil(assetsCount / (input?.limit ?? 10)),
+          total: assetsCount,
         };
       } catch (error) {
         console.log(error);
@@ -166,7 +167,9 @@ export const assetRouter = t.router({
               },
             }),
           ],
-          {}
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
         );
         return "Asset successfully edited";
       } catch (error) {

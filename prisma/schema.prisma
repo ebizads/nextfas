@@ -54,20 +54,22 @@ model user {
 }
 
 model employee {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
-  image String?
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  image        String?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted      Boolean   @default(false)
+  deletedAt    DateTime?
+  employee_id  String    @unique
+  hired_date   DateTime?
+  subsidiary   String?
+  address      address?
+  owned_assets asset?
+  profile      profile?
 
-  address address?
-  profile profile?
-
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted    Boolean   @default(false)
-  deletedAt  DateTime?
-
-  owned_assets asset[]
+  @@index([employee_id, name, email, hired_date, subsidiary], map: "employee_index")
 }
 
 model VerificationToken {
@@ -80,7 +82,6 @@ model VerificationToken {
 
 model profile {
   id            Int       @id @default(autoincrement())
-  phone_no      String?
   first_name    String
   middle_name   String?
   last_name     String
@@ -90,12 +91,13 @@ model profile {
   userId        Int?      @unique
   date_of_birth DateTime?
   employeeId    Int?      @unique
+  phone_number  String?
   employee      employee? @relation(fields: [employeeId], references: [id])
   user          user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model address {
-  id               Int     @id @default(autoincrement())
+  id               Int           @id @default(autoincrement())
   street           String?
   city             String?
   state            String?
@@ -103,23 +105,20 @@ model address {
   country          String?
   shipping_address String?
   billing_address  String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deleted   Boolean   @default(false)
-  deletedAt DateTime?
-
-  supplier       supplier?     @relation(fields: [supplierId], references: [id])
-  supplierId     Int?          @unique
-  manufacturer   manufacturer? @relation(fields: [manufacturerId], references: [id])
-  manufacturerId Int?          @unique
-  vendor         vendor?       @relation(fields: [vendorId], references: [id])
-  vendorId       Int?          @unique
-
-  userId     Int?      @unique
-  user       user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  employeeId Int?      @unique
-  employee   employee? @relation(fields: [employeeId], references: [id])
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deleted          Boolean       @default(false)
+  deletedAt        DateTime?
+  supplierId       Int?          @unique
+  manufacturerId   Int?          @unique
+  vendorId         Int?          @unique
+  userId           Int?          @unique
+  employeeId       Int?          @unique
+  employee         employee?     @relation(fields: [employeeId], references: [id])
+  manufacturer     manufacturer? @relation(fields: [manufacturerId], references: [id])
+  supplier         supplier?     @relation(fields: [supplierId], references: [id])
+  user             user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendor           vendor?       @relation(fields: [vendorId], references: [id])
 }
 
 model location {
@@ -130,8 +129,7 @@ model location {
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
   deleted    Boolean   @default(false)
-
-  assets asset[]
+  assets     asset?
 }
 
 model type {
@@ -141,8 +139,7 @@ model type {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-
-  assets asset[]
+  assets    asset[]
 }
 
 model asset_class {
@@ -152,8 +149,7 @@ model asset_class {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-
-  assets asset[]
+  assets    asset[]
 }
 
 model model {
@@ -165,8 +161,7 @@ model model {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-
-  assets asset[]
+  assets    asset[]
 }
 
 model category {
@@ -176,8 +171,7 @@ model category {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-
-  assets asset[]
+  assets    asset[]
 }
 
 model supplier {
@@ -185,13 +179,12 @@ model supplier {
   name      String
   email     String    @unique
   phone_no  String?
-  address   address?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-
-  assets asset[]
+  address   address?
+  assets    asset[]
 }
 
 model manufacturer {
@@ -199,13 +192,12 @@ model manufacturer {
   name      String
   email     String    @unique
   phone_no  String?
-  address   address?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-
-  assets asset[]
+  address   address?
+  assets    asset[]
 }
 
 model vendor {
@@ -213,61 +205,52 @@ model vendor {
   name      String
   email     String    @unique
   phone_no  String?
-  address   address?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-
-  assets asset[]
+  address   address?
+  assets    asset[]
 }
 
 model asset {
-  id                    Int     @id @default(autoincrement())
-  // properties
+  id                    Int           @id @default(autoincrement())
   name                  String
-  number                String  @unique
+  number                String        @unique
   description           String?
   serial_number         String?
   original_cost         Float?
   current_netbook_value Float?
   current_cost          Float?
-
-  // dates
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
-
-  // relations id
-  locationId     Int? @unique
-  custodianId    Int? @unique
-  typeId         Int?
-  modelId        Int?
-  classId        Int?
-  categoryId     Int?
-  manufacturerId Int?
-  supplierId     Int?
-  vendorId       Int?
-
-  // relations table
-  location     location?     @relation(fields: [locationId], references: [id], onDelete: SetNull)
-  custodian    employee?     @relation(fields: [custodianId], references: [id])
-  class        asset_class?  @relation(fields: [classId], references: [id])
-  type         type?         @relation(fields: [typeId], references: [id], onDelete: SetNull)
-  model        model?        @relation(fields: [modelId], references: [id], onDelete: SetNull)
-  category     category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  manufacturer manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
-  supplier     supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
-  vendor       vendor?       @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  deletedAt             DateTime?
+  deleted               Boolean       @default(false)
+  locationId            Int?          @unique
+  custodianId           Int?          @unique
+  typeId                Int?
+  modelId               Int?
+  classId               Int?
+  categoryId            Int?
+  manufacturerId        Int?
+  supplierId            Int?
+  vendorId              Int?
+  barcode               String?
+  category              category?     @relation(fields: [categoryId], references: [id])
+  class                 asset_class?  @relation(fields: [classId], references: [id])
+  custodian             employee?     @relation(fields: [custodianId], references: [id])
+  location              location?     @relation(fields: [locationId], references: [id])
+  manufacturer          manufacturer? @relation(fields: [manufacturerId], references: [id])
+  model                 model?        @relation(fields: [modelId], references: [id])
+  supplier              supplier?     @relation(fields: [supplierId], references: [id])
+  type                  type?         @relation(fields: [typeId], references: [id])
+  vendor                vendor?       @relation(fields: [vendorId], references: [id])
 
   @@index([name, number, serial_number, typeId, categoryId, classId])
 }
 
 model general {
-  id Int @id @default(autoincrement())
-
-  // properties
+  id                   Int       @id @default(autoincrement())
   subsidiary           String?
   currency             String?
   rev_current_period   Int?
@@ -280,17 +263,14 @@ model general {
   allow_override       Boolean?
   add_alternate_method Boolean?
   store_history        String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  deletedAt            DateTime?
+  deleted              Boolean   @default(false)
 }
 
 model lease {
-  id Int @id @default(autoincrement())
-
-  // properties
+  id                  Int       @id @default(autoincrement())
   proposal            String?
   company             String?
   contact_no          String?
@@ -303,17 +283,14 @@ model lease {
   total_interest      Float?
   total_npv           String?
   total_lease_payment String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime?
+  deleted             Boolean   @default(false)
 }
 
 model insurance {
-  id Int @id @default(autoincrement())
-
-  // properties
+  id                Int       @id @default(autoincrement())
   company           String?
   policy_no         String?
   startAt           DateTime?
@@ -321,17 +298,14 @@ model insurance {
   date              DateTime?
   payment_frequency String?
   payment_account   Float?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+  deleted           Boolean   @default(false)
 }
 
 model maintenance {
-  id Int @id @default(autoincrement())
-
-  // properties
+  id                  Int       @id @default(autoincrement())
   company             String?
   contact_no          String?
   inspection_interval String?
@@ -343,49 +317,40 @@ model maintenance {
   quantity            Int?
   units_measurement   String?
   quantity_disposed   Int?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime?
+  deleted             Boolean   @default(false)
 }
 
 model disposal {
-  id Int @id @default(autoincrement())
-
-  // properties
+  id           Int       @id @default(autoincrement())
   date         DateTime?
   type         String?
   item         String?
   customer     String?
   sale_amount  Float?
   sale_invoice String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  deleted      Boolean   @default(false)
 }
 
 model usage {
-  id Int @id @default(autoincrement())
-
-  // properties
+  id         Int       @id @default(autoincrement())
   date       DateTime?
   period     String?
   units_used Int?
   comments   String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  deleted    Boolean   @default(false)
 }
 
 model depreciation {
-  id Int @id @default(autoincrement())
-
-  // properties
+  id                        Int       @id @default(autoincrement())
   method                    String?
   startAt                   DateTime?
   endAt                     DateTime?
@@ -393,17 +358,14 @@ model depreciation {
   lifetime_usage            Int?
   residual_value            Float?
   residual_value_percentage Float?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  deletedAt                 DateTime?
+  deleted                   Boolean   @default(false)
 }
 
 model depreciation_history {
-  id Int @id @default(autoincrement())
-
-  // properties
+  id                        Int       @id @default(autoincrement())
   asset_life                Int?
   financial_year_start      DateTime?
   period_convention         String?
@@ -427,9 +389,8 @@ model depreciation_history {
   group_depreciation        String?
   group_master              String?
   allow_override            Boolean?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  deletedAt                 DateTime?
+  deleted                   Boolean   @default(false)
 }

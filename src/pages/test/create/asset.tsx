@@ -9,10 +9,9 @@ import { trpc } from "../../../utils/trpc";
 import { InputField } from "../../../components/atoms/forms/InputField";
 import AlertInput from "../../../components/atoms/forms/AlertInput";
 
-// TODO input validations
 type Asset = z.infer<typeof AssetCreateInput>;
 
-const Register = () => {
+const RegisterAsset = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation();
   const {
     register,
@@ -97,4 +96,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterAsset;

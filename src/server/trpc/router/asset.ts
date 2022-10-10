@@ -72,8 +72,6 @@ export const assetRouter = t.router({
           pages: Math.ceil(assetsCount / (input?.limit ?? 10)),
         };
       } catch (error) {
-        console.log(error);
-
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
@@ -195,4 +193,27 @@ export const assetRouter = t.router({
       });
     }
   }),
+  deleteMany: authedProcedure
+    .input(z.array(z.number()))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.asset.updateMany({
+          where: {
+            id: {
+              in: input,
+            },
+          },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+          },
+        });
+        return "Assets successfully deleted";
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        });
+      }
+    }),
 });

@@ -54,7 +54,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ["General Sans", "sans-serif"],
+        sans: ["Inter", "sans-serif"],
       },
     },
   },

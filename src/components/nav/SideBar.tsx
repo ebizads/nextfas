@@ -1,10 +1,9 @@
-import { Accordion } from "@mantine/core"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/router"
-import React, { useEffect, useMemo, useState } from "react"
-import { useMinimizeStore } from "../../store/useStore"
-import NavAccordion, { NavType } from "./NavAccordion"
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useMemo } from "react";
+import { useMinimizeStore } from "../../store/useStore";
+import NavAccordion, { NavType } from "./NavAccordion";
 
 const navigations = [
   {
@@ -27,15 +26,15 @@ const navigations = [
     icon: "fa-light fa-folders",
     link: "/inventory",
   },
-] as NavType[]
+] as NavType[];
 
 const SideBar = () => {
-  const { pathname } = useRouter()
+  const { pathname } = useRouter();
   const paths = useMemo(() => {
-    return pathname.split("/").filter((item, idx) => idx !== 0)
-  }, [pathname])
+    return pathname.split("/").filter((item, idx) => idx !== 0);
+  }, [pathname]);
 
-  const { minimize, setMinimize } = useMinimizeStore()
+  const { minimize, setMinimize } = useMinimizeStore();
 
   return (
     <div
@@ -48,7 +47,7 @@ const SideBar = () => {
       <div
         className="relative flex flex-col w-full px-2 pb-2"
         onClick={() => {
-          setMinimize(({ prev }: { prev: boolean }) => !prev)
+          setMinimize((prev) => !prev);
         }}
       >
         <Image
@@ -169,7 +168,7 @@ const SideBar = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SideBar
+export default SideBar;

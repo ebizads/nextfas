@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react"
-import DashboardLayout from "../layouts/DashboardLayout"
-import { Select, Popover, Checkbox } from "@mantine/core"
-import { ColumnType, RowType } from "../types/table"
-import AssetTable from "../components/atoms/table/AssetTable"
+import React, { useState } from "react";
+import DashboardLayout from "../layouts/DashboardLayout";
+import { Select, Popover, Checkbox } from "@mantine/core";
+import { ColumnType, RowType } from "../types/table";
+import AssetTable from "../components/atoms/table/AssetTable";
 
 type SearchType = {
-  value: string
-  label: string
-}
+  value: string;
+  label: string;
+};
 
 const Search = (props: { data: SearchType[] }) => {
-  const [value, setValue] = useState<string | null>(null)
+  const [value, setValue] = useState<string | null>(null);
   return (
     <Select
       value={value}
@@ -22,8 +22,8 @@ const Search = (props: { data: SearchType[] }) => {
       data={[...props.data]}
       icon={<i className="text-xs fa-solid fa-magnifying-glass"></i>}
     />
-  )
-}
+  );
+};
 
 const assets = [
   {
@@ -146,7 +146,7 @@ const assets = [
     owner: "Franz Arvae",
     added_date: "08/15/22 (1:05 pm)",
   },
-] as RowType[]
+] as RowType[];
 
 const columns = [
   { value: "serial_no", name: "Serial No." },
@@ -157,13 +157,13 @@ const columns = [
   { value: "description", name: "Description" },
   { value: "owner", name: "Owner" },
   { value: "added_date", name: "Added Date" },
-] as ColumnType[]
+] as ColumnType[];
 
 const FilterPopover = (props: {
-  openPopover: boolean
-  setOpenPopover: Function
-  filterBy: string[]
-  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>
+  openPopover: boolean;
+  setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>;
+  filterBy: string[];
+  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
   return (
     <Popover
@@ -179,7 +179,7 @@ const FilterPopover = (props: {
       <Popover.Target>
         <button
           onClick={() => {
-            props.setOpenPopover(!props.openPopover)
+            props.setOpenPopover(!props.openPopover);
           }}
           className="bg-tangerine-500 p-2 focus:outline-none group w-7 hover:w-16 duration-200 transition-width  outline-none hover:bg-tangerine-400 text-neutral-50 flex gap-2 rounded-md text-xs"
         >
@@ -197,7 +197,7 @@ const FilterPopover = (props: {
             onChange={props.setFilterBy}
           >
             <div className="grid grid-cols-2">
-              {columns.map((col, idx) => (
+              {columns.map((col) => (
                 <Checkbox
                   color={"orange"}
                   key={col.name}
@@ -220,15 +220,15 @@ const FilterPopover = (props: {
         </div>
       </Popover.Dropdown>
     </Popover>
-  )
-}
+  );
+};
 
 const Assets = () => {
-  const [checkboxes, setCheckboxes] = useState<number[]>([])
-  const [openPopover, setOpenPopover] = useState<boolean>(false)
+  const [checkboxes, setCheckboxes] = useState<number[]>([]);
+  const [openPopover, setOpenPopover] = useState<boolean>(false);
   const [filterBy, setFilterBy] = useState<string[]>([
     ...columns.map((i) => i.value),
-  ])
+  ]);
 
   return (
     <DashboardLayout>
@@ -242,7 +242,7 @@ const Assets = () => {
                   <Search
                     data={[
                       ...assets.map((obj) => {
-                        return { value: obj.serial_no, label: obj.name }
+                        return { value: obj.serial_no, label: obj.name };
                       }),
                     ]}
                   />
@@ -302,7 +302,7 @@ const Assets = () => {
         </div>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default Assets
+export default Assets;

@@ -4,8 +4,6 @@ import { assetRouter } from "./asset";
 import { authRouter } from "./auth";
 import { categoryRouter } from "./category";
 import { employeeRouter } from "./employee";
-import { manufacturerRouter } from "./manufacturer";
-import { supplierRouter } from "./supplier";
 import { typeRouter } from "./type";
 import { userRouter } from "./user";
 
@@ -14,8 +12,6 @@ export const appRouter = t.router({
   asset: assetRouter,
   categories: categoryRouter,
   type: typeRouter,
-  manufacturer: manufacturerRouter,
-  supplier: supplierRouter,
   user: userRouter,
   employee: employeeRouter,
 });

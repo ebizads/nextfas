@@ -1,13 +1,85 @@
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { AssetCreateInput, AssetEditInput } from "../../common/input-types";
 import { authedProcedure, t } from "../trpc";
 
 export const assetRouter = t.router({
-  findAll: authedProcedure.query(async ({ ctx }) => {
-    const assets = await ctx.prisma.asset.findMany();
-    return assets;
-  }),
+  findAll: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              name: z.string().optional(),
+              number: z.string().optional(),
+              serial_number: z.string().optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              typeId: z.number().optional(),
+              classId: z.number().optional(),
+              categoryId: z.number().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const [assets, assetsCount] = await ctx.prisma.$transaction(
+          [
+            ctx.prisma.asset.findMany({
+              orderBy: {
+                createdAt: "desc",
+              },
+              include: {
+                category: true,
+                class: true,
+                type: true,
+                supplier: true,
+                manufacturer: true,
+                vendor: true,
+                model: true,
+                location: true,
+                custodian: true,
+              },
+              where: {
+                name: { contains: input?.search?.name },
+                number: { contains: input?.search?.number },
+                serial_number: { contains: input?.search?.serial_number },
+                typeId: input?.filter?.typeId,
+                classId: input?.filter?.classId,
+                categoryId: input?.filter?.categoryId,
+              },
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+              take: input?.limit ?? 10,
+            }),
+            ctx.prisma.asset.count(),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        );
+
+        return {
+          assets,
+          pages: Math.ceil(assetsCount / (input?.limit ?? 10)),
+        };
+      } catch (error) {
+        console.log(error);
+
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        });
+      }
+    }),
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const asset = await ctx.prisma.asset.findUnique({
       where: {
@@ -15,11 +87,14 @@ export const assetRouter = t.router({
       },
       include: {
         category: true,
-        location: true,
-        model: true,
+        class: true,
         type: true,
-        manufacturer: true,
         supplier: true,
+        manufacturer: true,
+        vendor: true,
+        model: true,
+        location: true,
+        custodian: true,
       },
     });
     return asset;
@@ -27,16 +102,32 @@ export const assetRouter = t.router({
   create: authedProcedure
     .input(AssetCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { model, location, ...rest } = input;
+      const { model, ...rest } = input;
 
       try {
-        await ctx.prisma.asset.create({
-          data: {
-            ...rest,
-            model: { create: model ?? undefined },
-            location: { create: location ?? undefined },
-          },
-        });
+        await ctx.prisma.$transaction(
+          [
+            ctx.prisma.asset.create({
+              data: {
+                ...rest,
+              },
+            }),
+            ctx.prisma.asset.update({
+              where: {
+                number: rest.number,
+              },
+              data: {
+                model: {
+                  create: model ?? undefined,
+                },
+              },
+            }),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        );
+
         return "Asset successfully created";
       } catch (error) {
         throw new TRPCError({
@@ -48,19 +139,35 @@ export const assetRouter = t.router({
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { model, location, id, ...rest } = input;
+      const { model, id, ...rest } = input;
 
       try {
-        await ctx.prisma.asset.update({
-          where: {
-            id,
-          },
-          data: {
-            ...rest,
-            model: { create: model ?? undefined },
-            location: { create: location ?? undefined },
-          },
-        });
+        await ctx.prisma.$transaction(
+          [
+            ctx.prisma.asset.update({
+              where: {
+                id,
+              },
+              data: {
+                ...rest,
+              },
+            }),
+            ctx.prisma.asset.update({
+              where: {
+                id,
+              },
+              data: {
+                model: {
+                  create: {
+                    ...model,
+                    name: model?.name ?? "",
+                  },
+                },
+              },
+            }),
+          ],
+          {}
+        );
         return "Asset successfully edited";
       } catch (error) {
         throw new TRPCError({

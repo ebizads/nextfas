@@ -75,8 +75,12 @@ export const EditUserInput = z.object({
 });
 
 export const AssetCreateInput = z.object({
-  name: z.string(),
-  number: z.string(),
+  name: z
+    .string({ required_error: "Name is required" })
+    .min(1, { message: "Name is required" }),
+  number: z
+    .string({ required_error: "Asset number is required" })
+    .min(1, { message: "Asset number is required" }),
   description: z.string().nullish(),
   serial_number: z.string().nullish(),
   original_cost: z.number().nullish(),
@@ -90,19 +94,13 @@ export const AssetCreateInput = z.object({
   supplierId: z.number().nullish(),
   classId: z.number().nullish(),
   vendorId: z.number().nullish(),
+  locationId: z.number().nullish(),
 
   model: z
     .object({
       name: z.string(),
       number: z.string().nullish(),
       brand: z.string().nullish(),
-    })
-    .nullish(),
-  location: z
-    .object({
-      department: z.string().nullish(),
-      floor: z.string().nullish(),
-      class: z.string().nullish(),
     })
     .nullish(),
 });
@@ -124,19 +122,14 @@ export const AssetEditInput = z.object({
   supplierId: z.number().optional(),
   classId: z.number().optional(),
   vendorId: z.number().optional(),
+  locationId: z.number().nullish(),
+  modelId: z.number().optional(),
 
   model: z
     .object({
       name: z.string(),
       number: z.string().optional(),
       brand: z.string().optional(),
-    })
-    .optional(),
-  location: z
-    .object({
-      department: z.string().optional(),
-      floor: z.string().optional(),
-      class: z.string().optional(),
     })
     .optional(),
 });

@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { t } from "../trpc";
 import bcrypt from "bcrypt";
 import { RegisterUserInput } from "../../common/input-types";
+import { env } from "../../../env/client.mjs";
 
 export const authRouter = t.router({
   getSession: t.procedure.query(({ ctx }) => ctx.session),
@@ -33,7 +34,7 @@ export const authRouter = t.router({
           data: {
             ...rest,
             password: encryptedPassword,
-            email: username + "@omsim.com",
+            email: username + env.NEXT_PUBLIC_CLIENT_EMAIL,
             username,
             profile: {
               create: profile ?? undefined,

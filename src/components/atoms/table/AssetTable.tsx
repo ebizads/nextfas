@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMinimizeStore } from "../../../store/useStore";
 import { ColumnType, RowType } from "../../../types/table";
 import { Checkbox } from "@mantine/core";
+import { Dialog } from "@headlessui/react";
+import Modal from "../../asset/Modal";
+import { trpc } from "../../../utils/trpc";
+import { AssetType } from "../../../types/assets";
+import { columns } from "../../../lib/table";
 
 const AssetTable = (props: {
   checkboxes: number[];
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>;
   filterBy: string[];
-  rows: RowType[];
+  rows: AssetType[];
   columns: ColumnType[];
 }) => {
+  //minimize screen toggle
   const { minimize } = useMinimizeStore();
+
+  const [openModalDesc, setOpenModalDesc] = useState<boolean>(false);
+  const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null);
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -30,9 +39,12 @@ const AssetTable = (props: {
     props.setCheckboxes((prev) => [...prev, id]);
   };
 
-  const getProperty = (filter: string, asset: RowType) => {
+  const getProperty = (filter: string, asset: AssetType) => {
     //get object property
-    return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value";
+    return (
+      Object.getOwnPropertyDescriptor(asset, filter)?.value ??
+      "omsim bara bira omsim"
+    );
   };
 
   return (
@@ -41,6 +53,7 @@ const AssetTable = (props: {
         minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
       } relative border shadow-md sm:rounded-lg`}
     >
+      {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
         <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
@@ -99,15 +112,20 @@ const AssetTable = (props: {
                   />
                 </div>
               </td>
-              {Object.keys(row).map((key) => {
-                return (
-                  props.filterBy.includes(key) && (
-                    <td key={key} className="max-w-[10rem] truncate py-2 px-6">
-                      {getProperty(key, row)}
-                    </td>
-                  )
-                );
-              })}
+              {columns
+                .filter((col) => props.filterBy.includes(col.value))
+                .map((col) => (
+                  <td
+                    key={col.value}
+                    className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
+                    onClick={() => {
+                      setOpenModalDesc(true);
+                      setSelectedAsset(row);
+                    }}
+                  >
+                    {getProperty(col.value, row)}
+                  </td>
+                ))}
 
               <td className="max-w-[10rem] space-x-2 text-center">
                 <i className="fa-light fa-pen-to-square" />
@@ -117,6 +135,9 @@ const AssetTable = (props: {
           ))}
         </tbody>
       </table>
+      <Modal isOpen={openModalDesc} setIsOpen={setOpenModalDesc}>
+        <pre>{JSON.stringify(selectedAsset, null, 2)}</pre>
+      </Modal>
     </div>
   );
 };

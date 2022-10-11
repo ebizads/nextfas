@@ -3,17 +3,9 @@ import { ColumnType, RowType } from "../../types/table";
 import { Select, Popover, Checkbox, Pagination } from "@mantine/core";
 import AssetTable from "../atoms/table/AssetTable";
 import Link from "next/link";
-
-const columns = [
-  { value: "serial_number", name: "Serial No." },
-  { value: "bar_code", name: "Bar Code" },
-  { value: "type", name: "Type" },
-  { value: "category", name: "Category" },
-  { value: "name", name: "Name" },
-  { value: "description", name: "Description" },
-  { value: "owner", name: "Owner" },
-  { value: "added_date", name: "Added Date" },
-] as ColumnType[];
+import { asset, location, model, type } from "@prisma/client";
+import { AssetType } from "../../types/assets";
+import { columns } from "../../lib/table";
 
 type SearchType = {
   value: string;
@@ -154,7 +146,7 @@ const PaginationPopover = (props: {
 
 const DisplayAssets = (props: {
   total: number;
-  assets: RowType[];
+  assets: AssetType[];
   accessiblePage: number;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
@@ -179,8 +171,8 @@ const DisplayAssets = (props: {
                   data={[
                     ...props.assets?.map((obj) => {
                       return {
-                        value: obj.serial_number,
-                        label: obj.name,
+                        value: obj.id.toString(),
+                        label: obj.name.toString(),
                       };
                     }),
                   ]}

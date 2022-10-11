@@ -3,6 +3,19 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 import { RowType } from "../../types/table";
 import { trpc } from "../../utils/trpc";
 import DisplayAssets from "../../components/asset/DisplayAssets";
+import {
+  asset,
+  asset_class,
+  category,
+  employee,
+  location,
+  manufacturer,
+  model,
+  supplier,
+  type,
+  vendor,
+} from "@prisma/client";
+import { AssetType } from "../../types/assets";
 
 const Assets = () => {
   const [page, setPage] = useState(1);
@@ -14,28 +27,28 @@ const Assets = () => {
     page,
   });
 
-  const [assets, setAssets] = useState<RowType[]>([]);
+  const [assets, setAssets] = useState<AssetType[]>([]);
   const [accessiblePage, setAccessiblePage] = useState<number>(0);
 
   useEffect(() => {
     //get and parse all data
     if (data) {
       const asset_array = [] as RowType[];
-      data.assets.map((a) => {
-        const asset = {
-          id: a.id,
-          serial_number: a.number ?? "ser123",
-          bar_code: "bar123",
-          type: a.type?.name ?? "",
-          category: a.category?.name ?? "",
-          name: a.name,
-          description: a.description,
-          owner: a.custodian?.name ?? "Arvae",
-          added_date: a.createdAt.toISOString(),
-        } as RowType;
-        asset_array.push(asset);
-      });
-      setAssets(asset_array);
+      // data.assets.map((a) => {
+      //   const asset = {
+      //     id: a.id,
+      //     serial_number: a.number ?? "ser123",
+      //     bar_code: "bar123",
+      //     type: a.type?.name ?? "",
+      //     category: a.category?.name ?? "",
+      //     name: a.name,
+      //     description: a.description,
+      //     owner: a.custodian?.name ?? "Arvae",
+      //     added_date: a.createdAt.toISOString(),
+      //   } as RowType;
+      //   asset_array.push(asset);
+      // });
+      setAssets(data.assets);
 
       //generate accessible page
       // const accPage = Array.from(

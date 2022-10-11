@@ -48,6 +48,9 @@ export const assetRouter = t.router({
                 custodian: true,
               },
               where: {
+                NOT: {
+                  deleted: true,
+                },
                 name: { contains: input?.search?.name },
                 number: { contains: input?.search?.number },
                 serial_number: { contains: input?.search?.serial_number },

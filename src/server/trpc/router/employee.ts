@@ -44,6 +44,9 @@ export const employeeRouter = t.router({
                 owned_assets: true,
               },
               where: {
+                NOT: {
+                  deleted: true,
+                },
                 name: { contains: input?.search?.name },
                 employee_id: { contains: input?.search?.employee_id },
                 email: { contains: input?.search?.email },

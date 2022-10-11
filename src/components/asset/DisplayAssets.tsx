@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ColumnType, RowType } from "../../types/table";
 import { Select, Popover, Checkbox, Pagination } from "@mantine/core";
 import AssetTable from "../atoms/table/AssetTable";
+import Link from "next/link";
 
 const columns = [
   { value: "serial_number", name: "Serial No." },
@@ -159,7 +160,6 @@ const DisplayAssets = (props: {
   setPage: React.Dispatch<React.SetStateAction<number>>;
   limit: number;
   setLimit: React.Dispatch<React.SetStateAction<number>>;
-  setTogglePage: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [checkboxes, setCheckboxes] = useState<number[]>([]);
   const [openPopover, setOpenPopover] = useState<boolean>(false);
@@ -206,15 +206,12 @@ const DisplayAssets = (props: {
               <i className="fa-solid fa-print text-xs" />
               Print CVs
             </button>
-            <button
-              onClick={() => {
-                props.setTogglePage((prev) => !prev);
-              }}
-              className="flex gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none"
-            >
-              <i className="fa-regular fa-plus text-xs" />
-              Add New
-            </button>
+            <Link href={"/assets/create"}>
+              <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
+                <i className="fa-regular fa-plus text-xs" />
+                <p>Add New</p>
+              </div>
+            </Link>
           </div>
         </div>
         <AssetTable

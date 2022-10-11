@@ -1,8 +1,8 @@
-import { Prisma } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { AssetCreateInput, AssetEditInput } from "../../common/input-types";
-import { authedProcedure, t } from "../trpc";
+import { Prisma } from "@prisma/client"
+import { TRPCError } from "@trpc/server"
+import { z } from "zod"
+import { AssetCreateInput, AssetEditInput } from "../../common/input-types"
+import { authedProcedure, t } from "../trpc"
 
 export const assetRouter = t.router({
   findAll: authedProcedure
@@ -11,13 +11,7 @@ export const assetRouter = t.router({
         .object({
           page: z.number().optional(),
           limit: z.number().optional(),
-          search: z
-            .object({
-              name: z.string().optional(),
-              number: z.string().optional(),
-              serial_number: z.string().optional(),
-            })
-            .optional(),
+          search: z.string().optional(),
           filter: z
             .object({
               typeId: z.number().optional(),
@@ -51,9 +45,9 @@ export const assetRouter = t.router({
                 NOT: {
                   deleted: true,
                 },
-                name: { contains: input?.search?.name },
-                number: { contains: input?.search?.number },
-                serial_number: { contains: input?.search?.serial_number },
+                name: { contains: input?.search },
+                number: { contains: input?.search },
+                serial_number: { contains: input?.search },
                 typeId: input?.filter?.typeId,
                 classId: input?.filter?.classId,
                 categoryId: input?.filter?.categoryId,
@@ -68,17 +62,17 @@ export const assetRouter = t.router({
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           }
-        );
+        )
 
         return {
           assets,
           pages: Math.ceil(assetsCount / (input?.limit ?? 10)),
-        };
+        }
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
-        });
+        })
       }
     }),
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -97,13 +91,13 @@ export const assetRouter = t.router({
         location: true,
         custodian: true,
       },
-    });
-    return asset;
+    })
+    return asset
   }),
   create: authedProcedure
     .input(AssetCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { model, ...rest } = input;
+      const { model, ...rest } = input
 
       try {
         await ctx.prisma.$transaction(
@@ -127,20 +121,20 @@ export const assetRouter = t.router({
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           }
-        );
+        )
 
-        return "Asset successfully created";
+        return "Asset successfully created"
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
-        });
+        })
       }
     }),
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { model, id, ...rest } = input;
+      const { model, id, ...rest } = input
 
       try {
         await ctx.prisma.$transaction(
@@ -168,13 +162,13 @@ export const assetRouter = t.router({
             }),
           ],
           {}
-        );
-        return "Asset successfully edited";
+        )
+        return "Asset successfully edited"
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
-        });
+        })
       }
     }),
   delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
@@ -187,13 +181,13 @@ export const assetRouter = t.router({
           deleted: true,
           deletedAt: new Date(),
         },
-      });
-      return "Asset successfully deleted";
+      })
+      return "Asset successfully deleted"
     } catch (error) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: JSON.stringify(error),
-      });
+      })
     }
   }),
   deleteMany: authedProcedure
@@ -210,13 +204,13 @@ export const assetRouter = t.router({
             deleted: true,
             deletedAt: new Date(),
           },
-        });
-        return "Assets successfully deleted";
+        })
+        return "Assets successfully deleted"
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
-        });
+        })
       }
     }),
-});
+})

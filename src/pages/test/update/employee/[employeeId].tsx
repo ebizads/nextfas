@@ -1,21 +1,21 @@
-import { z } from "zod";
-import { EmployeeEditInput } from "../../../../server/common/input-types";
-import React, { useEffect, useMemo } from "react";
-import { useRouter } from "next/router";
-import { trpc } from "../../../../utils/trpc";
-import _ from "lodash";
-import Head from "next/head";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { address, profile } from "@prisma/client";
-import { InputField } from "../../../../components/atoms/forms/InputField";
-import AlertInput from "../../../../components/atoms/forms/AlertInput";
+import { z } from "zod"
+import { EmployeeEditInput } from "../../../../server/common/input-types"
+import React, { useEffect, useMemo } from "react"
+import { useRouter } from "next/router"
+import { trpc } from "../../../../utils/trpc"
+import _ from "lodash"
+import Head from "next/head"
+import Link from "next/link"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { address, profile } from "@prisma/client"
+import { InputField } from "../../../../components/atoms/forms/InputField"
+import AlertInput from "../../../../components/atoms/forms/AlertInput"
 
-type Employee = z.infer<typeof EmployeeEditInput>;
+type Employee = z.infer<typeof EmployeeEditInput>
 
 const EmployeeEdit = () => {
-  const { employeeId } = useRouter().query;
+  const { employeeId } = useRouter().query
 
   const { data: employee } = trpc.employee.findOne.useQuery(
     Number(employeeId),
@@ -23,14 +23,14 @@ const EmployeeEdit = () => {
       //  only fetch when employeeId is not undefined or null
       enabled: !!employeeId,
     }
-  );
+  )
 
   // remove null values on asset data
   const editEmployee = useMemo(() => {
     if (employee) {
-      return _.pickBy(employee);
+      return _.pickBy(employee)
     }
-  }, [employee]);
+  }, [employee])
 
   return (
     <>
@@ -51,26 +51,26 @@ const EmployeeEdit = () => {
         </Link>
       </main>
     </>
-  );
-};
+  )
+}
 
-export default EmployeeEdit;
+export default EmployeeEdit
 
 const EditForm = ({
   employee,
 }: {
   employee:
     | _.Dictionary<string | number | boolean | address | profile | Date | null>
-    | undefined;
+    | undefined
 }) => {
   // use utils from use context
-  const utils = trpc.useContext();
+  const utils = trpc.useContext()
   const { mutate, isLoading, error } = trpc.employee.edit.useMutation({
     onSuccess() {
       // invalidate query of asset id when mutations is successful
-      utils.employee.findOne.invalidate(Number(employee?.id));
+      utils.employee.findOne.invalidate(Number(employee?.id))
     },
-  });
+  })
   const {
     register,
     handleSubmit,
@@ -82,18 +82,18 @@ const EditForm = ({
       () => ({ ...employee, id: Number(employee?.id) }),
       [employee]
     ),
-  });
+  })
 
-  useEffect(() => reset(employee), [employee, reset]);
+  useEffect(() => reset(employee), [employee, reset])
 
   const onSubmit = async (employee: Employee) => {
     // Register function
     mutate({
       ...employee,
       name: `${employee.profile?.first_name} ${employee.profile?.last_name}`,
-    });
-    reset();
-  };
+    })
+    reset()
+  }
 
   return (
     <>
@@ -149,5 +149,5 @@ const EditForm = ({
         </pre>
       )}
     </>
-  );
-};
+  )
+}

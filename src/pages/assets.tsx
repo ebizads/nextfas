@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import DashboardLayout from "../layouts/DashboardLayout";
-import { Select, Popover, Checkbox } from "@mantine/core";
-import { ColumnType, RowType } from "../types/table";
-import AssetTable from "../components/atoms/table/AssetTable";
+import React, { useState } from "react"
+import DashboardLayout from "../layouts/DashboardLayout"
+import { Select, Popover, Checkbox } from "@mantine/core"
+import { ColumnType, RowType } from "../types/table"
+import AssetTable from "../components/atoms/table/AssetTable"
 
 type SearchType = {
-  value: string;
-  label: string;
-};
+  value: string
+  label: string
+}
 
 const Search = (props: { data: SearchType[] }) => {
-  const [value, setValue] = useState<string | null>(null);
+  const [value, setValue] = useState<string | null>(null)
   return (
     <Select
       value={value}
@@ -20,10 +20,10 @@ const Search = (props: { data: SearchType[] }) => {
       onChange={setValue}
       clearable
       data={[...props.data]}
-      icon={<i className="text-xs fa-solid fa-magnifying-glass"></i>}
+      icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
     />
-  );
-};
+  )
+}
 
 const assets = [
   {
@@ -146,7 +146,7 @@ const assets = [
     owner: "Franz Arvae",
     added_date: "08/15/22 (1:05 pm)",
   },
-] as RowType[];
+] as RowType[]
 
 const columns = [
   { value: "serial_no", name: "Serial No." },
@@ -157,13 +157,13 @@ const columns = [
   { value: "description", name: "Description" },
   { value: "owner", name: "Owner" },
   { value: "added_date", name: "Added Date" },
-] as ColumnType[];
+] as ColumnType[]
 
 const FilterPopover = (props: {
-  openPopover: boolean;
-  setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>;
-  filterBy: string[];
-  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>;
+  openPopover: boolean
+  setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
+  filterBy: string[]
+  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>
 }) => {
   return (
     <Popover
@@ -179,9 +179,9 @@ const FilterPopover = (props: {
       <Popover.Target>
         <button
           onClick={() => {
-            props.setOpenPopover(!props.openPopover);
+            props.setOpenPopover(!props.openPopover)
           }}
-          className="bg-tangerine-500 p-2 focus:outline-none group w-7 hover:w-16 duration-200 transition-width  outline-none hover:bg-tangerine-400 text-neutral-50 flex gap-2 rounded-md text-xs"
+          className="group flex w-7 gap-2 rounded-md bg-tangerine-500 p-2 text-xs  text-neutral-50 outline-none transition-width duration-200 hover:w-16 hover:bg-tangerine-400 focus:outline-none"
         >
           <i className="fa-regular fa-bars-filter text-xs" />
           <span className="invisible group-hover:visible">Filter</span>
@@ -220,29 +220,29 @@ const FilterPopover = (props: {
         </div>
       </Popover.Dropdown>
     </Popover>
-  );
-};
+  )
+}
 
 const Assets = () => {
-  const [checkboxes, setCheckboxes] = useState<number[]>([]);
-  const [openPopover, setOpenPopover] = useState<boolean>(false);
+  const [checkboxes, setCheckboxes] = useState<number[]>([])
+  const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [filterBy, setFilterBy] = useState<string[]>([
     ...columns.map((i) => i.value),
-  ]);
+  ])
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <h3 className="text-xl font-medium">Assets</h3>
         <section className="space-y-4">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 w-fit">
+              <div className="flex w-fit items-center gap-2">
                 <div className="flex-1">
                   <Search
                     data={[
                       ...assets.map((obj) => {
-                        return { value: obj.serial_no, label: obj.name };
+                        return { value: obj.serial_no, label: obj.name }
                       }),
                     ]}
                   />
@@ -255,7 +255,7 @@ const Assets = () => {
                 />
               </div>
               {checkboxes.length > 0 && (
-                <button className="p-2 focus:outline-none outline-none text-red-500 underline underline-offset-4  font-medium flex gap-2 rounded-md text-xs">
+                <button className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
                   {checkboxes.includes(-1)
                     ? `Delete all record/s ( ${assets.length} ) ?`
                     : `Delete selected record/s ( ${checkboxes.length} )`}
@@ -263,12 +263,12 @@ const Assets = () => {
                 </button>
               )}
             </div>
-            <div className="flex gap-2 items-center">
-              <button className="bg-tangerine-500 py-2 px-4 focus:outline-none outline-none hover:bg-tangerine-600 text-neutral-50 flex gap-2 rounded-md text-xs">
+            <div className="flex items-center gap-2">
+              <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
                 <i className="fa-solid fa-print text-xs" />
                 Print CVs
               </button>
-              <button className="border-2 border-tangerine-500 py-2 px-4 focus:outline-none outline-none hover:bg-tangerine-200 text-tangerine-600 font-medium flex gap-2 text-center rounded-md text-xs">
+              <button className="flex gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
                 <i className="fa-regular fa-plus text-xs" />
                 Add New
               </button>
@@ -282,27 +282,27 @@ const Assets = () => {
             columns={columns.filter((col) => filterBy.includes(col.value))}
           />
         </section>
-        <div className="flex justify-between mt-8 px-4">
+        <div className="mt-8 flex justify-between px-4">
           <p>{`Showing 1 to 5 of ${assets.length} entries`}</p>
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <button className="text-light-muted">Previous</button>
-            <button className="bg-tangerine-400 hover:bg-tangerine-500 hover:text-neutral-50 w-8 h-8 text-center rounded-md ">
+            <button className="h-8 w-8 rounded-md bg-tangerine-400 text-center hover:bg-tangerine-500 hover:text-neutral-50 ">
               1
             </button>
-            <button className="hover:bg-tangerine-500 hover:text-neutral-50 w-8 h-8 text-center rounded-md ">
+            <button className="h-8 w-8 rounded-md text-center hover:bg-tangerine-500 hover:text-neutral-50 ">
               2
             </button>
-            <button className="hover:bg-tangerine-500 hover:text-neutral-50 w-8 h-8 text-center rounded-md ">
+            <button className="h-8 w-8 rounded-md text-center hover:bg-tangerine-500 hover:text-neutral-50 ">
               3
             </button>
-            <button className="hover:underline outline-none focus:outline-none">
+            <button className="outline-none hover:underline focus:outline-none">
               Next
             </button>
           </div>
         </div>
       </div>
     </DashboardLayout>
-  );
-};
+  )
+}
 
-export default Assets;
+export default Assets

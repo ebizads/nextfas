@@ -1,18 +1,18 @@
-import Head from "next/head";
-import Link from "next/link";
-import React from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { AssetCreateInput } from "../../../server/common/input-types";
-import { trpc } from "../../../utils/trpc";
-import { InputField } from "../../../components/atoms/forms/InputField";
-import AlertInput from "../../../components/atoms/forms/AlertInput";
+import Head from "next/head"
+import Link from "next/link"
+import React from "react"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { AssetCreateInput } from "../../../server/common/input-types"
+import { trpc } from "../../../utils/trpc"
+import { InputField } from "../../../components/atoms/forms/InputField"
+import AlertInput from "../../../components/atoms/forms/AlertInput"
 
-type Asset = z.infer<typeof AssetCreateInput>;
+type Asset = z.infer<typeof AssetCreateInput>
 
 const RegisterAsset = () => {
-  const { mutate, isLoading, error } = trpc.asset.create.useMutation();
+  const { mutate, isLoading, error } = trpc.asset.create.useMutation()
   const {
     register,
     handleSubmit,
@@ -24,7 +24,7 @@ const RegisterAsset = () => {
       name: "",
       number: "",
     },
-  });
+  })
 
   const onSubmit = async (asset: Asset) => {
     // Register function
@@ -36,9 +36,9 @@ const RegisterAsset = () => {
         brand: "OMSKIRT",
         number: "2",
       },
-    });
-    reset();
-  };
+    })
+    reset()
+  }
 
   return (
     <>
@@ -93,7 +93,7 @@ const RegisterAsset = () => {
         </Link>
       </main>
     </>
-  );
-};
+  )
+}
 
-export default RegisterAsset;
+export default RegisterAsset

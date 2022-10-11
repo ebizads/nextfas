@@ -1,20 +1,20 @@
-import Head from "next/head";
-import Link from "next/link";
-import React from "react";
-import { z } from "zod";
-import { InputField } from "../../components/atoms/forms/InputField";
-import { trpc } from "../../utils/trpc";
-import { RegisterUserInput } from "../../server/common/input-types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import AlertInput from "../../components/atoms/forms/AlertInput";
-import PasswordChecker from "../../components/atoms/forms/PasswordChecker";
+import Head from "next/head"
+import Link from "next/link"
+import React from "react"
+import { z } from "zod"
+import { InputField } from "../../components/atoms/forms/InputField"
+import { trpc } from "../../utils/trpc"
+import { RegisterUserInput } from "../../server/common/input-types"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import AlertInput from "../../components/atoms/forms/AlertInput"
+import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 
 // TODO input validations
-type User = z.infer<typeof RegisterUserInput>;
+type User = z.infer<typeof RegisterUserInput>
 
 const Register = () => {
-  const { mutate, isLoading, error } = trpc.auth.register.useMutation();
+  const { mutate, isLoading, error } = trpc.auth.register.useMutation()
   const {
     register,
     handleSubmit,
@@ -31,7 +31,7 @@ const Register = () => {
       },
       password: "",
     },
-  });
+  })
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
@@ -43,9 +43,9 @@ const Register = () => {
         first_name: user.profile.first_name,
         last_name: user.profile.last_name,
       },
-    });
-    reset();
-  };
+    })
+    reset()
+  }
 
   return (
     <>
@@ -54,8 +54,8 @@ const Register = () => {
         <meta name="description" content="Fixed Asset System server" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container flex flex-col items-center justify-center min-h-screen p-4 mx-auto">
-        <h3 className="text-xl md:text-[2rem] leading-normal font-bold text-gray-700 mb-2">
+      <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4">
+        <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
           Register
         </h3>
         <form
@@ -93,25 +93,25 @@ const Register = () => {
           <AlertInput>{errors?.password?.message}</AlertInput>
           <button
             type="submit"
-            className="px-4 py-1 bg-tangerine-500 hover:bg-tangerine-400 duration-150 text-white rounded font-medium disabled:bg-gray-300 disabled:text-gray-500"
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={isLoading}
           >
             {isLoading ? "Loading..." : "Register"}
           </button>
         </form>
         {error && (
-          <pre className="text-red-500 text-sm mt-2 italic">
+          <pre className="mt-2 text-sm italic text-red-500">
             Something went wrong!
           </pre>
         )}
         <Link href="/auth/login">
-          <a className="px-4 py-1 text-amber-300 hover:text-amber-400 underline my-2">
+          <a className="my-2 px-4 py-1 text-amber-300 underline hover:text-amber-400">
             Login
           </a>
         </Link>
       </main>
     </>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register

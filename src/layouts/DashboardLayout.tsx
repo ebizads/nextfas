@@ -11,15 +11,15 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Sidebar */}
       <SideBar />
       <div
-        className={`flex-1 flex flex-col ${
+        className={`flex flex-1 flex-col ${
           minimize ? "w-[90vw]" : "w-[75vw]"
-        } xl:w-full min-h-screen duration-200`}
+        } min-h-screen duration-200 xl:w-full`}
       >
         {/* Topbar */}
 
         <TopBar />
         {/* Content */}
-        <section className={`flex flex-col p-4 w-full flex-1`}>
+        <section className={`flex w-full flex-1 flex-col p-4`}>
           {children}
         </section>
       </div>

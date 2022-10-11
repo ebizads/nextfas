@@ -1,15 +1,15 @@
-import Head from "next/head";
-import Link from "next/link";
-import React, { useEffect, useMemo } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { AssetEditInput } from "../../../../server/common/input-types";
-import { trpc } from "../../../../utils/trpc";
-import { InputField } from "../../../../components/atoms/forms/InputField";
-import AlertInput from "../../../../components/atoms/forms/AlertInput";
-import { useRouter } from "next/router";
-import _ from "lodash";
+import Head from "next/head"
+import Link from "next/link"
+import React, { useEffect, useMemo } from "react"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { AssetEditInput } from "../../../../server/common/input-types"
+import { trpc } from "../../../../utils/trpc"
+import { InputField } from "../../../../components/atoms/forms/InputField"
+import AlertInput from "../../../../components/atoms/forms/AlertInput"
+import { useRouter } from "next/router"
+import _ from "lodash"
 import {
   asset_class,
   category,
@@ -20,25 +20,25 @@ import {
   supplier,
   type,
   vendor,
-} from "@prisma/client";
+} from "@prisma/client"
 
-type Asset = z.infer<typeof AssetEditInput>;
+type Asset = z.infer<typeof AssetEditInput>
 
 const AssetEdit = () => {
-  const { assetId } = useRouter().query;
+  const { assetId } = useRouter().query
 
   // Get asset by asset id
   const { data: asset } = trpc.asset.findOne.useQuery(Number(assetId), {
     //  only fetch when assetId is not undefined or null
     enabled: !!assetId,
-  });
+  })
 
   // remove null values on asset data
   const editAsset = useMemo(() => {
     if (asset) {
-      return _.pickBy(asset);
+      return _.pickBy(asset)
     }
-  }, [asset]);
+  }, [asset])
 
   return (
     <>
@@ -59,10 +59,10 @@ const AssetEdit = () => {
         </Link>
       </main>
     </>
-  );
-};
+  )
+}
 
-export default AssetEdit;
+export default AssetEdit
 
 const EditForm = ({
   asset,
@@ -84,16 +84,16 @@ const EditForm = ({
         | Date
         | null
       >
-    | undefined;
+    | undefined
 }) => {
   // use utils from use context
-  const utils = trpc.useContext();
+  const utils = trpc.useContext()
   const { mutate, isLoading, error } = trpc.asset.edit.useMutation({
     onSuccess() {
       // invalidate query of asset id when mutations is successful
-      utils.asset.findOne.invalidate(Number(asset?.id));
+      utils.asset.findOne.invalidate(Number(asset?.id))
     },
-  });
+  })
   const {
     register,
     handleSubmit,
@@ -105,15 +105,15 @@ const EditForm = ({
       () => ({ ...asset, id: Number(asset?.id) }),
       [asset]
     ),
-  });
+  })
 
-  useEffect(() => reset(asset), [asset, reset]);
+  useEffect(() => reset(asset), [asset, reset])
 
   const onSubmit = async (asset: Asset) => {
     // Register function
-    mutate(asset);
-    reset();
-  };
+    mutate(asset)
+    reset()
+  }
 
   return (
     <>
@@ -153,5 +153,5 @@ const EditForm = ({
         </pre>
       )}
     </>
-  );
-};
+  )
+}

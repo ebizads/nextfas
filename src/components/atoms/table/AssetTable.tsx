@@ -1,56 +1,56 @@
-import React from "react";
-import { useMinimizeStore } from "../../../store/useStore";
-import { ColumnType, RowType } from "../../../types/table";
-import { Checkbox } from "@mantine/core";
+import React from "react"
+import { useMinimizeStore } from "../../../store/useStore"
+import { ColumnType, RowType } from "../../../types/table"
+import { Checkbox } from "@mantine/core"
 
 const AssetTable = (props: {
-  checkboxes: number[];
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>;
-  filterBy: string[];
-  rows: RowType[];
-  columns: ColumnType[];
+  checkboxes: number[]
+  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  filterBy: string[]
+  rows: RowType[]
+  columns: ColumnType[]
 }) => {
-  const { minimize } = useMinimizeStore();
+  const { minimize } = useMinimizeStore()
   // const [checkAll, setCheckAll] = useState<boolean>(false)
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
-      props.setCheckboxes([-1]);
+      props.setCheckboxes([-1])
     } else {
-      props.setCheckboxes([]);
+      props.setCheckboxes([])
     }
-  };
+  }
 
   const toggleCheckbox = async (id: number) => {
     if (props.checkboxes.includes(id)) {
       // removes id if not selected
-      props.setCheckboxes((prev) => prev.filter((e) => e !== id));
-      return;
+      props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+      return
     }
     // adds id
-    props.setCheckboxes((prev) => [...prev, id]);
-  };
+    props.setCheckboxes((prev) => [...prev, id])
+  }
 
   const getProperty = (filter: string, asset: RowType) => {
     //get object property
-    return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value";
-  };
+    return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value"
+  }
 
   return (
     <div
-      className={`overflow-x-auto max-w-[90vw] ${
+      className={`max-w-[90vw] overflow-x-auto ${
         minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } border relative shadow-md sm:rounded-lg`}
+      } relative border shadow-md sm:rounded-lg`}
     >
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-neutral-50 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 uppercase">
+      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+        <thead className="bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
             <th scope="col" className="py-1">
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <Checkbox
                   color={"orange"}
                   onChange={() => {
-                    selectAllCheckboxes();
+                    selectAllCheckboxes()
                   }}
                   checked={props.checkboxes.length > 0 ? true : false}
                   classNames={{
@@ -64,7 +64,7 @@ const AssetTable = (props: {
               <th
                 key={col.name}
                 scope="col"
-                className="px-6 duration-150 max-w-[10rem] truncate"
+                className="max-w-[10rem] truncate px-6 duration-150"
               >
                 {col.name}
               </th>
@@ -79,15 +79,15 @@ const AssetTable = (props: {
           {props.rows.map((row) => (
             <tr
               key={row.id}
-              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
             >
-              <td className="p-2 w-4">
-                <div className="flex justify-center items-center">
+              <td className="w-4 p-2">
+                <div className="flex items-center justify-center">
                   <Checkbox
                     value={row.id}
                     color={"orange"}
                     onChange={(e) => {
-                      toggleCheckbox(Number(e.target.value));
+                      toggleCheckbox(Number(e.target.value))
                     }}
                     checked={
                       props.checkboxes.includes(row.id) ||
@@ -103,23 +103,23 @@ const AssetTable = (props: {
               {Object.keys(row).map((key) => {
                 return (
                   props.filterBy.includes(key) && (
-                    <td className="py-2 px-6 max-w-[10rem] truncate">
+                    <td className="max-w-[10rem] truncate py-2 px-6">
                       {getProperty(key, row)}
                     </td>
                   )
-                );
+                )
               })}
 
-              <td className="space-x-2 text-center max-w-[10rem]">
+              <td className="max-w-[10rem] space-x-2 text-center">
                 <i className="fa-light fa-pen-to-square" />
-                <i className="text-red-500 fa-light fa-trash-can" />{" "}
+                <i className="fa-light fa-trash-can text-red-500" />{" "}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  );
-};
+  )
+}
 
-export default AssetTable;
+export default AssetTable

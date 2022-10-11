@@ -1,18 +1,18 @@
-import Head from "next/head";
-import Link from "next/link";
-import React from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { EmployeeCreateInput } from "../../../server/common/input-types";
-import { trpc } from "../../../utils/trpc";
-import { InputField } from "../../../components/atoms/forms/InputField";
-import AlertInput from "../../../components/atoms/forms/AlertInput";
+import Head from "next/head"
+import Link from "next/link"
+import React from "react"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { EmployeeCreateInput } from "../../../server/common/input-types"
+import { trpc } from "../../../utils/trpc"
+import { InputField } from "../../../components/atoms/forms/InputField"
+import AlertInput from "../../../components/atoms/forms/AlertInput"
 
-type Employee = z.infer<typeof EmployeeCreateInput>;
+type Employee = z.infer<typeof EmployeeCreateInput>
 
 const Register = () => {
-  const { mutate, isLoading, error } = trpc.employee.create.useMutation();
+  const { mutate, isLoading, error } = trpc.employee.create.useMutation()
   const {
     register,
     handleSubmit,
@@ -25,7 +25,7 @@ const Register = () => {
       employee_id: "",
       email: "",
     },
-  });
+  })
 
   const onSubmit = async (employee: Employee) => {
     // Register function
@@ -39,9 +39,9 @@ const Register = () => {
         first_name: employee.profile.first_name,
         last_name: employee.profile.last_name,
       },
-    });
-    reset();
-  };
+    })
+    reset()
+  }
 
   return (
     <>
@@ -112,7 +112,7 @@ const Register = () => {
         </Link>
       </main>
     </>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register

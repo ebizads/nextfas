@@ -1,11 +1,11 @@
 // src/server/trpc/router/index.ts
-import { t } from "../trpc";
-import { assetRouter } from "./asset";
-import { authRouter } from "./auth";
-import { categoryRouter } from "./category";
-import { employeeRouter } from "./employee";
-import { typeRouter } from "./type";
-import { userRouter } from "./user";
+import { t } from "../trpc"
+import { assetRouter } from "./asset"
+import { authRouter } from "./auth"
+import { categoryRouter } from "./category"
+import { employeeRouter } from "./employee"
+import { typeRouter } from "./type"
+import { userRouter } from "./user"
 
 export const appRouter = t.router({
   auth: authRouter,
@@ -14,7 +14,7 @@ export const appRouter = t.router({
   type: typeRouter,
   user: userRouter,
   employee: employeeRouter,
-});
+})
 
 // export type definition of API
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter

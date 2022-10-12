@@ -17,15 +17,15 @@ export const asset_info = [
   { type: "name", label: "Name" },
   { type: "description", label: "Description" },
   { type: "type", label: "Type" },
-  { type: ["manufacturer", "name"], label: "Manufacturer" },
+  { type: "manufacturer-name", label: "Manufacturer" },
   { type: "serial_number", label: "Serial Number" },
-  { type: ["vendor", "name"], label: "Vendor" },
+  { type: "vendor-name", label: "Vendor" },
   { type: "original_cost", label: "Original Cost" },
-  { type: ["category", "name"], label: "Category" },
+  { type: "category-name", label: "Category" },
 ] as DetailType[];
 
 export const vendor_info = [
-  { type: "name", label: "Company Name" },
+  { type: "company-name", label: "Company Name" },
   { type: "type", label: "Type" },
   { type: "url", label: "Website Link" },
   { type: "email", label: "Email Address" },
@@ -34,7 +34,7 @@ export const vendor_info = [
 ] as DetailType[];
 
 export const manufacturer_info = [
-  { type: "name", label: "Manufacturer Name" },
+  { type: "manufacturer-name", label: "Manufacturer Name" },
   { type: "type", label: "Type" },
   { type: "url", label: "Website Link" },
   { type: "image_name", label: "Image" },
@@ -45,7 +45,7 @@ export const manufacturer_info = [
 ] as DetailType[];
 
 export const purchase_info = [
-  { type: ["vendor", "name"], label: "Vendor Name" },
+  { type: "vendor-name", label: "Vendor Name" },
   { type: "payment_method", label: "Payment Method" },
   { type: "account_ref_no", label: "Account Ref. No." },
   { type: "cost", label: "Purchase Cost" },

@@ -4,7 +4,9 @@ import { ColumnType } from "../../../types/table";
 import { Checkbox } from "@mantine/core";
 import Modal from "../../asset/Modal";
 import { AssetType } from "../../../types/assets";
-import { asset_info, asset_information, columns } from "../../../lib/table";
+import { asset_information, columns } from "../../../lib/table";
+import { navigations } from "../../nav/NavAccordion";
+import { getProperty } from "../../../lib/functions";
 
 const Detail = (props: {
   key?: number;
@@ -15,7 +17,7 @@ const Detail = (props: {
   return (
     <div className={props.className}>
       <p className="font-medium">{props.label}</p>
-      <p>{props.value}</p>
+      <p className="truncate">{props.value}</p>
     </div>
   );
 };
@@ -34,11 +36,11 @@ const AssetDetailsModal = (props: {
 }) => {
   return (
     <Modal
-      size={10}
+      size={13}
       isOpen={props.openModalDesc}
       setIsOpen={props.setOpenModalDesc}
     >
-      <div className="mx-4 my-2">
+      <div className="m-4 ">
         <div className="flex w-full">
           <div className="w-[80%]">
             {asset_information.map((info, idx) => (
@@ -48,27 +50,39 @@ const AssetDetailsModal = (props: {
                   idx === 0 ? "" : "border-t"
                 } py-4 text-light-primary`}
               >
-                <h3 className="text-lg font-medium">{info_names[idx]}</h3>
-                <div className="grid grid-cols-4 gap-4 pl-2 text-sm">
-                  {info.map((detail, idx) => (
-                    <Detail
-                      key={idx}
-                      className=""
-                      label={detail.label}
-                      value={`asset[${detail.type}]`}
-                    />
-                  ))}
-                </div>
+                <h3 className="font-medium xl:text-lg">{info_names[idx]}</h3>
+                {props.asset && (
+                  <div className="grid grid-cols-4 gap-4 pl-2 text-xs xl:text-sm">
+                    {info.map((detail, idx) => (
+                      <Detail
+                        key={idx}
+                        className=""
+                        label={detail.label}
+                        value={getProperty(detail.type, props.asset)}
+                      />
+                    ))}
+                  </div>
+                )}
               </section>
             ))}
           </div>
-          <nav className="relative flex-1 border-l">
+          <nav className="relative my-2 flex flex-1 flex-col gap-2 border-l pl-2 text-light-primary">
             <button
               className="outline-none focus:outline-none"
               onClick={() => props.setOpenModalDesc(false)}
             >
               <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
             </button>
+            <p className="font-medium xl:text-lg">Asset Transactions</p>
+            {navigations[0]?.subType?.map((action, idx) => (
+              <button
+                key={idx}
+                className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
+              >
+                <i className={action.icon} />
+                {action.name}
+              </button>
+            ))}
           </nav>
         </div>
       </div>
@@ -105,14 +119,6 @@ const AssetTable = (props: {
     }
     // adds id
     props.setCheckboxes((prev) => [...prev, id]);
-  };
-
-  const getProperty = (filter: string, asset: AssetType) => {
-    //get object property
-    return (
-      Object.getOwnPropertyDescriptor(asset, filter)?.value ??
-      "omsim bara bira omsim"
-    );
   };
 
   return (

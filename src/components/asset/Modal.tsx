@@ -78,8 +78,8 @@ const Modal = ({
                 <Dialog.Panel
                   className={
                     className
-                      ? `${className} ${getSize(size)}`
-                      : `${getSize(
+                      ? `${className} ${getSize(size - 3)} xl:${getSize(size)}`
+                      : `${getSize(size - 3)} xl:${getSize(
                           size
                         )} min-w-lg w-full max-w-3xl transform overflow-hidden rounded-xl bg-neutral-50 text-left align-middle shadow-xl transition-all`
                   }

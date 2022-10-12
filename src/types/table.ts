@@ -16,6 +16,6 @@ export type RowType = {
 };
 
 export type DetailType = {
-  type: string | string[];
+  type: string;
   label: string;
 };

@@ -1,7 +1,7 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { Button } from "@mantine/core";
+import { Dialog, Transition } from "@headlessui/react"
+import { Button } from "@mantine/core"
 // import { XCircleIcon } from "@heroicons/react/outline";
-import { Fragment, useState } from "react";
+import React, { Fragment, useState } from "react"
 
 export default function Modal({
   cancelButton,
@@ -10,14 +10,21 @@ export default function Modal({
   setIsVisible,
   children,
   className,
+}: {
+  cancelButton: boolean
+  title: string
+  isVisible: boolean
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+  children: React.ReactElement
+  className: string
 }) {
   const closeModal = () => {
-    setIsVisible(false);
-  };
+    setIsVisible(false)
+  }
 
   const openModal = () => {
-    setIsVisible(true);
-  };
+    setIsVisible(true)
+  }
 
   return (
     <>
@@ -36,7 +43,7 @@ export default function Modal({
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto ">
-            <div className="flex items-center justify-center min-h-full p-4 text-center">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -47,7 +54,7 @@ export default function Modal({
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel
-                  className={`w-full p-6 bg-white overflow-hidden text-left align-middle transition-all transform shadow-xl rounded-2xl bg-darkmode-300 ${className}`}
+                  className={`bg-darkmode-300 w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all ${className}`}
                 >
                   <Dialog.Title
                     as="h3"
@@ -57,7 +64,7 @@ export default function Modal({
                     {cancelButton && (
                       <Button
                         onClick={closeModal}
-                        className="w-8 h-8 hover:cursor-pointer"
+                        className="h-8 w-8 hover:cursor-pointer"
                       />
                     )}
                   </Dialog.Title>
@@ -69,5 +76,5 @@ export default function Modal({
         </Dialog>
       </Transition>
     </>
-  );
+  )
 }

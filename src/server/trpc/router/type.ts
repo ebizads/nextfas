@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { TypeCreateInput, TypeEditInput } from "../../common/input-types"
 import { authedProcedure, t } from "../trpc"
 
 export const typeRouter = t.router({
@@ -17,7 +16,7 @@ export const typeRouter = t.router({
     return type
   }),
   create: authedProcedure
-    .input(TypeCreateInput)
+    .input(z.object({ name: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
         await ctx.prisma.type.create({
@@ -32,7 +31,7 @@ export const typeRouter = t.router({
       }
     }),
   edit: authedProcedure
-    .input(TypeEditInput)
+    .input(z.object({ id: z.number(), name: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...rest } = input
       try {

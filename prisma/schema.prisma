@@ -115,8 +115,6 @@ model address {
   deleted   Boolean   @default(false)
   deletedAt DateTime?
 
-  supplier       supplier?     @relation(fields: [supplierId], references: [id])
-  supplierId     Int?          @unique
   manufacturer   manufacturer? @relation(fields: [manufacturerId], references: [id])
   manufacturerId Int?          @unique
   vendor         vendor?       @relation(fields: [vendorId], references: [id])
@@ -186,20 +184,6 @@ model category {
   assets asset[]
 }
 
-model supplier {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  phone_no  String?
-  address   address?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
-
-  assets asset[]
-}
-
 model manufacturer {
   id        Int       @id @default(autoincrement())
   name      String
@@ -215,10 +199,17 @@ model manufacturer {
 }
 
 model vendor {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  phone_no  String?
+  id           Int     @id @default(autoincrement())
+  name         String
+  email        String  @unique
+  type         String?
+  url          String?
+  image        String?
+  remarks      String?
+  fax_no       String?
+  alt_phone_no String?
+  phone_no     String?
+
   address   address?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -226,6 +217,8 @@ model vendor {
   deleted   Boolean   @default(false)
 
   assets asset[]
+
+  @@index([name, type])
 }
 
 model asset {
@@ -254,7 +247,6 @@ model asset {
   classId        Int?
   categoryId     Int?
   manufacturerId Int?
-  supplierId     Int?
   vendorId       Int?
 
   // relations table
@@ -265,7 +257,6 @@ model asset {
   model        model?        @relation(fields: [modelId], references: [id], onDelete: SetNull)
   category     category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   manufacturer manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
-  supplier     supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   vendor       vendor?       @relation(fields: [vendorId], references: [id], onDelete: SetNull)
 
   @@index([name, number, serial_number, typeId, categoryId, classId])

@@ -1,36 +1,28 @@
-import { z } from "zod"
-import { EmployeeEditInput } from "../../../../server/common/input-types"
-import React, { useEffect, useMemo } from "react"
-import { useRouter } from "next/router"
-import { trpc } from "../../../../utils/trpc"
-import _ from "lodash"
 import Head from "next/head"
 import Link from "next/link"
-import { useForm } from "react-hook-form"
+import React, { useEffect, useMemo } from "react"
+import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { address, profile } from "@prisma/client"
+import { useForm } from "react-hook-form"
+import { trpc } from "../../../../utils/trpc"
 import { InputField } from "../../../../components/atoms/forms/InputField"
 import AlertInput from "../../../../components/atoms/forms/AlertInput"
+import { useRouter } from "next/router"
+import { EmployeeEditInput } from "../../../../server/common/schemas/employee"
 
 type Employee = z.infer<typeof EmployeeEditInput>
 
 const EmployeeEdit = () => {
   const { employeeId } = useRouter().query
 
+  // Get asset by asset id
   const { data: employee } = trpc.employee.findOne.useQuery(
     Number(employeeId),
     {
-      //  only fetch when employeeId is not undefined or null
+      //  only fetch when assetId is not undefined or null
       enabled: !!employeeId,
     }
   )
-
-  // remove null values on asset data
-  const editEmployee = useMemo(() => {
-    if (employee) {
-      return _.pickBy(employee)
-    }
-  }, [employee])
 
   return (
     <>
@@ -43,7 +35,15 @@ const EmployeeEdit = () => {
         <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
           Update Employee - {employee?.name}
         </h3>
-        <EditForm employee={editEmployee} />
+        <EditForm
+          employee={
+            {
+              id: employee?.id ?? 0,
+              name: employee?.name,
+              ...employee,
+            } ?? ({} as Employee)
+          }
+        />
         <Link href="/auth/login">
           <a className="my-2 px-4 py-1 text-amber-300 underline hover:text-amber-400">
             Login
@@ -56,13 +56,7 @@ const EmployeeEdit = () => {
 
 export default EmployeeEdit
 
-const EditForm = ({
-  employee,
-}: {
-  employee:
-    | _.Dictionary<string | number | boolean | address | profile | Date | null>
-    | undefined
-}) => {
+const EditForm = ({ employee }: { employee: Employee }) => {
   // use utils from use context
   const utils = trpc.useContext()
   const { mutate, isLoading, error } = trpc.employee.edit.useMutation({
@@ -88,10 +82,7 @@ const EditForm = ({
 
   const onSubmit = async (employee: Employee) => {
     // Register function
-    mutate({
-      ...employee,
-      name: `${employee.profile?.first_name} ${employee.profile?.last_name}`,
-    })
+    mutate(employee)
     reset()
   }
 
@@ -132,7 +123,7 @@ const EditForm = ({
           name="email"
           className="border-b"
         />
-        <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+        <AlertInput>{errors?.email?.message}</AlertInput>
 
         <button
           type="submit"

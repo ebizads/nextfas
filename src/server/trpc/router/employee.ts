@@ -4,7 +4,7 @@ import { z } from "zod"
 import {
   EmployeeCreateInput,
   EmployeeEditInput,
-} from "../../common/input-types"
+} from "../../common/schemas/employee"
 import { authedProcedure, t } from "../trpc"
 
 export const employeeRouter = t.router({
@@ -24,7 +24,7 @@ export const employeeRouter = t.router({
           filter: z
             .object({
               hired_date: z.date().optional(),
-              subsidiary: z.number().optional(),
+              subsidiary: z.string().optional(),
             })
             .optional(),
         })
@@ -47,6 +47,8 @@ export const employeeRouter = t.router({
                 NOT: {
                   deleted: true,
                 },
+                hired_date: input?.filter?.hired_date,
+                subsidiary: { contains: input?.filter?.subsidiary },
                 name: { contains: input?.search?.name },
                 employee_id: { contains: input?.search?.employee_id },
                 email: { contains: input?.search?.email },

@@ -6,6 +6,7 @@ import { categoryRouter } from "./category"
 import { employeeRouter } from "./employee"
 import { typeRouter } from "./type"
 import { userRouter } from "./user"
+import { vendorRouter } from "./vendor"
 
 export const appRouter = t.router({
   auth: authRouter,
@@ -14,6 +15,7 @@ export const appRouter = t.router({
   type: typeRouter,
   user: userRouter,
   employee: employeeRouter,
+  vendor: vendorRouter,
 })
 
 // export type definition of API

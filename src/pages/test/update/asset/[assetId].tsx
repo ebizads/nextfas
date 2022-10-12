@@ -4,23 +4,11 @@ import React, { useEffect, useMemo } from "react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { AssetEditInput } from "../../../../server/common/input-types"
 import { trpc } from "../../../../utils/trpc"
 import { InputField } from "../../../../components/atoms/forms/InputField"
 import AlertInput from "../../../../components/atoms/forms/AlertInput"
 import { useRouter } from "next/router"
-import _ from "lodash"
-import {
-  asset_class,
-  category,
-  employee,
-  location,
-  manufacturer,
-  model,
-  supplier,
-  type,
-  vendor,
-} from "@prisma/client"
+import { AssetEditInput } from "../../../../server/common/schemas/asset"
 
 type Asset = z.infer<typeof AssetEditInput>
 
@@ -33,13 +21,6 @@ const AssetEdit = () => {
     enabled: !!assetId,
   })
 
-  // remove null values on asset data
-  const editAsset = useMemo(() => {
-    if (asset) {
-      return _.pickBy(asset)
-    }
-  }, [asset])
-
   return (
     <>
       <Head>
@@ -51,7 +32,16 @@ const AssetEdit = () => {
         <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
           Update Asset - {asset?.name}
         </h3>
-        <EditForm asset={editAsset} />
+        <EditForm
+          asset={
+            {
+              id: asset?.id ?? 0,
+              name: asset?.name,
+              number: asset?.number,
+              ...asset,
+            } ?? ({} as Asset)
+          }
+        />
         <Link href="/auth/login">
           <a className="my-2 px-4 py-1 text-amber-300 underline hover:text-amber-400">
             Login
@@ -64,28 +54,7 @@ const AssetEdit = () => {
 
 export default AssetEdit
 
-const EditForm = ({
-  asset,
-}: {
-  asset:
-    | _.Dictionary<
-        | string
-        | number
-        | boolean
-        | supplier
-        | manufacturer
-        | vendor
-        | employee
-        | location
-        | type
-        | asset_class
-        | model
-        | category
-        | Date
-        | null
-      >
-    | undefined
-}) => {
+const EditForm = ({ asset }: { asset: Asset }) => {
   // use utils from use context
   const utils = trpc.useContext()
   const { mutate, isLoading, error } = trpc.asset.edit.useMutation({

@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { EditUserInput } from "../../common/input-types"
+import { EditUserInput } from "../../common/schemas/user"
 import { authedProcedure, t } from "../trpc"
 
 export const userRouter = t.router({

@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server"
 import { t } from "../trpc"
 import bcrypt from "bcrypt"
-import { RegisterUserInput } from "../../common/input-types"
 import { env } from "../../../env/client.mjs"
+import { RegisterUserInput } from "../../common/schemas/user"
 
 export const authRouter = t.router({
   getSession: t.procedure.query(({ ctx }) => ctx.session),
@@ -27,9 +27,6 @@ export const authRouter = t.router({
         if (user.length !== 0) {
           username = username + user.length
         }
-
-        console.log(username)
-
         await ctx.prisma.user.create({
           data: {
             ...rest,

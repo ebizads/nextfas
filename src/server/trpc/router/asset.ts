@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { AssetCreateInput, AssetEditInput } from "../../common/input-types"
+import { AssetCreateInput, AssetEditInput } from "../../common/schemas/asset"
 import { authedProcedure, t } from "../trpc"
 
 export const assetRouter = t.router({
@@ -34,7 +34,6 @@ export const assetRouter = t.router({
                 category: true,
                 class: true,
                 type: true,
-                supplier: true,
                 manufacturer: true,
                 vendor: true,
                 model: true,
@@ -84,7 +83,6 @@ export const assetRouter = t.router({
         category: true,
         class: true,
         type: true,
-        supplier: true,
         manufacturer: true,
         vendor: true,
         model: true,

@@ -22,7 +22,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "src/store/useStore.ts"
+    "src/store/useStore.ts",
+    "src/components/headless/modal/modal.tsx"
   ],
   "exclude": ["node_modules"]
 }

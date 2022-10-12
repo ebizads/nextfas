@@ -97,7 +97,7 @@ model profile {
 }
 
 model address {
-  id               Int     @id @default(autoincrement())
+  id               Int           @id @default(autoincrement())
   street           String?
   city             String?
   state            String?
@@ -105,7 +105,6 @@ model address {
   country          String?
   shipping_address String?
   billing_address  String?
-
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deleted   Boolean   @default(false)
@@ -201,20 +200,19 @@ model vendor {
   phone_no     String?
 
   address   address?
+  
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-
-  assets asset[]
-
-  @@index([name, type])
+  address   address?
+  asset     asset[]
 }
 
 model asset {
   id                    Int     @id @default(autoincrement())
   name                  String
-  number                String  @unique
+  number                String        @unique
   description           String?
   serial_number         String?
   original_cost         Float?

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
@@ -105,22 +106,27 @@ const AssetTable = (props: {
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
-      props.setCheckboxes([-1])
+      props.setCheckboxes([-1]);
     } else {
-      props.setCheckboxes([])
+      props.setCheckboxes([]);
     }
-  }
+  };
 
   const toggleCheckbox = async (id: number) => {
     if (props.checkboxes.includes(id)) {
       // removes id if not selected
-      props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-      return
+      props.setCheckboxes((prev) => prev.filter((e) => e !== id));
+      return;
     }
     // adds id
-    props.setCheckboxes((prev) => [...prev, id])
-  }
+    props.setCheckboxes((prev) => [...prev, id]);
+  };
 
+  const getProperty = (filter: string, asset: RowType | EmployeeRowType) => {
+    //get object property
+    return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value";
+  };
+  
   return (
     <div
       className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
@@ -136,7 +142,7 @@ const AssetTable = (props: {
                 <Checkbox
                   color={"orange"}
                   onChange={() => {
-                    selectAllCheckboxes()
+                    selectAllCheckboxes();
                   }}
                   checked={props.checkboxes.length > 0 ? true : false}
                   classNames={{
@@ -173,7 +179,7 @@ const AssetTable = (props: {
                     value={row.id}
                     color={"orange"}
                     onChange={(e) => {
-                      toggleCheckbox(Number(e.target.value))
+                      toggleCheckbox(Number(e.target.value));
                     }}
                     checked={
                       props.checkboxes.includes(row.id) ||
@@ -200,7 +206,6 @@ const AssetTable = (props: {
                     {getProperty(col.value, row)}
                   </td>
                 ))}
-
               <td className="max-w-[10rem] space-x-2 text-center">
                 <i className="fa-light fa-pen-to-square" />
                 <i className="fa-light fa-trash-can text-red-500" />{" "}
@@ -216,7 +221,7 @@ const AssetTable = (props: {
         setOpenModalDesc={setOpenModalDesc}
       />
     </div>
-  )
-}
+  );
+};
 
-export default AssetTable
+export default AssetTable;

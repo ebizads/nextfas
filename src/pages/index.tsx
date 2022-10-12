@@ -1,15 +1,15 @@
-import type { NextPage } from "next";
-import { signOut, useSession } from "next-auth/react";
-import Head from "next/head";
-import Link from "next/link";
-import { trpc } from "../utils/trpc";
+import type { NextPage } from "next"
+import { signOut, useSession } from "next-auth/react"
+import Head from "next/head"
+import Link from "next/link"
+import { trpc } from "../utils/trpc"
 
 const Home: NextPage = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession()
   const { data } = trpc.asset.findAll.useQuery({
     page: 1,
     limit: 1,
-  });
+  })
 
   return (
     <>
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
         )}
       </main>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

@@ -97,7 +97,7 @@ model profile {
 }
 
 model address {
-  id               Int           @id @default(autoincrement())
+  id               Int     @id @default(autoincrement())
   street           String?
   city             String?
   state            String?
@@ -105,20 +105,21 @@ model address {
   country          String?
   shipping_address String?
   billing_address  String?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  deleted          Boolean       @default(false)
-  deletedAt        DateTime?
-  supplierId       Int?          @unique
-  manufacturerId   Int?          @unique
-  vendorId         Int?          @unique
-  userId           Int?          @unique
-  employeeId       Int?          @unique
-  employee         employee?     @relation(fields: [employeeId], references: [id])
-  manufacturer     manufacturer? @relation(fields: [manufacturerId], references: [id])
-  supplier         supplier?     @relation(fields: [supplierId], references: [id])
-  user             user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vendor           vendor?       @relation(fields: [vendorId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
+
+  manufacturer   manufacturer? @relation(fields: [manufacturerId], references: [id])
+  manufacturerId Int?          @unique
+  vendor         vendor?       @relation(fields: [vendorId], references: [id])
+  vendorId       Int?          @unique
+
+  userId     Int?      @unique
+  user       user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId Int?      @unique
+  employee   employee? @relation(fields: [employeeId], references: [id])
 }
 
 model location {
@@ -174,19 +175,6 @@ model category {
   assets    asset[]
 }
 
-model supplier {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  phone_no  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
-  address   address?
-  assets    asset[]
-}
-
 model manufacturer {
   id        Int       @id @default(autoincrement())
   name      String
@@ -201,22 +189,32 @@ model manufacturer {
 }
 
 model vendor {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  phone_no  String?
+  id           Int     @id @default(autoincrement())
+  name         String
+  email        String  @unique
+  type         String?
+  url          String?
+  image        String?
+  remarks      String?
+  fax_no       String?
+  alt_phone_no String?
+  phone_no     String?
+
+  address   address?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-  address   address?
-  assets    asset[]
+
+  assets asset[]
+
+  @@index([name, type])
 }
 
 model asset {
-  id                    Int           @id @default(autoincrement())
+  id                    Int     @id @default(autoincrement())
   name                  String
-  number                String        @unique
+  number                String  @unique
   description           String?
   serial_number         String?
   original_cost         Float?
@@ -238,7 +236,6 @@ model asset {
   classId        Int?
   categoryId     Int?
   manufacturerId Int?
-  supplierId     Int?
   vendorId       Int?
 
   // relations table
@@ -249,7 +246,6 @@ model asset {
   model        model?        @relation(fields: [modelId], references: [id], onDelete: SetNull)
   category     category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   manufacturer manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
-  supplier     supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   vendor       vendor?       @relation(fields: [vendorId], references: [id], onDelete: SetNull)
 
   @@index([name, number, serial_number, typeId, categoryId, classId])

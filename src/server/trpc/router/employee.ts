@@ -1,11 +1,11 @@
-import { Prisma } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { Prisma } from "@prisma/client"
+import { TRPCError } from "@trpc/server"
+import { z } from "zod"
 import {
   EmployeeCreateInput,
   EmployeeEditInput,
-} from "../../common/input-types";
-import { authedProcedure, t } from "../trpc";
+} from "../../common/schemas/employee"
+import { authedProcedure, t } from "../trpc"
 
 export const employeeRouter = t.router({
   findAll: authedProcedure
@@ -24,7 +24,7 @@ export const employeeRouter = t.router({
           filter: z
             .object({
               hired_date: z.date().optional(),
-              subsidiary: z.number().optional(),
+              subsidiary: z.string().optional(),
             })
             .optional(),
         })
@@ -44,6 +44,11 @@ export const employeeRouter = t.router({
                 owned_assets: true,
               },
               where: {
+                NOT: {
+                  deleted: true,
+                },
+                hired_date: input?.filter?.hired_date,
+                subsidiary: { contains: input?.filter?.subsidiary },
                 name: { contains: input?.search?.name },
                 employee_id: { contains: input?.search?.employee_id },
                 email: { contains: input?.search?.email },
@@ -54,17 +59,17 @@ export const employeeRouter = t.router({
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           }
-        );
+        )
 
         return {
           employees,
           pages: Math.ceil(employeesCount / (input?.limit ?? 10)),
-        };
+        }
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
-        });
+        })
       }
     }),
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -76,13 +81,13 @@ export const employeeRouter = t.router({
         address: true,
         profile: true,
       },
-    });
-    return employee;
+    })
+    return employee
   }),
   create: authedProcedure
     .input(EmployeeCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { profile, address, ...rest } = input;
+      const { profile, address, ...rest } = input
 
       try {
         await ctx.prisma.employee.create({
@@ -95,19 +100,19 @@ export const employeeRouter = t.router({
               create: address ?? undefined,
             },
           },
-        });
-        return "Employee successfully created";
+        })
+        return "Employee successfully created"
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
-        });
+        })
       }
     }),
   edit: authedProcedure
     .input(EmployeeEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { profile, address, id, ...rest } = input;
+      const { profile, address, id, ...rest } = input
 
       try {
         await ctx.prisma.employee.update({
@@ -119,13 +124,13 @@ export const employeeRouter = t.router({
             profile: { update: profile ?? undefined },
             address: { update: address ?? undefined },
           },
-        });
-        return "Employee successfully edited";
+        })
+        return "Employee successfully edited"
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
-        });
+        })
       }
     }),
   delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
@@ -138,13 +143,13 @@ export const employeeRouter = t.router({
           deleted: true,
           deletedAt: new Date(),
         },
-      });
-      return "Employee successfully deleted";
+      })
+      return "Employee successfully deleted"
     } catch (error) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: JSON.stringify(error),
-      });
+      })
     }
   }),
   deleteMany: authedProcedure
@@ -161,13 +166,13 @@ export const employeeRouter = t.router({
             deleted: true,
             deletedAt: new Date(),
           },
-        });
-        return "Employees successfully deleted";
+        })
+        return "Employees successfully deleted"
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
-        });
+        })
       }
     }),
-});
+})

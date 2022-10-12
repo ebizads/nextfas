@@ -1,18 +1,18 @@
-import { Accordion } from "@mantine/core";
-import Link from "next/link";
-import React from "react";
+import { Accordion } from "@mantine/core"
+import Link from "next/link"
+import React from "react"
 
 type SubNavType = {
-  name: string;
-  icon?: string;
-  link: string;
-};
+  name: string
+  icon?: string
+  link: string
+}
 
 export interface NavType {
-  name: string;
-  icon: string;
-  link: string;
-  subType?: SubNavType[];
+  name: string
+  icon: string
+  link: string
+  subType?: SubNavType[]
 }
 
 export const navigations = [
@@ -66,12 +66,12 @@ export const navigations = [
       { name: "Issuance", link: "/transactions/issuance" },
     ],
   },
-] as NavType[];
+] as NavType[]
 
 const NavAccordion = (props: {
-  paths: string[];
-  minimize: boolean;
-  setMinimize: React.Dispatch<React.SetStateAction<boolean>>;
+  paths: string[]
+  minimize: boolean
+  setMinimize: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   return (
     <div>
@@ -138,7 +138,7 @@ const NavAccordion = (props: {
                   : "text-light-secondary"
               }`}
               onClick={() => {
-                props.setMinimize(false);
+                props.setMinimize(false)
               }}
             >
               <i className={page.icon + " fa-regular text-xl"} />
@@ -147,6 +147,6 @@ const NavAccordion = (props: {
         </div>
       )}
     </div>
-  );
-};
-export default NavAccordion;
+  )
+}
+export default NavAccordion

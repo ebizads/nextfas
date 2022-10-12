@@ -1,16 +1,16 @@
-import { Checkbox } from "@mantine/core";
-import { signIn } from "next-auth/react";
-import Head from "next/head";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { InputField } from "../../components/atoms/forms/InputField";
+import { Checkbox } from "@mantine/core"
+import { signIn } from "next-auth/react"
+import Head from "next/head"
+import Image from "next/image"
+import { useRouter } from "next/router"
+import React, { useState } from "react"
+import { InputField } from "../../components/atoms/forms/InputField"
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod"
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import AlertInput from "../../components/atoms/forms/AlertInput";
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import AlertInput from "../../components/atoms/forms/AlertInput"
 
 // TODO input validations
 // Describe the correctness of data's form.
@@ -20,33 +20,33 @@ const userSchema = z.object({
     .string()
     .min(1, { message: "The password is invalid" })
     .max(20, { message: "The password is invalid" }),
-});
+})
 
 // Infer the TS type according to the zod schema.
-type User = z.infer<typeof userSchema>;
+type User = z.infer<typeof userSchema>
 
 // Global Alert div.
 export function Alert({
   children,
   clearErrors,
 }: {
-  children: string;
-  clearErrors: () => void;
+  children: string
+  clearErrors: () => void
 }) {
   return (
-    <div className="rounded-lg p-4 border-2 border-red-200 bg-red-100 text-sm text-red-500 flex gap-2 justify-between items-center">
+    <div className="flex items-center justify-between gap-2 rounded-lg border-2 border-red-200 bg-red-100 p-4 text-sm text-red-500">
       {children}
       <i
-        className="fa-solid fa-xmark text-xs cursor-pointer"
+        className="fa-solid fa-xmark cursor-pointer text-xs"
         onClick={() => clearErrors()}
       />
     </div>
-  );
+  )
 }
 
 function LoginForm() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
 
   const {
     register,
@@ -59,7 +59,7 @@ function LoginForm() {
       username: "",
       password: "",
     },
-  });
+  })
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
@@ -70,19 +70,19 @@ function LoginForm() {
       username: user.username,
       password: user.password,
       callbackUrl: "/",
-    });
+    })
 
     if (res?.error) {
-      setError(res.error);
+      setError(res.error)
     } else {
-      router.push(res?.url as string);
+      router.push(res?.url as string)
     }
-  };
+  }
 
   return (
-    <div className="flex w-full h-full justify-center items-center">
-      <div className="space-y-8 w-[65%]">
-        <h3 className="text-xl md:text-[2rem] leading-normal font-bold text-tangerine-500">
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="w-[65%] space-y-8">
+        <h3 className="text-xl font-bold leading-normal text-tangerine-500 md:text-[2rem]">
           Login
         </h3>
         {Boolean(Object.keys(errors)?.length) && (
@@ -125,7 +125,7 @@ function LoginForm() {
           />
           <button
             type="submit"
-            className="px-4 py-1 bg-tangerine-500 hover:bg-tangerine-400 duration-150 text-white rounded font-medium disabled:bg-gray-300 disabled:text-gray-500"
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Loading..." : "Login"}
@@ -140,13 +140,13 @@ function LoginForm() {
           </a>
         </div>
         {error && (
-          <pre className="text-red-500 text-sm mt-2 italic font-sans">
+          <pre className="mt-2 font-sans text-sm italic text-red-500">
             {error}
           </pre>
         )}
       </div>
     </div>
-  );
+  )
 }
 
 const Login = () => {
@@ -157,9 +157,9 @@ const Login = () => {
         <meta name="description" content="Fixed Asset System server" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex items-center justify-center min-h-screen border">
-        <div className="grid grid-cols-2 w-[70%] xl:w-[55%] duration-150 transition-width h-[495px] rounded-3xl shadow-md">
-          <div className="relative w-full h-full">
+      <main className="flex min-h-screen items-center justify-center border">
+        <div className="grid h-[495px] w-[70%] grid-cols-2 rounded-3xl shadow-md transition-width duration-150 xl:w-[55%]">
+          <div className="relative h-full w-full">
             <Image
               src="/login.svg"
               alt="no image"
@@ -177,7 +177,7 @@ const Login = () => {
         </Link> */}
       </main>
     </>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

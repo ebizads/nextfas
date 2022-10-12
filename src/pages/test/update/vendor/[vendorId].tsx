@@ -8,21 +8,18 @@ import { trpc } from "../../../../utils/trpc"
 import { InputField } from "../../../../components/atoms/forms/InputField"
 import AlertInput from "../../../../components/atoms/forms/AlertInput"
 import { useRouter } from "next/router"
-import { EmployeeEditInput } from "../../../../server/common/schemas/employee"
+import { VendorEditInput } from "../../../../server/common/schemas/vendor"
 
-type Employee = z.infer<typeof EmployeeEditInput>
+type Vendor = z.infer<typeof VendorEditInput>
 
 const EmployeeEdit = () => {
-  const { employeeId } = useRouter().query
+  const { vendorId } = useRouter().query
 
   // Get asset by asset id
-  const { data: employee } = trpc.employee.findOne.useQuery(
-    Number(employeeId),
-    {
-      //  only fetch when assetId is not undefined or null
-      enabled: !!employeeId,
-    }
-  )
+  const { data: vendor } = trpc.vendor.findOne.useQuery(Number(vendorId), {
+    //  only fetch when assetId is not undefined or null
+    enabled: !!vendorId,
+  })
 
   return (
     <>
@@ -33,15 +30,14 @@ const EmployeeEdit = () => {
       </Head>
       <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4">
         <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
-          Update Employee - {employee?.name}
+          Update Employee - {vendor?.name}
         </h3>
         <EditForm
-          employee={
+          vendor={
             {
-              id: employee?.id ?? 0,
-              name: employee?.name,
-              ...employee,
-            } ?? ({} as Employee)
+              id: vendor?.id ?? 0,
+              ...vendor,
+            } ?? ({} as Vendor)
           }
         />
         <Link href="/auth/login">
@@ -56,13 +52,13 @@ const EmployeeEdit = () => {
 
 export default EmployeeEdit
 
-const EditForm = ({ employee }: { employee: Employee }) => {
+const EditForm = ({ vendor }: { vendor: Vendor }) => {
   // use utils from use context
   const utils = trpc.useContext()
-  const { mutate, isLoading, error } = trpc.employee.edit.useMutation({
+  const { mutate, isLoading, error } = trpc.vendor.edit.useMutation({
     onSuccess() {
-      // invalidate query of asset id when mutations is successful
-      utils.employee.findOne.invalidate(Number(employee?.id))
+      // invalidate query of vendor id when mutations is successful
+      utils.vendor.findOne.invalidate(Number(vendor?.id))
     },
   })
   const {
@@ -70,17 +66,17 @@ const EditForm = ({ employee }: { employee: Employee }) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Employee>({
-    resolver: zodResolver(EmployeeEditInput),
+  } = useForm<Vendor>({
+    resolver: zodResolver(VendorEditInput),
     defaultValues: useMemo(
-      () => ({ ...employee, id: Number(employee?.id) }),
-      [employee]
+      () => ({ ...vendor, id: Number(vendor?.id) }),
+      [vendor]
     ),
   })
 
-  useEffect(() => reset(employee), [employee, reset])
+  useEffect(() => reset(vendor), [vendor, reset])
 
-  const onSubmit = async (employee: Employee) => {
+  const onSubmit = async (employee: Vendor) => {
     // Register function
     mutate(employee)
     reset()
@@ -95,27 +91,11 @@ const EditForm = ({ employee }: { employee: Employee }) => {
       >
         <InputField
           register={register}
-          label="Employee ID"
-          name="employee_id"
+          label="Vendor Name"
+          name="name"
           className="border-b"
         />
-        <AlertInput>{errors?.employee_id?.message}</AlertInput>
-
-        <InputField
-          register={register}
-          label="First Name"
-          name="profile.first_name"
-          className="border-b"
-        />
-        <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
-
-        <InputField
-          register={register}
-          label="Last Name"
-          name="profile.last_name"
-          className="border-b"
-        />
-        <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+        <AlertInput>{errors?.name?.message}</AlertInput>
 
         <InputField
           register={register}

@@ -1,38 +1,38 @@
-import React, { useState } from "react";
-import { useMinimizeStore } from "../../../store/useStore";
-import { ColumnType } from "../../../types/table";
-import { Checkbox } from "@mantine/core";
-import Modal from "../../asset/Modal";
-import { AssetType } from "../../../types/assets";
-import { asset_information, columns } from "../../../lib/table";
-import { navigations } from "../../nav/NavAccordion";
-import { getProperty } from "../../../lib/functions";
+import React, { useState } from "react"
+import { useMinimizeStore } from "../../../store/useStore"
+import { ColumnType } from "../../../types/table"
+import { Checkbox } from "@mantine/core"
+import Modal from "../../asset/Modal"
+import { AssetType } from "../../../types/assets"
+import { asset_information, columns } from "../../../lib/table"
+import { navigations } from "../../nav/NavAccordion"
+import { getProperty } from "../../../lib/functions"
 
 const Detail = (props: {
-  key?: number;
-  className?: string;
-  label: string;
-  value: string;
+  key?: number
+  className?: string
+  label: string
+  value: string
 }) => {
   return (
     <div className={props.className}>
       <p className="font-medium">{props.label}</p>
       <p className="truncate">{props.value}</p>
     </div>
-  );
-};
+  )
+}
 
 const info_names = [
   "Asset Information",
   "Vendor Information",
   "Manufacturer Information",
   "Purchase Information",
-];
+]
 
 const AssetDetailsModal = (props: {
-  asset: AssetType;
-  openModalDesc: boolean;
-  setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>;
+  asset: AssetType
+  openModalDesc: boolean
+  setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   return (
     <Modal
@@ -87,39 +87,39 @@ const AssetDetailsModal = (props: {
         </div>
       </div>
     </Modal>
-  );
-};
+  )
+}
 
 const AssetTable = (props: {
-  checkboxes: number[];
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>;
-  filterBy: string[];
-  rows: AssetType[];
-  columns: ColumnType[];
+  checkboxes: number[]
+  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  filterBy: string[]
+  rows: AssetType[]
+  columns: ColumnType[]
 }) => {
   //minimize screen toggle
-  const { minimize } = useMinimizeStore();
+  const { minimize } = useMinimizeStore()
 
-  const [openModalDesc, setOpenModalDesc] = useState<boolean>(false);
-  const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null);
+  const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
+  const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
-      props.setCheckboxes([-1]);
+      props.setCheckboxes([-1])
     } else {
-      props.setCheckboxes([]);
+      props.setCheckboxes([])
     }
-  };
+  }
 
   const toggleCheckbox = async (id: number) => {
     if (props.checkboxes.includes(id)) {
       // removes id if not selected
-      props.setCheckboxes((prev) => prev.filter((e) => e !== id));
-      return;
+      props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+      return
     }
     // adds id
-    props.setCheckboxes((prev) => [...prev, id]);
-  };
+    props.setCheckboxes((prev) => [...prev, id])
+  }
 
   return (
     <div
@@ -136,7 +136,7 @@ const AssetTable = (props: {
                 <Checkbox
                   color={"orange"}
                   onChange={() => {
-                    selectAllCheckboxes();
+                    selectAllCheckboxes()
                   }}
                   checked={props.checkboxes.length > 0 ? true : false}
                   classNames={{
@@ -173,7 +173,7 @@ const AssetTable = (props: {
                     value={row.id}
                     color={"orange"}
                     onChange={(e) => {
-                      toggleCheckbox(Number(e.target.value));
+                      toggleCheckbox(Number(e.target.value))
                     }}
                     checked={
                       props.checkboxes.includes(row.id) ||
@@ -193,8 +193,8 @@ const AssetTable = (props: {
                     key={col.value}
                     className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
                     onClick={() => {
-                      setOpenModalDesc(true);
-                      setSelectedAsset(row);
+                      setOpenModalDesc(true)
+                      setSelectedAsset(row)
                     }}
                   >
                     {getProperty(col.value, row)}
@@ -210,12 +210,13 @@ const AssetTable = (props: {
         </tbody>
       </table>
       <AssetDetailsModal
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         asset={selectedAsset!}
         openModalDesc={openModalDesc}
         setOpenModalDesc={setOpenModalDesc}
       />
     </div>
-  );
-};
+  )
+}
 
-export default AssetTable;
+export default AssetTable

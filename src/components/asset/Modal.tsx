@@ -1,5 +1,5 @@
-import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment, ReactElement } from "react";
+import { Dialog, Transition } from "@headlessui/react"
+import React, { Fragment, ReactElement } from "react"
 
 const getSize = (size: number) => {
   return size === 1
@@ -24,8 +24,8 @@ const getSize = (size: number) => {
     ? "max-w-6xl"
     : size === 11
     ? "max-w-7xl"
-    : "max-w-full";
-};
+    : "max-w-full"
+}
 
 const Modal = ({
   isOpen,
@@ -34,18 +34,14 @@ const Modal = ({
   size,
   children,
 }: {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  className?: string;
-  size: number;
-  children: ReactElement;
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  className?: string
+  size: number
+  children: ReactElement
 }) => {
   function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
+    setIsOpen(false)
   }
 
   return (
@@ -92,7 +88,7 @@ const Modal = ({
         </Dialog>
       </Transition>
     </>
-  );
-};
+  )
+}
 
-export default Modal;
+export default Modal

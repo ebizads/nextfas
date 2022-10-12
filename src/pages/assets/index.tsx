@@ -1,39 +1,25 @@
-import React, { useEffect, useState } from "react";
-import DashboardLayout from "../../layouts/DashboardLayout";
-import { RowType } from "../../types/table";
-import { trpc } from "../../utils/trpc";
-import DisplayAssets from "../../components/asset/DisplayAssets";
-import {
-  asset,
-  asset_class,
-  category,
-  employee,
-  location,
-  manufacturer,
-  model,
-  supplier,
-  type,
-  vendor,
-} from "@prisma/client";
-import { AssetType } from "../../types/assets";
+import React, { useEffect, useState } from "react"
+import DashboardLayout from "../../layouts/DashboardLayout"
+import { trpc } from "../../utils/trpc"
+import DisplayAssets from "../../components/asset/DisplayAssets"
+import { AssetType } from "../../types/assets"
 
 const Assets = () => {
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
 
   // Get asset by asset id
   const { data } = trpc.asset.findAll.useQuery({
     limit,
     page,
-  });
+  })
 
-  const [assets, setAssets] = useState<AssetType[]>([]);
-  const [accessiblePage, setAccessiblePage] = useState<number>(0);
+  const [assets, setAssets] = useState<AssetType[]>([])
+  const [accessiblePage, setAccessiblePage] = useState<number>(0)
 
   useEffect(() => {
     //get and parse all data
     if (data) {
-      const asset_array = [] as RowType[];
       // data.assets.map((a) => {
       //   const asset = {
       //     id: a.id,
@@ -48,16 +34,16 @@ const Assets = () => {
       //   } as RowType;
       //   asset_array.push(asset);
       // });
-      setAssets(data.assets);
+      setAssets(data.assets)
 
       //generate accessible page
       // const accPage = Array.from(
       //   { length: Math.ceil(data?.total / limit) },
       //   (_, i) => i + 1
       // );
-      setAccessiblePage(Math.ceil(data?.total / limit));
+      setAccessiblePage(Math.ceil(data?.total / limit))
     }
-  }, [data, limit]);
+  }, [data, limit])
 
   return (
     <DashboardLayout>
@@ -75,7 +61,7 @@ const Assets = () => {
         />
       </div>
     </DashboardLayout>
-  );
-};
+  )
+}
 
-export default Assets;
+export default Assets

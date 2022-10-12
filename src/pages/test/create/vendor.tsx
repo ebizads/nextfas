@@ -7,38 +7,31 @@ import { useForm } from "react-hook-form"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../../components/atoms/forms/InputField"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
-import { EmployeeCreateInput } from "../../../server/common/schemas/employee"
+import { VendorCreateInput } from "../../../server/common/schemas/vendor"
 
-type Employee = z.infer<typeof EmployeeCreateInput>
+type Vendor = z.infer<typeof VendorCreateInput>
 
-const Register = () => {
-  const { mutate, isLoading, error } = trpc.employee.create.useMutation()
+const RegisterVendor = () => {
+  const { mutate, isLoading, error } = trpc.vendor.create.useMutation()
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Employee>({
-    resolver: zodResolver(EmployeeCreateInput),
+  } = useForm<Vendor>({
+    resolver: zodResolver(VendorCreateInput),
     defaultValues: {
       name: "",
-      employee_id: "",
       email: "",
     },
   })
 
-  const onSubmit = async (employee: Employee) => {
-    // Register function
-    // console.log(employee);
+  const onSubmit = async (vendor: Vendor) => {
+    // Register function;
 
     mutate({
-      name: `${employee.profile.first_name} ${employee.profile.last_name}`,
-      employee_id: employee.employee_id,
-      email: employee.email,
-      profile: {
-        first_name: employee.profile.first_name,
-        last_name: employee.profile.last_name,
-      },
+      name: vendor.name,
+      email: vendor.email,
     })
     reset()
   }
@@ -52,7 +45,7 @@ const Register = () => {
       </Head>
       <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4">
         <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
-          Create Asset
+          Create Vendor
         </h3>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -61,27 +54,11 @@ const Register = () => {
         >
           <InputField
             register={register}
-            label="Employee ID"
-            name="employee_id"
+            label="Vendor Name"
+            name="name"
             className="border-b"
           />
-          <AlertInput>{errors?.employee_id?.message}</AlertInput>
-
-          <InputField
-            register={register}
-            label="First Name"
-            name="profile.first_name"
-            className="border-b"
-          />
-          <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
-
-          <InputField
-            register={register}
-            label="Last Name"
-            name="profile.last_name"
-            className="border-b"
-          />
-          <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+          <AlertInput>{errors?.name?.message}</AlertInput>
 
           <InputField
             register={register}
@@ -89,7 +66,7 @@ const Register = () => {
             name="email"
             className="border-b"
           />
-          <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+          <AlertInput>{errors?.email?.message}</AlertInput>
 
           <button
             type="submit"
@@ -99,10 +76,10 @@ const Register = () => {
             {isLoading ? "Loading..." : "Register"}
           </button>
         </form>
-        {error && errors && (
+        {error && (
           <pre className="mt-2 text-sm italic text-red-500">
             Something went wrong!
-            {JSON.stringify({ error, errors }, null, 2)}
+            {JSON.stringify({ error }, null, 2)}
           </pre>
         )}
         <Link href="/auth/login">
@@ -115,4 +92,4 @@ const Register = () => {
   )
 }
 
-export default Register
+export default RegisterVendor

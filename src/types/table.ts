@@ -25,3 +25,9 @@ export type EmployeeRowType = {
   subsidiary: string;
   contact_number: string;
 };
+
+export type ImageJSON = {
+  name: string;
+  size: number;
+  file: string;
+};

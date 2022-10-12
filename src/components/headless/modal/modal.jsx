@@ -9,6 +9,7 @@ export default function Modal({
   isVisible,
   setIsVisible,
   children,
+  className,
 }) {
   const closeModal = () => {
     setIsVisible(false);
@@ -45,7 +46,9 @@ export default function Modal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-4xl p-6  bg-white overflow-hidden text-left align-middle transition-all transform shadow-xl rounded-2xl bg-darkmode-300">
+                <Dialog.Panel
+                  className={`w-full p-6 bg-white overflow-hidden text-left align-middle transition-all transform shadow-xl rounded-2xl bg-darkmode-300 ${className}`}
+                >
                   <Dialog.Title
                     as="h3"
                     className="flex justify-between text-xl font-semibold leading-6 text-neutral-200"

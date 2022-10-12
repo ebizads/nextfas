@@ -1,10 +1,18 @@
-import React, { Children, useState } from "react";
+import React, { Children, useState, useRef } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
-import { Select, Popover, Checkbox } from "@mantine/core";
-import { ColumnType, EmployeeRowType, RowType } from "../types/table";
-import AssetTable from "../components/atoms/table/AssetTable";
+import { Select, Popover, Checkbox, Loader } from "@mantine/core";
+import {
+  ColumnType,
+  EmployeeRowType,
+  ImageJSON,
+  RowType,
+} from "../types/table";
+import EmployeeTable from "../components/atoms/table/EmployeeTable";
 import Modal from "../components/headless/modal/modal";
-import { DateRangePicker, DateRangePickerValue } from "@mantine/dates";
+import { DatePicker } from "@mantine/dates";
+import { Image } from "@mantine/core";
+import { FileWithPath } from "@mantine/dropzone";
+import DropzoneCMP from "../components/dropzone/dropzonecmp";
 
 type SearchType = {
   value: string;
@@ -222,10 +230,14 @@ const Employees = () => {
   const [filterBy, setFilterBy] = useState<string[]>([
     ...columns.map((i) => i.value),
   ]);
-  const [value, setValue] = useState<DateRangePickerValue>([
-    new Date(2021, 11, 1),
-    new Date(2021, 11, 5),
-  ]);
+
+  const [value, setValue] = useState<Date>(new Date());
+  const [image, setImage] = useState<ImageJSON>({
+    name: "",
+    size: 0,
+    file: "",
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -280,24 +292,25 @@ const Employees = () => {
             isVisible={isVisible}
             setIsVisible={setIsVisible}
             cancelButton
+            className="max-w-4xl"
           >
             <div>
-              <div className="flex flex-wrap gap-10 py-2.5">
-                <div className="flex-col flex w-1/4">
+              <div className="flex flex-wrap gap-4 py-2.5 w-full">
+                <div className="flex-col flex w-[32%]">
                   <label className="sm:text-sm">First Name</label>
                   <input
                     className="shadow appearance-none border rounded border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type={"text"}
                   />
                 </div>
-                <div className="flex-col flex w-1/4">
+                <div className="flex-col flex w-[32%]">
                   <label className="sm:text-sm">Middle Name</label>
                   <input
                     className="shadow appearance-none border rounded border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type={"text"}
                   />
                 </div>
-                <div className="flex-col flex w-1/4">
+                <div className="flex-col flex w-[32%]">
                   <label className="sm:text-sm">Last Name</label>
                   <input
                     className="shadow appearance-none border rounded border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -305,15 +318,15 @@ const Employees = () => {
                   />
                 </div>
               </div>
-              <div className="flex flex-wrap gap-10 py-2.5">
-                <div className="flex-col flex md:w-1/2 sm:w-13">
+              <div className="flex flex-wrap gap-4 py-2.5">
+                <div className="flex-col flex w-[55%]">
                   <label className="sm:text-sm">Address</label>
                   <input
                     className="shadow appearance-none border rounded border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type={"text"}
                   />
                 </div>
-                <div className="flex-col flex w-1/3">
+                <div className="flex-col flex w-[43%]">
                   <label className="sm:text-sm">Employee Number</label>
                   <input
                     className="shadow appearance-none border rounded border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -321,29 +334,28 @@ const Employees = () => {
                   />
                 </div>
               </div>
-              <div className="flex flex-wrap gap-10 py-2.5">
-                <div className="flex-col flex md:w-1/4 sm:w-13">
-                  <label className="sm:text-sm">Hired Date</label>
+              <div className="flex flex-wrap gap-4 py-2.5">
+                <div className="flex-col flex md:w-[32%] sm:w-1/3">
+                  <label className="sm:text-sm ">Hired Date</label>
                   {/* <input
                     className="shadow appearance-none border rounded border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type={"text"}
                   /> */}
-                  <DateRangePicker
+                  <DatePicker
                     dropdownType="modal"
                     placeholder="Pick dates range"
                     size="sm"
                     value={value}
-                    onChange={setValue}
                   />
                 </div>
-                <div className="flex-col flex w-1/4">
+                <div className="flex-col flex w-[32%]">
                   <label className="sm:text-sm">Subsidiary</label>
                   <input
                     className="shadow appearance-none border rounded border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type={"text"}
                   />
                 </div>
-                <div className="flex-col flex w-1/4">
+                <div className="flex-col flex w-[32%]">
                   <label className="sm:text-sm">Mobile Number</label>
                   <input
                     className="shadow appearance-none border rounded border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -351,9 +363,48 @@ const Employees = () => {
                   />
                 </div>
               </div>
+              <div className="flex flex-wrap gap-4 py-2.5 px-5">
+                <div className="w-[48%] drop-shadow-2xl border rounded-md bg-white">
+                  <div className="p-5">
+                    <DropzoneCMP
+                      setImage={setImage}
+                      setIsLoading={setIsLoading}
+                    />
+                  </div>
+                </div>
+                <div className="w-[48%] drop-shadow-2xl border rounded-md bg-white flex flex-wrap content-center">
+                  <div className="p-10 flex flex-wrap">
+                    {isLoading === true ? (
+                      <Loader
+                        color="orange"
+                        variant="bars"
+                        className="self-center"
+                      />
+                    ) : image.file === "" ? (
+                      <text className="text-center">Image Preview</text>
+                    ) : (
+                      <div className="flex flex-row gap-4">
+                        <Image
+                          radius="md"
+                          src={image.file}
+                          alt="Image"
+                          width={135}
+                          height={135}
+                          withPlaceholder
+                        />
+                        <div className="flex flex-col">
+                          <text>{image.name}</text>
+                          <text>{image.size} mb</text>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className=""></div>
+                </div>
+              </div>
             </div>
           </Modal>
-          <AssetTable
+          <EmployeeTable
             checkboxes={checkboxes}
             setCheckboxes={setCheckboxes}
             rows={assets}

@@ -155,7 +155,7 @@ const columns = [
 
 const FilterPopover = (props: {
   openPopover: boolean
-  setOpenPopover: Function
+  setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
   filterBy: string[]
   setFilterBy: React.Dispatch<React.SetStateAction<string[]>>
 }) => {
@@ -191,7 +191,7 @@ const FilterPopover = (props: {
             onChange={props.setFilterBy}
           >
             <div className="grid grid-cols-2">
-              {columns.map((col, idx) => (
+              {columns.map((col) => (
                 <Checkbox
                   color={"orange"}
                   key={col.name}
@@ -225,7 +225,7 @@ const Employees = () => {
     ...columns.map((i) => i.value),
   ])
 
-  const [value, setValue] = useState<Date>(new Date())
+  const value = (new Date())
   const [image, setImage] = useState<ImageJSON>({
     name: "",
     size: 0,

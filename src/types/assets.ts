@@ -6,7 +6,6 @@ import {
   location,
   manufacturer,
   model,
-  supplier,
   type,
   vendor,
 } from "@prisma/client"

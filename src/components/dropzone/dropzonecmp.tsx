@@ -1,35 +1,31 @@
-import React from "react";
-import { Group, Text, useMantineTheme } from "@mantine/core";
-import { IconUpload, IconPhoto, IconX } from "@tabler/icons";
-import {
-  Dropzone,
-  DropzoneProps,
-  FileWithPath,
-  IMAGE_MIME_TYPE,
-} from "@mantine/dropzone";
-import { ImageJSON } from "../../types/table";
+import React from "react"
+import { Group, Text } from "@mantine/core"
+import { IconUpload, IconX } from "@tabler/icons"
+import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone"
+import { ImageJSON } from "../../types/table"
+import Image from "next/image"
 
 export default function DropzoneCMP(
   props: Partial<DropzoneProps> & {
-    setImage: React.Dispatch<React.SetStateAction<ImageJSON>>;
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    setImage: React.Dispatch<React.SetStateAction<ImageJSON>>
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   }
 ) {
   return (
     <Dropzone
       onDrop={(files) => {
-        props.setIsLoading(true);
-        console.log("accepted files");
+        props.setIsLoading(true)
+        console.log("accepted files")
 
-        const img_file = URL.createObjectURL(files[0]!);
+        const img_file = URL.createObjectURL(files[0]!)
         props.setImage({
           name: files[0]!.name,
           size: files[0]!.size,
           file: img_file,
-        });
+        })
         setTimeout(function () {
-          props.setIsLoading(false);
-        }, 5000);
+          props.setIsLoading(false)
+        }, 5000)
       }}
       onReject={(files) => console.log("rejected files", files)}
       accept={IMAGE_MIME_TYPE}
@@ -65,7 +61,7 @@ export default function DropzoneCMP(
               color={"orange"}
               className="self-center"
             /> */}
-            <img
+            <Image
               src="/UploadIcon.svg"
               alt="An SVG of an eye"
               height={50}
@@ -84,5 +80,5 @@ export default function DropzoneCMP(
         </div>
       </Group>
     </Dropzone>
-  );
+  )
 }

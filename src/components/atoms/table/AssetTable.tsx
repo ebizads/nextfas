@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
-import { ColumnType, EmployeeRowType, RowType } from "../../../types/table"
+import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
 import Modal from "../../asset/Modal"
 import { AssetType } from "../../../types/assets"

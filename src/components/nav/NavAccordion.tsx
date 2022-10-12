@@ -15,18 +15,42 @@ export interface NavType {
   subType?: SubNavType[]
 }
 
-const navigations = [
+export const navigations = [
   {
     name: "Transactions",
     icon: "fa-light fa-arrow-right-arrow-left",
     link: "#",
     subType: [
-      { name: "Transfer", link: "/transactions/transfer" },
-      { name: "Split", link: "/transactions/split" },
-      { name: "Depreciation", link: "/transactions/depreciation" },
-      { name: "Disposal", link: "/transactions/disposal" },
-      { name: "Repair", link: "/transactions/repair" },
-      { name: "Issuance", link: "/transactions/issuance" },
+      {
+        icon: "fa-regular fa-arrow-right-arrow-left",
+        name: "Transfer",
+        link: "/transactions/transfer",
+      },
+      {
+        icon: "fa-solid fa-file-dashed-line",
+        name: "Split",
+        link: "/transactions/split",
+      },
+      {
+        icon: "fa-regular fa-chart-line-down",
+        name: "Depreciation",
+        link: "/transactions/depreciation",
+      },
+      {
+        icon: "fa-regular fa-trash-can",
+        name: "Disposal",
+        link: "/transactions/disposal",
+      },
+      {
+        icon: "fa-regular fa-screwdriver-wrench",
+        name: "Repair",
+        link: "/transactions/repair",
+      },
+      {
+        icon: "fa-regular fa-hand-holding-hand",
+        name: "Issuance",
+        link: "/transactions/issuance",
+      },
     ],
   },
   {

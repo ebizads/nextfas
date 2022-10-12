@@ -1,13 +1,43 @@
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment, ReactElement } from "react";
 
+const getSize = (size: number) => {
+  return size === 1
+    ? "max-w-xs"
+    : size === 2
+    ? "max-w-sm"
+    : size === 3
+    ? "max-w-md"
+    : size === 4
+    ? "max-w-lg"
+    : size === 5
+    ? "max-w-xl"
+    : size === 6
+    ? "max-w-2xl"
+    : size === 7
+    ? "max-w-3xl"
+    : size === 8
+    ? "max-w-4xl"
+    : size === 9
+    ? "max-w-5xl"
+    : size === 10
+    ? "max-w-6xl"
+    : size === 11
+    ? "max-w-7xl"
+    : "max-w-full";
+};
+
 const Modal = ({
   isOpen,
   setIsOpen,
+  className,
+  size,
   children,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  className?: string;
+  size: number;
   children: ReactElement;
 }) => {
   function closeModal() {
@@ -45,18 +75,16 @@ const Modal = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="min-w-lg w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel
+                  className={
+                    className
+                      ? `${className} ${getSize(size)}`
+                      : `${getSize(
+                          size
+                        )} min-w-lg w-full max-w-3xl transform overflow-hidden rounded-xl bg-neutral-50 text-left align-middle shadow-xl transition-all`
+                  }
+                >
                   {children}
-
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
-                    >
-                      Got it, thanks!
-                    </button>
-                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

@@ -1,12 +1,80 @@
 import React, { useState } from "react";
 import { useMinimizeStore } from "../../../store/useStore";
-import { ColumnType, RowType } from "../../../types/table";
+import { ColumnType } from "../../../types/table";
 import { Checkbox } from "@mantine/core";
-import { Dialog } from "@headlessui/react";
 import Modal from "../../asset/Modal";
-import { trpc } from "../../../utils/trpc";
 import { AssetType } from "../../../types/assets";
-import { columns } from "../../../lib/table";
+import { asset_info, asset_information, columns } from "../../../lib/table";
+
+const Detail = (props: {
+  key?: number;
+  className?: string;
+  label: string;
+  value: string;
+}) => {
+  return (
+    <div className={props.className}>
+      <p className="font-medium">{props.label}</p>
+      <p>{props.value}</p>
+    </div>
+  );
+};
+
+const info_names = [
+  "Asset Information",
+  "Vendor Information",
+  "Manufacturer Information",
+  "Purchase Information",
+];
+
+const AssetDetailsModal = (props: {
+  asset: AssetType;
+  openModalDesc: boolean;
+  setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  return (
+    <Modal
+      size={10}
+      isOpen={props.openModalDesc}
+      setIsOpen={props.setOpenModalDesc}
+    >
+      <div className="mx-4 my-2">
+        <div className="flex w-full">
+          <div className="w-[80%]">
+            {asset_information.map((info, idx) => (
+              <section
+                key={idx}
+                className={`flex flex-col gap-2 ${
+                  idx === 0 ? "" : "border-t"
+                } py-4 text-light-primary`}
+              >
+                <h3 className="text-lg font-medium">{info_names[idx]}</h3>
+                <div className="grid grid-cols-4 gap-4 pl-2 text-sm">
+                  {info.map((detail, idx) => (
+                    <Detail
+                      key={idx}
+                      className=""
+                      label={detail.label}
+                      value={`asset[${detail.type}]`}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+          <nav className="relative flex-1 border-l">
+            <button
+              className="outline-none focus:outline-none"
+              onClick={() => props.setOpenModalDesc(false)}
+            >
+              <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
+            </button>
+          </nav>
+        </div>
+      </div>
+    </Modal>
+  );
+};
 
 const AssetTable = (props: {
   checkboxes: number[];
@@ -135,9 +203,11 @@ const AssetTable = (props: {
           ))}
         </tbody>
       </table>
-      <Modal isOpen={openModalDesc} setIsOpen={setOpenModalDesc}>
-        <pre>{JSON.stringify(selectedAsset, null, 2)}</pre>
-      </Modal>
+      <AssetDetailsModal
+        asset={selectedAsset!}
+        openModalDesc={openModalDesc}
+        setOpenModalDesc={setOpenModalDesc}
+      />
     </div>
   );
 };

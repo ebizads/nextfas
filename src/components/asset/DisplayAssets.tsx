@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { ColumnType, RowType } from "../../types/table";
 import { Select, Popover, Checkbox, Pagination } from "@mantine/core";
 import AssetTable from "../atoms/table/AssetTable";
 import Link from "next/link";
-import { asset, location, model, type } from "@prisma/client";
 import { AssetType } from "../../types/assets";
 import { columns } from "../../lib/table";
 

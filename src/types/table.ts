@@ -14,3 +14,8 @@ export type RowType = {
   owner: string;
   added_date: string;
 };
+
+export type DetailType = {
+  type: string | string[];
+  label: string;
+};

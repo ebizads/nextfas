@@ -4,37 +4,40 @@ import React from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { AssetCreateInput } from "../../../server/common/input-types";
+import { EmployeeCreateInput } from "../../../server/common/input-types";
 import { trpc } from "../../../utils/trpc";
 import { InputField } from "../../../components/atoms/forms/InputField";
 import AlertInput from "../../../components/atoms/forms/AlertInput";
 
-type Asset = z.infer<typeof AssetCreateInput>;
+type Employee = z.infer<typeof EmployeeCreateInput>;
 
-const RegisterAsset = () => {
-  const { mutate, isLoading, error } = trpc.asset.create.useMutation();
+const Register = () => {
+  const { mutate, isLoading, error } = trpc.employee.create.useMutation();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Asset>({
-    resolver: zodResolver(AssetCreateInput),
+  } = useForm<Employee>({
+    resolver: zodResolver(EmployeeCreateInput),
     defaultValues: {
       name: "",
-      number: "",
+      employee_id: "",
+      email: "",
     },
   });
 
-  const onSubmit = async (asset: Asset) => {
+  const onSubmit = async (employee: Employee) => {
     // Register function
+    // console.log(employee);
+
     mutate({
-      name: asset.name,
-      number: asset.number,
-      model: {
-        name: "z-omsim",
-        brand: "OMSKIRT",
-        number: "2",
+      name: `${employee.profile.first_name} ${employee.profile.last_name}`,
+      employee_id: employee.employee_id,
+      email: employee.email,
+      profile: {
+        first_name: employee.profile.first_name,
+        last_name: employee.profile.last_name,
       },
     });
     reset();
@@ -58,19 +61,35 @@ const RegisterAsset = () => {
         >
           <InputField
             register={register}
-            label="Asset Name"
-            name="name"
+            label="Employee ID"
+            name="employee_id"
             className="border-b"
           />
-          <AlertInput>{errors?.name?.message}</AlertInput>
+          <AlertInput>{errors?.employee_id?.message}</AlertInput>
 
           <InputField
             register={register}
-            label="Asset Number"
-            name="number"
+            label="First Name"
+            name="profile.first_name"
             className="border-b"
           />
-          <AlertInput>{errors?.number?.message}</AlertInput>
+          <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
+
+          <InputField
+            register={register}
+            label="Last Name"
+            name="profile.last_name"
+            className="border-b"
+          />
+          <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+
+          <InputField
+            register={register}
+            label="Email"
+            name="email"
+            className="border-b"
+          />
+          <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
 
           <button
             type="submit"
@@ -80,10 +99,10 @@ const RegisterAsset = () => {
             {isLoading ? "Loading..." : "Register"}
           </button>
         </form>
-        {error && (
+        {error && errors && (
           <pre className="mt-2 text-sm italic text-red-500">
             Something went wrong!
-            {JSON.stringify(error, null, 2)}
+            {JSON.stringify({ error, errors }, null, 2)}
           </pre>
         )}
         <Link href="/auth/login">
@@ -96,4 +115,4 @@ const RegisterAsset = () => {
   );
 };
 
-export default RegisterAsset;
+export default Register;

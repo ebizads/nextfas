@@ -24,7 +24,7 @@ import {
 
 type Asset = z.infer<typeof AssetEditInput>;
 
-const Register = () => {
+const AssetEdit = () => {
   const { assetId } = useRouter().query;
 
   // Get asset by asset id
@@ -62,7 +62,7 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default AssetEdit;
 
 const EditForm = ({
   asset,

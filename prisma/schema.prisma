@@ -222,29 +222,35 @@ model asset {
   original_cost         Float?
   current_netbook_value Float?
   current_cost          Float?
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
-  deletedAt             DateTime?
-  deleted               Boolean       @default(false)
-  locationId            Int?          @unique
-  custodianId           Int?          @unique
-  typeId                Int?
-  modelId               Int?
-  classId               Int?
-  categoryId            Int?
-  manufacturerId        Int?
-  supplierId            Int?
-  vendorId              Int?
   barcode               String?
-  category              category?     @relation(fields: [categoryId], references: [id])
-  class                 asset_class?  @relation(fields: [classId], references: [id])
-  custodian             employee?     @relation(fields: [custodianId], references: [id])
-  location              location?     @relation(fields: [locationId], references: [id])
-  manufacturer          manufacturer? @relation(fields: [manufacturerId], references: [id])
-  model                 model?        @relation(fields: [modelId], references: [id])
-  supplier              supplier?     @relation(fields: [supplierId], references: [id])
-  type                  type?         @relation(fields: [typeId], references: [id])
-  vendor                vendor?       @relation(fields: [vendorId], references: [id])
+
+  // dates
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  // relations id
+  locationId     Int? @unique
+  custodianId    Int? @unique
+  typeId         Int?
+  modelId        Int?
+  classId        Int?
+  categoryId     Int?
+  manufacturerId Int?
+  supplierId     Int?
+  vendorId       Int?
+
+  // relations table
+  location     location?     @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  custodian    employee?     @relation(fields: [custodianId], references: [id])
+  class        asset_class?  @relation(fields: [classId], references: [id])
+  type         type?         @relation(fields: [typeId], references: [id], onDelete: SetNull)
+  model        model?        @relation(fields: [modelId], references: [id], onDelete: SetNull)
+  category     category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  manufacturer manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
+  supplier     supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  vendor       vendor?       @relation(fields: [vendorId], references: [id], onDelete: SetNull)
 
   @@index([name, number, serial_number, typeId, categoryId, classId])
 }

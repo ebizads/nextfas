@@ -257,6 +257,7 @@ export const SupplierEditInput = z.object({
 
 export const EmployeeCreateInput = z.object({
   name: z.string(),
+  employee_id: z.string(),
   email: z.string().email(),
   image: z.string().nullish(),
   profile: z.object({
@@ -272,6 +273,8 @@ export const EmployeeCreateInput = z.object({
     phone_no: z.string().nullish(),
     gender: z.string().nullish(),
   }),
+  hired_date: z.date().nullish(),
+  subsidiary: z.string().nullish(),
   address: z
     .object({
       street: z.string().nullish(),
@@ -290,30 +293,35 @@ export const EmployeeEditInput = z.object({
   name: z.string().optional(),
   email: z.string().email().optional(),
   image: z.string().optional(),
-  profile: z.object({
-    first_name: z
-      .string()
-      .min(1, { message: "First name is required" })
-      .optional(),
-    last_name: z
-      .string({ required_error: "Last Name is required" })
-      .min(1, "Last name is required")
-      .optional(),
-    middle_name: z.string().optional(),
-    suffix: z.string().optional(),
-    date_of_birth: z.date().optional(),
-    phone_no: z.string().optional(),
-    gender: z.string().optional(),
-  }),
+  employee_id: z.string().optional(),
+  profile: z
+    .object({
+      first_name: z
+        .string()
+        .min(1, { message: "First name is required" })
+        .optional(),
+      last_name: z
+        .string({ required_error: "Last Name is required" })
+        .min(1, "Last name is required")
+        .optional(),
+      middle_name: z.string().nullish(),
+      suffix: z.string().nullish(),
+      date_of_birth: z.date().nullish(),
+      phone_no: z.string().nullish(),
+      gender: z.string().nullish(),
+    })
+    .optional(),
+  hired_date: z.date().optional(),
+  subsidiary: z.string().optional(),
   address: z
     .object({
-      street: z.string().optional(),
-      city: z.string().optional(),
-      state: z.string().optional(),
-      zip: z.string().optional(),
-      country: z.string().optional(),
-      shipping_address: z.string().optional(),
-      billing_address: z.string().optional(),
+      street: z.string().nullish(),
+      city: z.string().nullish(),
+      state: z.string().nullish(),
+      zip: z.string().nullish(),
+      country: z.string().nullish(),
+      shipping_address: z.string().nullish(),
+      billing_address: z.string().nullish(),
     })
     .optional(),
 });

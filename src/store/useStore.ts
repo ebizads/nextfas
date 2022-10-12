@@ -2,7 +2,7 @@ import create from "zustand"
 
 type MinimizeState = {
   minimize: boolean
-  setMinimize: Function
+  setMinimize: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const useMinimizeStore = create<MinimizeState>((set) => ({

@@ -62,9 +62,14 @@ model employee {
   updated_at   DateTime  @updatedAt
   deleted      Boolean   @default(false)
   deletedAt    DateTime?
+  employee_id  String    @unique
+  hired_date   DateTime?
+  subsidiary   String?
   address      address?
   owned_assets asset?
   profile      profile?
+
+  @@index([employee_id, name, email, hired_date, subsidiary], map: "employee_index")
 }
 
 model VerificationToken {
@@ -77,7 +82,6 @@ model VerificationToken {
 
 model profile {
   id            Int       @id @default(autoincrement())
-  phone_no      String?
   first_name    String
   middle_name   String?
   last_name     String
@@ -87,6 +91,7 @@ model profile {
   userId        Int?      @unique
   date_of_birth DateTime?
   employeeId    Int?      @unique
+  phone_number  String?
   employee      employee? @relation(fields: [employeeId], references: [id])
   user          user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -100,20 +105,20 @@ model address {
   country          String?
   shipping_address String?
   billing_address  String?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  deleted          Boolean       @default(false)
-  deletedAt        DateTime?
-  supplierId       Int?          @unique
-  manufacturerId   Int?          @unique
-  vendorId         Int?          @unique
-  userId           Int?          @unique
-  employeeId       Int?          @unique
-  employee         employee?     @relation(fields: [employeeId], references: [id])
-  manufacturer     manufacturer? @relation(fields: [manufacturerId], references: [id])
-  supplier         supplier?     @relation(fields: [supplierId], references: [id])
-  user             user?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vendor           vendor?       @relation(fields: [vendorId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
+
+  manufacturer   manufacturer? @relation(fields: [manufacturerId], references: [id])
+  manufacturerId Int?          @unique
+  vendor         vendor?       @relation(fields: [vendorId], references: [id])
+  vendorId       Int?          @unique
+
+  userId     Int?      @unique
+  user       user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId Int?      @unique
+  employee   employee? @relation(fields: [employeeId], references: [id])
 }
 
 model location {
@@ -124,7 +129,7 @@ model location {
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
   deleted    Boolean   @default(false)
-  asset      asset?
+  assets     asset?
 }
 
 model type {
@@ -169,19 +174,6 @@ model category {
   assets    asset[]
 }
 
-model supplier {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  phone_no  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
-  address   address?
-  assets    asset[]
-}
-
 model manufacturer {
   id        Int       @id @default(autoincrement())
   name      String
@@ -196,10 +188,19 @@ model manufacturer {
 }
 
 model vendor {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  phone_no  String?
+  id           Int     @id @default(autoincrement())
+  name         String
+  email        String  @unique
+  type         String?
+  url          String?
+  image        String?
+  remarks      String?
+  fax_no       String?
+  alt_phone_no String?
+  phone_no     String?
+
+  address   address?
+  
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -209,7 +210,7 @@ model vendor {
 }
 
 model asset {
-  id                    Int           @id @default(autoincrement())
+  id                    Int     @id @default(autoincrement())
   name                  String
   number                String        @unique
   description           String?
@@ -217,28 +218,35 @@ model asset {
   original_cost         Float?
   current_netbook_value Float?
   current_cost          Float?
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
-  deletedAt             DateTime?
-  deleted               Boolean       @default(false)
-  locationId            Int?          @unique
-  custodianId           Int?          @unique
-  typeId                Int?
-  modelId               Int?
-  classId               Int?
-  categoryId            Int?
-  manufacturerId        Int?
-  supplierId            Int?
-  vendorId              Int?
-  category              category?     @relation(fields: [categoryId], references: [id])
-  class                 asset_class?  @relation(fields: [classId], references: [id])
-  custodian             employee?     @relation(fields: [custodianId], references: [id])
-  location              location?     @relation(fields: [locationId], references: [id])
-  manufacturer          manufacturer? @relation(fields: [manufacturerId], references: [id])
-  model                 model?        @relation(fields: [modelId], references: [id])
-  supplier              supplier?     @relation(fields: [supplierId], references: [id])
-  type                  type?         @relation(fields: [typeId], references: [id])
-  vendor                vendor?       @relation(fields: [vendorId], references: [id])
+  barcode               String?
+
+  // dates
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  // relations id
+  locationId     Int? @unique
+  custodianId    Int? @unique
+  typeId         Int?
+  modelId        Int?
+  classId        Int?
+  categoryId     Int?
+  manufacturerId Int?
+  vendorId       Int?
+
+  // relations table
+  location     location?     @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  custodian    employee?     @relation(fields: [custodianId], references: [id])
+  class        asset_class?  @relation(fields: [classId], references: [id])
+  type         type?         @relation(fields: [typeId], references: [id], onDelete: SetNull)
+  model        model?        @relation(fields: [modelId], references: [id], onDelete: SetNull)
+  category     category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  manufacturer manufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
+  vendor       vendor?       @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+
+  @@index([name, number, serial_number, typeId, categoryId, classId])
 }
 
 model general {

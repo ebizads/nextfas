@@ -1,8 +1,7 @@
-import { Accordion } from "@mantine/core"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useMemo } from "react"
 import { useMinimizeStore } from "../../store/useStore"
 import NavAccordion, { NavType } from "./NavAccordion"
 
@@ -41,14 +40,14 @@ const SideBar = () => {
     <div
       className={`max-w-md duration-300 ${
         minimize
-          ? "min-w-[10vw] w-[10vw]"
-          : "min-w-[25vw] w-[25vw] xl:w-[20vw] xl:min-w-[20vw]"
-      } px-2 py-4 flex flex-col border-r min-h-screen space-y-4 overflow-hidden`}
+          ? "w-[10vw] min-w-[10vw]"
+          : "w-[25vw] min-w-[25vw] xl:w-[20vw] xl:min-w-[20vw]"
+      } flex min-h-screen flex-col space-y-4 overflow-hidden border-r px-2 py-4`}
     >
       <div
-        className="relative flex flex-col w-full px-2 pb-2"
+        className="relative flex w-full flex-col px-2 pb-2"
         onClick={() => {
-          setMinimize(({ prev }: { prev: boolean }) => !prev)
+          setMinimize((prev) => !prev)
         }}
       >
         <Image
@@ -59,9 +58,9 @@ const SideBar = () => {
           className=""
         />
       </div>
-      <div className="flex flex-col w-full border-b">
+      <div className="flex w-full flex-col border-b">
         {!minimize && (
-          <p className="text-light-secondary capitalize text-xs pl-2">home</p>
+          <p className="pl-2 text-xs capitalize text-light-secondary">home</p>
         )}
         {/* <Link href={"/dashboard"}>
           <div
@@ -84,15 +83,15 @@ const SideBar = () => {
         <div
           className={`py-4 px-2 ${
             paths[paths.length - 1] === "dashboard"
-              ? "text-tangerine-500 font-medium bg-tangerine-50"
+              ? "bg-tangerine-50 font-medium text-tangerine-500"
               : "text-light-secondary"
           }`}
         >
           <Link href={"/dashboard"}>
             <div
               className={`flex items-center ${
-                minimize ? "justify-center" : "pl-2 justify-start"
-              } gap-2 pl-2 cursor-pointer`}
+                minimize ? "justify-center" : "justify-start pl-2"
+              } cursor-pointer gap-2 pl-2`}
             >
               <i
                 className={`fa-house-blank w-8 ${
@@ -104,24 +103,24 @@ const SideBar = () => {
           </Link>
         </div>
       </div>
-      <div className="flex flex-col w-full">
+      <div className="flex w-full flex-col">
         {!minimize && (
-          <p className="text-light-secondary capitalize text-xs px-2">
+          <p className="px-2 text-xs capitalize text-light-secondary">
             asset info
           </p>
         )}
         <div
           className={`py-4 px-2 ${
             paths[paths.length - 1] === "assets"
-              ? "text-tangerine-500 font-medium bg-tangerine-50"
+              ? "bg-tangerine-50 font-medium text-tangerine-500"
               : "text-light-secondary"
           }`}
         >
           <Link href={"/assets"}>
             <div
               className={`flex items-center ${
-                minimize ? "justify-center" : "pl-2 justify-start"
-              } gap-2 pl-2 cursor-pointer`}
+                minimize ? "justify-center" : "justify-start pl-2"
+              } cursor-pointer gap-2 pl-2`}
             >
               <i
                 className={`fa-cubes w-8 ${
@@ -142,21 +141,21 @@ const SideBar = () => {
             key={idx}
             className={`py-4 px-2 ${
               paths[paths.length - 1]?.toUpperCase() === page.name.toUpperCase()
-                ? "text-tangerine-500 font-medium bg-tangerine-50"
+                ? "bg-tangerine-50 font-medium text-tangerine-500"
                 : ""
             }`}
           >
             <Link href={page.link}>
               <div
                 className={`flex items-center ${
-                  minimize ? "justify-center" : "pl-2 justify-start"
-                } gap-2 pl-2 cursor-pointer`}
+                  minimize ? "justify-center" : "justify-start pl-2"
+                } cursor-pointer gap-2 pl-2`}
               >
                 <i
                   className={`${page.icon} ${
                     paths[paths.length - 1]?.toUpperCase() ===
                     page.name.toUpperCase()
-                      ? "text-tangerine-500 font-medium bg-tangerine-50"
+                      ? "bg-tangerine-50 font-medium text-tangerine-500"
                       : "text-light-secondary"
                   } w-8 ${
                     minimize ? "fa-regular text-2xl" : "fa-light"

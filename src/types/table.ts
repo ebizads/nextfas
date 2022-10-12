@@ -5,7 +5,8 @@ export type ColumnType = {
 
 export type RowType = {
   id: number;
-  serial_no: string;
+
+  serial_number: string;
   bar_code: string;
   type: string;
   category: string;
@@ -14,6 +15,7 @@ export type RowType = {
   owner: string;
   added_date: string;
 };
+
 export type EmployeeRowType = {
   id: number;
   first_name: string;
@@ -30,4 +32,9 @@ export type ImageJSON = {
   name: string;
   size: number;
   file: string;
+};
+
+export type DetailType = {
+  type: string;
+  label: string;
 };

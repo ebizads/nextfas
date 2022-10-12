@@ -15,18 +15,42 @@ export interface NavType {
   subType?: SubNavType[]
 }
 
-const navigations = [
+export const navigations = [
   {
     name: "Transactions",
     icon: "fa-light fa-arrow-right-arrow-left",
     link: "#",
     subType: [
-      { name: "Transfer", link: "/transactions/transfer" },
-      { name: "Split", link: "/transactions/split" },
-      { name: "Depreciation", link: "/transactions/depreciation" },
-      { name: "Disposal", link: "/transactions/disposal" },
-      { name: "Repair", link: "/transactions/repair" },
-      { name: "Issuance", link: "/transactions/issuance" },
+      {
+        icon: "fa-regular fa-arrow-right-arrow-left",
+        name: "Transfer",
+        link: "/transactions/transfer",
+      },
+      {
+        icon: "fa-solid fa-file-dashed-line",
+        name: "Split",
+        link: "/transactions/split",
+      },
+      {
+        icon: "fa-regular fa-chart-line-down",
+        name: "Depreciation",
+        link: "/transactions/depreciation",
+      },
+      {
+        icon: "fa-regular fa-trash-can",
+        name: "Disposal",
+        link: "/transactions/disposal",
+      },
+      {
+        icon: "fa-regular fa-screwdriver-wrench",
+        name: "Repair",
+        link: "/transactions/repair",
+      },
+      {
+        icon: "fa-regular fa-hand-holding-hand",
+        name: "Issuance",
+        link: "/transactions/issuance",
+      },
     ],
   },
   {
@@ -47,7 +71,7 @@ const navigations = [
 const NavAccordion = (props: {
   paths: string[]
   minimize: boolean
-  setMinimize: Function
+  setMinimize: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   return (
     <div>
@@ -64,24 +88,24 @@ const NavAccordion = (props: {
                 <Accordion.Control
                   className={`m-0 py-4 px-4 ${
                     props.paths[0]?.toUpperCase() === page.name.toUpperCase()
-                      ? "text-tangerine-500 font-medium bg-tangerine-50"
+                      ? "bg-tangerine-50 font-medium text-tangerine-500"
                       : "text-light-secondary"
                   }`}
                 >
                   <div
-                    className={`flex gap-2 items-center ${
+                    className={`flex items-center gap-2 ${
                       props.minimize ? "justify-center" : ""
                     }`}
                   >
                     <i className={page.icon + " w-8 text-left "} />
-                    <p className=" text-base font-sans text-light-primary">
+                    <p className=" font-sans text-base text-light-primary">
                       {page.name}
                     </p>
                   </div>
                 </Accordion.Control>
                 {page.subType && (
                   <Accordion.Panel>
-                    <div className="text-sm flex flex-col font-sans">
+                    <div className="flex flex-col font-sans text-sm">
                       {page.subType.map((type, idx) => (
                         <Link key={idx} href={type.link}>
                           <a
@@ -91,7 +115,7 @@ const NavAccordion = (props: {
                               ]?.toUpperCase() === type.name.toUpperCase()
                                 ? "bg-tangerine-100"
                                 : ""
-                            } py-1 hover:bg-tangerine-50 hover:text-tangerine-600 duration-150`}
+                            } py-1 duration-150 hover:bg-tangerine-50 hover:text-tangerine-600`}
                           >
                             {type.name}
                           </a>
@@ -108,16 +132,16 @@ const NavAccordion = (props: {
           {navigations.map((page, idx) => (
             <button
               key={idx}
-              className={`py-4  w-full text-center ${
+              className={`w-full  py-4 text-center ${
                 props.paths[0]?.toUpperCase() === page.name.toUpperCase()
-                  ? "text-tangerine-500 bg-tangerine-50"
+                  ? "bg-tangerine-50 text-tangerine-500"
                   : "text-light-secondary"
               }`}
               onClick={() => {
                 props.setMinimize(false)
               }}
             >
-              <i className={page.icon + " text-xl fa-regular"} />
+              <i className={page.icon + " fa-regular text-xl"} />
             </button>
           ))}
         </div>

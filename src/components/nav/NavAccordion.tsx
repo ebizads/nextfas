@@ -3,7 +3,7 @@ import Link from "next/link"
 import React from "react"
 import { NavType } from "../../types/table"
 
-const navigations = [
+export const navigations = [
   {
     name: "Transactions",
     icon: "fa-light fa-arrow-right-arrow-left",

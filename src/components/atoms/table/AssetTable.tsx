@@ -5,8 +5,9 @@ import { Checkbox } from "@mantine/core"
 import Modal from "../../asset/Modal"
 import { AssetType } from "../../../types/assets"
 import { asset_information, columns } from "../../../lib/table"
-import { navigations } from "../../nav/NavAccordion"
 import { getProperty } from "../../../lib/functions"
+import { navigations } from "../../nav/NavAccordion"
+import { trpc } from "../../../utils/trpc"
 
 const Detail = (props: {
   key?: number
@@ -30,7 +31,7 @@ const info_names = [
 ]
 
 const AssetDetailsModal = (props: {
-  asset: AssetType
+  asset: AssetType | null
   openModalDesc: boolean
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
@@ -58,7 +59,11 @@ const AssetDetailsModal = (props: {
                         key={idx}
                         className=""
                         label={detail.label}
-                        value={getProperty(detail.type, props.asset)}
+                        value={
+                          props.asset
+                            ? getProperty(detail.type, props.asset)
+                            : ""
+                        }
                       />
                     ))}
                   </div>
@@ -90,6 +95,92 @@ const AssetDetailsModal = (props: {
   )
 }
 
+export const AssetDeleteModal = (props: {
+  checkboxes: number[]
+  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  openModalDel: boolean
+  assets: AssetType[]
+  setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  const [showList, setShowList] = useState<boolean>(false)
+
+  //trpc utils for delete
+  const utils = trpc.useContext()
+  const { mutate, isLoading, error } = trpc.asset.deleteMany.useMutation({
+    onSuccess() {
+      utils.asset.findAll.invalidate()
+    },
+  })
+  const handleDelete = () => {
+    const id_array = [...props.checkboxes]
+    //delete function
+    mutate([...id_array])
+    props.setCheckboxes([])
+    props.setOpenModalDel(false)
+  }
+
+  return (
+    <Modal
+      size={8}
+      isOpen={props.openModalDel}
+      setIsOpen={props.setOpenModalDel}
+    >
+      <div className="m-4 flex flex-col text-light-primary">
+        <div className="flex flex-col items-center gap-8 text-center">
+          <div>
+            You are about to permanently delete{" "}
+            <button
+              className="border-b border-tangerine-600 text-tangerine-600 hover:bg-tangerine-100"
+              onClick={() => {
+                setShowList(!showList)
+              }}
+            >
+              {props.checkboxes.length}{" "}
+              {props.checkboxes.length > 1 ? "records" : "record"}{" "}
+              <i
+                className={`fa-solid ${
+                  showList ? " fa-caret-up" : " fa-caret-down"
+                }`}
+              />
+            </button>{" "}
+            from <span className="text-tangerine-600">Assets Table</span>.
+          </div>
+          {showList && (
+            <ul className="min-h-10 flex h-fit max-h-20 w-fit flex-col ">
+              {props.assets
+                .filter((asset) => props.checkboxes.includes(asset.id))
+                .map((asset) => (
+                  <li className="flex items-center gap-2 text-red-500">
+                    <i className="fa-solid fa-circle text-xs" />
+                    {asset.serial_number ?? "asset[serial_number]"}
+                  </li>
+                ))}
+            </ul>
+          )}
+          <p className="text-neutral-500">
+            This action is irrevokable, please carefully review the action.
+          </p>
+          <div className="flex items-center justify-end gap-2">
+            <button
+              className="rounded-sm bg-gray-300 px-5 py-1 hover:bg-gray-400"
+              onClick={() => props.setOpenModalDel(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
+              onClick={() => handleDelete()}
+              disabled={isLoading}
+            >
+              Yes, delete records
+            </button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
 const AssetTable = (props: {
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
@@ -101,11 +192,12 @@ const AssetTable = (props: {
   const { minimize } = useMinimizeStore()
 
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
+  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
-      props.setCheckboxes([-1])
+      props.setCheckboxes(props.rows.map((row) => row.id))
     } else {
       props.setCheckboxes([])
     }
@@ -175,10 +267,7 @@ const AssetTable = (props: {
                     onChange={(e) => {
                       toggleCheckbox(Number(e.target.value))
                     }}
-                    checked={
-                      props.checkboxes.includes(row.id) ||
-                      props.checkboxes.includes(-1)
-                    }
+                    checked={props.checkboxes.includes(row.id)}
                     classNames={{
                       input:
                         "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
@@ -201,18 +290,33 @@ const AssetTable = (props: {
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
-                <i className="fa-light fa-pen-to-square" />
-                <i className="fa-light fa-trash-can text-red-500" />{" "}
+                <button>
+                  <i className="fa-light fa-pen-to-square" />
+                </button>
+                <button
+                  onClick={() => {
+                    setOpenModalDel(true)
+                    props.setCheckboxes([row.id])
+                  }}
+                >
+                  <i className="fa-light fa-trash-can text-red-500" />{" "}
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       <AssetDetailsModal
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        asset={selectedAsset!}
+        asset={selectedAsset}
         openModalDesc={openModalDesc}
         setOpenModalDesc={setOpenModalDesc}
+      />
+      <AssetDeleteModal
+        checkboxes={props.checkboxes}
+        setCheckboxes={props.setCheckboxes}
+        assets={props.rows}
+        openModalDel={openModalDel}
+        setOpenModalDel={setOpenModalDel}
       />
     </div>
   )

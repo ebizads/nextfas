@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { Select, Popover, Checkbox, Pagination } from "@mantine/core";
-import AssetTable from "../atoms/table/AssetTable";
-import Link from "next/link";
-import { AssetType } from "../../types/assets";
-import { columns } from "../../lib/table";
+import React, { useState } from "react"
+import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
+import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
+import Link from "next/link"
+import { AssetType } from "../../types/assets"
+import { columns } from "../../lib/table"
 
 type SearchType = {
-  value: string;
-  label: string;
-};
+  value: string
+  label: string
+}
 
 const Search = (props: { data: SearchType[] }) => {
-  const [value, setValue] = useState<string | null>(null);
+  const [value, setValue] = useState<string | null>(null)
   return (
     <Select
       value={value}
@@ -23,16 +23,16 @@ const Search = (props: { data: SearchType[] }) => {
       data={[...props.data]}
       icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
     />
-  );
-};
+  )
+}
 
-const showAssetsBy = [5, 10, 20, 50];
+const showAssetsBy = [5, 10, 20, 50]
 
 const FilterPopover = (props: {
-  openPopover: boolean;
-  setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>;
-  filterBy: string[];
-  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>;
+  openPopover: boolean
+  setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
+  filterBy: string[]
+  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>
 }) => {
   return (
     <Popover
@@ -48,7 +48,7 @@ const FilterPopover = (props: {
       <Popover.Target>
         <button
           onClick={() => {
-            props.setOpenPopover(!props.openPopover);
+            props.setOpenPopover(!props.openPopover)
           }}
           className="group flex w-7 gap-2 rounded-md bg-tangerine-500 p-2 text-xs  text-neutral-50 outline-none transition-width duration-200 hover:w-16 hover:bg-tangerine-400 focus:outline-none"
         >
@@ -89,15 +89,15 @@ const FilterPopover = (props: {
         </div>
       </Popover.Dropdown>
     </Popover>
-  );
-};
+  )
+}
 const PaginationPopover = (props: {
-  paginationPopover: boolean;
-  setPaginationPopover: React.Dispatch<React.SetStateAction<boolean>>;
-  page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-  limit: number;
-  setLimit: React.Dispatch<React.SetStateAction<number>>;
+  paginationPopover: boolean
+  setPaginationPopover: React.Dispatch<React.SetStateAction<boolean>>
+  page: number
+  setPage: React.Dispatch<React.SetStateAction<number>>
+  limit: number
+  setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
   return (
     <Popover
@@ -113,7 +113,7 @@ const PaginationPopover = (props: {
       <Popover.Target>
         <button
           onClick={() => {
-            props.setPaginationPopover(!props.paginationPopover);
+            props.setPaginationPopover(!props.paginationPopover)
           }}
           className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-tangerine-300 to-tangerine-500 py-1 px-3 text-neutral-50"
         >
@@ -129,8 +129,8 @@ const PaginationPopover = (props: {
               key={i}
               className="cursor-pointer hover:bg-tangerine-50"
               onClick={() => {
-                props.setLimit(i);
-                props.setPage(1);
+                props.setLimit(i)
+                props.setPage(1)
               }}
             >
               {i}
@@ -139,24 +139,26 @@ const PaginationPopover = (props: {
         </ul>
       </Popover.Dropdown>
     </Popover>
-  );
-};
+  )
+}
 
 const DisplayAssets = (props: {
-  total: number;
-  assets: AssetType[];
-  accessiblePage: number;
-  page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-  limit: number;
-  setLimit: React.Dispatch<React.SetStateAction<number>>;
+  total: number
+  assets: AssetType[]
+  accessiblePage: number
+  page: number
+  setPage: React.Dispatch<React.SetStateAction<number>>
+  limit: number
+  setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-  const [checkboxes, setCheckboxes] = useState<number[]>([]);
-  const [openPopover, setOpenPopover] = useState<boolean>(false);
-  const [paginationPopover, setPaginationPopover] = useState<boolean>(false);
+  const [checkboxes, setCheckboxes] = useState<number[]>([])
+  const [openPopover, setOpenPopover] = useState<boolean>(false)
+  const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
+  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+
   const [filterBy, setFilterBy] = useState<string[]>([
     ...columns.map((i) => i.value),
-  ]);
+  ])
 
   return (
     <div>
@@ -171,7 +173,7 @@ const DisplayAssets = (props: {
                       return {
                         value: obj.id.toString(),
                         label: obj.name.toString(),
-                      };
+                      }
                     }),
                   ]}
                 />
@@ -184,7 +186,10 @@ const DisplayAssets = (props: {
               />
             </div>
             {checkboxes.length > 0 && (
-              <button className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
+              <button
+                onClick={() => setOpenModalDel(true)}
+                className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
+              >
                 {checkboxes.includes(-1)
                   ? `Delete all record/s ( ${props.assets.length} ) ?`
                   : `Delete selected record/s ( ${checkboxes.length} )`}
@@ -234,8 +239,15 @@ const DisplayAssets = (props: {
           }}
         />
       </section>
+      <AssetDeleteModal
+        checkboxes={checkboxes}
+        setCheckboxes={setCheckboxes}
+        assets={props.assets}
+        openModalDel={openModalDel}
+        setOpenModalDel={setOpenModalDel}
+      />
     </div>
-  );
-};
+  )
+}
 
-export default DisplayAssets;
+export default DisplayAssets

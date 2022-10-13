@@ -4,7 +4,6 @@ import { useRouter } from "next/router"
 import React, { useMemo } from "react"
 import { navigations } from "../../lib/table"
 import { useMinimizeStore } from "../../store/useStore"
-import { NavType } from "../../types/table"
 import NavAccordion from "./NavAccordion"
 
 const SideBar = () => {

@@ -106,7 +106,7 @@ export const AssetDeleteModal = (props: {
 
   //trpc utils for delete
   const utils = trpc.useContext()
-  const { mutate, isLoading, error } = trpc.asset.deleteMany.useMutation({
+  const { mutate, isLoading } = trpc.asset.deleteMany.useMutation({
     onSuccess() {
       utils.asset.findAll.invalidate()
     },
@@ -150,7 +150,10 @@ export const AssetDeleteModal = (props: {
               {props.assets
                 .filter((asset) => props.checkboxes.includes(asset.id))
                 .map((asset) => (
-                  <li className="flex items-center gap-2 text-red-500">
+                  <li
+                    key={asset.id}
+                    className="flex items-center gap-2 text-red-500"
+                  >
                     <i className="fa-solid fa-circle text-xs" />
                     {asset.serial_number ?? "asset[serial_number]"}
                   </li>

@@ -1,6 +1,6 @@
 //constants
 
-import { ColumnType, DetailType } from "../types/table";
+import { ColumnType, DetailType, NavType } from "../types/table"
 
 export const columns = [
   { value: "serial_number", name: "Serial No." },
@@ -11,7 +11,7 @@ export const columns = [
   { value: "description", name: "Description" },
   { value: "owner", name: "Owner" },
   { value: "added_date", name: "Added Date" },
-] as ColumnType[];
+] as ColumnType[]
 
 export const asset_info = [
   { type: "name", label: "Name" },
@@ -22,7 +22,7 @@ export const asset_info = [
   { type: "vendor-name", label: "Vendor" },
   { type: "original_cost", label: "Original Cost" },
   { type: "category-name", label: "Category" },
-] as DetailType[];
+] as DetailType[]
 
 export const vendor_info = [
   { type: "company-name", label: "Company Name" },
@@ -31,7 +31,7 @@ export const vendor_info = [
   { type: "email", label: "Email Address" },
   { type: "phone_no", label: "Phone Number" },
   { type: "address", label: "Address" },
-] as DetailType[];
+] as DetailType[]
 
 export const manufacturer_info = [
   { type: "manufacturer-name", label: "Manufacturer Name" },
@@ -42,7 +42,7 @@ export const manufacturer_info = [
   { type: "phone_no", label: "Phone Number" },
   { type: "alt_phone_no", label: "Alt Phone Number" },
   { type: "fax_no", label: "Fax Number" },
-] as DetailType[];
+] as DetailType[]
 
 export const purchase_info = [
   { type: "vendor-name", label: "Vendor Name" },
@@ -53,11 +53,34 @@ export const purchase_info = [
   { type: "delivery_date", label: "Delivered Date" },
   { type: "address", label: "Billing Date" },
   { type: "shipping_method", label: "Shipping Method" },
-] as DetailType[];
+] as DetailType[]
 
 export const asset_information = [
   asset_info,
   vendor_info,
   manufacturer_info,
   purchase_info,
-] as DetailType[][];
+] as DetailType[][]
+
+export const navigations = [
+  {
+    name: "Employees",
+    icon: "fa-users",
+    link: "/employees",
+  },
+  {
+    name: "Accounting",
+    icon: "fa-calculator-simple",
+    link: "/accounting",
+  },
+  {
+    name: "Vendors",
+    icon: "fa-store",
+    link: "/vendors",
+  },
+  {
+    name: "Inventory",
+    icon: "fa-light fa-folders",
+    link: "/inventory",
+  },
+] as NavType[]

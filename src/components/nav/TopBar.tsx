@@ -4,7 +4,16 @@ import React, { useMemo } from "react"
 const TopBar = () => {
   const { pathname } = useRouter()
   const paths = useMemo(() => {
-    return pathname.split("/").filter((_, idx) => idx !== 0)
+    const path_array = pathname
+      .split("/")
+      .filter((_, idx) => idx !== 0)
+      .map((path) => {
+        if (path.includes("_")) {
+          return path.replace("_", " ")
+        }
+        return path
+      })
+    return path_array
   }, [pathname])
 
   return (

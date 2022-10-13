@@ -2,31 +2,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import React, { useMemo } from "react"
+import { navigations } from "../../lib/table"
 import { useMinimizeStore } from "../../store/useStore"
-import NavAccordion, { NavType } from "./NavAccordion"
-
-const navigations = [
-  {
-    name: "Employees",
-    icon: "fa-users",
-    link: "/employees",
-  },
-  {
-    name: "Accounting",
-    icon: "fa-calculator-simple",
-    link: "/accounting",
-  },
-  {
-    name: "Vendors",
-    icon: "fa-store",
-    link: "/vendors",
-  },
-  {
-    name: "Inventory",
-    icon: "fa-light fa-folders",
-    link: "/inventory",
-  },
-] as NavType[]
+import { NavType } from "../../types/table"
+import NavAccordion from "./NavAccordion"
 
 const SideBar = () => {
   const { pathname } = useRouter()
@@ -62,24 +41,6 @@ const SideBar = () => {
         {!minimize && (
           <p className="pl-2 text-xs capitalize text-light-secondary">home</p>
         )}
-        {/* <Link href={"/dashboard"}>
-          <div
-            className={`${
-              paths[paths.length - 1] === "dashboard"
-                ? "text-tangerine-500 font-medium bg-tangerine-50"
-                : "text-light-secondary"
-            } flex items-center ${
-              minimize ? "justify-center" : "pl-2 justify-start"
-            } gap-2 cursor-pointer`}
-          >
-            <i
-              className={`fa-house-blank ${
-                minimize ? "fa-regular text-2xl" : "fa-light w-8"
-              } text-left`}
-            />
-            {!minimize && <p className="text-light-primary">Dashboard</p>}
-          </div>
-        </Link> */}
         <div
           className={`py-4 px-2 ${
             paths[paths.length - 1] === "dashboard"

@@ -17,7 +17,7 @@ const Detail = (props: {
   return (
     <div className={props.className}>
       <p className="font-medium">{props.label}</p>
-      <p className="truncate">{props.value}</p>
+      <p className="truncate text-light-secondary">{props.value}</p>
     </div>
   )
 }

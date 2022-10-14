@@ -30,6 +30,7 @@
     "@trpc/server": "10.0.0-proxy-beta.2",
     "bcrypt": "^5.1.0",
     "dayjs": "^1.11.5",
+    "framer-motion": "^7.5.3",
     "lodash": "^4.17.21",
     "next": "12.3.1",
     "next-auth": "~4.10.3",

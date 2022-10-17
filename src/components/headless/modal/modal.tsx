@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { Button } from "@mantine/core"
 // import { XCircleIcon } from "@heroicons/react/outline";
-import React, { Fragment, useState } from "react"
+import React, { Fragment } from "react"
 
 export default function Modal({
   cancelButton,
@@ -22,9 +22,9 @@ export default function Modal({
     setIsVisible(false)
   }
 
-  const openModal = () => {
-    setIsVisible(true)
-  }
+  // const openModal = () => {
+  //   setIsVisible(true)
+  // }
 
   return (
     <>

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
-import { ColumnType, EmployeeRowType, RowType } from "../../../types/table"
+import { ColumnType, EmployeeRowType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
 
@@ -32,7 +32,7 @@ const EmployeeTable = (props: {
     props.setCheckboxes((prev) => [...prev, id])
   }
 
-  const getProperty = (filter: string, asset: RowType | EmployeeRowType) => {
+  const getProperty = (filter: string, asset: EmployeeRowType) => {
     //get object property
     return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value"
   }

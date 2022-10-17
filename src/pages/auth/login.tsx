@@ -11,8 +11,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
+import { useQuery } from "@tanstack/react-query"
 
-// TODO input validations
+// input validations
 // Describe the correctness of data's form.
 const userSchema = z.object({
   username: z.string().min(1, { message: "The username is required" }).trim(),
@@ -48,6 +49,12 @@ function LoginForm() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
 
+  const { data } = useQuery(["ip"], async () => {
+    return await fetch("/api/ip").then((res) => res.json())
+  })
+
+  console.log(data)
+
   const {
     register,
     handleSubmit,
@@ -72,8 +79,8 @@ function LoginForm() {
       callbackUrl: "/",
     })
 
+    setError(res?.error as string)
     if (res?.error) {
-      setError(res.error)
     } else {
       router.push(res?.url as string)
     }

@@ -24,7 +24,7 @@ export const userRouter = t.router({
         data: {
           ...rest,
           address: {
-            create: address,
+            create: address ?? undefined,
           },
         },
       })

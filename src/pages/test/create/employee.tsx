@@ -52,7 +52,7 @@ const Register = () => {
       </Head>
       <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4">
         <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
-          Create Asset
+          Create Employee
         </h3>
         <form
           onSubmit={handleSubmit(onSubmit)}

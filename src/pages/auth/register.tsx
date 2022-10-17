@@ -4,11 +4,11 @@ import React from "react"
 import { z } from "zod"
 import { InputField } from "../../components/atoms/forms/InputField"
 import { trpc } from "../../utils/trpc"
-import { RegisterUserInput } from "../../server/common/input-types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
+import { RegisterUserInput } from "../../server/common/schemas/user"
 
 // TODO input validations
 type User = z.infer<typeof RegisterUserInput>
@@ -25,6 +25,7 @@ const Register = () => {
     resolver: zodResolver(RegisterUserInput), // Configuration the validation with the zod schema.
     defaultValues: {
       name: "amogus",
+      email: "omsim@omsim.com",
       profile: {
         first_name: "",
         last_name: "",
@@ -38,6 +39,7 @@ const Register = () => {
     // Register function
     mutate({
       password: user.password,
+      email: "omsim@omsim.com",
       name: `${user.profile.first_name} ${user.profile.last_name}`,
       profile: {
         first_name: user.profile.first_name,

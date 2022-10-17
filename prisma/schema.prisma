@@ -51,6 +51,7 @@ model user {
   sessions       Session[]
   address        address?
   profile        profile?
+  lockedUntil    DateTime?
 }
 
 model employee {
@@ -95,7 +96,7 @@ model profile {
   userId        Int?      @unique
   date_of_birth DateTime?
   employeeId    Int?      @unique
-  phone_number  String?
+  phone_no      String?
   employee      employee? @relation(fields: [employeeId], references: [id])
   user          user?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

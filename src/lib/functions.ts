@@ -1,4 +1,5 @@
 import { AssetType, EmployeeType } from "../types/assets"
+import * as XLSX from "xlsx"
 
 export const getProperty = (filter: string, asset: AssetType) => {
   //get object property
@@ -32,4 +33,13 @@ export const getEmployeeProperty = (filter: string, emp: EmployeeType) => {
     `asset[${filter}]`
 
   return property
+}
+
+export const downloadExcel = (data: EmployeeType[]) => {
+  const worksheet = XLSX.utils.json_to_sheet(data)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  XLSX.writeFile(workbook, "DataSheet.xlsx")
 }

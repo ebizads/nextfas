@@ -139,86 +139,90 @@ function ShowDetails({ isVisible, setIsVisible, info }: { isVisible: boolean, se
       setIsVisible={setIsVisible}
       className="max-w-lg"
     >
-      {
-        info == null ? <div></div> :
-          <div>
-            <div className="flex flex-row items-center gap-4 py-5">
-              <Avatar src={info.image} alt="it's me" radius={200} size={100} />
-              <div className="flex flex-col">
-                <div className="flex flex-row">
-                  <text className="font-bold text-xl">
-                    {info.profile?.first_name}
-                  </text>
-                  <div className="bg-green-500 border rounded-full w-5 h-5 ml-2 mt-1"></div>
-                </div>
-                <text className="text-sm">{`${info.profile?.employeeId}`}</text>
-              </div>
-            </div>
-            <div className="px-3 flex flex-col py-3">
-              <text className="font-bold text-lg">Personal Information</text>
-              <div className="grid grid-cols-2">
-                <div className="py-3">
-                  <text className="font-semibold text-sm">FIRST NAME</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">{info.profile?.first_name ?? "NO DATA"}</text>
-                </div>
-                <div className="py-3">
-                  <text className="font-semibold text-sm">MIDDLE NAME</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">{info.profile?.middle_name ?? "NO DATA"}</text>
-                </div>
-                <div className="py-3">
-                  <text className="font-semibold text-sm">LAST NAME</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">{info.profile?.last_name ?? "NO DATA"}</text>
-                </div>
-                <div className="py-3">
-                  <text className="font-semibold text-sm">EMPLOYEE ID</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">{info.employee_id ?? "NO DATA"}</text>
-                </div>
-                <div className="py-3">
-                  <text className="font-semibold text-sm">STREET ADDRESS</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">{info.address?.street ?? "NO DATA"}</text>
-                </div>
-                <div className="py-3">
-                  <text className="font-semibold text-sm">HIRE DATE</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">{info.hired_date?.toDateString() ?? "NO DATA"}</text>
-                </div>
-                <div className="py-3">
-                  <text className="font-semibold text-sm">SUBSIDIARY</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">{info.subsidiary ?? "NO DATA"}</text>
-                </div>
-                <div className="py-3">
-                  <text className="font-semibold text-sm">PHONE NUMBER</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">
-                    {info.profile?.phone_no ?? "NO DATA"}
-                  </text>
-                </div>
-                <div className="py-3">
-                  <text className="font-semibold text-sm">EMAIL</text>
-                </div>
-                <div className="py-3">
-                  <text className="text-sm col-span-2">
-                    {info.email ?? "NO DATA"}
-                  </text>
+      <>
+        {console.log(info)}
+        {
+
+          info == null ? <div></div> :
+            <div>
+              <div className="flex flex-row items-center gap-4 py-5">
+                <Avatar src={info.image} alt="it's me" radius={200} size={100} />
+                <div className="flex flex-col">
+                  <div className="flex flex-row">
+                    <text className="font-bold text-xl">
+                      {info.profile?.first_name}
+                    </text>
+                    <div className="bg-green-500 border rounded-full w-5 h-5 ml-2 mt-1"></div>
+                  </div>
+                  <text className="text-sm">{`${info.employee_id}`}</text>
                 </div>
               </div>
+              <div className="px-3 flex flex-col py-3">
+                <text className="font-bold text-lg">Personal Information</text>
+                <div className="grid grid-cols-2">
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">FIRST NAME</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">{info.profile?.first_name ?? "NO DATA"}</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">MIDDLE NAME</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">{info.profile?.middle_name ?? "NO DATA"}</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">LAST NAME</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">{info.profile?.last_name ?? "NO DATA"}</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">EMPLOYEE ID</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">{info.employee_id ?? "NO DATA"}</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">STREET ADDRESS</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">{info.address?.street ?? "NO DATA"}</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">HIRE DATE</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">{info.hired_date?.toDateString() ?? "NO DATA"}</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">SUBSIDIARY</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">{info.subsidiary ?? "NO DATA"}</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">PHONE NUMBER</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">
+                      {info.profile?.phone_no ?? "NO DATA"}
+                    </text>
+                  </div>
+                  <div className="py-3">
+                    <text className="font-semibold text-sm">EMAIL</text>
+                  </div>
+                  <div className="py-3">
+                    <text className="text-sm col-span-2">
+                      {info.email ?? "NO DATA"}
+                    </text>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-      }
+        }
+      </>
     </Modal>
   );
 }

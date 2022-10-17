@@ -21,12 +21,14 @@ export default function DropzoneCMP(
         console.log("accepted files")
 
         const img_file = URL.createObjectURL(files[0]!)
+
         props.setImage({
           name: files[0]!.name,
           size: files[0]!.size,
           file: img_file,
         })
         setTimeout(function () {
+          props.setValue('image', img_file)
           props.setIsLoading(false)
 
         }, 5000)

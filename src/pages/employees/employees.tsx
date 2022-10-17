@@ -6,6 +6,7 @@ import { columns } from "../../lib/employeeTable"
 import { ImageJSON } from "../../types/table"
 import Modal from "../../components/headless/modal/modal"
 import { CreateEmployeeModal } from "../../components/employee/createEmployee"
+import { downloadExcel } from "../../lib/functions"
 
 type SearchType = {
   value: string
@@ -204,9 +205,10 @@ const DisplayEmployees = (props: {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex gap-2 -md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
+            <button onClick={() => { downloadExcel(props.employees) }}
+              className="flex gap-2 -md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
               <i className="fa-solid fa-print text-xs" />
-              Print CVs
+              Generate CVs
             </button>
             <button
               onClick={() => {

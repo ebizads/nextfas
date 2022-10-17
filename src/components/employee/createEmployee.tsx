@@ -66,7 +66,7 @@ export const CreateEmployeeModal = (props: {
             employee_id: employee.employee_id,
             email: (employee.profile.first_name[0] + employee.profile.last_name)
                 .replace(" ", "")
-                .toLowerCase() + env.NEXT_PUBLIC_CLIENT_EMAIL,
+                .toLowerCase().toString() + "@omsim.com",
             department: employee.department,
             hired_date: employee.hired_date,
             image: employee.image,

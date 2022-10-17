@@ -9,14 +9,8 @@ import {
   type,
   vendor,
 } from "@prisma/client"
+import { inferProcedureOutput } from "@trpc/server"
+import { AppRouter } from "../server/trpc/router"
 
-export type AssetType = asset & {
-  location: location | null
-  type: type | null
-  model: model | null
-  category: category | null
-  manufacturer: manufacturer | null
-  vendor: vendor | null
-  class: asset_class | null
-  custodian: employee | null
-}
+//dynamic inference of type
+export type AssetType = inferProcedureOutput<AppRouter["asset"]["findOne"]>

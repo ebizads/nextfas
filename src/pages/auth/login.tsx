@@ -1,9 +1,9 @@
 import { Checkbox } from "@mantine/core"
-import { signIn } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import Head from "next/head"
 import Image from "next/image"
 import { useRouter } from "next/router"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { InputField } from "../../components/atoms/forms/InputField"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -49,15 +49,18 @@ function LoginForm() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
 
+  //get client ip address
   const { data } = useQuery(["ip"], async () => {
     return await fetch("/api/ip").then((res) => res.json())
   })
 
-  console.log(data)
+  //get user
+  const { data: session, status } = useSession()
 
   const {
     register,
     handleSubmit,
+    watch,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<User>({
@@ -67,6 +70,17 @@ function LoginForm() {
       password: "",
     },
   })
+
+  //TODO: Username validator
+  // useEffect(() => {
+  //   //if valid username but password is incorrect
+  //   if (errors) {
+  //     if (!Boolean(errors.username)) {
+  //       //create an attempt update
+  //       const username = watch().username
+  //     }
+  //   }
+  // }, [errors])
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
@@ -81,6 +95,7 @@ function LoginForm() {
 
     setError(res?.error as string)
     if (res?.error) {
+      // console.log("May error ", res?.error)
     } else {
       router.push(res?.url as string)
     }

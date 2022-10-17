@@ -6,6 +6,7 @@ import { prisma } from "../../../server/db/client"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt"
 import { env } from "../../../env/server.mjs"
+import dayjs from "dayjs"
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -38,6 +39,14 @@ export const authOptions: NextAuthOptions = {
           },
         })
 
+        if (Boolean(user?.lockedUntil)) {
+          throw new Error(
+            `This user is currently locked until ${dayjs(
+              user?.lockedUntil
+            )}. Please contact administrator.`
+          )
+        }
+
         if (user !== null) {
           const isValid = bcrypt.compareSync(
             credentials?.password ?? "",
@@ -45,8 +54,31 @@ export const authOptions: NextAuthOptions = {
           )
 
           if (isValid) {
+            await prisma.user.update({
+              where: {
+                username: credentials?.username,
+              },
+              data: { attempts: 0 },
+            })
             return user
           }
+          let data = {}
+          if (user.attempts < 5) {
+            // checks if user has remaining attempts
+            data = { attempts: (user.attempts += 1) }
+          } else {
+            // locks user if user reached 5 attempts
+            const lock_date = dayjs().add(60, "day").toDate()
+            // console.log(lock_date)
+            data = { lockedUntil: lock_date }
+          }
+
+          await prisma.user.update({
+            where: {
+              username: credentials?.username,
+            },
+            data,
+          })
           throw new Error("Incorrect password. Please try again.")
         }
         throw new Error("Invalid credentials. Please try again.")

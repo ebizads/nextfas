@@ -20,27 +20,9 @@ const Assets = () => {
   useEffect(() => {
     //get and parse all data
     if (data) {
-      // data.assets.map((a) => {
-      //   const asset = {
-      //     id: a.id,
-      //     serial_number: a.number ?? "ser123",
-      //     bar_code: "bar123",
-      //     type: a.type?.name ?? "",
-      //     category: a.category?.name ?? "",
-      //     name: a.name,
-      //     description: a.description,
-      //     owner: a.custodian?.name ?? "Arvae",
-      //     added_date: a.createdAt.toISOString(),
-      //   } as RowType;
-      //   asset_array.push(asset);
-      // });
+
       setAssets(data.assets)
 
-      //generate accessible page
-      // const accPage = Array.from(
-      //   { length: Math.ceil(data?.total / limit) },
-      //   (_, i) => i + 1
-      // );
       setAccessiblePage(Math.ceil(data?.total / limit))
     }
   }, [data, limit])

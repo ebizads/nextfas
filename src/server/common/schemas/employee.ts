@@ -21,6 +21,8 @@ export const EmployeeCreateInput = z.object({
   }),
   hired_date: z.date().nullish(),
   subsidiary: z.string().nullish(),
+  department: z.string().nullish(),
+  position: z.string().nullish(),
   address: AddressCreateInput,
 })
 
@@ -29,7 +31,7 @@ export const EmployeeEditInput = z.object({
   name: z.string().optional(),
   email: z.string().email().optional(),
   image: z.string().nullish().optional(),
-  employee_id: z.string().nullish().optional(),
+  employee_id: z.string().optional(),
   profile: z
     .object({
       first_name: z
@@ -50,5 +52,7 @@ export const EmployeeEditInput = z.object({
     .optional(),
   hired_date: z.date().nullish().optional(),
   subsidiary: z.string().nullish().optional(),
+  department: z.string().nullish().optional(),
+  position: z.string().nullish().optional(),
   address: AddressEditInput,
 })

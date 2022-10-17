@@ -36,7 +36,7 @@ export const employeeRouter = t.router({
           [
             ctx.prisma.employee.findMany({
               orderBy: {
-                created_at: "desc",
+                createdAt: "desc",
               },
               include: {
                 address: true,
@@ -64,8 +64,11 @@ export const employeeRouter = t.router({
         return {
           employees,
           pages: Math.ceil(employeesCount / (input?.limit ?? 10)),
+          total: employeesCount,
         }
       } catch (error) {
+        console.log(error)
+
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
@@ -103,6 +106,8 @@ export const employeeRouter = t.router({
         })
         return "Employee successfully created"
       } catch (error) {
+        console.log(error)
+
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),

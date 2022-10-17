@@ -4,10 +4,10 @@ import React from "react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { AssetCreateInput } from "../../../server/common/input-types"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../../components/atoms/forms/InputField"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
+import { AssetCreateInput } from "../../../server/common/schemas/asset"
 
 type Asset = z.infer<typeof AssetCreateInput>
 

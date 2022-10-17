@@ -82,7 +82,10 @@ const EditForm = ({ employee }: { employee: Employee }) => {
 
   const onSubmit = async (employee: Employee) => {
     // Register function
-    mutate(employee)
+    mutate({
+      ...employee,
+      name: `${employee.profile?.first_name} ${employee.profile?.last_name}`,
+    })
     reset()
   }
 

@@ -36,7 +36,7 @@ export const employeeRouter = t.router({
           [
             ctx.prisma.employee.findMany({
               orderBy: {
-                created_at: "desc",
+                createdAt: "desc",
               },
               include: {
                 address: true,
@@ -54,7 +54,13 @@ export const employeeRouter = t.router({
                 email: { contains: input?.search?.email },
               },
             }),
-            ctx.prisma.employee.count(),
+            ctx.prisma.employee.count({
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+              },
+            }),
           ],
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,

@@ -6,6 +6,7 @@ export const EmployeeCreateInput = z.object({
   employee_id: z.string(),
   email: z.string().email(),
   image: z.string().nullish(),
+  work_calendarId: z.number().nullish(),
   profile: z.object({
     first_name: z
       .string({ required_error: "First Name is required" })
@@ -21,15 +22,18 @@ export const EmployeeCreateInput = z.object({
   }),
   hired_date: z.date().nullish(),
   subsidiary: z.string().nullish(),
+  department: z.string().nullish(),
+  position: z.string().nullish(),
   address: AddressCreateInput,
 })
 
 export const EmployeeEditInput = z.object({
   id: z.number(),
   name: z.string().optional(),
+  employee_id: z.string().optional(),
   email: z.string().email().optional(),
   image: z.string().nullish().optional(),
-  employee_id: z.string().nullish().optional(),
+  work_calendarId: z.number().nullish().optional(),
   profile: z
     .object({
       first_name: z

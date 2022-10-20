@@ -71,17 +71,6 @@ function LoginForm() {
     },
   })
 
-  //TODO: Username validator
-  // useEffect(() => {
-  //   //if valid username but password is incorrect
-  //   if (errors) {
-  //     if (!Boolean(errors.username)) {
-  //       //create an attempt update
-  //       const username = watch().username
-  //     }
-  //   }
-  // }, [errors])
-
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
     // Login function
@@ -90,7 +79,7 @@ function LoginForm() {
       redirect: false,
       username: user.username,
       password: user.password,
-      callbackUrl: "/",
+      callbackUrl: "/dashboard",
     })
 
     setError(res?.error as string)

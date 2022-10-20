@@ -145,17 +145,17 @@ export const AssetDeleteModal = (props: {
             </button>{" "}
             from <span className="text-tangerine-600">Assets Table</span>.
           </div>
-          {showList && (
+          {showList && props.assets && (
             <ul className="min-h-10 flex h-fit max-h-20 w-fit flex-col ">
               {props.assets
-                .filter((asset) => props.checkboxes.includes(asset.id))
-                .map((asset) => (
+                .filter((asset) => props.checkboxes.includes(asset?.id ?? 0))
+                .map((asset, idx) => (
                   <li
-                    key={asset.id}
+                    key={asset?.id ?? idx}
                     className="flex items-center gap-2 text-red-500"
                   >
                     <i className="fa-solid fa-circle text-xs" />
-                    {asset.serial_number ?? "asset[serial_number]"}
+                    {asset?.serial_number ?? "asset[serial_number]"}
                   </li>
                 ))}
             </ul>
@@ -200,7 +200,7 @@ const AssetTable = (props: {
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
-      props.setCheckboxes(props.rows.map((row) => row.id))
+      props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
     } else {
       props.setCheckboxes([])
     }
@@ -257,20 +257,20 @@ const AssetTable = (props: {
           </tr>
         </thead>
         <tbody>
-          {props.rows.map((row) => (
+          {props.rows.map((row, idx) => (
             <tr
-              key={row.id}
+              key={row?.id ?? idx}
               className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
                   <Checkbox
-                    value={row.id}
+                    value={row?.id ?? idx}
                     color={"orange"}
                     onChange={(e) => {
                       toggleCheckbox(Number(e.target.value))
                     }}
-                    checked={props.checkboxes.includes(row.id)}
+                    checked={props.checkboxes.includes(row?.id ?? idx)}
                     classNames={{
                       input:
                         "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
@@ -299,7 +299,7 @@ const AssetTable = (props: {
                 <button
                   onClick={() => {
                     setOpenModalDel(true)
-                    props.setCheckboxes([row.id])
+                    props.setCheckboxes([row?.id ?? idx])
                   }}
                 >
                   <i className="fa-light fa-trash-can text-red-500" />{" "}

@@ -171,8 +171,8 @@ const DisplayAssets = (props: {
                   data={[
                     ...props.assets?.map((obj) => {
                       return {
-                        value: obj.id.toString(),
-                        label: obj.name.toString(),
+                        value: obj ? obj.id.toString() : "",
+                        label: obj ? obj.name.toString() : "",
                       }
                     }),
                   ]}

@@ -1,5 +1,23 @@
 import { z } from "zod"
 
+export const LocationCreateInput = z
+  .object({
+    department: z.string().optional(),
+    floor: z.string().optional(),
+    room: z.string().optional(),
+  })
+  .optional()
+
+export const GeneralCreateInput = z.object({
+  assetId: z.number(),
+  currency: z.string().nullish().optional(),
+  purchase_date: z.date().nullish().optional(),
+  custodianId: z.number().nullish().optional(),
+  classId: z.number().nullish().optional(),
+  location: LocationCreateInput.optional(),
+  physical_location: LocationCreateInput.optional(),
+})
+
 export const AssetCreateInput = z.object({
   name: z
     .string({ required_error: "Name is required" })
@@ -15,11 +33,8 @@ export const AssetCreateInput = z.object({
 
   typeId: z.number().nullish(),
   categoryId: z.number().nullish(),
-  custodianId: z.number().nullish(),
   manufacturerId: z.number().nullish(),
-  classId: z.number().nullish(),
   vendorId: z.number().nullish(),
-  locationId: z.number().nullish(),
 
   model: z
     .object({
@@ -28,6 +43,8 @@ export const AssetCreateInput = z.object({
       brand: z.string().nullish(),
     })
     .nullish(),
+
+  general: GeneralCreateInput.optional(),
 })
 
 export const AssetEditInput = z.object({
@@ -42,11 +59,8 @@ export const AssetEditInput = z.object({
 
   typeId: z.number().nullish().optional(),
   categoryId: z.number().nullish().optional(),
-  custodianId: z.number().nullish().optional(),
   manufacturerId: z.number().nullish().optional(),
-  classId: z.number().nullish().optional(),
   vendorId: z.number().nullish().optional(),
-  locationId: z.number().nullish().optional(),
   modelId: z.number().nullish().optional(),
 
   model: z

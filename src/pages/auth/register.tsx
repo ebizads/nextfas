@@ -10,7 +10,6 @@ import AlertInput from "../../components/atoms/forms/AlertInput"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import { RegisterUserInput } from "../../server/common/schemas/user"
 
-// TODO input validations
 type User = z.infer<typeof RegisterUserInput>
 
 const Register = () => {

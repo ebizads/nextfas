@@ -29,6 +29,9 @@ export const vendorRouter = t.router({
               name: { contains: input?.search },
               type: { contains: input?.search },
             },
+            include: {
+              address: true,
+            },
             skip: input?.page
               ? (input.page - 1) * (input.limit ?? 10)
               : undefined,
@@ -46,7 +49,11 @@ export const vendorRouter = t.router({
           isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
         }
       )
-      return { vendors, pages: Math.ceil(vendorsCount / (input?.limit ?? 10)) }
+      return {
+        vendors,
+        pages: Math.ceil(vendorsCount / (input?.limit ?? 10)),
+        total: vendorsCount,
+      }
     }),
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const vendor = await ctx.prisma.vendor.findUnique({

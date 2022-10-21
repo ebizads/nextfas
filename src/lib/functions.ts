@@ -1,9 +1,9 @@
-import { AssetType } from "../types/assets"
+import { AssetType, VendorType } from "../types/assets"
 import { EmployeeRowType } from "../types/table"
 
 export const getProperty = (
   filter: string,
-  asset: AssetType | EmployeeRowType
+  asset: AssetType | EmployeeRowType | VendorType
 ) => {
   //get object property
   // if (filter.includes("-")) {
@@ -15,6 +15,6 @@ export const getProperty = (
   //   return;
   // }
   const property =
-    Object.getOwnPropertyDescriptor(asset, filter)?.value ?? `asset[${filter}]`
+    Object.getOwnPropertyDescriptor(asset, filter)?.value ?? `attr[${filter}]`
   return property
 }

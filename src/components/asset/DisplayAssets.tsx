@@ -3,144 +3,10 @@ import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
 import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
 import Link from "next/link"
 import { AssetType } from "../../types/assets"
-import { columns } from "../../lib/table"
-
-type SearchType = {
-  value: string
-  label: string
-}
-
-const Search = (props: { data: SearchType[] }) => {
-  const [value, setValue] = useState<string | null>(null)
-  return (
-    <Select
-      value={value}
-      placeholder="Search"
-      searchable
-      nothingFound={`Cannot find option`}
-      onChange={setValue}
-      clearable
-      data={[...props.data]}
-      icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
-    />
-  )
-}
-
-const showAssetsBy = [5, 10, 20, 50]
-
-const FilterPopover = (props: {
-  openPopover: boolean
-  setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
-  filterBy: string[]
-  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>
-}) => {
-  return (
-    <Popover
-      opened={props.openPopover}
-      onClose={() => props.setOpenPopover(false)}
-      trapFocus={false}
-      position="bottom"
-      zIndex={20}
-      classNames={{
-        dropdown: "p-0 w-80 rounded-md shadow-lg",
-      }}
-    >
-      <Popover.Target>
-        <button
-          onClick={() => {
-            props.setOpenPopover(!props.openPopover)
-          }}
-          className="group flex w-7 gap-2 rounded-md bg-tangerine-500 p-2 text-xs  text-neutral-50 outline-none transition-width duration-200 hover:w-16 hover:bg-tangerine-400 focus:outline-none"
-        >
-          <i className="fa-regular fa-bars-filter text-xs" />
-          <span className="invisible group-hover:visible">Filter</span>
-        </button>
-      </Popover.Target>{" "}
-      <Popover.Dropdown>
-        <div className="h-2 rounded-t-md bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500"></div>
-        <div className="px-4 py-2">
-          <Checkbox.Group
-            orientation="vertical"
-            description="Filter by"
-            value={props.filterBy}
-            onChange={props.setFilterBy}
-          >
-            <div className="grid grid-cols-2 gap-2">
-              {columns.map((col) => (
-                <Checkbox
-                  color={"orange"}
-                  key={col.name}
-                  disabled={
-                    props.filterBy.length === 1 &&
-                    props.filterBy.includes(col.value)
-                      ? true
-                      : false
-                  }
-                  value={col.value}
-                  label={col.name}
-                  classNames={{
-                    input:
-                      "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                  }}
-                />
-              ))}
-            </div>
-          </Checkbox.Group>
-        </div>
-      </Popover.Dropdown>
-    </Popover>
-  )
-}
-const PaginationPopover = (props: {
-  paginationPopover: boolean
-  setPaginationPopover: React.Dispatch<React.SetStateAction<boolean>>
-  page: number
-  setPage: React.Dispatch<React.SetStateAction<number>>
-  limit: number
-  setLimit: React.Dispatch<React.SetStateAction<number>>
-}) => {
-  return (
-    <Popover
-      opened={props.paginationPopover}
-      onClose={() => props.setPaginationPopover(false)}
-      trapFocus={false}
-      position="top"
-      zIndex={10}
-      classNames={{
-        dropdown: "p-0 rounded-md shadow-lg",
-      }}
-    >
-      <Popover.Target>
-        <button
-          onClick={() => {
-            props.setPaginationPopover(!props.paginationPopover)
-          }}
-          className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-tangerine-300 to-tangerine-500 py-1 px-3 text-neutral-50"
-        >
-          <p className="font-medium">{props.limit}</p>
-          <i className="fa-regular fa-chevron-down" />
-        </button>
-      </Popover.Target>
-      <Popover.Dropdown>
-        <div className="h-2 rounded-t-md bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500"></div>
-        <ul className="px-4 py-2">
-          {showAssetsBy.map((i) => (
-            <li
-              key={i}
-              className="cursor-pointer hover:bg-tangerine-50"
-              onClick={() => {
-                props.setLimit(i)
-                props.setPage(1)
-              }}
-            >
-              {i}
-            </li>
-          ))}
-        </ul>
-      </Popover.Dropdown>
-    </Popover>
-  )
-}
+import { columns, showAssetsBy } from "../../lib/table"
+import PaginationPopOver from "../atoms/popover/PaginationPopOver"
+import FilterPopOver from "../atoms/popover/FilterPopOver"
+import Search from "../atoms/search/Search"
 
 const DisplayAssets = (props: {
   total: number
@@ -161,7 +27,7 @@ const DisplayAssets = (props: {
   ])
 
   return (
-    <div>
+    <div className="space-y-4">
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -178,11 +44,12 @@ const DisplayAssets = (props: {
                   ]}
                 />
               </div>
-              <FilterPopover
+              <FilterPopOver
                 openPopover={openPopover}
                 setOpenPopover={setOpenPopover}
                 filterBy={filterBy}
                 setFilterBy={setFilterBy}
+                columns={columns}
               />
             </div>
             {checkboxes.length > 0 && (
@@ -209,18 +76,18 @@ const DisplayAssets = (props: {
             </Link>
           </div>
         </div>
-        <AssetTable
-          checkboxes={checkboxes}
-          setCheckboxes={setCheckboxes}
-          rows={props.assets}
-          filterBy={filterBy}
-          columns={columns.filter((col) => filterBy.includes(col.value))}
-        />
       </section>
+      <AssetTable
+        checkboxes={checkboxes}
+        setCheckboxes={setCheckboxes}
+        rows={props.assets}
+        filterBy={filterBy}
+        columns={columns.filter((col) => filterBy.includes(col.value))}
+      />
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">
           <p>Showing </p>
-          <PaginationPopover
+          <PaginationPopOver
             paginationPopover={paginationPopover}
             setPaginationPopover={setPaginationPopover}
             page={props.page}

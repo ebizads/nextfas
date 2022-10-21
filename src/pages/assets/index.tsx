@@ -3,8 +3,6 @@ import DashboardLayout from "../../layouts/DashboardLayout"
 import { trpc } from "../../utils/trpc"
 import DisplayAssets from "../../components/asset/DisplayAssets"
 import { AssetType } from "../../types/assets"
-import { inferProcedureOutput } from "@trpc/server"
-import { AppRouter } from "../../server/trpc/router"
 
 const Assets = () => {
   const [page, setPage] = useState(1)

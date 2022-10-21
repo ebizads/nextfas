@@ -13,6 +13,23 @@ export const columns = [
   { value: "added_date", name: "Added Date" },
 ] as ColumnType[]
 
+export const vendorColumns = [
+  { value: "id", name: "Vendor ID." },
+  { value: "type", name: "Type" },
+  { value: "name", name: "Company Name" },
+  { value: "category", name: "Category" },
+  { value: "url", name: "Web Address" },
+  { value: "email", name: "Email" },
+  { value: "phone_no", name: "Phone Number" },
+  { value: "alt_phone_no", name: "Alternate Number" },
+  { value: "fax_no", name: "Fax Number" },
+  { value: "address", name: "Address" },
+  { value: "image", name: "Image" },
+  { value: "comments", name: "Comments" },
+] as ColumnType[]
+
+export const showAssetsBy = [5, 10, 20, 50] as number[]
+
 export const asset_info = [
   { type: "name", label: "Name" },
   { type: "description", label: "Description" },

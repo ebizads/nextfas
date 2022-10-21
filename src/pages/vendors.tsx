@@ -9,6 +9,9 @@ import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
 import PaginationPopOver from "../components/atoms/popover/PaginationPopOver"
 import FilterPopOver from "../components/atoms/popover/FilterPopOver"
 import Search from "../components/atoms/search/Search"
+import Modal from "../components/asset/Modal"
+import { InputField } from "../components/atoms/forms/InputField"
+import { useForm } from "react-hook-form"
 
 const Vendors = () => {
   const [page, setPage] = useState(1)
@@ -31,10 +34,25 @@ const Vendors = () => {
     }
   }, [data, limit])
 
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   watch,
+  //   clearErrors,
+  //   formState: { errors, isSubmitting },
+  // } = useForm<User>({
+  //   resolver: zodResolver(userSchema), // Configuration the validation with the zod schema.
+  //   defaultValues: {
+  //     username: "",
+  //     password: "",
+  //   },
+  // })
+
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+  const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
 
   const [filterBy, setFilterBy] = useState<string[]>([
     ...vendorColumns.map((i) => i.value),
@@ -83,12 +101,15 @@ const Vendors = () => {
                 <i className="fa-solid fa-print text-xs" />
                 Print CVs
               </button>
-              <Link href={"/assets/create"}>
-                <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
-                  <i className="fa-regular fa-plus text-xs" />
-                  <p>Add New</p>
-                </div>
-              </Link>
+              <button
+                onClick={() => {
+                  setOpenModalAdd(true)
+                }}
+                className="flex gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none"
+              >
+                <i className="fa-regular fa-plus text-xs" />
+                <p>Add New</p>
+              </button>
             </div>
           </div>
         </section>
@@ -121,6 +142,19 @@ const Vendors = () => {
             }}
           />
         </section>
+        <Modal isOpen={openModalAdd} setIsOpen={setOpenModalAdd} size={10}>
+          <div className="w-full p-4">
+            <section className="flex items-center justify-between border-b py-2 text-light-primary">
+              <h4>Add New Vendor</h4>
+              <i className="fa-solid fa-xmark text-lg text-gray-500" />
+            </section>
+            <form className="py-2">
+              <div className="flex flex-wrap gap-2">
+                {/* <InputField label="Vendor ID" ></InputField> */}
+              </div>
+            </form>
+          </div>
+        </Modal>
       </div>
     </DashboardLayout>
   )

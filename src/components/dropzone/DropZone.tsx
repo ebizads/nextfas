@@ -1,12 +1,12 @@
 import React from "react"
 import { Group, Text } from "@mantine/core"
 import { IconUpload, IconX } from "@tabler/icons"
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone"
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone"
 import { ImageJSON } from "../../types/table"
 import Image from "next/image"
 
-export default function DropzoneCMP({ setImage, loading, setIsLoading }: {
-  setImage: React.Dispatch<React.SetStateAction<ImageJSON>>
+export default function DropZone({ setImage, loading, setIsLoading }: {
+  setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
   loading: boolean,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -17,18 +17,22 @@ export default function DropzoneCMP({ setImage, loading, setIsLoading }: {
         setIsLoading(true)
         console.log("accepted files")
 
-        console.log(files)
+        for (let i = 0; i < files.length; i++) {
+          if (files[i]) {
 
-        const img_file = URL.createObjectURL(files[0]!)
-        setImage({
-          name: files[0]!.name,
-          size: files[0]!.size,
-          file: img_file,
-        })
+            const file_to_append = {
+              name: files[i]?.name ?? "",
+              size: files[i]?.size ?? 0,
+              file: files[i] ? URL.createObjectURL(files[i] ?? new Blob) : "",
+            }
+            setImage((prev) => [...prev, file_to_append])
+          }
+        }
         setTimeout(function () {
           setIsLoading(false)
-        }, 5000)
+        }, 2000)
       }}
+      loading={loading}
       onReject={(files) => console.log("rejected files", files)}
       accept={IMAGE_MIME_TYPE}
 

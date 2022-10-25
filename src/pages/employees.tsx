@@ -1,12 +1,11 @@
 import React, { useState } from "react"
 import DashboardLayout from "../layouts/DashboardLayout"
-import { Select, Popover, Checkbox, Loader } from "@mantine/core"
+import { Select, Popover, Checkbox } from "@mantine/core"
 import { ColumnType, EmployeeRowType, ImageJSON } from "../types/table"
 import EmployeeTable from "../components/atoms/table/EmployeeTable"
 import Modal from "../components/headless/modal/modal"
 import { DatePicker } from "@mantine/dates"
-import { Image } from "@mantine/core"
-import DropzoneCMP from "../components/dropzone/dropzonecmp"
+import DropZoneComponent from "../components/dropzone/DropZoneComponent"
 
 type SearchType = {
   value: string
@@ -226,11 +225,7 @@ const Employees = () => {
   ])
 
   const value = (new Date())
-  const [image, setImage] = useState<ImageJSON>({
-    name: "",
-    size: 0,
-    file: "",
-  })
+  const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   return (
     <DashboardLayout>
@@ -357,46 +352,8 @@ const Employees = () => {
                   />
                 </div>
               </div>
-              <div className="flex flex-wrap gap-4 py-2.5 px-5">
-                <div className="w-[48%] rounded-md border bg-white drop-shadow-2xl">
-                  <div className="p-5">
-                    <DropzoneCMP
-                      setImage={setImage}
-                      loading={isLoading}
-                      setIsLoading={setIsLoading}
-                    />
-                  </div>
-                </div>
-                <div className="flex w-[48%] flex-wrap content-center rounded-md border bg-white drop-shadow-2xl">
-                  <div className="flex flex-wrap p-10">
-                    {isLoading === true ? (
-                      <Loader
-                        color="orange"
-                        variant="bars"
-                        className="self-center"
-                      />
-                    ) : image.file === "" ? (
-                      <p className="text-center">Image Preview</p>
-                    ) : (
-                      <div className="flex flex-row gap-4">
-                        <Image
-                          radius="md"
-                          src={image.file}
-                          alt="Image"
-                          width={135}
-                          height={135}
-                          withPlaceholder
-                        />
-                        <div className="flex flex-col">
-                          <p>{image.name}</p>
-                          <p>{image.size} mb</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className=""></div>
-                </div>
-              </div>
+              <DropZoneComponent images={images} setImage={setImage} isLoading={isLoading} setIsLoading={setIsLoading} />
+
             </div>
           </Modal>
           <EmployeeTable

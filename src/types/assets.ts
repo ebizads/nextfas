@@ -1,14 +1,3 @@
-import {
-  asset,
-  asset_class,
-  category,
-  employee,
-  location,
-  manufacturer,
-  model,
-  type,
-  vendor,
-} from "@prisma/client"
 import { inferProcedureOutput } from "@trpc/server"
 import { AppRouter } from "../server/trpc/router"
 

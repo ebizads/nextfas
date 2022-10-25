@@ -4,7 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout"
 import { vendorColumns } from "../lib/table"
 import { VendorType } from "../types/assets"
 import { trpc } from "../utils/trpc"
-import { Image, Pagination } from "@mantine/core"
+import { Pagination } from "@mantine/core"
 import PaginationPopOver from "../components/atoms/popover/PaginationPopOver"
 import FilterPopOver from "../components/atoms/popover/FilterPopOver"
 import Search from "../components/atoms/search/Search"
@@ -15,9 +15,10 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { InputField } from "../components/atoms/forms/InputField"
 import AlertInput from "../components/atoms/forms/AlertInput"
-import { Textarea, Loader } from '@mantine/core';
+import { Textarea } from '@mantine/core';
 import { ImageJSON } from "../types/table"
-import DropzoneCMP from "../components/dropzone/dropzonecmp"
+import DropZoneComponent from "../components/dropzone/DropZoneComponent"
+
 
 const Vendors = () => {
   const [page, setPage] = useState(1)
@@ -46,8 +47,8 @@ const Vendors = () => {
   const {
     register,
     handleSubmit,
-    watch,
-    clearErrors,
+    // watch,
+    // clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<Vendor>({
     resolver: zodResolver(VendorCreateInput), // Configuration the validation with the zod schema.
@@ -58,19 +59,20 @@ const Vendors = () => {
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
-  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+  // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
 
   const [filterBy, setFilterBy] = useState<string[]>([
     ...vendorColumns.map((i) => i.value),
   ])
 
-  const [image, setImage] = useState<ImageJSON>({
-    name: "",
-    size: 0,
-    file: "",
-  })
+  const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const onSubmit = async (vendor: Vendor) => {
+    // Register function
+    console.log(vendor)
+  }
 
   return (
     <DashboardLayout>
@@ -102,7 +104,7 @@ const Vendors = () => {
               </div>
               {checkboxes.length > 0 && (
                 <button
-                  onClick={() => setOpenModalDel(true)}
+                  // onClick={() => setOpenModalDel(true)}
                   className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
                 >
                   {checkboxes.includes(-1)
@@ -161,9 +163,10 @@ const Vendors = () => {
           <div className="w-full py-4 px-8">
             <section className="flex items-center justify-between border-b py-2 text-light-primary">
               <h4>Add New Vendor</h4>
-              <i className="fa-solid fa-xmark text-lg text-gray-500" />
+              {/* TODO: Reset form */}
+              <i onClick={() => setOpenModalAdd(false)} className="cursor-pointer fa-solid fa-xmark text-lg text-gray-500" />
             </section>
-            <form className="p-2">
+            <form className="p-2" onSubmit={(e) => { e.preventDefault(); }} noValidate>
               <div className="grid grid-cols-10 gap-4">
                 <div className="col-span-5">
                   <InputField
@@ -246,51 +249,13 @@ const Vendors = () => {
                     classNames={{ input: "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2", label: "font-sans text-sm text-gray-600 text-light" }}
                   />
                 </div>
-                <div className="flex flex-wrap gap-4 py-2.5 px-5 col-span-10">
-                  <div className="w-[48%] rounded-md border bg-white drop-shadow-2xl">
-                    <div className="p-5">
-                      <DropzoneCMP
-                        setImage={setImage}
-                        loading={isLoading}
-                        setIsLoading={setIsLoading}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex w-[48%] flex-wrap content-center rounded-md border bg-white drop-shadow-2xl">
-                    <div className="flex flex-wrap p-10">
-                      {isLoading === true ? (
-                        <Loader
-                          color="orange"
-                          variant="bars"
-                          className="self-center"
-                        />
-                      ) : image.file === "" ? (
-                        <p className="text-center">Image Preview</p>
-                      ) : (
-                        <div className="flex flex-row gap-4">
-                          <Image
-                            radius="md"
-                            src={image.file}
-                            alt="Image"
-                            width={135}
-                            height={135}
-                            withPlaceholder
-                          />
-                          <div className="flex flex-col">
-                            <p>{image.name}</p>
-                            <p>{image.size} mb</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className=""></div>
-                  </div>
-                </div>
+                <DropZoneComponent images={images} setImage={setImage} isLoading={isLoading} setIsLoading={setIsLoading} />
 
               </div>
               <div className="w-full flex justify-end gap-2 py-4">
-                <button className="py-2 px-4 underline font-medium">Discard</button>
-                <button className="rounded-md bg-tangerine-500 py-2 px-6 font-semibold text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
+                {/* TODO: Reset form */}
+                <button onClick={() => setOpenModalAdd(false)} className="py-2 px-4 underline font-medium">Discard</button>
+                <button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} className="rounded-md bg-tangerine-500 py-2 px-6 font-semibold text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
                   Add Vendor
                 </button>
               </div>

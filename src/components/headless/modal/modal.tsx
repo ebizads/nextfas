@@ -1,17 +1,14 @@
 import { Dialog, Transition } from "@headlessui/react"
-import { Button } from "@mantine/core"
 // import { XCircleIcon } from "@heroicons/react/outline";
 import React, { Fragment } from "react"
 
 export default function Modal({
-  cancelButton,
   title,
   isVisible,
   setIsVisible,
   children,
   className,
 }: {
-  cancelButton: boolean
   title: string
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -54,21 +51,25 @@ export default function Modal({
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel
-                  className={`bg-darkmode-300 w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all ${className}`}
+                  className={`bg-darkmode-300 w-full transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all ${className}`}
                 >
-                  <Dialog.Title
-                    as="h3"
-                    className="flex justify-between text-xl font-semibold leading-6 text-neutral-200"
-                  >
-                    {title}
-                    {cancelButton && (
-                      <Button
-                        onClick={closeModal}
-                        className="h-8 w-8 hover:cursor-pointer"
-                      />
-                    )}
-                  </Dialog.Title>
-                  {children}
+                  <div className="p-6">
+                    <Dialog.Title
+                      as="h3"
+                      className="flex justify-between text-xl font-semibold leading-6 text-neutral-800"
+                    >
+                      {title}
+
+                      <div>
+                        <i className="fa-thin fa-x hover:cursor-pointer" onClick={closeModal}></i>
+                      </div>
+
+                    </Dialog.Title>
+                  </div>
+                  <hr className="w-full"></hr>
+                  <div className="px-6 pb-6">
+                    {children}
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

@@ -5,12 +5,15 @@ import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone"
 import { ImageJSON } from "../../types/table"
 import Image from "next/image"
 
-export default function DropZone({ setImage, loading, setIsLoading }: {
+export default function DropZone({
+  setImage,
+  loading,
+  setIsLoading,
+}: {
   setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
-  loading: boolean,
+  loading: boolean
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-}
-) {
+}) {
   return (
     <Dropzone
       onDrop={(files) => {
@@ -19,11 +22,10 @@ export default function DropZone({ setImage, loading, setIsLoading }: {
 
         for (let i = 0; i < files.length; i++) {
           if (files[i]) {
-
             const file_to_append = {
               name: files[i]?.name ?? "",
               size: files[i]?.size ?? 0,
-              file: files[i] ? URL.createObjectURL(files[i] ?? new Blob) : "",
+              file: files[i] ? URL.createObjectURL(files[i] ?? new Blob()) : "",
             }
             setImage((prev) => [...prev, file_to_append])
           }
@@ -35,7 +37,6 @@ export default function DropZone({ setImage, loading, setIsLoading }: {
       loading={loading}
       onReject={(files) => console.log("rejected files", files)}
       accept={IMAGE_MIME_TYPE}
-
     >
       <Group
         position="center"

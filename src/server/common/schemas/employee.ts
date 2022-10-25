@@ -54,5 +54,7 @@ export const EmployeeEditInput = z.object({
     .optional(),
   hired_date: z.date().nullish().optional(),
   subsidiary: z.string().nullish().optional(),
+  department: z.string().nullish().optional(),
+  position: z.string().nullish().optional(),
   address: AddressEditInput,
 })

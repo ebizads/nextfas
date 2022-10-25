@@ -1,11 +1,9 @@
-import React, { Children, useState } from "react";
-import { useMinimizeStore } from "../../../store/useStore";
-import { ColumnType, EmployeeRowType, RowType } from "../../../types/table";
-import { Checkbox, Avatar } from "@mantine/core";
-import Modal from "../../headless/modal/modal";
-import { EmployeeType } from "../../../types/assets";
-import { columns } from "../../../lib/employeeTable";
-import { getEmployeeProperty } from "../../../lib/functions";
+
+import React, { useState } from "react"
+import { useMinimizeStore } from "../../../store/useStore"
+import { ColumnType, EmployeeRowType } from "../../../types/table"
+import { Checkbox, Avatar } from "@mantine/core"
+import Modal from "../../headless/modal/modal"
 
 const EmployeeTable = (props: {
   checkboxes: number[];
@@ -35,7 +33,91 @@ const EmployeeTable = (props: {
     // adds id
     props.setCheckboxes((prev) => [...prev, id])
   }
+  
+  const getProperty = (filter: string, asset: EmployeeRowType) => {
+    //get object property
+    return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value"
+  }
 
+  const showDetails = () => {
+    return (
+      <Modal
+        title={"Employee Details"}
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        cancelButton
+        className="max-w-lg"
+      >
+        <div>
+          <div className="flex flex-row items-center gap-4 py-5">
+            <Avatar src="avatar.png" alt="it's me" radius={200} size={100} />
+            <div className="flex flex-col">
+              <div className="flex flex-row">
+                <text className="text-xl font-bold">
+                  Clea Bernadette D. Payra
+                </text>
+                <div className="ml-2 mt-1 h-5 w-5 rounded-full border bg-green-500"></div>
+              </div>
+              <text className="text-sm">eBiz-12029312391</text>
+            </div>
+          </div>
+          <div className="flex flex-col px-3 py-3">
+            <text className="text-lg font-bold">Personal Information</text>
+            <div className="grid grid-cols-2">
+              <div className="py-3">
+                <text className="text-sm font-semibold">FIRST NAME</text>
+              </div>
+              <div>
+                <text className="col-span-2 text-sm">Clea Bernadette</text>
+              </div>
+              <div className="py-3">
+                <text className="text-sm font-semibold">MIDDLE NAME</text>
+              </div>
+              <div>
+                <text className="col-span-2 text-sm">Domingo</text>
+              </div>
+              <div className="py-3">
+                <text className="text-sm font-semibold">LAST NAME</text>
+              </div>
+              <div>
+                <text className="col-span-2 text-sm">Payra</text>
+              </div>
+              <div className="py-3">
+                <text className="text-sm font-semibold">EMPLOYEE ID</text>
+              </div>
+              <div>
+                <text className="col-span-2 text-sm">eB1z-12029312391</text>
+              </div>
+              <div className="py-3">
+                <text className="text-sm font-semibold">STREET ADDRESS</text>
+              </div>
+              <div>
+                <text className="col-span-2 text-sm">123 Tondo</text>
+              </div>
+              <div className="py-3">
+                <text className="text-sm font-semibold">HIRE DATE</text>
+              </div>
+              <div>
+                <text className="col-span-2 text-sm">July 11, 2022</text>
+              </div>
+              <div className="py-3">
+                <text className="text-sm font-semibold">SUBSIDIARY</text>
+              </div>
+              <div>
+                <text className="col-span-2 text-sm">eBizolution Inc.</text>
+              </div>
+              <div className="py-3">
+                <text className="text-sm font-semibold">PHONE NUMBER</text>
+              </div>
+              <div>
+                <text className="col-span-2 text-sm">0932423423</text>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+    )
+  }
 
   return (
     <div

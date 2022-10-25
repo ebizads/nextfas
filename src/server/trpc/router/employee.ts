@@ -54,7 +54,13 @@ export const employeeRouter = t.router({
                 email: { contains: input?.search?.email },
               },
             }),
-            ctx.prisma.employee.count(),
+            ctx.prisma.employee.count({
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+              },
+            }),
           ],
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,

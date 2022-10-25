@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { VendorCreateInput, VendorEditInput } from "../../common/schemas/vendor"
@@ -15,26 +16,52 @@ export const vendorRouter = t.router({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      const vendors = await ctx.prisma.vendor.findMany({
-        orderBy: {
-          createdAt: "desc",
-        },
-        where: {
-          NOT: {
-            deleted: true,
-          },
-          name: { contains: input?.search },
-          type: { contains: input?.search },
-        },
-        skip: input?.page ? (input.page - 1) * (input.limit ?? 10) : undefined,
-        take: input?.limit ?? 10,
-      })
-      return vendors
+      const [vendors, vendorsCount] = await ctx.prisma.$transaction(
+        [
+          ctx.prisma.vendor.findMany({
+            orderBy: {
+              createdAt: "desc",
+            },
+            where: {
+              NOT: {
+                deleted: true,
+              },
+              name: { contains: input?.search },
+              type: { contains: input?.search },
+            },
+            include: {
+              address: true,
+            },
+            skip: input?.page
+              ? (input.page - 1) * (input.limit ?? 10)
+              : undefined,
+            take: input?.limit ?? 10,
+          }),
+          ctx.prisma.vendor.count({
+            where: {
+              NOT: {
+                deleted: true,
+              },
+            },
+          }),
+        ],
+        {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        }
+      )
+      return {
+        vendors,
+        pages: Math.ceil(vendorsCount / (input?.limit ?? 10)),
+        total: vendorsCount,
+      }
     }),
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const vendor = await ctx.prisma.vendor.findUnique({
       where: {
         id: input,
+      },
+      include: {
+        address: true,
       },
     })
     return vendor

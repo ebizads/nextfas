@@ -1,9 +1,9 @@
 import { Checkbox } from "@mantine/core"
-import { signIn } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import Head from "next/head"
 import Image from "next/image"
 import { useRouter } from "next/router"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { InputField } from "../../components/atoms/forms/InputField"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -11,8 +11,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
+import { useQuery } from "@tanstack/react-query"
 
-// TODO input validations
+// input validations
 // Describe the correctness of data's form.
 const userSchema = z.object({
   username: z.string().min(1, { message: "The username is required" }).trim(),
@@ -48,9 +49,18 @@ function LoginForm() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
 
+  //get client ip address
+  const { data } = useQuery(["ip"], async () => {
+    return await fetch("/api/ip").then((res) => res.json())
+  })
+
+  //get user
+  const { data: session, status } = useSession()
+
   const {
     register,
     handleSubmit,
+    watch,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<User>({
@@ -69,11 +79,12 @@ function LoginForm() {
       redirect: false,
       username: user.username,
       password: user.password,
-      callbackUrl: "/",
+      callbackUrl: "/dashboard",
     })
 
+    setError(res?.error as string)
     if (res?.error) {
-      setError(res.error)
+      // console.log("May error ", res?.error)
     } else {
       router.push(res?.url as string)
     }

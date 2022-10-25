@@ -3,6 +3,9 @@ import SideBar from "../components/nav/SideBar"
 import TopBar from "../components/nav/TopBar"
 import { useMinimizeStore } from "../store/useStore"
 
+import { AnimatePresence } from "framer-motion"
+import AnimatedPage from "../components/framer/AnimatedPage"
+
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { minimize } = useMinimizeStore()
 
@@ -19,9 +22,14 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
         <TopBar />
         {/* Content */}
-        <section className={`flex w-full flex-1 flex-col p-4`}>
-          {children}
-        </section>
+
+        <AnimatePresence exitBeforeEnter>
+          <AnimatedPage>
+            <section className={`flex w-full flex-1 flex-col p-4`}>
+              {children}
+            </section>
+          </AnimatedPage>
+        </AnimatePresence>
       </div>
     </div>
   )

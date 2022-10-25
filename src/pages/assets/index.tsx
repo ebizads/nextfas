@@ -22,7 +22,6 @@ const Assets = () => {
     if (data) {
 
       setAssets(data.assets)
-
       setAccessiblePage(Math.ceil(data?.total / limit))
     }
   }, [data, limit])

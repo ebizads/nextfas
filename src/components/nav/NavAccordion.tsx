@@ -1,19 +1,7 @@
 import { Accordion } from "@mantine/core"
 import Link from "next/link"
 import React from "react"
-
-type SubNavType = {
-  name: string
-  icon?: string
-  link: string
-}
-
-export interface NavType {
-  name: string
-  icon: string
-  link: string
-  subType?: SubNavType[]
-}
+import { NavType } from "../../types/table"
 
 export const navigations = [
   {
@@ -58,12 +46,36 @@ export const navigations = [
     icon: "fa-light fa-file-chart-pie",
     link: "#",
     subType: [
-      { name: "Transfer", link: "/transactions/transfer" },
-      { name: "Split", link: "/transactions/split" },
-      { name: "Depreciation", link: "/transactions/depreciation" },
-      { name: "Disposal", link: "/transactions/disposal" },
-      { name: "Repair", link: "/transactions/repair" },
-      { name: "Issuance", link: "/transactions/issuance" },
+      {
+        icon: "fa-light fa-typewriter",
+        name: "Register",
+        link: "/reports/register",
+      },
+      {
+        icon: "fa-light fa-notebook",
+        name: "Summary",
+        link: "/reports/summary",
+      },
+      {
+        icon: "fa-light fa-calendar-circle-exclamation",
+        name: "Depreciation Schedule",
+        link: "/reports/depreciation_schedule",
+      },
+      {
+        icon: "fa-light fa-calendar-lines",
+        name: "Monthly Report",
+        link: "/reports/monthly_report",
+      },
+      {
+        icon: "fa-light fa-clock-rotate-left",
+        name: "History",
+        link: "/reports/history",
+      },
+      {
+        icon: "fa-light fa-money-bill-1",
+        name: "Audit Report",
+        link: "/reports/audit_report",
+      },
     ],
   },
 ] as NavType[]
@@ -115,9 +127,10 @@ const NavAccordion = (props: {
                               ]?.toUpperCase() === type.name.toUpperCase()
                                 ? "bg-tangerine-100"
                                 : ""
-                            } py-1 duration-150 hover:bg-tangerine-50 hover:text-tangerine-600`}
+                            } flex items-center gap-4 py-1 duration-150 hover:bg-tangerine-50 hover:text-tangerine-600`}
                           >
-                            {type.name}
+                            <i className={type.icon + " text-gray-400"} />
+                            <p>{type.name}</p>
                           </a>
                         </Link>
                       ))}

@@ -1,7 +1,11 @@
-import { AssetType, EmployeeType } from "../types/assets"
-import * as XLSX from "xlsx"
 
-export const getProperty = (filter: string, asset: AssetType) => {
+import { AssetType, VendorType } from "../types/assets"
+import { EmployeeRowType } from "../types/table"
+
+export const getProperty = (
+  filter: string,
+  asset: AssetType | EmployeeRowType | VendorType
+) => {
   //get object property
   // if (filter.includes("-")) {
   //   const arr = filter.split("-") as string[];
@@ -12,7 +16,7 @@ export const getProperty = (filter: string, asset: AssetType) => {
   //   return;
   // }
   const property =
-    Object.getOwnPropertyDescriptor(asset, filter)?.value ?? `asset[${filter}]`
+    Object.getOwnPropertyDescriptor(asset, filter)?.value ?? `attr[${filter}]`
   return property
 }
 

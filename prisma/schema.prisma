@@ -42,7 +42,7 @@ model user {
   password       String
   user_type      String?
   createdAt      DateTime  @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime  @updatedAt
   emailVerified  DateTime?
   image          String?
   deleted        Boolean   @default(false)
@@ -51,6 +51,8 @@ model user {
   sessions       Session[]
   address        address?
   profile        profile?
+  lockedUntil    DateTime?
+  attempts       Int @default(0)
 }
 
 model employee {
@@ -394,7 +396,8 @@ model calendar {
   startDate DateTime?
   endDate   DateTime?
   createdAt DateTime   @default(now())
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
+
   deletedAt DateTime?
   deleted   Boolean    @default(false)
   employee  employee[]

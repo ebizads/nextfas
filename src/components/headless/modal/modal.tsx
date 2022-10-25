@@ -19,9 +19,9 @@ export default function Modal({
     setIsVisible(false)
   }
 
-  const openModal = () => {
-    setIsVisible(true)
-  }
+  // const openModal = () => {
+  //   setIsVisible(true)
+  // }
 
   return (
     <>

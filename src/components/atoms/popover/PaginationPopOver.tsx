@@ -1,5 +1,5 @@
 import React from "react"
-import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
+import { Popover } from "@mantine/core"
 import { showAssetsBy } from "../../../lib/table"
 
 const PaginationPopOver = (props: {

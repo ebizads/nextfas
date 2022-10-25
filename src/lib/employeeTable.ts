@@ -1,6 +1,6 @@
 //constants
 
-import { ColumnType, DetailType } from "../types/table"
+import { ColumnType } from "../types/table"
 
 export const columns = [
   { value: "employee_id", name: "Employee ID" },

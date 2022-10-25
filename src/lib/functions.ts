@@ -1,4 +1,3 @@
-
 import { AssetType, VendorType } from "../types/assets"
 import { EmployeeRowType } from "../types/table"
 
@@ -20,30 +19,14 @@ export const getProperty = (
   return property
 }
 
-export const getEmployeeProperty = (filter: string, emp: EmployeeType) => {
-  //get object property
-  // if (filter.includes("-")) {
-  //   const arr = filter.split("-") as string[];
-  //   console.log(asset);
-  //   const obj =
-  //     Object.getOwnPropertyDescriptor(asset, arr[0]!) ?? `asset[${filter}]`;
-  //   // console.log(obj);
-  //   return;
-  // }
+export const formatBytes = (bytes: number) => {
+  if (!+bytes) return "0 Bytes"
 
-  const property =
-    Object.getOwnPropertyDescriptor(emp, filter)?.value ??
-    Object.getOwnPropertyDescriptor(emp.profile, filter)?.value ??
-    `asset[${filter}]`
+  const k = 1024
+  const dm = 2
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
 
-  return property
-}
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-export const downloadExcel = (data: EmployeeType[]) => {
-  const worksheet = XLSX.utils.json_to_sheet(data)
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "DataSheet.xlsx")
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }

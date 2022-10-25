@@ -1,20 +1,22 @@
-
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
-import { ColumnType, EmployeeRowType } from "../../../types/table"
+import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
+import { EmployeeType } from "../../../types/assets"
+import { columns } from "../../../lib/table"
 
 const EmployeeTable = (props: {
-  checkboxes: number[];
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>;
-  filterBy: string[];
-  rows: EmployeeType[];
-  columns: ColumnType[];
+  checkboxes: number[]
+  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  filterBy: string[]
+  rows: EmployeeType[]
+  columns: ColumnType[]
 }) => {
-  const { minimize } = useMinimizeStore();
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [details, setDetails] = useState<EmployeeType>();
+  const { minimize } = useMinimizeStore()
+  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [details, setDetails] = useState<EmployeeType>()
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -33,96 +35,12 @@ const EmployeeTable = (props: {
     // adds id
     props.setCheckboxes((prev) => [...prev, id])
   }
-  
-  const getProperty = (filter: string, asset: EmployeeRowType) => {
-    //get object property
-    return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value"
-  }
-
-  const showDetails = () => {
-    return (
-      <Modal
-        title={"Employee Details"}
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
-        cancelButton
-        className="max-w-lg"
-      >
-        <div>
-          <div className="flex flex-row items-center gap-4 py-5">
-            <Avatar src="avatar.png" alt="it's me" radius={200} size={100} />
-            <div className="flex flex-col">
-              <div className="flex flex-row">
-                <text className="text-xl font-bold">
-                  Clea Bernadette D. Payra
-                </text>
-                <div className="ml-2 mt-1 h-5 w-5 rounded-full border bg-green-500"></div>
-              </div>
-              <text className="text-sm">eBiz-12029312391</text>
-            </div>
-          </div>
-          <div className="flex flex-col px-3 py-3">
-            <text className="text-lg font-bold">Personal Information</text>
-            <div className="grid grid-cols-2">
-              <div className="py-3">
-                <text className="text-sm font-semibold">FIRST NAME</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">Clea Bernadette</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">MIDDLE NAME</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">Domingo</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">LAST NAME</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">Payra</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">EMPLOYEE ID</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">eB1z-12029312391</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">STREET ADDRESS</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">123 Tondo</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">HIRE DATE</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">July 11, 2022</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">SUBSIDIARY</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">eBizolution Inc.</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">PHONE NUMBER</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">0932423423</text>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    )
-  }
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -147,7 +65,7 @@ const EmployeeTable = (props: {
               <th
                 key={col.name}
                 scope="col"
-                className="px-6 duration-150 max-w-[10rem] truncate"
+                className="max-w-[10rem] truncate px-6 duration-150"
               >
                 {col.name}
               </th>
@@ -159,21 +77,21 @@ const EmployeeTable = (props: {
           </tr>
         </thead>
         <tbody>
-          {props.rows.map((row) => (
+          {props.rows.map((row, idx) => (
             <tr
-              key={row.id}
+              key={row?.id ?? idx}
               className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
                   <Checkbox
-                    value={row.id}
+                    value={row?.id ?? idx}
                     color={"orange"}
                     onChange={(e) => {
                       toggleCheckbox(Number(e.target.value))
                     }}
                     checked={
-                      props.checkboxes.includes(row.id) ||
+                      props.checkboxes.includes(row?.id ?? idx) ||
                       props.checkboxes.includes(-1)
                     }
                     classNames={{
@@ -194,7 +112,12 @@ const EmployeeTable = (props: {
                       setDetails(row)
                     }}
                   >
-                    {col.value === "hired_date" ? row.hired_date?.toDateString() ?? "No Data" : col.value === "city" ? row.address?.city ?? "No Data" : getEmployeeProperty(col.value, row)}
+                    {col.value === "hired_date"
+                      ? row?.hired_date?.toDateString() ?? "No Data"
+                      : col.value === "city"
+                      ? row?.address?.city ?? "No Data"
+                      : // : getEmployeeProperty(col.value, row)}
+                        ""}
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
@@ -205,15 +128,26 @@ const EmployeeTable = (props: {
           ))}
         </tbody>
       </table>
-      <ShowDetails isVisible={isVisible} setIsVisible={setIsVisible} info={details!} />
-
+      <ShowDetails
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        info={details!}
+      />
     </div>
-  );
-};
+  )
+}
 
-export default EmployeeTable;
+export default EmployeeTable
 
-function ShowDetails({ isVisible, setIsVisible, info }: { isVisible: boolean, setIsVisible: React.Dispatch<React.SetStateAction<boolean>>, info: EmployeeType }) {
+function ShowDetails({
+  isVisible,
+  setIsVisible,
+  info,
+}: {
+  isVisible: boolean
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+  info: EmployeeType
+}) {
   return (
     <Modal
       title={"Employee Details"}
@@ -223,88 +157,102 @@ function ShowDetails({ isVisible, setIsVisible, info }: { isVisible: boolean, se
     >
       <>
         {console.log(info)}
-        {
-
-          info == null ? <div></div> :
-            <div>
-              <div className="flex flex-row items-center gap-4 py-5">
-                <Avatar src={info.image} alt="it's me" radius={200} size={100} />
-                <div className="flex flex-col">
-                  <div className="flex flex-row">
-                    <text className="font-bold text-xl">
-                      {info.profile?.first_name}
-                    </text>
-                    <div className="bg-green-500 border rounded-full w-5 h-5 ml-2 mt-1"></div>
-                  </div>
-                  <text className="text-sm">{`${info.employee_id}`}</text>
+        {info == null ? (
+          <div></div>
+        ) : (
+          <div>
+            <div className="flex flex-row items-center gap-4 py-5">
+              <Avatar src={info.image} alt="it's me" radius={200} size={100} />
+              <div className="flex flex-col">
+                <div className="flex flex-row">
+                  <text className="text-xl font-bold">
+                    {info.profile?.first_name}
+                  </text>
+                  <div className="ml-2 mt-1 h-5 w-5 rounded-full border bg-green-500"></div>
                 </div>
+                <text className="text-sm">{`${info.employee_id}`}</text>
               </div>
-              <div className="px-3 flex flex-col py-3">
-                <text className="font-bold text-lg">Personal Information</text>
-                <div className="grid grid-cols-2">
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">FIRST NAME</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">{info.profile?.first_name ?? "NO DATA"}</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">MIDDLE NAME</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">{info.profile?.middle_name ?? "NO DATA"}</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">LAST NAME</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">{info.profile?.last_name ?? "NO DATA"}</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">EMPLOYEE ID</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">{info.employee_id ?? "NO DATA"}</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">STREET ADDRESS</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">{info.address?.street ?? "NO DATA"}</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">HIRE DATE</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">{info.hired_date?.toDateString() ?? "NO DATA"}</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">SUBSIDIARY</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">{info.subsidiary ?? "NO DATA"}</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">PHONE NUMBER</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">
-                      {info.profile?.phone_no ?? "NO DATA"}
-                    </text>
-                  </div>
-                  <div className="py-3">
-                    <text className="font-semibold text-sm">EMAIL</text>
-                  </div>
-                  <div className="py-3">
-                    <text className="text-sm col-span-2">
-                      {info.email ?? "NO DATA"}
-                    </text>
-                  </div>
+            </div>
+            <div className="flex flex-col px-3 py-3">
+              <text className="text-lg font-bold">Personal Information</text>
+              <div className="grid grid-cols-2">
+                <div className="py-3">
+                  <text className="text-sm font-semibold">FIRST NAME</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.profile?.first_name ?? "NO DATA"}
+                  </text>
+                </div>
+                <div className="py-3">
+                  <text className="text-sm font-semibold">MIDDLE NAME</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.profile?.middle_name ?? "NO DATA"}
+                  </text>
+                </div>
+                <div className="py-3">
+                  <text className="text-sm font-semibold">LAST NAME</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.profile?.last_name ?? "NO DATA"}
+                  </text>
+                </div>
+                <div className="py-3">
+                  <text className="text-sm font-semibold">EMPLOYEE ID</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.employee_id ?? "NO DATA"}
+                  </text>
+                </div>
+                <div className="py-3">
+                  <text className="text-sm font-semibold">STREET ADDRESS</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.address?.street ?? "NO DATA"}
+                  </text>
+                </div>
+                <div className="py-3">
+                  <text className="text-sm font-semibold">HIRE DATE</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.hired_date?.toDateString() ?? "NO DATA"}
+                  </text>
+                </div>
+                <div className="py-3">
+                  <text className="text-sm font-semibold">SUBSIDIARY</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.subsidiary ?? "NO DATA"}
+                  </text>
+                </div>
+                <div className="py-3">
+                  <text className="text-sm font-semibold">PHONE NUMBER</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.profile?.phone_no ?? "NO DATA"}
+                  </text>
+                </div>
+                <div className="py-3">
+                  <text className="text-sm font-semibold">EMAIL</text>
+                </div>
+                <div className="py-3">
+                  <text className="col-span-2 text-sm">
+                    {info.email ?? "NO DATA"}
+                  </text>
                 </div>
               </div>
             </div>
-        }
+          </div>
+        )}
       </>
     </Modal>
-  );
+  )
 }

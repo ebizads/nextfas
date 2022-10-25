@@ -183,7 +183,6 @@ export const AssetDeleteModal = (props: {
     </Modal>
   )
 }
-
 const AssetTable = (props: {
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
@@ -245,7 +244,7 @@ const AssetTable = (props: {
               <th
                 key={col.name}
                 scope="col"
-                className="max-w-[10rem] truncate px-6 duration-150"
+                className="px-6 duration-150 max-w-[10rem] truncate"
               >
                 {col.name}
               </th>
@@ -290,7 +289,7 @@ const AssetTable = (props: {
                     }}
                   >
                     {getProperty(col.value, row)}
-                  </td>
+                    </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
                 <button>
@@ -309,6 +308,7 @@ const AssetTable = (props: {
           ))}
         </tbody>
       </table>
+
       <AssetDetailsModal
         asset={selectedAsset}
         openModalDesc={openModalDesc}

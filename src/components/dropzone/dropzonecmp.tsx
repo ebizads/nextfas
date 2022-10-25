@@ -4,11 +4,14 @@ import { IconUpload, IconX } from "@tabler/icons"
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone"
 import { ImageJSON } from "../../types/table"
 import Image from "next/image"
+import { UseFormSetValue } from "react-hook-form/dist/types"
+import { Employee } from "../employee/createEmployee"
 
 export default function DropzoneCMP(
   props: Partial<DropzoneProps> & {
     setImage: React.Dispatch<React.SetStateAction<ImageJSON>>
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+    setValue: UseFormSetValue<Employee>
   }
 ) {
   return (
@@ -18,13 +21,16 @@ export default function DropzoneCMP(
         console.log("accepted files")
 
         const img_file = URL.createObjectURL(files[0]!)
+
         props.setImage({
           name: files[0]!.name,
           size: files[0]!.size,
           file: img_file,
         })
         setTimeout(function () {
+          props.setValue('image', img_file)
           props.setIsLoading(false)
+
         }, 5000)
       }}
       onReject={(files) => console.log("rejected files", files)}

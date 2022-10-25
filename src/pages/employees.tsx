@@ -191,13 +191,13 @@ const FilterPopover = (props: {
             onChange={props.setFilterBy}
           >
             <div className="grid grid-cols-2">
-              {columns.map((col) => (
+              {columns.map((col, idx) => (
                 <Checkbox
                   color={"orange"}
-                  key={col.name}
+                  key={idx}
                   disabled={
                     props.filterBy.length === 1 &&
-                    props.filterBy.includes(col.value)
+                      props.filterBy.includes(col.value)
                       ? true
                       : false
                   }
@@ -362,6 +362,7 @@ const Employees = () => {
                   <div className="p-5">
                     <DropzoneCMP
                       setImage={setImage}
+                      loading={isLoading}
                       setIsLoading={setIsLoading}
                     />
                   </div>
@@ -375,7 +376,7 @@ const Employees = () => {
                         className="self-center"
                       />
                     ) : image.file === "" ? (
-                      <text className="text-center">Image Preview</text>
+                      <p className="text-center">Image Preview</p>
                     ) : (
                       <div className="flex flex-row gap-4">
                         <Image
@@ -387,8 +388,8 @@ const Employees = () => {
                           withPlaceholder
                         />
                         <div className="flex flex-col">
-                          <text>{image.name}</text>
-                          <text>{image.size} mb</text>
+                          <p>{image.name}</p>
+                          <p>{image.size} mb</p>
                         </div>
                       </div>
                     )}

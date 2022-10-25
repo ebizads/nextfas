@@ -65,8 +65,6 @@ const Vendors = () => {
     ...vendorColumns.map((i) => i.value),
   ])
 
-
-  const value = (new Date())
   const [image, setImage] = useState<ImageJSON>({
     name: "",
     size: 0,
@@ -253,6 +251,7 @@ const Vendors = () => {
                     <div className="p-5">
                       <DropzoneCMP
                         setImage={setImage}
+                        loading={isLoading}
                         setIsLoading={setIsLoading}
                       />
                     </div>
@@ -266,7 +265,7 @@ const Vendors = () => {
                           className="self-center"
                         />
                       ) : image.file === "" ? (
-                        <text className="text-center">Image Preview</text>
+                        <p className="text-center">Image Preview</p>
                       ) : (
                         <div className="flex flex-row gap-4">
                           <Image
@@ -278,8 +277,8 @@ const Vendors = () => {
                             withPlaceholder
                           />
                           <div className="flex flex-col">
-                            <text>{image.name}</text>
-                            <text>{image.size} mb</text>
+                            <p>{image.name}</p>
+                            <p>{image.size} mb</p>
                           </div>
                         </div>
                       )}

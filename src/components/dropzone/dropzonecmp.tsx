@@ -5,31 +5,33 @@ import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone"
 import { ImageJSON } from "../../types/table"
 import Image from "next/image"
 
-export default function DropzoneCMP(
-  props: Partial<DropzoneProps> & {
-    setImage: React.Dispatch<React.SetStateAction<ImageJSON>>
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-  }
+export default function DropzoneCMP({ setImage, loading, setIsLoading }: {
+  setImage: React.Dispatch<React.SetStateAction<ImageJSON>>
+  loading: boolean,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+}
 ) {
   return (
     <Dropzone
       onDrop={(files) => {
-        props.setIsLoading(true)
+        setIsLoading(true)
         console.log("accepted files")
 
+        console.log(files)
+
         const img_file = URL.createObjectURL(files[0]!)
-        props.setImage({
+        setImage({
           name: files[0]!.name,
           size: files[0]!.size,
           file: img_file,
         })
         setTimeout(function () {
-          props.setIsLoading(false)
+          setIsLoading(false)
         }, 5000)
       }}
       onReject={(files) => console.log("rejected files", files)}
       accept={IMAGE_MIME_TYPE}
-      {...props}
+
     >
       <Group
         position="center"

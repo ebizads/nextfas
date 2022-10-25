@@ -51,64 +51,64 @@ const EmployeeTable = (props: {
             <Avatar src="avatar.png" alt="it's me" radius={200} size={100} />
             <div className="flex flex-col">
               <div className="flex flex-row">
-                <text className="text-xl font-bold">
+                <p className="text-xl font-bold">
                   Clea Bernadette D. Payra
-                </text>
+                </p>
                 <div className="ml-2 mt-1 h-5 w-5 rounded-full border bg-green-500"></div>
               </div>
-              <text className="text-sm">eBiz-12029312391</text>
+              <p className="text-sm">eBiz-12029312391</p>
             </div>
           </div>
           <div className="flex flex-col px-3 py-3">
-            <text className="text-lg font-bold">Personal Information</text>
+            <p className="text-lg font-bold">Personal Information</p>
             <div className="grid grid-cols-2">
               <div className="py-3">
-                <text className="text-sm font-semibold">FIRST NAME</text>
+                <p className="text-sm font-semibold">FIRST NAME</p>
               </div>
               <div>
-                <text className="col-span-2 text-sm">Clea Bernadette</text>
+                <p className="col-span-2 text-sm">Clea Bernadette</p>
               </div>
               <div className="py-3">
-                <text className="text-sm font-semibold">MIDDLE NAME</text>
+                <p className="text-sm font-semibold">MIDDLE NAME</p>
               </div>
               <div>
-                <text className="col-span-2 text-sm">Domingo</text>
+                <p className="col-span-2 text-sm">Domingo</p>
               </div>
               <div className="py-3">
-                <text className="text-sm font-semibold">LAST NAME</text>
+                <p className="text-sm font-semibold">LAST NAME</p>
               </div>
               <div>
-                <text className="col-span-2 text-sm">Payra</text>
+                <p className="col-span-2 text-sm">Payra</p>
               </div>
               <div className="py-3">
-                <text className="text-sm font-semibold">EMPLOYEE ID</text>
+                <p className="text-sm font-semibold">EMPLOYEE ID</p>
               </div>
               <div>
-                <text className="col-span-2 text-sm">eB1z-12029312391</text>
+                <p className="col-span-2 text-sm">eB1z-12029312391</p>
               </div>
               <div className="py-3">
-                <text className="text-sm font-semibold">STREET ADDRESS</text>
+                <p className="text-sm font-semibold">STREET ADDRESS</p>
               </div>
               <div>
-                <text className="col-span-2 text-sm">123 Tondo</text>
+                <p className="col-span-2 text-sm">123 Tondo</p>
               </div>
               <div className="py-3">
-                <text className="text-sm font-semibold">HIRE DATE</text>
+                <p className="text-sm font-semibold">HIRE DATE</p>
               </div>
               <div>
-                <text className="col-span-2 text-sm">July 11, 2022</text>
+                <p className="col-span-2 text-sm">July 11, 2022</p>
               </div>
               <div className="py-3">
-                <text className="text-sm font-semibold">SUBSIDIARY</text>
+                <p className="text-sm font-semibold">SUBSIDIARY</p>
               </div>
               <div>
-                <text className="col-span-2 text-sm">eBizolution Inc.</text>
+                <p className="col-span-2 text-sm">eBizolution Inc.</p>
               </div>
               <div className="py-3">
-                <text className="text-sm font-semibold">PHONE NUMBER</text>
+                <p className="text-sm font-semibold">PHONE NUMBER</p>
               </div>
               <div>
-                <text className="col-span-2 text-sm">0932423423</text>
+                <p className="col-span-2 text-sm">0932423423</p>
               </div>
             </div>
           </div>
@@ -119,9 +119,8 @@ const EmployeeTable = (props: {
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {typeof props.rows === "object" ? (
         <div>{showDetails()}</div>

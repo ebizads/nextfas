@@ -1,5 +1,7 @@
-import { AssetType, VendorType } from "../types/assets"
+import { AssetType, VendorType } from "../types/generic"
 import { EmployeeRowType } from "../types/table"
+import * as XLSX from "xlsx"
+import { ExcelExportType } from "../types/employee"
 
 export const getProperty = (
   filter: string,
@@ -29,4 +31,13 @@ export const formatBytes = (bytes: number) => {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
+export const downloadExcel = (data: ExcelExportType[]) => {
+  const worksheet = XLSX.utils.json_to_sheet(data)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  XLSX.writeFile(workbook, "DataSheet.xlsx")
 }

@@ -4,7 +4,7 @@ import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
-import { EmployeeType } from "../../../types/assets"
+import { EmployeeType } from "../../../types/generic"
 import { columns } from "../../../lib/table"
 
 const EmployeeTable = (props: {
@@ -38,9 +38,8 @@ const EmployeeTable = (props: {
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -115,8 +114,8 @@ const EmployeeTable = (props: {
                     {col.value === "hired_date"
                       ? row?.hired_date?.toDateString() ?? "No Data"
                       : col.value === "city"
-                      ? row?.address?.city ?? "No Data"
-                      : // : getEmployeeProperty(col.value, row)}
+                        ? row?.address?.city ?? "No Data"
+                        : // : getEmployeeProperty(col.value, row)}
                         ""}
                   </td>
                 ))}

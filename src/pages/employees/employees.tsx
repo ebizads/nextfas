@@ -11,6 +11,8 @@ import { ExcelExportType } from "../../types/employee"
 import FilterPopOver from "../../components/atoms/popover/FilterPopOver"
 import { employeeColumns } from "../../lib/table"
 import PaginationPopOver from "../../components/atoms/popover/PaginationPopOver"
+import AddEmployeePopOver from "../../components/atoms/popover/AddEmployeePopOver"
+import DropZone from "../../components/dropzone/DropZone"
 
 type SearchType = {
   value: string
@@ -44,18 +46,16 @@ const DisplayEmployees = (props: {
 }) => {
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
+  const [openAddPopover, setOpenAddPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [filterBy, setFilterBy] = useState<string[]>(employeeColumns.map((i) => i.value),
   )
 
-  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false)
+  const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
   const value = new Date()
-  const [image, setImage] = useState<ImageJSON>({
-    name: "",
-    size: 0,
-    file: "",
-  })
+  const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   return (
     <div>
@@ -101,27 +101,17 @@ const DisplayEmployees = (props: {
 
                     return { ...rest, ...address, ...profile, id: rest.id }
                   }
-                  return
-                }) as ExcelExportType[]
 
-                if (downloadableEmployees) {
-                  downloadExcel(downloadableEmployees)
-                }
+                }) as ExcelExportType[]
+                console.log("opo: ", downloadableEmployees)
+                downloadExcel(downloadableEmployees)
               }}
-              className="-md flex gap-2 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
+              className="-md flex gap-2 bg-tangerine-500 py-2 px-4 text-xs rounded-md text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
             >
               <i className="fa-solid fa-print text-xs" />
               Generate CVs
             </button>
-            <button
-              onClick={() => {
-                setIsVisible(true)
-              }}
-              className="-md flex gap-2 border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none"
-            >
-              <i className="fa-regular fa-plus text-xs" />
-              Add New
-            </button>
+            <AddEmployeePopOver openPopover={openAddPopover} setOpenPopover={setOpenAddPopover} setAddSingleRecord={setAddSingleRecord} setAddBulkRecord={setAddBulkRecord} />
           </div>
         </div>
 
@@ -157,19 +147,29 @@ const DisplayEmployees = (props: {
       </section>
 
       <Modal
-        title="Add New Employee"
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
+        title="Add Employee Record"
+        isVisible={addSingleRecord}
+        setIsVisible={setAddSingleRecord}
         className="max-w-4xl"
+
       >
         <CreateEmployeeModal
           value={value}
           setImage={setImage}
-          image={image}
+          images={images}
           setIsLoading={setIsLoading}
           isLoading={isLoading}
         />
       </Modal>
+      <Modal
+        title="Add Bulk Record of Employees"
+        isVisible={addBulkRecord}
+        setIsVisible={setAddBulkRecord}
+        className="max-w-4xl"
+      >
+        <DropZone file_type="xlsx" acceptingMany={false} loading={isLoading} setIsLoading={setIsLoading} />
+      </Modal>
+
     </div>
   )
 }

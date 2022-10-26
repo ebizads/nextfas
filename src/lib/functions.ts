@@ -57,16 +57,16 @@ export const formatBytes = (bytes: number) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
-export const downloadExcel = (data: ExcelExportType[] | null) => {
-  if (!data) {
-    // csv null fall back
-    const worksheet = XLSX.utils.json_to_sheet(data ?? [])
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-    //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-    //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-    XLSX.writeFile(workbook, "DataSheet.xlsx")
-  }
+export const downloadExcel = (data: ExcelExportType[]) => {
+  // if (!data) {
+  // csv null fall back
+  const worksheet = XLSX.utils.json_to_sheet(data ?? [])
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  XLSX.writeFile(workbook, "DataSheet.xlsx")
+  // }
 
   return
 }

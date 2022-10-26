@@ -249,7 +249,7 @@ const Vendors = () => {
                     classNames={{ input: "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2", label: "font-sans text-sm text-gray-600 text-light" }}
                   />
                 </div>
-                <DropZoneComponent images={images} setImage={setImage} isLoading={isLoading} setIsLoading={setIsLoading} />
+                <DropZoneComponent images={images} setImage={setImage} isLoading={isLoading} setIsLoading={setIsLoading} acceptingMany={true} />
 
               </div>
               <div className="w-full flex justify-end gap-2 py-4">

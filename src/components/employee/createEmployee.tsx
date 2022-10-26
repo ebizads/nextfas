@@ -9,18 +9,19 @@ import { trpc } from "../../utils/trpc"
 import AlertInput from "../atoms/forms/AlertInput"
 import { InputField } from "../atoms/forms/InputField"
 import { Select, Loader, Image, Text } from "@mantine/core"
+import DropZoneComponent from "../dropzone/DropZoneComponent"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
 export const CreateEmployeeModal = (props: {
   value: Date
-  setImage: React.Dispatch<React.SetStateAction<ImageJSON>>
-  image: ImageJSON
+  setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
+  images: ImageJSON[]
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   isLoading: boolean
 }) => {
   const [searchValue, onSearchChange] = useState("")
-  const { mutate, isLoading, error } = trpc.employee.create.useMutation()
+  const { mutate, isLoading: employeeLoading, error } = trpc.employee.create.useMutation()
   const {
     register,
     handleSubmit,
@@ -325,57 +326,21 @@ export const CreateEmployeeModal = (props: {
             </AlertInput>
           </div>
         </div>
-        <div className="flex flex-wrap gap-4 py-2.5 px-5 ">
-          <div className="w-[48%] rounded-md border bg-white drop-shadow-2xl">
-            <div className="p-5">
-              {/* <DropZoneComponent
-                setImage={props.setImage}
-                setIsLoading={props.setIsLoading}
-                setValue={setValue}
-              /> */}
-            </div>
-          </div>
-          <div className="flex w-[48%] flex-wrap content-center rounded-md border bg-white drop-shadow-2xl">
-            <div className="flex  w-full items-center justify-center">
-              {props.isLoading === true ? (
-                <Loader color="orange" variant="bars" className="self-center" />
-              ) : props.image.file === "" ? (
-                <Image
-                  height={120}
-                  width={200}
-                  src="42.png"
-                  alt="With custom placeholder"
-                  withPlaceholder
-                  placeholder={<Text align="center">This image </Text>}
-                ></Image>
-              ) : (
-                <div className="flex flex-row gap-4">
-                  <Image
-                    radius="md"
-                    src={props.image.file}
-                    alt="Image"
-                    width={135}
-                    height={135}
-                    withPlaceholder
-                  />
-                  <div className="flex flex-col p-5">
-                    <text>{props.image.name}</text>
-                    <text>{props.image.size} mb</text>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className=""></div>
-          </div>
-        </div>
+        <DropZoneComponent
+          setImage={props.setImage}
+          setIsLoading={props.setIsLoading}
+          images={props.images}
+          isLoading={props.isLoading}
+          acceptingMany={false}
+        />
         <hr className="w-full"></hr>
         <div className="flex w-full justify-end">
           <button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={isLoading}
+            disabled={employeeLoading}
           >
-            {isLoading ? "Loading..." : "Register"}
+            {employeeLoading ? "Loading..." : "Register"}
           </button>
         </div>
       </form>

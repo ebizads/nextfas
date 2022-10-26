@@ -399,6 +399,7 @@ model calendar {
   endDate   DateTime?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+
   deletedAt DateTime?
   deleted   Boolean    @default(false)
   employee  employee[]

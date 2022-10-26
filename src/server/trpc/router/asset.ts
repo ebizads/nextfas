@@ -1,7 +1,8 @@
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { AssetCreateInput, AssetEditInput } from "../../common/schemas/asset"
+import { AssetEditInput } from "../../common/schemas/asset"
+import { CreateAssetProcudure } from "../procedures/asset"
 import { authedProcedure, t } from "../trpc"
 
 export const assetRouter = t.router({
@@ -32,13 +33,10 @@ export const assetRouter = t.router({
               },
               include: {
                 category: true,
-                class: true,
                 type: true,
                 manufacturer: true,
                 vendor: true,
                 model: true,
-                location: true,
-                custodian: true,
               },
               where: {
                 NOT: {
@@ -48,7 +46,6 @@ export const assetRouter = t.router({
                 number: { contains: input?.search },
                 serial_number: { contains: input?.search },
                 typeId: input?.filter?.typeId,
-                classId: input?.filter?.classId,
                 categoryId: input?.filter?.categoryId,
               },
               skip: input?.page
@@ -89,54 +86,15 @@ export const assetRouter = t.router({
       },
       include: {
         category: true,
-        class: true,
         type: true,
         manufacturer: true,
         vendor: true,
         model: true,
-        location: true,
-        custodian: true,
       },
     })
     return asset
   }),
-  create: authedProcedure
-    .input(AssetCreateInput)
-    .mutation(async ({ ctx, input }) => {
-      const { model, ...rest } = input
-
-      try {
-        await ctx.prisma.$transaction(
-          [
-            ctx.prisma.asset.create({
-              data: {
-                ...rest,
-              },
-            }),
-            ctx.prisma.asset.update({
-              where: {
-                number: rest.number,
-              },
-              data: {
-                model: {
-                  create: model ?? undefined,
-                },
-              },
-            }),
-          ],
-          {
-            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-          }
-        )
-
-        return "Asset successfully created"
-      } catch (error) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: JSON.stringify(error),
-        })
-      }
-    }),
+  create: CreateAssetProcudure,
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {

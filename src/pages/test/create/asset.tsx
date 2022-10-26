@@ -36,6 +36,17 @@ const RegisterAsset = () => {
         brand: "OMSKIRT",
         number: "2",
       },
+      general: {
+        purchase_date: new Date(),
+        currency: "PHP",
+        classId: 1,
+        custodianId: 1,
+        location: {
+          department: "DevOps",
+          floor: "7th",
+          room: "7-1",
+        },
+      },
     })
     reset()
   }

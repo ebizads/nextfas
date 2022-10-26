@@ -7,6 +7,10 @@ import { ImageJSON } from "../../types/table"
 import Modal from "../../components/headless/modal/modal"
 import { CreateEmployeeModal } from "../../components/employee/createEmployee"
 import { downloadExcel } from "../../lib/functions"
+import { ExcelExportType } from "../../types/employee"
+import FilterPopOver from "../../components/atoms/popover/FilterPopOver"
+import { employeeColumns } from "../../lib/table"
+import PaginationPopOver from "../../components/atoms/popover/PaginationPopOver"
 
 type SearchType = {
   value: string
@@ -29,123 +33,6 @@ const Search = (props: { data: SearchType[] }) => {
   )
 }
 
-const showAssetsBy = [5, 10, 20, 50]
-
-const FilterPopover = (props: {
-  openPopover: boolean
-  setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
-  filterBy: string[]
-  setFilterBy: React.Dispatch<React.SetStateAction<string[]>>
-}) => {
-  return (
-    <Popover
-      opened={props.openPopover}
-      onClose={() => props.setOpenPopover(false)}
-      trapFocus={false}
-      position="bottom"
-      zIndex={20}
-      classNames={{
-        dropdown: "p-0 w-80 -md-lg",
-      }}
-    >
-      <Popover.Target>
-        <button
-          onClick={() => {
-            props.setOpenPopover(!props.openPopover)
-          }}
-          className="-md group flex w-7 gap-2 bg-tangerine-500 p-2 text-xs  text-neutral-50 outline-none transition-width duration-200 hover:w-16 hover:bg-tangerine-400 focus:outline-none"
-        >
-          <i className="fa-regular fa-bars-filter text-xs" />
-          <span className="invisible group-hover:visible">Filter</span>
-        </button>
-      </Popover.Target>{" "}
-      <Popover.Dropdown>
-        <div className="-t-md h-2 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500"></div>
-        <div className="px-4 py-2">
-          <Checkbox.Group
-            orientation="vertical"
-            description="Filter by"
-            value={props.filterBy}
-            onChange={props.setFilterBy}
-          >
-            <div className="grid grid-cols-2 gap-2">
-              {columns.map((col) => (
-                <Checkbox
-                  color={"orange"}
-                  key={col.name}
-                  disabled={
-                    props.filterBy.length === 1 &&
-                      props.filterBy.includes(col.value)
-                      ? true
-                      : false
-                  }
-                  value={col.value}
-                  label={col.name}
-                  classNames={{
-                    input:
-                      "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                  }}
-                />
-              ))}
-            </div>
-          </Checkbox.Group>
-        </div>
-      </Popover.Dropdown>
-    </Popover>
-  )
-}
-
-const PaginationPopover = (props: {
-  paginationPopover: boolean
-  setPaginationPopover: React.Dispatch<React.SetStateAction<boolean>>
-  page: number
-  setPage: React.Dispatch<React.SetStateAction<number>>
-  limit: number
-  setLimit: React.Dispatch<React.SetStateAction<number>>
-}) => {
-  return (
-    <Popover
-      opened={props.paginationPopover}
-      onClose={() => props.setPaginationPopover(false)}
-      trapFocus={false}
-      position="top"
-      zIndex={10}
-      classNames={{
-        dropdown: "p-0 -md-lg",
-      }}
-    >
-      <Popover.Target>
-        <button
-          onClick={() => {
-            props.setPaginationPopover(!props.paginationPopover)
-          }}
-          className="-lg flex items-center justify-center gap-2 bg-gradient-to-r from-tangerine-300 to-tangerine-500 py-1 px-3 text-neutral-50"
-        >
-          <p className="font-medium">{props.limit}</p>
-          <i className="fa-regular fa-chevron-down" />
-        </button>
-      </Popover.Target>
-      <Popover.Dropdown>
-        <div className="-t-md h-2 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500"></div>
-        <ul className="px-4 py-2">
-          {showAssetsBy.map((i) => (
-            <li
-              key={i}
-              className="cursor-pointer hover:bg-tangerine-50"
-              onClick={() => {
-                props.setLimit(i)
-                props.setPage(1)
-              }}
-            >
-              {i}
-            </li>
-          ))}
-        </ul>
-      </Popover.Dropdown>
-    </Popover>
-  )
-}
-
 const DisplayEmployees = (props: {
   total: number
   employees: EmployeeType[]
@@ -158,9 +45,8 @@ const DisplayEmployees = (props: {
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
-  const [filterBy, setFilterBy] = useState<string[]>([
-    ...columns.map((i) => i.value),
-  ])
+  const [filterBy, setFilterBy] = useState<string[]>(employeeColumns.map((i) => i.value),
+  )
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
@@ -182,18 +68,19 @@ const DisplayEmployees = (props: {
                   data={[
                     ...props.employees?.map((obj) => {
                       return {
-                        value: obj.id.toString(),
-                        label: obj.name.toString(),
+                        value: obj?.id.toString() ?? "",
+                        label: obj?.name.toString() ?? "",
                       }
                     }),
                   ]}
                 />
               </div>
-              <FilterPopover
+              <FilterPopOver
                 openPopover={openPopover}
                 setOpenPopover={setOpenPopover}
                 filterBy={filterBy}
                 setFilterBy={setFilterBy}
+                columns={employeeColumns}
               />
             </div>
             {checkboxes.length > 0 && (
@@ -207,7 +94,19 @@ const DisplayEmployees = (props: {
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
-                downloadExcel(props.employees)
+                const downloadableEmployees = props.employees.map((employee) => {
+                  if (employee?.['address'] && employee?.['profile']) {
+
+                    const { address, profile, ...rest } = employee
+
+                    return { ...rest, ...address, ...profile, id: rest.id }
+                  }
+                  return
+                }) as ExcelExportType[]
+
+                if (downloadableEmployees) {
+                  downloadExcel(downloadableEmployees)
+                }
               }}
               className="-md flex gap-2 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
             >
@@ -237,7 +136,7 @@ const DisplayEmployees = (props: {
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">
           <p>Showing </p>
-          <PaginationPopover
+          <PaginationPopOver
             paginationPopover={paginationPopover}
             setPaginationPopover={setPaginationPopover}
             page={props.page}

@@ -1,19 +1,24 @@
-import { AssetType, VendorType } from "../types/generic"
-import { EmployeeRowType } from "../types/table"
+import { AssetType, EmployeeType, VendorType } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
 
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeRowType | VendorType
+  type: AssetType | EmployeeType | VendorType,
+  subfilter?: string
 ) => {
   //get object property
-  const obj = Object.getOwnPropertyDescriptor(type, filter)?.value
+  const property =
+    Object.getOwnPropertyDescriptor(type, filter)?.value ?? "No value"
 
   //returns the actual property as string
-  if (typeof obj === "string") return obj as string
-  return obj ? Object.getOwnPropertyDescriptor(obj, "name")?.value : "No Value"
+  if (typeof property === "string") return property ?? "No Value"
+  //dig deeper if obj is an actual obj
+  return property
+    ? Object.getOwnPropertyDescriptor(property, "name")?.value
+    : "No Value"
 
+  // Allen's approach
   // if (typeof type?.[filter as keyof typeof type] === "object") {
   //   return (
   //     (
@@ -26,6 +31,18 @@ export const getProperty = (
   // }
 
   // return type?.[filter as keyof typeof type] ?? "No value"
+}
+
+export const getName = (filter: string, type: EmployeeType) => {
+  return filter === "first_name"
+    ? Object.getOwnPropertyDescriptor(type?.profile, "first_name")?.value
+    : filter === "middle_name"
+    ? Object.getOwnPropertyDescriptor(type?.profile, "middle_name")?.value
+    : Object.getOwnPropertyDescriptor(type?.profile, "last_name")?.value
+}
+
+export const getAddress = (type: EmployeeType) => {
+  return `${type?.address?.state} ${type?.address?.street}, ${type?.address?.city}, ${type?.address?.country} `
 }
 
 export const formatBytes = (bytes: number) => {

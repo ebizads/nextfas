@@ -41,7 +41,6 @@ export const employeeRouter = t.router({
               include: {
                 address: true,
                 profile: true,
-                owned_assets: true,
               },
               where: {
                 NOT: {

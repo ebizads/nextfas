@@ -53,8 +53,6 @@ model user {
   sessions       Session[]
   address        address?
   profile        profile?
-  lockedUntil    DateTime?
-  attempts       Int       @default(0)
 }
 
 model employee {
@@ -239,7 +237,6 @@ model asset {
   model                 model?        @relation(fields: [modelId], references: [id])
   type                  type?         @relation(fields: [typeId], references: [id])
   vendor                vendor?       @relation(fields: [vendorId], references: [id])
-  general               general?
 
   // general subtab connection
   general general?

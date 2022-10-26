@@ -5,7 +5,8 @@ import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
 import { EmployeeType } from "../../../types/generic"
-import { columns } from "../../../lib/table"
+import { columns, employeeColumns } from "../../../lib/table"
+import { getAddress, getName, getProperty } from "../../../lib/functions"
 
 const EmployeeTable = (props: {
   checkboxes: number[]
@@ -60,15 +61,16 @@ const EmployeeTable = (props: {
                 />
               </div>
             </th>
-            {props.columns.map((col) => (
-              <th
-                key={col.name}
-                scope="col"
-                className="max-w-[10rem] truncate px-6 duration-150"
-              >
-                {col.name}
-              </th>
-            ))}
+            {props.columns.filter((col) => props.filterBy.includes(col.value))
+              .map((col) => (
+                <th
+                  key={col.name}
+                  scope="col"
+                  className="max-w-[10rem] truncate px-6 duration-150"
+                >
+                  {col.name}
+                </th>
+              ))}
 
             <th scope="col" className="p-4 text-center">
               Action
@@ -100,7 +102,7 @@ const EmployeeTable = (props: {
                   />
                 </div>
               </td>
-              {columns
+              {employeeColumns
                 .filter((col) => props.filterBy.includes(col.value))
                 .map((col) => (
                   <td
@@ -111,12 +113,11 @@ const EmployeeTable = (props: {
                       setDetails(row)
                     }}
                   >
-                    {col.value === "hired_date"
-                      ? row?.hired_date?.toDateString() ?? "No Data"
-                      : col.value === "city"
-                        ? row?.address?.city ?? "No Data"
-                        : // : getEmployeeProperty(col.value, row)}
-                        ""}
+                    {
+                      // ternary operator that returns special values for date, name, and address
+                      col.value === "hired_date" ? row?.hired_date?.toDateString() : col.value.match(/_name/g) ? getName(col.value, row) : col.value === "city" ? getAddress(row) :
+                        getProperty(col.value, row)
+                    }
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
@@ -127,6 +128,7 @@ const EmployeeTable = (props: {
           ))}
         </tbody>
       </table>
+      {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <ShowDetails
         isVisible={isVisible}
         setIsVisible={setIsVisible}
@@ -155,7 +157,6 @@ function ShowDetails({
       className="max-w-lg"
     >
       <>
-        {console.log(info)}
         {info == null ? (
           <div></div>
         ) : (
@@ -164,88 +165,88 @@ function ShowDetails({
               <Avatar src={info.image} alt="it's me" radius={200} size={100} />
               <div className="flex flex-col">
                 <div className="flex flex-row">
-                  <text className="text-xl font-bold">
+                  <p className="text-xl font-bold">
                     {info.profile?.first_name}
-                  </text>
+                  </p>
                   <div className="ml-2 mt-1 h-5 w-5 rounded-full border bg-green-500"></div>
                 </div>
-                <text className="text-sm">{`${info.employee_id}`}</text>
+                <p className="text-sm">{`${info.employee_id}`}</p>
               </div>
             </div>
             <div className="flex flex-col px-3 py-3">
-              <text className="text-lg font-bold">Personal Information</text>
+              <p className="text-lg font-bold">Personal Information</p>
               <div className="grid grid-cols-2">
                 <div className="py-3">
-                  <text className="text-sm font-semibold">FIRST NAME</text>
+                  <p className="text-sm font-semibold">FIRST NAME</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.profile?.first_name ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
                 <div className="py-3">
-                  <text className="text-sm font-semibold">MIDDLE NAME</text>
+                  <p className="text-sm font-semibold">MIDDLE NAME</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.profile?.middle_name ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
                 <div className="py-3">
-                  <text className="text-sm font-semibold">LAST NAME</text>
+                  <p className="text-sm font-semibold">LAST NAME</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.profile?.last_name ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
                 <div className="py-3">
-                  <text className="text-sm font-semibold">EMPLOYEE ID</text>
+                  <p className="text-sm font-semibold">EMPLOYEE ID</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.employee_id ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
                 <div className="py-3">
-                  <text className="text-sm font-semibold">STREET ADDRESS</text>
+                  <p className="text-sm font-semibold">STREET ADDRESS</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.address?.street ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
                 <div className="py-3">
-                  <text className="text-sm font-semibold">HIRE DATE</text>
+                  <p className="text-sm font-semibold">HIRE DATE</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.hired_date?.toDateString() ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
                 <div className="py-3">
-                  <text className="text-sm font-semibold">SUBSIDIARY</text>
+                  <p className="text-sm font-semibold">SUBSIDIARY</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.subsidiary ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
                 <div className="py-3">
-                  <text className="text-sm font-semibold">PHONE NUMBER</text>
+                  <p className="text-sm font-semibold">PHONE NUMBER</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.profile?.phone_no ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
                 <div className="py-3">
-                  <text className="text-sm font-semibold">EMAIL</text>
+                  <p className="text-sm font-semibold">EMAIL</p>
                 </div>
                 <div className="py-3">
-                  <text className="col-span-2 text-sm">
+                  <p className="col-span-2 text-sm">
                     {info.email ?? "NO DATA"}
-                  </text>
+                  </p>
                 </div>
               </div>
             </div>

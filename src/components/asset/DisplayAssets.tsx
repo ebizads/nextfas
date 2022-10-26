@@ -22,9 +22,7 @@ const DisplayAssets = (props: {
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
-  const [filterBy, setFilterBy] = useState<string[]>([
-    ...columns.map((i) => i.value),
-  ])
+  const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
 
   return (
     <div className="space-y-4">

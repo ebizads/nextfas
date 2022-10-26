@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
 import EmployeeTable from "../../components/atoms/table/EmployeeTable"
-import { EmployeeType } from "../../types/assets"
+import { EmployeeType } from "../../types/generic"
 import { columns } from "../../lib/employeeTable"
 import { ImageJSON } from "../../types/table"
 import Modal from "../../components/headless/modal/modal"
@@ -75,7 +75,7 @@ const FilterPopover = (props: {
                   key={col.name}
                   disabled={
                     props.filterBy.length === 1 &&
-                    props.filterBy.includes(col.value)
+                      props.filterBy.includes(col.value)
                       ? true
                       : false
                   }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DashboardLayout from '../../layouts/DashboardLayout'
-import { EmployeeType } from '../../types/assets'
+import { EmployeeType } from '../../types/generic'
 import { trpc } from '../../utils/trpc'
 import DisplayEmployees from './employees'
 

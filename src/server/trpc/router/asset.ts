@@ -75,6 +75,7 @@ export const assetRouter = t.router({
           total: assetsCount,
         }
       } catch (error) {
+        console.log(error)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),

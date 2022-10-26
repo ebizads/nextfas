@@ -47,12 +47,12 @@ model user {
   image          String?
   deleted        Boolean   @default(false)
   deletedAt      DateTime?
+  lockedUntil    DateTime?
+  attempts       Int       @default(0)
   accounts       Account[]
   sessions       Session[]
   address        address?
   profile        profile?
-  lockedUntil    DateTime?
-  attempts       Int @default(0)
 }
 
 model employee {
@@ -72,7 +72,7 @@ model employee {
   work_calendarId Int?
   calendar        calendar? @relation(fields: [work_calendarId], references: [id])
   address         address?
-  owned_assets    asset[]
+  general         general[]
   profile         profile?
 
   @@index([employee_id, name, email, hired_date, subsidiary], map: "employee_index")
@@ -126,14 +126,16 @@ model address {
 }
 
 model location {
-  id         Int       @id @default(autoincrement())
-  department String?
-  floor      String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deletedAt  DateTime?
-  deleted    Boolean   @default(false)
-  assets     asset?
+  id                                            Int       @id @default(autoincrement())
+  department                                    String?
+  floor                                         String?
+  room                                          String?
+  createdAt                                     DateTime  @default(now())
+  updatedAt                                     DateTime  @updatedAt
+  deletedAt                                     DateTime?
+  deleted                                       Boolean   @default(false)
+  general_general_locationIdTolocation          general[] @relation("general_locationIdTolocation")
+  general_general_physical_locationIdTolocation general[] @relation("general_physical_locationIdTolocation")
 }
 
 model type {
@@ -153,7 +155,7 @@ model asset_class {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
-  assets    asset[]
+  general   general[]
 }
 
 model model {
@@ -223,45 +225,40 @@ model asset {
   updatedAt             DateTime      @updatedAt
   deletedAt             DateTime?
   deleted               Boolean       @default(false)
-  locationId            Int?          @unique
-  custodianId           Int?
   typeId                Int?
   modelId               Int?
-  classId               Int?
   categoryId            Int?
   manufacturerId        Int?
   vendorId              Int?
   barcode               String?
   category              category?     @relation(fields: [categoryId], references: [id])
-  class                 asset_class?  @relation(fields: [classId], references: [id])
-  custodian             employee?     @relation(fields: [custodianId], references: [id])
-  location              location?     @relation(fields: [locationId], references: [id])
   manufacturer          manufacturer? @relation(fields: [manufacturerId], references: [id])
   model                 model?        @relation(fields: [modelId], references: [id])
   type                  type?         @relation(fields: [typeId], references: [id])
   vendor                vendor?       @relation(fields: [vendorId], references: [id])
+  general               general?
 
-  @@index([name, number, serial_number, typeId, categoryId, classId])
+  @@index([name, number, serial_number, typeId, categoryId])
 }
 
 model general {
-  id                   Int       @id @default(autoincrement())
-  subsidiary           String?
-  currency             String?
-  rev_current_period   Int?
-  rev_remaining_life   String?
-  financial_year_start DateTime?
-  annual_method_entry  String?
-  convention           String?
-  period_convention    String?
-  prior_year_nbv       String?
-  allow_override       Boolean?
-  add_alternate_method Boolean?
-  store_history        String?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  deletedAt            DateTime?
-  deleted              Boolean   @default(false)
+  id                                             Int          @id @default(autoincrement())
+  assetId                                        Int          @unique
+  currency                                       String?
+  purchase_date                                  DateTime?
+  custodianId                                    Int?
+  physical_locationId                            Int?
+  locationId                                     Int?
+  classId                                        Int?
+  createdAt                                      DateTime     @default(now())
+  updatedAt                                      DateTime     @updatedAt
+  deletedAt                                      DateTime?
+  deleted                                        Boolean      @default(false)
+  asset                                          asset        @relation(fields: [assetId], references: [id])
+  asset_class                                    asset_class? @relation(fields: [classId], references: [id])
+  employee                                       employee?    @relation(fields: [custodianId], references: [id])
+  location_general_locationIdTolocation          location?    @relation("general_locationIdTolocation", fields: [locationId], references: [id])
+  location_general_physical_locationIdTolocation location?    @relation("general_physical_locationIdTolocation", fields: [physical_locationId], references: [id])
 }
 
 model lease {
@@ -396,8 +393,7 @@ model calendar {
   startDate DateTime?
   endDate   DateTime?
   createdAt DateTime   @default(now())
-  updatedAt DateTime  @updatedAt
-
+  updatedAt DateTime   @updatedAt
   deletedAt DateTime?
   deleted   Boolean    @default(false)
   employee  employee[]

@@ -263,7 +263,6 @@ export const assetSeed: z.infer<typeof AssetCreateInput>[] = [
     current_cost: 50000,
     current_netbook_value: 40000,
     original_cost: 50000,
-    classId: 1,
     categoryId: 1,
     typeId: 1,
     model: {
@@ -280,7 +279,6 @@ export const assetSeed: z.infer<typeof AssetCreateInput>[] = [
     current_cost: 50000,
     current_netbook_value: 40000,
     original_cost: 50000,
-    classId: 2,
     categoryId: 3,
     typeId: 4,
     model: {

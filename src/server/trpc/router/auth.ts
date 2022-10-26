@@ -37,7 +37,7 @@ export const authRouter = t.router({
               create: profile ?? undefined,
             },
             address: {
-              create: address ?? undefined,
+              create: address,
             },
           },
         })

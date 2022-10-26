@@ -9,7 +9,6 @@ export const LocationCreateInput = z
   .optional()
 
 export const GeneralCreateInput = z.object({
-  assetId: z.number(),
   currency: z.string().nullish().optional(),
   purchase_date: z.date().nullish().optional(),
   custodianId: z.number().nullish().optional(),

@@ -32,7 +32,7 @@ export const CreateAssetProcudure = authedProcedure
         }
       )
 
-      // TODO convert to transaction if assets connections are established
+      // general asset information
       await ctx.prisma.$transaction([
         ctx.prisma.asset.update({
           where: {

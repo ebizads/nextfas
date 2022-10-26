@@ -5,20 +5,27 @@ import { ExcelExportType } from "../types/employee"
 
 export const getProperty = (
   filter: string,
-  asset: AssetType | EmployeeRowType | VendorType
+  type: AssetType | EmployeeRowType | VendorType
 ) => {
   //get object property
-  // if (filter.includes("-")) {
-  //   const arr = filter.split("-") as string[];
-  //   console.log(asset);
-  //   const obj =
-  //     Object.getOwnPropertyDescriptor(asset, arr[0]!) ?? `asset[${filter}]`;
-  //   // console.log(obj);
-  //   return;
+  const obj = Object.getOwnPropertyDescriptor(type, filter)?.value
+
+  //returns the actual property as string
+  if (typeof obj === "string") return obj as string
+  return obj ? Object.getOwnPropertyDescriptor(obj, "name")?.value : "No Value"
+
+  // if (typeof type?.[filter as keyof typeof type] === "object") {
+  //   return (
+  //     (
+  //       type?.[filter as keyof typeof type] as unknown as Record<
+  //         string,
+  //         unknown
+  //       >
+  //     )?.name ?? "No value"
+  //   )
   // }
-  const property =
-    Object.getOwnPropertyDescriptor(asset, filter)?.value ?? `attr[${filter}]`
-  return property
+
+  // return type?.[filter as keyof typeof type] ?? "No value"
 }
 
 export const formatBytes = (bytes: number) => {
@@ -33,11 +40,16 @@ export const formatBytes = (bytes: number) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
-export const downloadExcel = (data: ExcelExportType[]) => {
-  const worksheet = XLSX.utils.json_to_sheet(data)
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "DataSheet.xlsx")
+export const downloadExcel = (data: ExcelExportType[] | null) => {
+  if (!data) {
+    // csv null fall back
+    const worksheet = XLSX.utils.json_to_sheet(data ?? [])
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+    //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+    //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+    XLSX.writeFile(workbook, "DataSheet.xlsx")
+  }
+
+  return
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Group, Text } from "@mantine/core"
 import { IconUpload, IconX } from "@tabler/icons"
 import { Dropzone, IMAGE_MIME_TYPE, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone"
@@ -8,6 +8,8 @@ import * as XLSX from "xlsx";
 import { EmployeeType } from "../../types/generic"
 import { ExcelExportType } from "../../types/employee"
 import { trpc } from "../../utils/trpc"
+import { employee } from "@prisma/client"
+import DuplicateAccordion from "../atoms/accordions/DuplicateAccordion"
 
 
 export default function DropZone({
@@ -24,28 +26,22 @@ export default function DropZone({
   acceptingMany?: boolean
 }) {
 
-  const [employeesJSON, setEmployeesJSON] = useState<ExcelExportType[] | null>(null)
   const [idList, setIdList] = useState<number[]>([])
 
   const { data: duplicates } = trpc.employee.checkDuplicates.useQuery(idList)
+  const [duplicatedEmployees, setDuplicatedEmployees] = useState<unknown[]>([])
   const { mutate: create } = trpc.employee.createMany.useMutation()
 
   const parseEmployeesData = (data: unknown[]) => {
 
-
+    //returns all id of parsed employees
     const id_list = data.map((employee) => {
-
       return (employee as number[])[0] as number
     }) as number[]
-    console.log(id_list)
     setIdList(id_list)
-
-    // id list
-    // const id_list = parsedEmployees.map(employee => Number(employee[0]))
-    // setIdList(id_list)
-    // console.log("here: ", id_list)
-
-    // setEmployeesJSON(parsedEmployees)
+    const dupEmployees = data.filter(employee => id_list.includes(employee ? (employee as number[])[0] as number : -1)).reverse()
+    setDuplicatedEmployees(dupEmployees)
+    // console.log(dupEmployees)
   }
 
   return (
@@ -163,9 +159,18 @@ export default function DropZone({
               </div>
             </Group>
           </Dropzone> :
-          <div>
-            <div>Duplicates</div>
-            <pre>{JSON.stringify(duplicates, null, 2)}</pre>
+          <div className="px-4 py-2 flex flex-col gap-2">
+            <h6 className="text-lg font-medium">Duplicates found!</h6>
+            <div className="bg-yellow-100 p-4 flex gap-4 items-center text-light-secondary">
+              <i className="fa-regular fa-circle-exclamation" />
+              <p>Our database has found existing records, please resolve record conflicts:</p>
+            </div>
+            <DuplicateAccordion currentRecords={duplicates} incomingChanges={duplicatedEmployees} />
+            <div className="flex justify-end items-center gap-2 mt-4">
+              <button className="underline font-medium px-4 py-2">Discard Changes</button>
+              <button className="text-dark-primary font-medium bg-tangerine-500 hover:bg-tangerine-600 px-4 py-2">Accept All Changes</button>
+            </div>
+            {/* <pre>{JSON.stringify(duplicates, null, 2)}</pre> */}
           </div> : <></>
 
       }

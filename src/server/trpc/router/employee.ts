@@ -126,6 +126,10 @@ export const employeeRouter = t.router({
         where: {
           id: { in: input },
         },
+        include: {
+          address: true,
+          profile: true,
+        },
       })
       return employees
     }),

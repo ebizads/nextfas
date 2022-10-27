@@ -6,7 +6,7 @@ import Modal from "../../asset/Modal"
 import { AssetType } from "../../../types/generic"
 import { asset_information, columns } from "../../../lib/table"
 import { getProperty } from "../../../lib/functions"
-import { navigations } from "../../nav/NavAccordion"
+import { navigations } from "../accordions/NavAccordion"
 import { trpc } from "../../../utils/trpc"
 
 const Detail = (props: {

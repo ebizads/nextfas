@@ -3,8 +3,9 @@ import React, { useState } from "react"
 import { getProperty } from "../../../lib/functions"
 import { vendorColumns } from "../../../lib/table"
 import { useMinimizeStore } from "../../../store/useStore"
-import { AssetType, VendorType } from "../../../types/assets"
+import { VendorType } from "../../../types/assets"
 import { ColumnType } from "../../../types/table"
+import Modal from "../../asset/Modal"
 
 const VendorTable = (props: {
   checkboxes: number[]
@@ -17,8 +18,8 @@ const VendorTable = (props: {
   const { minimize } = useMinimizeStore()
 
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
-  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [selectedAsset, setSelectedAsset] = useState<VendorType | null>(null)
+  // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -40,9 +41,8 @@ const VendorTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -133,6 +133,9 @@ const VendorTable = (props: {
           ))}
         </tbody>
       </table>
+      <Modal isOpen={openModalDesc} setIsOpen={setOpenModalDesc} size={8} >
+        <pre>{JSON.stringify(selectedAsset, null, 2)}</pre>
+      </Modal>
     </div>
   )
 }

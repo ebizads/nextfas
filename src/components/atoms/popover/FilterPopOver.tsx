@@ -1,5 +1,5 @@
-import React, { useEffect } from "react"
-import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
+import React from "react"
+import { Popover, Checkbox } from "@mantine/core"
 import { ColumnType } from "../../../types/table"
 
 const FilterPopOver = (props: {
@@ -47,7 +47,7 @@ const FilterPopOver = (props: {
                   key={col.name}
                   disabled={
                     props.filterBy.length === 1 &&
-                    props.filterBy.includes(col.value)
+                      props.filterBy.includes(col.value)
                       ? true
                       : false
                   }

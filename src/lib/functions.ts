@@ -1,24 +1,48 @@
-import { AssetType, VendorType } from "../types/generic"
-import { EmployeeRowType } from "../types/table"
+import { AssetType, EmployeeType, VendorType } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
 
 export const getProperty = (
   filter: string,
-  asset: AssetType | EmployeeRowType | VendorType
+  type: AssetType | EmployeeType | VendorType,
+  subfilter?: string
 ) => {
   //get object property
-  // if (filter.includes("-")) {
-  //   const arr = filter.split("-") as string[];
-  //   console.log(asset);
-  //   const obj =
-  //     Object.getOwnPropertyDescriptor(asset, arr[0]!) ?? `asset[${filter}]`;
-  //   // console.log(obj);
-  //   return;
-  // }
   const property =
-    Object.getOwnPropertyDescriptor(asset, filter)?.value ?? `attr[${filter}]`
+    Object.getOwnPropertyDescriptor(type, filter)?.value ?? "No value"
+
+  //returns the actual property as string
+  if (typeof property === "string") return property ?? "No Value"
+  //dig deeper if obj is an actual obj
   return property
+    ? Object.getOwnPropertyDescriptor(property, "name")?.value
+    : "No Value"
+
+  // Allen's approach
+  // if (typeof type?.[filter as keyof typeof type] === "object") {
+  //   return (
+  //     (
+  //       type?.[filter as keyof typeof type] as unknown as Record<
+  //         string,
+  //         unknown
+  //       >
+  //     )?.name ?? "No value"
+  //   )
+  // }
+
+  // return type?.[filter as keyof typeof type] ?? "No value"
+}
+
+export const getName = (filter: string, type: EmployeeType) => {
+  return filter === "first_name"
+    ? Object.getOwnPropertyDescriptor(type?.profile, "first_name")?.value
+    : filter === "middle_name"
+    ? Object.getOwnPropertyDescriptor(type?.profile, "middle_name")?.value
+    : Object.getOwnPropertyDescriptor(type?.profile, "last_name")?.value
+}
+
+export const getAddress = (type: EmployeeType) => {
+  return `${type?.address?.state} ${type?.address?.street}, ${type?.address?.city}, ${type?.address?.country} `
 }
 
 export const formatBytes = (bytes: number) => {
@@ -34,10 +58,15 @@ export const formatBytes = (bytes: number) => {
 }
 
 export const downloadExcel = (data: ExcelExportType[]) => {
-  const worksheet = XLSX.utils.json_to_sheet(data)
+  // if (!data) {
+  // csv null fall back
+  const worksheet = XLSX.utils.json_to_sheet(data ?? [])
   const workbook = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
   XLSX.writeFile(workbook, "DataSheet.xlsx")
+  // }
+
+  return
 }

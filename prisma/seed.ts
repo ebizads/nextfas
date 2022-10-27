@@ -18,6 +18,9 @@ const main = async () => {
       data: {
         ...rest,
         password: await bcrypt.hash(u.password, 10),
+        username: (profile.first_name[0] + profile.last_name)
+          .replace(" ", "")
+          .toLowerCase(),
         address: {
           create: address,
         },

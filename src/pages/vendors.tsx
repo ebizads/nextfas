@@ -62,9 +62,7 @@ const Vendors = () => {
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
 
-  const [filterBy, setFilterBy] = useState<string[]>([
-    ...vendorColumns.map((i) => i.value),
-  ])
+  const [filterBy, setFilterBy] = useState<string[]>(vendorColumns.map((i) => i.value))
 
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)

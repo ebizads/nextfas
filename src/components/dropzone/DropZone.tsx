@@ -5,6 +5,10 @@ import { Dropzone, IMAGE_MIME_TYPE, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone
 import { ImageJSON } from "../../types/table"
 import Image from "next/image"
 import * as XLSX from "xlsx";
+import { EmployeeType } from "../../types/generic"
+import { ExcelExportType } from "../../types/employee"
+import { trpc } from "../../utils/trpc"
+
 
 export default function DropZone({
   setImage,
@@ -20,27 +24,34 @@ export default function DropZone({
   acceptingMany?: boolean
 }) {
 
-  const [employeesJSON, setEmployeesJSON] = useState<any[] | null>(null)
+  const [employeesJSON, setEmployeesJSON] = useState<ExcelExportType[] | null>(null)
+  const [idList, setIdList] = useState<number[]>([])
+
+  const { data: duplicates } = trpc.employee.checkDuplicates.useQuery(idList)
+  const { mutate: create } = trpc.employee.createMany.useMutation()
+
+  const parseEmployeesData = (data: unknown[]) => {
+
+
+    const id_list = data.map((employee) => {
+
+      return (employee as number[])[0] as number
+    }) as number[]
+    console.log(id_list)
+    setIdList(id_list)
+
+    // id list
+    // const id_list = parsedEmployees.map(employee => Number(employee[0]))
+    // setIdList(id_list)
+    // console.log("here: ", id_list)
+
+    // setEmployeesJSON(parsedEmployees)
+  }
 
   return (
     <div>
-
-      {/* <div>
-        <label htmlFor="file-upload">Upload</label>
-        <input
-          id="file-upload"
-          name="file-upload"
-          type="file"
-          className="sr-only"
-          onChange={handleFile}
-          onClick={(event) => {
-            event.currentTarget.value = "";
-          }}
-          disabled={loading}
-        />
-      </div> */}
       {
-        !employeesJSON ?
+        duplicates ? duplicates.length === 0 ?
           <Dropzone
             onDrop={(files) => {
               setIsLoading(true)
@@ -87,10 +98,15 @@ export default function DropZone({
 
                     const ws = wb.Sheets[wsname];
                     if (ws) {
-                      const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+                      const raw_data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+                      raw_data.shift()
+                      const data = raw_data
                       // do something here
-                      setEmployeesJSON(data)
+                      // const headers = data.shift()
+                      parseEmployeesData(data)
                     }
+                  } else {
+                    console.log("Contains too many sheets")
                   }
                 }
 
@@ -147,11 +163,10 @@ export default function DropZone({
               </div>
             </Group>
           </Dropzone> :
-
-          employeesJSON.map((employeeJSON, idx) => (
-
-            <pre key={idx}>{JSON.stringify(employeeJSON, null, 2)}</pre>
-          ))
+          <div>
+            <div>Duplicates</div>
+            <pre>{JSON.stringify(duplicates, null, 2)}</pre>
+          </div> : <></>
 
       }
     </div>

@@ -119,6 +119,46 @@ export const employeeRouter = t.router({
         })
       }
     }),
+  checkDuplicates: authedProcedure
+    .input(z.array(z.number()))
+    .query(async ({ ctx, input }) => {
+      const employees = await ctx.prisma.employee.findMany({
+        where: {
+          id: { in: input },
+        },
+      })
+      return employees
+    }),
+  createMany: authedProcedure
+    .input(z.array(EmployeeCreateInput))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.employee.createMany({
+          data: input.map((employee) => {
+            const { profile, address, ...rest } = employee
+
+            return {
+              ...rest,
+              profile: {
+                create: profile ?? undefined,
+              },
+              address: {
+                create: address ?? undefined,
+              },
+            }
+          }),
+          skipDuplicates: true,
+        })
+
+        return "Employees successfully created"
+      } catch (error) {
+        console.log(error)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
   edit: authedProcedure
     .input(EmployeeEditInput)
     .mutation(async ({ ctx, input }) => {

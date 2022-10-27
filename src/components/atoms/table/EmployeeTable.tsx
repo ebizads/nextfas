@@ -5,7 +5,7 @@ import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
 import { EmployeeType } from "../../../types/generic"
-import { columns, employeeColumns } from "../../../lib/table"
+import { employeeColumns } from "../../../lib/table"
 import { getAddress, getName, getProperty } from "../../../lib/functions"
 
 const EmployeeTable = (props: {

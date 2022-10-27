@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
             return user
           }
           let data = {}
-          if (user.attempts < 3) {
+          if (user.attempts < 4) {
             // checks if user has remaining attempts
             data = { attempts: (user.attempts += 1) }
           } else {

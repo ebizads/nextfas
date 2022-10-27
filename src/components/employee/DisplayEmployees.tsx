@@ -1,18 +1,18 @@
 import React, { useState } from "react"
 import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
-import EmployeeTable from "../../components/atoms/table/EmployeeTable"
+import EmployeeTable from "../atoms/table/EmployeeTable"
 import { EmployeeType } from "../../types/generic"
 import { columns } from "../../lib/employeeTable"
 import { ImageJSON } from "../../types/table"
-import Modal from "../../components/headless/modal/modal"
-import { CreateEmployeeModal } from "../../components/employee/createEmployee"
+import Modal from "../headless/modal/modal"
+import { CreateEmployeeModal } from "./CreateEmployeeModal"
 import { downloadExcel } from "../../lib/functions"
 import { ExcelExportType } from "../../types/employee"
-import FilterPopOver from "../../components/atoms/popover/FilterPopOver"
+import FilterPopOver from "../atoms/popover/FilterPopOver"
 import { employeeColumns } from "../../lib/table"
-import PaginationPopOver from "../../components/atoms/popover/PaginationPopOver"
-import AddEmployeePopOver from "../../components/atoms/popover/AddEmployeePopOver"
-import DropZone from "../../components/dropzone/DropZone"
+import PaginationPopOver from "../atoms/popover/PaginationPopOver"
+import AddEmployeePopOver from "../atoms/popover/AddEmployeePopOver"
+import DropZone from "../dropzone/DropZone"
 
 type SearchType = {
   value: string
@@ -48,8 +48,7 @@ const DisplayEmployees = (props: {
   const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [openAddPopover, setOpenAddPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
-  const [filterBy, setFilterBy] = useState<string[]>(employeeColumns.map((i) => i.value),
-  )
+  const [filterBy, setFilterBy] = useState<string[]>(employeeColumns.map((i) => i.value))
 
   const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)

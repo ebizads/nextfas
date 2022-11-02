@@ -45,9 +45,6 @@ const TopBar = () => {
           <p className="text-xs">{session?.user?.name}</p>
 
         </div>
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-full border-4 border-tangerine-500 bg-tangerine-400">
-          <i className="fa-solid fa-user-ninja text-2xl" />
-        </div>
         <LogOutPopOver openPopover={openLogoutPopover} setOpenPopover={setOpenLogoutPopover} />
       </div>
     </div>

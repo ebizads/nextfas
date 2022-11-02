@@ -10,7 +10,7 @@ export const AddressCreateInput = z
     shipping_address: z.string().nullish(),
     billing_address: z.string().nullish(),
   })
-  .nullish()
+  .optional()
 
 export const AddressEditInput = z
   .object({

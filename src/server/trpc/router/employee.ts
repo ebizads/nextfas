@@ -41,7 +41,6 @@ export const employeeRouter = t.router({
               include: {
                 address: true,
                 profile: true,
-                owned_assets: true,
               },
               where: {
                 NOT: {
@@ -114,6 +113,50 @@ export const employeeRouter = t.router({
       } catch (error) {
         console.log(error)
 
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  checkDuplicates: authedProcedure
+    .input(z.array(z.number()))
+    .query(async ({ ctx, input }) => {
+      const employees = await ctx.prisma.employee.findMany({
+        where: {
+          id: { in: input },
+        },
+        include: {
+          address: true,
+          profile: true,
+        },
+      })
+      return employees
+    }),
+  createMany: authedProcedure
+    .input(z.array(EmployeeCreateInput))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.employee.createMany({
+          data: input.map((employee) => {
+            const { profile, address, ...rest } = employee
+
+            return {
+              ...rest,
+              profile: {
+                create: profile ?? undefined,
+              },
+              address: {
+                create: address ?? undefined,
+              },
+            }
+          }),
+          skipDuplicates: true,
+        })
+
+        return "Employees successfully created"
+      } catch (error) {
+        console.log(error)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),

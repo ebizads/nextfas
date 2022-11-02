@@ -150,9 +150,9 @@ function LoginForm() {
           </a>
         </div>
         {error && (
-          <pre className="mt-2 font-sans text-sm italic text-red-500">
+          <div className="mt-2 font-sans text-sm italic text-red-500 text-wrap">
             {error}
-          </pre>
+          </div>
         )}
       </div>
     </div>

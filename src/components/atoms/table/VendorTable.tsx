@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import { getProperty } from "../../../lib/functions"
 import { vendorColumns } from "../../../lib/table"
 import { useMinimizeStore } from "../../../store/useStore"
-import { VendorType } from "../../../types/assets"
+import { VendorType } from "../../../types/generic"
 import { ColumnType } from "../../../types/table"
 import Modal from "../../asset/Modal"
 

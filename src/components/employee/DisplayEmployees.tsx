@@ -97,12 +97,11 @@ const DisplayEmployees = (props: {
                   if (employee?.['address'] && employee?.['profile']) {
 
                     const { address, profile, ...rest } = employee
-
                     return { ...rest, ...address, ...profile, id: rest.id }
                   }
 
                 }) as ExcelExportType[]
-                console.log("opo: ", downloadableEmployees)
+                // console.log("opo: ", downloadableEmployees)
                 downloadExcel(downloadableEmployees)
               }}
               className="-md flex gap-2 bg-tangerine-500 py-2 px-4 text-xs rounded-md text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
@@ -164,7 +163,7 @@ const DisplayEmployees = (props: {
         title="Add Bulk Record of Employees"
         isVisible={addBulkRecord}
         setIsVisible={setAddBulkRecord}
-        className="max-w-4xl"
+        className="max-w-6xl"
       >
         <DropZone file_type="xlsx" acceptingMany={false} loading={isLoading} setIsLoading={setIsLoading} />
       </Modal>

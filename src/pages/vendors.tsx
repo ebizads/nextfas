@@ -18,6 +18,7 @@ import AlertInput from "../components/atoms/forms/AlertInput"
 import { Textarea } from '@mantine/core';
 import { ImageJSON } from "../types/table"
 import DropZoneComponent from "../components/dropzone/DropZoneComponent"
+import TypeSelect from "../components/atoms/select/TypeSelect"
 
 
 const Vendors = () => {
@@ -176,13 +177,7 @@ const Vendors = () => {
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
                 <div className="col-span-5">
-                  <InputField
-                    register={register}
-                    label="Type"
-                    name="type"
-                    type="text"
-                  />
-                  <AlertInput>{errors?.type?.message}</AlertInput>
+                  <TypeSelect />
                 </div>
                 <div className="col-span-5">
                   <InputField

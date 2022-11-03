@@ -1,9 +1,9 @@
 import { Checkbox } from "@mantine/core"
-import { signIn, useSession } from "next-auth/react"
+import { signIn } from "next-auth/react"
 import Head from "next/head"
 import Image from "next/image"
 import { useRouter } from "next/router"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { InputField } from "../../components/atoms/forms/InputField"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
-import { useQuery } from "@tanstack/react-query"
 
 // input validations
 // Describe the correctness of data's form.
@@ -50,17 +49,17 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null)
 
   //get client ip address
-  const { data } = useQuery(["ip"], async () => {
-    return await fetch("/api/ip").then((res) => res.json())
-  })
+  // const { data } = useQuery(["ip"], async () => {
+  //   return await fetch("/api/ip").then((res) => res.json())
+  // })
 
   //get user
-  const { data: session, status } = useSession()
+  // const { data: session, status } = useSession()
 
   const {
     register,
     handleSubmit,
-    watch,
+    // watch,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<User>({
@@ -151,9 +150,9 @@ function LoginForm() {
           </a>
         </div>
         {error && (
-          <pre className="mt-2 font-sans text-sm italic text-red-500">
+          <div className="mt-2 font-sans text-sm italic text-red-500 text-wrap">
             {error}
-          </pre>
+          </div>
         )}
       </div>
     </div>

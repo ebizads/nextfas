@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react"
 import DashboardLayout from "../../layouts/DashboardLayout"
 import { trpc } from "../../utils/trpc"
 import DisplayAssets from "../../components/asset/DisplayAssets"
-import { AssetType } from "../../types/assets"
-import { inferProcedureOutput } from "@trpc/server"
-import { AppRouter } from "../../server/trpc/router"
+import { AssetType } from "../../types/generic"
 
 const Assets = () => {
   const [page, setPage] = useState(1)
@@ -22,6 +20,7 @@ const Assets = () => {
   useEffect(() => {
     //get and parse all data
     if (data) {
+
       setAssets(data.assets)
       setAccessiblePage(Math.ceil(data?.total / limit))
     }

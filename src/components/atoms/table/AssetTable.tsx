@@ -3,10 +3,10 @@ import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
 import Modal from "../../asset/Modal"
-import { AssetType } from "../../../types/assets"
+import { AssetType } from "../../../types/generic"
 import { asset_information, columns } from "../../../lib/table"
 import { getProperty } from "../../../lib/functions"
-import { navigations } from "../../nav/NavAccordion"
+import { navigations } from "../accordions/NavAccordion"
 import { trpc } from "../../../utils/trpc"
 
 const Detail = (props: {
@@ -47,9 +47,8 @@ const AssetDetailsModal = (props: {
             {asset_information.map((info, idx) => (
               <section
                 key={idx}
-                className={`flex flex-col gap-2 ${
-                  idx === 0 ? "" : "border-t"
-                } py-4 text-light-primary`}
+                className={`flex flex-col gap-2 ${idx === 0 ? "" : "border-t"
+                  } py-4 text-light-primary`}
               >
                 <h3 className="font-medium xl:text-lg">{info_names[idx]}</h3>
                 {props.asset && (
@@ -138,9 +137,8 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}{" "}
               {props.checkboxes.length > 1 ? "records" : "record"}{" "}
               <i
-                className={`fa-solid ${
-                  showList ? " fa-caret-up" : " fa-caret-down"
-                }`}
+                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
+                  }`}
               />
             </button>{" "}
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -183,7 +181,6 @@ export const AssetDeleteModal = (props: {
     </Modal>
   )
 }
-
 const AssetTable = (props: {
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
@@ -218,9 +215,8 @@ const AssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -245,7 +241,7 @@ const AssetTable = (props: {
               <th
                 key={col.name}
                 scope="col"
-                className="max-w-[10rem] truncate px-6 duration-150"
+                className="px-6 duration-150 max-w-[10rem] truncate"
               >
                 {col.name}
               </th>
@@ -309,6 +305,7 @@ const AssetTable = (props: {
           ))}
         </tbody>
       </table>
+
       <AssetDetailsModal
         asset={selectedAsset}
         openModalDesc={openModalDesc}

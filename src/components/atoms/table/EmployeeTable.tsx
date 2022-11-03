@@ -1,18 +1,23 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
-import { ColumnType, EmployeeRowType } from "../../../types/table"
+import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
+import { EmployeeType } from "../../../types/generic"
+import { employeeColumns } from "../../../lib/table"
+import { getAddress, getName, getProperty } from "../../../lib/functions"
 
 const EmployeeTable = (props: {
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
   filterBy: string[]
-  rows: EmployeeRowType[]
+  rows: EmployeeType[]
   columns: ColumnType[]
 }) => {
   const { minimize } = useMinimizeStore()
   const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [details, setDetails] = useState<EmployeeType>()
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -32,104 +37,14 @@ const EmployeeTable = (props: {
     props.setCheckboxes((prev) => [...prev, id])
   }
 
-  const getProperty = (filter: string, asset: EmployeeRowType) => {
-    //get object property
-    return Object.getOwnPropertyDescriptor(asset, filter)?.value ?? "No Value"
-  }
-
-  const showDetails = () => {
-    return (
-      <Modal
-        title={"Employee Details"}
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
-        cancelButton
-        className="max-w-lg"
-      >
-        <div>
-          <div className="flex flex-row items-center gap-4 py-5">
-            <Avatar src="avatar.png" alt="it's me" radius={200} size={100} />
-            <div className="flex flex-col">
-              <div className="flex flex-row">
-                <text className="text-xl font-bold">
-                  Clea Bernadette D. Payra
-                </text>
-                <div className="ml-2 mt-1 h-5 w-5 rounded-full border bg-green-500"></div>
-              </div>
-              <text className="text-sm">eBiz-12029312391</text>
-            </div>
-          </div>
-          <div className="flex flex-col px-3 py-3">
-            <text className="text-lg font-bold">Personal Information</text>
-            <div className="grid grid-cols-2">
-              <div className="py-3">
-                <text className="text-sm font-semibold">FIRST NAME</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">Clea Bernadette</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">MIDDLE NAME</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">Domingo</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">LAST NAME</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">Payra</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">EMPLOYEE ID</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">eB1z-12029312391</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">STREET ADDRESS</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">123 Tondo</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">HIRE DATE</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">July 11, 2022</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">SUBSIDIARY</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">eBizolution Inc.</text>
-              </div>
-              <div className="py-3">
-                <text className="text-sm font-semibold">PHONE NUMBER</text>
-              </div>
-              <div>
-                <text className="col-span-2 text-sm">0932423423</text>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    )
-  }
-
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
-      {typeof props.rows === "object" ? (
-        <div>{showDetails()}</div>
-      ) : (
-        <div></div>
-      )}
+      {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-        <thead className="bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
+        <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
             <th scope="col" className="py-1">
               <div className="flex items-center justify-center">
@@ -146,39 +61,38 @@ const EmployeeTable = (props: {
                 />
               </div>
             </th>
-            {props.columns.map((col) => (
-              <th
-                key={col.name}
-                scope="col"
-                className="max-w-[10rem] truncate px-6 duration-150"
-              >
-                {col.name}
-              </th>
-            ))}
+            {props.columns.filter((col) => props.filterBy.includes(col.value))
+              .map((col) => (
+                <th
+                  key={col.name}
+                  scope="col"
+                  className="max-w-[10rem] truncate px-6 duration-150"
+                >
+                  {col.name}
+                </th>
+              ))}
 
             <th scope="col" className="p-4 text-center">
               Action
             </th>
           </tr>
         </thead>
-
         <tbody>
-          {props.rows.map((row) => (
+          {props.rows.map((row, idx) => (
             <tr
-              key={row.id}
+              key={row?.id ?? idx}
               className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-              onClick={() => setIsVisible(true)}
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
                   <Checkbox
-                    value={row.id}
+                    value={row?.id ?? idx}
                     color={"orange"}
                     onChange={(e) => {
                       toggleCheckbox(Number(e.target.value))
                     }}
                     checked={
-                      props.checkboxes.includes(row.id) ||
+                      props.checkboxes.includes(row?.id ?? idx) ||
                       props.checkboxes.includes(-1)
                     }
                     classNames={{
@@ -188,16 +102,24 @@ const EmployeeTable = (props: {
                   />
                 </div>
               </td>
-              {Object.keys(row).map((key) => {
-                return (
-                  props.filterBy.includes(key) && (
-                    <td className="max-w-[10rem] truncate py-2 px-6">
-                      {getProperty(key, row)}
-                    </td>
-                  )
-                )
-              })}
-
+              {employeeColumns
+                .filter((col) => props.filterBy.includes(col.value))
+                .map((col) => (
+                  <td
+                    key={col.value}
+                    className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
+                    onClick={() => {
+                      setIsVisible(true)
+                      setDetails(row)
+                    }}
+                  >
+                    {
+                      // ternary operator that returns special values for date, name, and address
+                      col.value === "hired_date" ? row?.hired_date?.toDateString() : col.value.match(/_name/g) ? getName(col.value, row) : col.value === "city" ? getAddress(row) :
+                        getProperty(col.value, row)
+                    }
+                  </td>
+                ))}
               <td className="max-w-[10rem] space-x-2 text-center">
                 <i className="fa-light fa-pen-to-square" />
                 <i className="fa-light fa-trash-can text-red-500" />{" "}
@@ -206,8 +128,131 @@ const EmployeeTable = (props: {
           ))}
         </tbody>
       </table>
+      {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
+      <ShowDetails
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        info={details!}
+      />
     </div>
   )
 }
 
 export default EmployeeTable
+
+function ShowDetails({
+  isVisible,
+  setIsVisible,
+  info,
+}: {
+  isVisible: boolean
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+  info: EmployeeType
+}) {
+  return (
+    <Modal
+      title={"Employee Details"}
+      isVisible={isVisible}
+      setIsVisible={setIsVisible}
+      className="max-w-lg"
+    >
+      <>
+        {info == null ? (
+          <div></div>
+        ) : (
+          <div>
+            <div className="flex flex-row items-center gap-4 py-5">
+              <Avatar src={info.image} alt="it's me" radius={200} size={100} />
+              <div className="flex flex-col">
+                <div className="flex flex-row">
+                  <p className="text-xl font-bold">
+                    {info.profile?.first_name}
+                  </p>
+                  <div className="ml-2 mt-1 h-5 w-5 rounded-full border bg-green-500"></div>
+                </div>
+                <p className="text-sm">{`${info.employee_id}`}</p>
+              </div>
+            </div>
+            <div className="flex flex-col px-3 py-3">
+              <p className="text-lg font-bold">Personal Information</p>
+              <div className="grid grid-cols-2">
+                <div className="py-3">
+                  <p className="text-sm font-semibold">FIRST NAME</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.profile?.first_name ?? "NO DATA"}
+                  </p>
+                </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">MIDDLE NAME</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.profile?.middle_name ?? "NO DATA"}
+                  </p>
+                </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">LAST NAME</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.profile?.last_name ?? "NO DATA"}
+                  </p>
+                </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">EMPLOYEE ID</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.employee_id ?? "NO DATA"}
+                  </p>
+                </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">STREET ADDRESS</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.address?.street ?? "NO DATA"}
+                  </p>
+                </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">HIRE DATE</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.hired_date?.toDateString() ?? "NO DATA"}
+                  </p>
+                </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">SUBSIDIARY</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.subsidiary ?? "NO DATA"}
+                  </p>
+                </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">PHONE NUMBER</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.profile?.phone_no ?? "NO DATA"}
+                  </p>
+                </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">EMAIL</p>
+                </div>
+                <div className="py-3">
+                  <p className="col-span-2 text-sm">
+                    {info.email ?? "NO DATA"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    </Modal>
+  )
+}

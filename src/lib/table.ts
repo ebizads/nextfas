@@ -97,11 +97,6 @@ export const navigations = [
     link: "/employees",
   },
   {
-    name: "Accounting",
-    icon: "fa-calculator-simple",
-    link: "/accounting",
-  },
-  {
     name: "Vendors",
     icon: "fa-store",
     link: "/vendors",

@@ -45,31 +45,36 @@ const CreateAsset = () => {
     <DashboardLayout>
       <div className="h-full space-y-6">
         <h3 className="text-xl font-medium">Add Asset</h3>
-        <div className="h-full w-full">
-          <Tabs defaultValue="first" className="space-y-2 h-full" classNames={{ tab: "border border-blue-200 aria-selected:text-tangerine-600 font-sans" }}>
-            <Tabs.List>
-              <Tabs.Tab value="first" color={"orange"}>Asset Info</Tabs.Tab>
-              <Tabs.Tab value="second" color={"orange"}>General Subtab</Tabs.Tab>
-            </Tabs.List>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col space-y-4 p-4"
+          noValidate
+        >
+          <div className="h-full w-full">
+            <Tabs defaultValue="first" className="space-y-2 h-full" classNames={{ tab: "border border-blue-200 aria-selected:text-tangerine-600 font-sans" }}>
+              <Tabs.List>
+                <Tabs.Tab value="first" color={"orange"}>Asset Info</Tabs.Tab>
+                <Tabs.Tab value="second" color={"orange"}>General Subtab</Tabs.Tab>
+              </Tabs.List>
 
-            <Tabs.Panel value="first">
-              <div className="rounded-md h-full bg-white border p-4 flex flex-col gap-2">
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="flex flex-col space-y-4 p-4"
-                  noValidate
-                >
-                  <CreateAssetAccordion register={register} errors={errors} />
-                  <div className="w-full flex gap-2 text-lg justify-end">
-                    <button className="underline px-4 py-2">Discard</button>
-                    <button className="rounded-md bg-tangerine-300 hover:bg-tangerine-400 font-medium text-dark-primary px-6 py-2">Save</button>
-                  </div>
-                </form>
-              </div>
-            </Tabs.Panel>
-            <Tabs.Panel value="second">Second panel</Tabs.Panel>
-          </Tabs>
-        </div>
+              <Tabs.Panel value="first">
+                <div className="rounded-md h-full bg-white border p-4 flex flex-col gap-2">
+                  <CreateAssetAccordion form={"asset info"} register={register} errors={errors} />
+                </div>
+              </Tabs.Panel>
+              <Tabs.Panel value="second">
+                <div className="rounded-md h-full bg-white border p-4 flex flex-col gap-2">
+                  <CreateAssetAccordion form={"general subtab"} register={register} errors={errors} />
+                </div>
+              </Tabs.Panel>
+            </Tabs>
+            <div className="w-full flex gap-2 text-lg justify-end mt-2">
+              <button className="underline px-4 py-2">Discard</button>
+              <button className="rounded-md bg-tangerine-300 hover:bg-tangerine-400 font-medium text-dark-primary px-6 py-2">Save</button>
+            </div>
+          </div>
+        </form>
+
       </div>
     </DashboardLayout>
   );

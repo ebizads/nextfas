@@ -12,7 +12,9 @@ export const getProperty = (
     Object.getOwnPropertyDescriptor(type, filter)?.value ?? "No value"
 
   //returns the actual property as string
-  if (typeof property === "string") return property ?? "No Value"
+  if (typeof property === "string" || typeof property === "number")
+    return property.toString()
+
   //dig deeper if obj is an actual obj
   return property
     ? Object.getOwnPropertyDescriptor(property, "name")?.value

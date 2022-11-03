@@ -60,6 +60,10 @@ const CreateAsset = () => {
                   noValidate
                 >
                   <CreateAssetAccordion register={register} errors={errors} />
+                  <div className="w-full flex gap-2 text-lg justify-end">
+                    <button className="underline px-4 py-2">Discard</button>
+                    <button className="rounded-md bg-tangerine-300 hover:bg-tangerine-400 font-medium text-dark-primary px-6 py-2">Save</button>
+                  </div>
                 </form>
               </div>
             </Tabs.Panel>

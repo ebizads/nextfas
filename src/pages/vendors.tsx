@@ -177,7 +177,7 @@ const Vendors = () => {
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
                 <div className="col-span-5">
-                  <TypeSelect />
+                  <TypeSelect title={"Type"} placeholder={"Pick asset type"} data={['Company', 'Individual']} />
                 </div>
                 <div className="col-span-5">
                   <InputField

@@ -13,6 +13,7 @@ import { employeeColumns } from "../../lib/table"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import AddEmployeePopOver from "../atoms/popover/AddEmployeePopOver"
 import DropZone from "../dropzone/DropZone"
+import { trpc } from "../../utils/trpc"
 
 type SearchType = {
   value: string
@@ -56,6 +57,14 @@ const DisplayEmployees = (props: {
   const [date, setDate] = useState<Date>(new Date())
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const utils = trpc.useContext();
+
+  const { mutate } = trpc.employee.deleteMany.useMutation({
+    onSuccess: () => {
+      utils.employee.findAll.invalidate();
+    }
+  })
+
   return (
     <div>
       <section className="space-y-4">
@@ -83,7 +92,7 @@ const DisplayEmployees = (props: {
               />
             </div>
             {checkboxes.length > 0 && (
-              <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
+              <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none" onClick={() => { mutate(checkboxes); setCheckboxes([]) }}>
                 {checkboxes.includes(-1)
                   ? `Delete all record/s ( ${props.employees.length} ) ?`
                   : `Delete selected record/s ( ${checkboxes.length} )`}

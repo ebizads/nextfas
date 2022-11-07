@@ -21,6 +21,7 @@ const EmployeeTable = (props: {
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
   const [details, setDetails] = useState<EmployeeType>()
 
+
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
       props.setCheckboxes([-1])
@@ -198,14 +199,6 @@ function ShowDetails({
                 <div className="py-3">
                   <p className="col-span-2 text-sm">
                     {info.profile?.first_name ?? "NO DATA"}
-                  </p>
-                </div>
-                <div className="py-3">
-                  <p className="text-sm font-semibold">MIDDLE NAME</p>
-                </div>
-                <div className="py-3">
-                  <p className="col-span-2 text-sm">
-                    {info.profile?.middle_name ?? "NO DATA"}
                   </p>
                 </div>
                 <div className="py-3">

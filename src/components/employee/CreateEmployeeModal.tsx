@@ -31,6 +31,7 @@ export const CreateEmployeeModal = (props: {
     onSuccess: () => {
       utils.employee.findAll.invalidate()
       props.setIsVisible(false)
+      props.setImage([])
     }
   })
   const {
@@ -77,7 +78,7 @@ export const CreateEmployeeModal = (props: {
           .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
       department: employee.department,
       hired_date: employee.hired_date,
-      image: employee.image,
+      image: props.images[0]?.file ?? "",
       position: employee.position,
       subsidiary: employee.subsidiary,
       address: {
@@ -148,13 +149,11 @@ export const CreateEmployeeModal = (props: {
             <label className="sm:text-sm">Departments</label>
             <Select
               placeholder="Pick one"
-              searchable
-              onSearchChange={(value) => {
-                setValue("department", value)
-                onSearchChange(value)
+              onChange={(value) => {
+                setValue("department", value ?? "")
+                onSearchChange(value ?? "")
               }}
-              searchValue={searchValue}
-              nothingFound="No options"
+              value={searchValue}
               data={["Human Resource", "Finance", "Accounting", "IT", "Admin"]}
               styles={(theme) => ({
                 item: {

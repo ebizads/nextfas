@@ -152,8 +152,8 @@ export default function DropZone({
                     const ws = wb.Sheets[wsname];
                     if (ws) {
                       const raw_data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
-                      console.log("RAW:", raw_data);
-                      // raw_data.shift()
+                      // console.log("RAW:", raw_data);
+                      raw_data.shift()
 
                       const data = raw_data
                       // do something here

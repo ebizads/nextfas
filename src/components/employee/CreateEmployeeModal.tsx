@@ -8,20 +8,31 @@ import { ImageJSON } from "../../types/table"
 import { trpc } from "../../utils/trpc"
 import AlertInput from "../atoms/forms/AlertInput"
 import { InputField } from "../atoms/forms/InputField"
-import { Select, Loader, Image, Text } from "@mantine/core"
+import { Select } from "@mantine/core"
 import DropZoneComponent from "../dropzone/DropZoneComponent"
+import { env } from "../../env/client.mjs"
+import moment from "moment";
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
 export const CreateEmployeeModal = (props: {
-  value: Date
+  date: Date
+  setDate: React.Dispatch<React.SetStateAction<Date>>
   setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
   images: ImageJSON[]
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   isLoading: boolean
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [searchValue, onSearchChange] = useState("")
-  const { mutate, isLoading: employeeLoading, error } = trpc.employee.create.useMutation()
+  const [empId] = useState<string>(moment().format('YY-MDhms'))
+  const utils = trpc.useContext()
+  const { mutate, isLoading: employeeLoading, error } = trpc.employee.create.useMutation({
+    onSuccess: () => {
+      utils.employee.findAll.invalidate()
+      props.setIsVisible(false)
+    }
+  })
   const {
     register,
     handleSubmit,
@@ -40,8 +51,6 @@ export const CreateEmployeeModal = (props: {
       position: "",
       subsidiary: "",
       address: {
-        billing_address: "",
-        shipping_address: "",
         city: "",
         country: "",
         street: "",
@@ -60,20 +69,18 @@ export const CreateEmployeeModal = (props: {
 
     mutate({
       name: `${employee.profile.first_name} ${employee.profile.last_name}`,
-      employee_id: employee.employee_id,
+      employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
       email:
         (employee.profile.first_name[0] + employee.profile.last_name)
           .replace(" ", "")
           .toLowerCase()
-          .toString() + "@omsim.com",
+          .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
       department: employee.department,
       hired_date: employee.hired_date,
       image: employee.image,
       position: employee.position,
       subsidiary: employee.subsidiary,
       address: {
-        billing_address: employee.address?.billing_address,
-        shipping_address: employee.address?.shipping_address,
         city: employee.address?.city,
         country: employee.address?.country,
         street: employee.address?.street,
@@ -88,6 +95,7 @@ export const CreateEmployeeModal = (props: {
       },
     })
     reset()
+
   }
 
   return (
@@ -107,9 +115,11 @@ export const CreateEmployeeModal = (props: {
               type={"text"}
               label={""}
             />
+            <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
+
           </div>
           <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Middle Name</label>
+            <label className="sm:text-sm">Middle Name (Optional)</label>
             <InputField
               className="0 appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
               type={"text"}
@@ -117,6 +127,7 @@ export const CreateEmployeeModal = (props: {
               name={"profile.middle_name"}
               register={register}
             />
+
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Last Name</label>
@@ -127,17 +138,14 @@ export const CreateEmployeeModal = (props: {
               name={"profile.last_name"}
               register={register}
             />
+            <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+
           </div>
         </div>
 
-        <AlertInput>{errors?.name?.message}</AlertInput>
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Departments</label>
-            {/* <input
-              className="focus-outline appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
-              type={"text"}
-            /> */}
             <Select
               placeholder="Pick one"
               searchable
@@ -169,20 +177,22 @@ export const CreateEmployeeModal = (props: {
                 },
               })}
               variant="unstyled"
-              className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+              className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-[.28%] px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
             />
+            <AlertInput>{errors?.department?.message}</AlertInput>
+
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Employee Number</label>
-            <InputField
+            {/* <InputField
               className="focus-outline appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
               type={"text"}
               label={""}
               name={"employee_id"}
               register={register}
-            />
-
-            <AlertInput>{errors?.employee_id?.message}</AlertInput>
+            /> */}
+            <p className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-[3.23%] px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+            >{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -209,11 +219,12 @@ export const CreateEmployeeModal = (props: {
               placeholder="Pick Date"
               size="sm"
               variant="unstyled"
-              value={props.value}
+              value={props.date}
               onChange={(value) => {
                 setValue("hired_date", value)
+                value === null ? props.setDate(new Date()) : props.setDate(value);
               }}
-              className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+              className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-[.28%] px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
             />
           </div>
           <div className="flex w-[32%] flex-col">
@@ -232,7 +243,7 @@ export const CreateEmployeeModal = (props: {
             <label className="sm:text-sm">Mobile Number</label>
             <InputField
               className="focus-outline appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
-              type={"text"}
+              type={"number"}
               label={""}
               name={"profile.phone_no"}
               register={register}
@@ -272,6 +283,8 @@ export const CreateEmployeeModal = (props: {
                 name={"address.city"}
                 register={register}
               />
+
+              <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
             <div className="flex w-[18%] flex-col">
               <label className="sm:text-sm">Zip Code</label>
@@ -298,34 +311,7 @@ export const CreateEmployeeModal = (props: {
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-wrap gap-4 py-2.5">
-          <div className="flex w-[48%] flex-col">
-            <label className="sm:text-sm">Billing Address</label>
-            <InputField
-              className="focus-outline appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
-              type={"text"}
-              label={""}
-              name={"address.billing_address"}
-              register={register}
-            />
 
-            <AlertInput>{errors?.address?.billing_address?.message}</AlertInput>
-          </div>
-          <div className="flex w-[48%] flex-col">
-            <label className="sm:text-sm">Shipping Address</label>
-            <InputField
-              className="focus-outline appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
-              type={"text"}
-              label={""}
-              name={"address.shipping_address"}
-              register={register}
-            />
-
-            <AlertInput>
-              {errors?.address?.shipping_address?.message}
-            </AlertInput>
-          </div>
-        </div>
         <DropZoneComponent
           setImage={props.setImage}
           setIsLoading={props.setIsLoading}

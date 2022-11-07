@@ -15,10 +15,18 @@ type Vendor = z.infer<typeof VendorEditInput>
 const EmployeeEdit = () => {
   const { vendorId } = useRouter().query
 
+  const utils = trpc.useContext()
+
   // Get asset by asset id
   const { data: vendor } = trpc.vendor.findOne.useQuery(Number(vendorId), {
     //  only fetch when assetId is not undefined or null
     enabled: !!vendorId,
+  })
+
+  const { mutate } = trpc.vendor.delete.useMutation({
+    onSuccess: () => {
+      utils.vendor.findOne.invalidate(Number(vendor?.id))
+    },
   })
 
   return (
@@ -30,7 +38,7 @@ const EmployeeEdit = () => {
       </Head>
       <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4">
         <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
-          Update Vendor - {vendor?.name}
+          Update Vendor - {vendor?.name} - {vendor?.deleted ? "Deleted" : ""}
         </h3>
         <EditForm
           vendor={
@@ -40,11 +48,12 @@ const EmployeeEdit = () => {
             } ?? ({} as Vendor)
           }
         />
-        <Link href="/auth/login">
-          <a className="my-2 px-4 py-1 text-amber-300 underline hover:text-amber-400">
-            Login
-          </a>
-        </Link>
+        <button
+          className="my-2 bg-amber-300 px-8 py-2 text-white"
+          onClick={() => mutate(Number(vendorId))}
+        >
+          Delete Vendor
+        </button>
       </main>
     </>
   )
@@ -110,7 +119,7 @@ const EditForm = ({ vendor }: { vendor: Vendor }) => {
           className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
           disabled={isLoading}
         >
-          {isLoading ? "Loading..." : "Register"}
+          {isLoading ? "Loading..." : "Update Vendor"}
         </button>
       </form>
       {error && (

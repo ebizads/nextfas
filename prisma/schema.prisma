@@ -212,30 +212,40 @@ model vendor {
   asset        asset[]
 }
 
+// add parent, project, residual_value, residual_value_percentage, accounting_method, asset_lifetime, alternate_number
 model asset {
-  id                    Int           @id @default(autoincrement())
-  name                  String
-  number                String        @unique
-  description           String?
-  serial_number         String?
-  original_cost         Float?
-  current_netbook_value Float?
-  current_cost          Float?
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
-  deletedAt             DateTime?
-  deleted               Boolean       @default(false)
-  typeId                Int?
-  modelId               Int?
-  categoryId            Int?
-  manufacturerId        Int?
-  vendorId              Int?
-  barcode               String?
-  category              category?     @relation(fields: [categoryId], references: [id])
-  manufacturer          manufacturer? @relation(fields: [manufacturerId], references: [id])
-  model                 model?        @relation(fields: [modelId], references: [id])
-  type                  type?         @relation(fields: [typeId], references: [id])
-  vendor                vendor?       @relation(fields: [vendorId], references: [id])
+  id                        Int           @id @default(autoincrement())
+  name                      String
+  number                    String        @unique
+  description               String?
+  serial_number             String?
+  original_cost             Float?
+  current_netbook_value     Float?
+  current_cost              Float?
+  project                   String?
+  alt_number                String?
+  residual_value            Float?
+  residual_value_percentage Float?
+  accounting_method         String?
+  asset_lifetime            String?
+  parent                    asset?        @relation(name: "parent_asset", fields: [parentId], references: [id])
+  parentId                  Int?
+  children                  asset[]       @relation(name: "parent_asset")
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+  deletedAt                 DateTime?
+  deleted                   Boolean       @default(false)
+  typeId                    Int?
+  modelId                   Int?
+  categoryId                Int?
+  manufacturerId            Int?
+  vendorId                  Int?
+  barcode                   String?
+  category                  category?     @relation(fields: [categoryId], references: [id])
+  manufacturer              manufacturer? @relation(fields: [manufacturerId], references: [id])
+  model                     model?        @relation(fields: [modelId], references: [id])
+  type                      type?         @relation(fields: [typeId], references: [id])
+  vendor                    vendor?       @relation(fields: [vendorId], references: [id])
 
   // general subtab connection
   general            general?

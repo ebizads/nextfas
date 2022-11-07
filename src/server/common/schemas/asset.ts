@@ -51,6 +51,14 @@ export const AssetCreateInput = z.object({
   current_cost: z.number().nullish(),
   current_netbook_value: z.number().nullish(),
 
+  project: z.string().nullish(),
+  alt_number: z.string().nullish(),
+  residual_value: z.number().nullish(),
+  residual_value_percentage: z.number().nullish(),
+  accounting_method: z.string().nullish(),
+  asset_lifetime: z.number().nullish(),
+
+  parentId: z.number().nullish(),
   typeId: z.number().nullish(),
   categoryId: z.number().nullish(),
   manufacturerId: z.number().nullish(),

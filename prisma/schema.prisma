@@ -212,7 +212,6 @@ model vendor {
   asset        asset[]
 }
 
-// remove department, class, location, subsidiary, custodian here
 model asset {
   id                    Int           @id @default(autoincrement())
   name                  String
@@ -239,18 +238,27 @@ model asset {
   vendor                vendor?       @relation(fields: [vendorId], references: [id])
 
   // general subtab connection
-  general general?
+  general            general?
+  depreciation_rules depreciation_rules?
+  revision_rules     revision_rules?
 
   @@index([name, number, serial_number, typeId, categoryId])
 }
 
-// move department, class, location, subsidiary, custodian here
 model general {
-  id                  Int          @id @default(autoincrement())
-  asset               asset        @relation(fields: [assetId], references: [id])
-  assetId             Int          @unique
-  currency            String?
-  purchase_date       DateTime?
+  id                       Int       @id @default(autoincrement())
+  asset                    asset     @relation(fields: [assetId], references: [id])
+  assetId                  Int       @unique
+  currency                 String?
+  purchase_date            DateTime?
+  subsidiary               String?
+  depreciation_start_date  DateTime?
+  depreciation_end_date    DateTime?
+  depreciation_active      Boolean?  @default(false)
+  target_depreciation_date DateTime?
+  last_depreciation_amount Int?
+  last_depreciation_period Int?
+
   custodian           employee?    @relation(fields: [custodianId], references: [id])
   custodianId         Int?
   physical_location   location?    @relation(name: "physical_location", fields: [physical_locationId], references: [id])
@@ -266,139 +274,51 @@ model general {
   deleted   Boolean   @default(false)
 }
 
-model lease {
-  id                  Int       @id @default(autoincrement())
-  proposal            String?
-  company             String?
-  contact_no          String?
-  startAt             DateTime?
-  endAt               DateTime?
-  finance_lease       Int?
-  rental_frequency    String?
-  least_term          String?
-  annual_interest     Float?
-  total_interest      Float?
-  total_npv           String?
-  total_lease_payment String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  deletedAt           DateTime?
-  deleted             Boolean   @default(false)
+model depreciation_rules {
+  id          Int       @id @default(autoincrement())
+  asset       asset     @relation(fields: [assetId], references: [id])
+  assetId     Int       @unique
+  acquisition String?
+  pro_rata    String?
+  disposal    String?
+  mid_month   DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
 }
 
-model insurance {
-  id                Int       @id @default(autoincrement())
-  company           String?
-  policy_no         String?
-  startAt           DateTime?
-  endAt             DateTime?
-  date              DateTime?
-  payment_frequency String?
-  payment_account   Float?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  deletedAt         DateTime?
-  deleted           Boolean   @default(false)
-}
+model revision_rules {
+  id      Int   @id @default(autoincrement())
+  asset   asset @relation(fields: [assetId], references: [id])
+  assetId Int   @unique
 
-model maintenance {
-  id                  Int       @id @default(autoincrement())
-  company             String?
-  contact_no          String?
-  inspection_interval String?
-  last_inspection     DateTime?
-  next_inspection     DateTime?
-  warranty_no         String?
-  warranty_start      DateTime?
-  warranty_end        DateTime?
-  quantity            Int?
-  units_measurement   String?
-  quantity_disposed   Int?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  deletedAt           DateTime?
-  deleted             Boolean   @default(false)
-}
+  financial_start_year   String?
+  annual_method_entry    String?
+  convention             String?
+  period_convention      String?
+  depreciation_period    String?
+  prior_year_NBV         String?
+  group_depreciation     String?
+  group_master           String?
+  allow_override         String?
+  add_alternative_method String?
+  store_history          String?
 
-model disposal {
-  id           Int       @id @default(autoincrement())
-  date         DateTime?
-  type         String?
-  item         String?
-  customer     String?
-  sale_amount  Float?
-  sale_invoice String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
-  deleted      Boolean   @default(false)
-}
-
-model usage {
-  id         Int       @id @default(autoincrement())
-  date       DateTime?
-  period     String?
-  units_used Int?
-  comments   String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deletedAt  DateTime?
-  deleted    Boolean   @default(false)
-}
-
-model depreciation {
-  id                        Int       @id @default(autoincrement())
-  method                    String?
-  startAt                   DateTime?
-  endAt                     DateTime?
-  period                    String?
-  lifetime_usage            Int?
-  residual_value            Float?
-  residual_value_percentage Float?
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
-  deletedAt                 DateTime?
-  deleted                   Boolean   @default(false)
-}
-
-model depreciation_history {
-  id                        Int       @id @default(autoincrement())
-  asset_life                Int?
-  financial_year_start      DateTime?
-  period_convention         String?
-  subsidiary                String?
-  original_cost             Float?
-  residual_value            Float?
-  residual_value_percentage Float?
-  netbook_value             Float?
-  cumulative_depreciation   Float?
-  asset_status              String?
-  last_depreciation_date    DateTime?
-  last_depreciation_amount  Float?
-  last_depreciation_period  String?
-  depreciation_status       String?
-  revision_rules            String[]
-  annual_method_entry       String?
-  convention                String?
-  prior_year_nbv            String?
-  convention_asset_life     String?
-  convention_period         String?
-  group_depreciation        String?
-  group_master              String?
-  allow_override            Boolean?
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
-  deletedAt                 DateTime?
-  deleted                   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
 }
 
 model calendar {
-  id        Int        @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
   startDate DateTime?
   endDate   DateTime?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   deletedAt DateTime?
   deleted   Boolean    @default(false)

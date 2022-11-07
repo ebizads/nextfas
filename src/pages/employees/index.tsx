@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import DashboardLayout from '../../layouts/DashboardLayout'
-import { EmployeeType } from '../../types/generic'
 import { trpc } from '../../utils/trpc'
 import DisplayEmployees from '../../components/employee/DisplayEmployees'
 
@@ -8,28 +7,10 @@ const Employee = () => {
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(10)
 
-
-    const [employees, setEmployees] = useState<EmployeeType[]>([])
-    const [employeesPage, setEmployeesPage] = useState<number>(0)
-
     const { data } = trpc.employee.findAll.useQuery({
         limit,
         page,
     })
-
-
-    useEffect(() => {
-        if (data) {
-
-            setEmployees(data.employees)
-
-
-            setEmployeesPage(Math.ceil(data?.total / limit))
-
-            //console.log(employees);
-        }
-
-    }, [data, limit])
 
     return (
         <DashboardLayout>
@@ -37,8 +18,8 @@ const Employee = () => {
                 <h3 className="text-xl font-medium">Assets</h3>
                 <DisplayEmployees
                     total={data?.total ?? 0}
-                    employees={employees}
-                    employeePage={employeesPage}
+                    employees={data?.employees ?? []}
+                    employeePage={data?.pages ?? 0}
                     page={page}
                     setPage={setPage}
                     limit={limit}

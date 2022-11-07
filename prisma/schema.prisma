@@ -72,8 +72,8 @@ model employee {
   work_calendarId Int?
   calendar        calendar? @relation(fields: [work_calendarId], references: [id])
   address         address?
-  profile         profile?
   general         general[]
+  profile         profile?
 
   @@index([employee_id, name, email, hired_date, subsidiary], map: "employee_index")
 }
@@ -134,8 +134,8 @@ model location {
   updatedAt          DateTime  @updatedAt
   deletedAt          DateTime?
   deleted            Boolean   @default(false)
-  physical_locations general[] @relation(name: "physical_location")
-  locations          general[] @relation(name: "locations")
+  locations          general[] @relation("locations")
+  physical_locations general[] @relation("physical_location")
 }
 
 model type {
@@ -212,7 +212,6 @@ model vendor {
   asset        asset[]
 }
 
-// remove department, class, location, subsidiary, custodian here
 model asset {
   id                    Int           @id @default(autoincrement())
   name                  String
@@ -237,32 +236,29 @@ model asset {
   model                 model?        @relation(fields: [modelId], references: [id])
   type                  type?         @relation(fields: [typeId], references: [id])
   vendor                vendor?       @relation(fields: [vendorId], references: [id])
+  general               general?
 
-  // general subtab connection
-  general general?
   @@index([name, number, serial_number, typeId, categoryId])
 }
 
-// move department, class, location, subsidiary, custodian here
 model general {
   id                  Int          @id @default(autoincrement())
-  asset               asset        @relation(fields: [assetId], references: [id])
   assetId             Int          @unique
   currency            String?
   purchase_date       DateTime?
-  custodian           employee?    @relation(fields: [custodianId], references: [id])
   custodianId         Int?
-  physical_location   location?    @relation(name: "physical_location", fields: [physical_locationId], references: [id])
   physical_locationId Int?
-  location            location?    @relation(name: "locations", fields: [locationId], references: [id])
   locationId          Int?
-  class               asset_class? @relation(fields: [classId], references: [id])
   classId             Int?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  deletedAt           DateTime?
+  deleted             Boolean      @default(false)
+  asset               asset        @relation(fields: [assetId], references: [id])
+  class               asset_class? @relation(fields: [classId], references: [id])
+  custodian           employee?    @relation(fields: [custodianId], references: [id])
+  location            location?    @relation("locations", fields: [locationId], references: [id])
+  physical_location   location?    @relation("physical_location", fields: [physical_locationId], references: [id])
 }
 
 model lease {
@@ -398,7 +394,6 @@ model calendar {
   endDate   DateTime?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-
   deletedAt DateTime?
   deleted   Boolean    @default(false)
   employee  employee[]

@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
+import { Select, Pagination } from "@mantine/core"
 import EmployeeTable from "../atoms/table/EmployeeTable"
 import { EmployeeType } from "../../types/generic"
 import { columns } from "../../lib/employeeTable"
@@ -53,7 +53,7 @@ const DisplayEmployees = (props: {
   const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
-  const value = new Date()
+  const [date, setDate] = useState<Date>(new Date())
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   return (
@@ -149,14 +149,15 @@ const DisplayEmployees = (props: {
         isVisible={addSingleRecord}
         setIsVisible={setAddSingleRecord}
         className="max-w-4xl"
-
       >
         <CreateEmployeeModal
-          value={value}
+          date={date}
+          setDate={setDate}
           setImage={setImage}
           images={images}
           setIsLoading={setIsLoading}
           isLoading={isLoading}
+          setIsVisible={setAddSingleRecord}
         />
       </Modal>
       <Modal

@@ -7,6 +7,7 @@ import Modal from "../../headless/modal/modal"
 import { EmployeeType } from "../../../types/generic"
 import { employeeColumns } from "../../../lib/table"
 import { getAddress, getName, getProperty } from "../../../lib/functions"
+import { Employee, UpdateEmployeeModal } from "../../employee/UpdateEmployeeModal"
 
 const EmployeeTable = (props: {
   checkboxes: number[]
@@ -17,6 +18,7 @@ const EmployeeTable = (props: {
 }) => {
   const { minimize } = useMinimizeStore()
   const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [updateRecord, setUpdateRecord] = useState<boolean>(false)
   const [details, setDetails] = useState<EmployeeType>()
 
   const selectAllCheckboxes = () => {
@@ -121,8 +123,11 @@ const EmployeeTable = (props: {
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
-                <i className="fa-light fa-pen-to-square" />
-                <i className="fa-light fa-trash-can text-red-500" />{" "}
+                <i className="fa-light fa-pen-to-square" onClick={() => {
+                  setDetails(row)
+                  setUpdateRecord(true)
+                }} />
+                {/* <i className="fa-light fa-trash-can text-red-500" />{" "} */}
               </td>
             </tr>
           ))}
@@ -134,6 +139,17 @@ const EmployeeTable = (props: {
         setIsVisible={setIsVisible}
         info={details!}
       />
+
+      {details !== null ?
+        <Modal title="Update Employee Record"
+          isVisible={updateRecord}
+          setIsVisible={setUpdateRecord}
+          className="max-w-4xl">
+          <UpdateEmployeeModal employee={details as Employee} setIsVisible={setUpdateRecord}
+          />
+        </Modal>
+        : <div></div>
+      }
     </div>
   )
 }

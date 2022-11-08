@@ -32,6 +32,7 @@ export default function DropZone({
   const [duplicatedEmployees, setDuplicatedEmployees] = useState<ExcelExportType[]>([])
   const { mutate: create } = trpc.employee.createMany.useMutation()
 
+
   const parseEmployeesData = (data: unknown[]) => {
 
     //returns all id of parsed employees
@@ -39,14 +40,15 @@ export default function DropZone({
       return (employee as string[])[8] as string
     }) as string[]
     setIdList(id_list)
+
     //filters duplicated ID
-    const dupEmployeeList = data.filter(employee => id_list.includes(employee ? (employee as string[])[8] as string : "N/A")).reverse() as any[]
-    // setDuplicatedEmployees(dupEmployeeList)
+    const dupEmployeeList = data.filter(employee => {
+      return id_list.includes(employee ? (employee as string[])[8] as string : "N/A")
+    }) as any[]
 
+    const final_dupList = [] as ExcelExportType[]
     dupEmployeeList.forEach(emp => {
-      console.log(emp)
-
-      const structure = {
+      const data_structure = {
         id: (emp as (string | number | null)[])[0] as number,
         name: (emp as (string | number | null)[])[1] as string,
         email: (emp as (string | number | null)[])[2] as string,
@@ -94,9 +96,14 @@ export default function DropZone({
           phone_no: ((emp as (string | number | null)[])[35] as string),
         }
       } as ExcelExportType
-
-      setDuplicatedEmployees((prev) => [...prev, structure])
+      final_dupList.push(data_structure)
     })
+
+    setDuplicatedEmployees(final_dupList.sort((a, b) => {
+      return a.id! - b.id!
+    }))
+
+
     // setDuplicatedEmployees(dupEmployees)
     // console.log(dupEmployees)
   }
@@ -224,7 +231,7 @@ export default function DropZone({
               <i className="fa-regular fa-circle-exclamation" />
               <p>Our database has found existing records, please resolve record conflicts:</p>
             </div>
-            <DuplicateAccordion currentRecords={duplicates} incomingChanges={duplicatedEmployees} />
+            <DuplicateAccordion currentRecords={duplicates.sort((a, b) => a.id - b.id)} incomingChanges={duplicatedEmployees} />
             <div className="flex justify-end items-center gap-2 mt-4">
               <button className="underline font-medium px-4 py-2">Discard Changes</button>
               <button className="text-dark-primary font-medium bg-tangerine-500 hover:bg-tangerine-600 px-4 py-2">Accept All Changes</button>

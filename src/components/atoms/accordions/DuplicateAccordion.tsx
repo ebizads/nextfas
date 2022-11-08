@@ -4,6 +4,10 @@ import { useEffect } from 'react';
 
 const DuplicateAccordion = (props: { currentRecords: employee[], incomingChanges: unknown[] }) => {
 
+  useEffect(() => {
+    console.log(props.currentRecords, props.incomingChanges)
+  }, [])
+
   return (
     <Accordion>
       {props.currentRecords.map((employee, idx) => (

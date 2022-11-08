@@ -226,16 +226,16 @@ export default function DropZone({
             </Group>
           </Dropzone> :
           <div className="px-4 py-2 flex flex-col gap-2">
-            <h6 className="text-lg font-medium">Duplicates found!</h6>
             <div className="bg-yellow-100 p-4 flex gap-4 items-center text-light-secondary">
               <i className="fa-regular fa-circle-exclamation" />
-              <p>Our database has found existing records, please resolve record conflicts:</p>
+              <p>Our database has found existing records, please resolve record conflicts before proceeding.</p>
             </div>
             <DuplicateAccordion currentRecords={duplicates.sort((a, b) => a.id - b.id)} incomingChanges={duplicatedEmployees} />
             <div className="flex justify-end items-center gap-2 mt-4">
               <button className="underline font-medium px-4 py-2">Discard Changes</button>
               <button className="text-dark-primary font-medium bg-tangerine-500 hover:bg-tangerine-600 px-4 py-2">Accept All Changes</button>
             </div>
+
             {/* <pre>{JSON.stringify(duplicates, null, 2)}</pre> */}
           </div> : <></>
 

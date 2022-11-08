@@ -26,21 +26,78 @@ export default function DropZone({
   acceptingMany?: boolean
 }) {
 
-  const [idList, setIdList] = useState<number[]>([])
+  const [idList, setIdList] = useState<string[]>([])
 
   const { data: duplicates } = trpc.employee.checkDuplicates.useQuery(idList)
-  const [duplicatedEmployees, setDuplicatedEmployees] = useState<unknown[]>([])
+  const [duplicatedEmployees, setDuplicatedEmployees] = useState<ExcelExportType[]>([])
   const { mutate: create } = trpc.employee.createMany.useMutation()
 
   const parseEmployeesData = (data: unknown[]) => {
 
     //returns all id of parsed employees
     const id_list = data.map((employee) => {
-      return (employee as number[])[0] as number
-    }) as number[]
+      return (employee as string[])[8] as string
+    }) as string[]
     setIdList(id_list)
-    const dupEmployees = data.filter(employee => id_list.includes(employee ? (employee as number[])[0] as number : -1)).reverse()
-    setDuplicatedEmployees(dupEmployees)
+    //filters duplicated ID
+    const dupEmployeeList = data.filter(employee => id_list.includes(employee ? (employee as string[])[8] as string : "N/A")).reverse() as any[]
+    // setDuplicatedEmployees(dupEmployeeList)
+
+    dupEmployeeList.forEach(emp => {
+      console.log(emp)
+
+      const structure = {
+        id: (emp as (string | number | null)[])[0] as number,
+        name: (emp as (string | number | null)[])[1] as string,
+        email: (emp as (string | number | null)[])[2] as string,
+        image: (emp as (string | number | null)[])[3] as string,
+        createdAt: new Date((emp as (string | number | null)[])[4] as string),
+        updatedAt: new Date((emp as (string | number | null)[])[5] as string),
+        deleted: (emp as (string | number | null | boolean)[])[6] as boolean,
+        deletedAt: new Date((emp as (string | number | null | boolean)[])[7] as string),
+        employee_id: ((emp as (string | number | null)[])[8] as string),
+        hired_date: new Date((emp as (string | number | null | boolean)[])[9] as string),
+        subsidiary: ((emp as (string | number | null)[])[10] as string),
+        department: ((emp as (string | number | null)[])[11] as string),
+        position: ((emp as (string | number | null)[])[12] as string),
+        work_calendarId: ((emp as (string | number | null)[])[13] as number),
+        address: {
+          id: ((emp as (string | number | null)[])[14] as number),
+          street: ((emp as (string | number | null)[])[15] as string),
+          city: ((emp as (string | number | null)[])[16] as string),
+          state: ((emp as (string | number | null)[])[17] as string),
+          zip: ((emp as (string | number | null)[])[18] as string),
+          country: ((emp as (string | number | null)[])[19] as string),
+          shipping_address: ((emp as (string | number | null)[])[20] as string) ?? null,
+          billing_address: ((emp as (string | number | null)[])[21] as string) ?? null,
+          createdAt: new Date((emp as (string | number | null | boolean)[])[22] as string) ?? null,
+          updatedAt: new Date((emp as (string | number | null | boolean)[])[23] as string) ?? null,
+          //may laktaw po ito
+          deleted: (emp as (string | number | null | boolean)[])[26] as boolean,
+          deletedAt: new Date((emp as (string | number | null | boolean)[])[27] as string),
+          manufacturerId: ((emp as (string | number | null)[])[22] as number),
+          vendorId: ((emp as (string | number | null)[])[23] as number),
+          userId: ((emp as (string | number | null)[])[24] as number),
+          employeeId: ((emp as (string | number | null)[])[25] as number),
+        },
+        profile: {
+          id: ((emp as (string | number | null)[])[28] as number),
+          first_name: ((emp as (string | number | null)[])[29] as string),
+          middle_name: ((emp as (string | number | null)[])[30] as string),
+          last_name: ((emp as (string | number | null)[])[31] as string),
+          suffix: ((emp as (string | number | null)[])[32] as string),
+          gender: ((emp as (string | number | null)[])[33] as string),
+          image: ((emp as (string | number | null)[])[3] as string),
+          userId: ((emp as (string | number | null)[])[24] as number),
+          date_of_birth: new Date((emp as (string | number | null | boolean)[])[36] as string),
+          employeeId: ((emp as (string | number | null)[])[36] as number),
+          phone_no: ((emp as (string | number | null)[])[35] as string),
+        }
+      } as ExcelExportType
+
+      setDuplicatedEmployees((prev) => [...prev, structure])
+    })
+    // setDuplicatedEmployees(dupEmployees)
     // console.log(dupEmployees)
   }
 
@@ -94,8 +151,10 @@ export default function DropZone({
 
                     const ws = wb.Sheets[wsname];
                     if (ws) {
-                      const raw_data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+                      const raw_data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+                      // console.log("RAW:", raw_data);
                       raw_data.shift()
+
                       const data = raw_data
                       // do something here
                       // const headers = data.shift()

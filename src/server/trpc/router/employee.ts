@@ -120,11 +120,11 @@ export const employeeRouter = t.router({
       }
     }),
   checkDuplicates: authedProcedure
-    .input(z.array(z.number()))
+    .input(z.array(z.string()))
     .query(async ({ ctx, input }) => {
       const employees = await ctx.prisma.employee.findMany({
         where: {
-          id: { in: input },
+          employee_id: { in: input },
         },
         include: {
           address: true,

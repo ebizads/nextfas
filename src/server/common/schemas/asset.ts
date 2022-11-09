@@ -17,6 +17,27 @@ export const GeneralCreateInput = z.object({
   physical_location: LocationCreateInput.optional(),
 })
 
+export const DepreciationRulesCreateInput = z.object({
+  acquisition: z.string().nullish().optional(),
+  pro_rata: z.string().nullish().optional(),
+  disposal: z.string().nullish().optional(),
+  mid_month: z.date().nullish().optional(),
+})
+
+export const RevisionRulesCreateInput = z.object({
+  financial_start_year: z.string().nullish().optional(),
+  annual_method_entry: z.string().nullish().optional(),
+  convention: z.string().nullish().optional(),
+  period_convention: z.string().nullish().optional(),
+  depreciation_period: z.string().nullish().optional(),
+  prior_year_NBV: z.string().nullish().optional(),
+  group_depreciation: z.string().nullish().optional(),
+  group_master: z.string().nullish().optional(),
+  allow_override: z.string().nullish().optional(),
+  add_alternative_method: z.string().nullish().optional(),
+  store_history: z.string().nullish().optional(),
+})
+
 export const AssetCreateInput = z.object({
   name: z
     .string({ required_error: "Name is required" })
@@ -30,6 +51,14 @@ export const AssetCreateInput = z.object({
   current_cost: z.number().nullish(),
   current_netbook_value: z.number().nullish(),
 
+  project: z.string().nullish(),
+  alt_number: z.string().nullish(),
+  residual_value: z.number().nullish(),
+  residual_value_percentage: z.number().nullish(),
+  accounting_method: z.string().nullish(),
+  asset_lifetime: z.number().nullish(),
+
+  parentId: z.number().nullish(),
   typeId: z.number().nullish(),
   categoryId: z.number().nullish(),
   manufacturerId: z.number().nullish(),
@@ -44,6 +73,8 @@ export const AssetCreateInput = z.object({
     .nullish(),
 
   general: GeneralCreateInput.optional(),
+  depreciation_rules: DepreciationRulesCreateInput.optional(),
+  revision_rules: RevisionRulesCreateInput.optional(),
 })
 
 export const AssetEditInput = z.object({

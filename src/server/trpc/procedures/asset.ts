@@ -6,7 +6,8 @@ import { authedProcedure } from "../trpc"
 export const CreateAssetProcudure = authedProcedure
   .input(AssetCreateInput)
   .mutation(async ({ ctx, input }) => {
-    const { model, general, ...rest } = input
+    const { model, general, depreciation_rules, revision_rules, ...rest } =
+      input
 
     try {
       const [asset] = await ctx.prisma.$transaction(
@@ -23,6 +24,12 @@ export const CreateAssetProcudure = authedProcedure
             data: {
               model: {
                 create: model ?? undefined,
+              },
+              depreciation_rules: {
+                create: depreciation_rules ?? undefined,
+              },
+              revision_rules: {
+                create: revision_rules ?? undefined,
               },
             },
           }),

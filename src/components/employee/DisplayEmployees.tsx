@@ -104,7 +104,6 @@ const DisplayEmployees = (props: {
               onClick={() => {
                 const downloadableEmployees = props.employees.map((employee) => {
                   if (employee?.['address'] && employee?.['profile']) {
-
                     const { address, profile, ...rest } = employee
                     return {
                       ...rest,
@@ -118,7 +117,6 @@ const DisplayEmployees = (props: {
                       id: rest.id
                     }
                   }
-
                 }) as ExcelExportType[]
                 downloadExcel(downloadableEmployees)
               }}

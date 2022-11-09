@@ -8,7 +8,11 @@ const DuplicateAccordion = (props: { currentRecords: employee[], incomingChanges
     <Accordion>
       {props.currentRecords.map((employee, idx) => (
         <Accordion.Item value={employee.id.toString()} key={idx}>
-          <Accordion.Control className='uppercase'>Employee: {employee.employee_id} - {employee.name}</Accordion.Control>
+          <Accordion.Control className='uppercase'>
+            <div className='grid grid-cols-2 gap-1 w-1/2'>
+              <p>{employee.employee_id}</p>
+              <p>{employee.name}</p>
+            </div></Accordion.Control>
           <Accordion.Panel>
             <div className='flex flex-col gap-2'>
               <div className='flex gap-4'>

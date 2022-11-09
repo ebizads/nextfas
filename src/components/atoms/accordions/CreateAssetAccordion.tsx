@@ -4,10 +4,15 @@ import { InputField } from '../forms/InputField';
 import TypeSelect from '../select/TypeSelect';
 import { Textarea, Switch } from '@mantine/core'
 import { DatePicker } from '@mantine/dates';
+import { trpc } from '../../../utils/trpc';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { AssetCreateInput } from '../../../server/common/schemas/asset';
 
 
 function GeneralSubtab(props: { register: any, errors: any }) {
-  return (<Accordion transitionDuration={500} classNames={{}}>
+  return (<Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
     <Accordion.Item value={"1"}>
       <Accordion.Control className='uppercase'>
         <div className="flex gap-2 text-gray-700 items-center">
@@ -39,7 +44,7 @@ function GeneralSubtab(props: { register: any, errors: any }) {
           </div>
           <div className="col-span-9 grid grid-cols-11 gap-2">
             <div className="col-span-3 space-y-2">
-              <p className='text-sm text-gray-700'>Depreciation End</p>
+              <p className='text-sm text-gray-700'>Purchase Date</p>
               <DatePicker dropdownType="modal" size="sm" // value={props.value}
                 onChange={value => {// setValue("hired_date", value)
                 }} classNames={{
@@ -48,7 +53,7 @@ function GeneralSubtab(props: { register: any, errors: any }) {
               />
             </div>
             <div className="col-span-3 space-y-2">
-              <p className='text-sm text-gray-700'>Depreciation End</p>
+              <p className='text-sm text-gray-700'>Depreciation Start Date</p>
               <DatePicker dropdownType="modal" size="sm" // value={props.value}
                 onChange={value => {// setValue("hired_date", value)
                 }} classNames={{
@@ -57,7 +62,7 @@ function GeneralSubtab(props: { register: any, errors: any }) {
               />
             </div>
             <div className="col-span-3 space-y-2">
-              <p className='text-sm text-gray-700'>Depreciation End</p>
+              <p className='text-sm text-gray-700'>Depreciation End Date</p>
               <DatePicker dropdownType="modal" size="sm" // value={props.value}
                 onChange={value => {// setValue("hired_date", value)
                 }} classNames={{
@@ -135,40 +140,53 @@ function GeneralSubtab(props: { register: any, errors: any }) {
         </div>
       </Accordion.Control>
       <Accordion.Panel>
-        <div className="grid grid-cols-8 gap-2">
-          <div className="col-span-4 space-y-2">
-            <p className='text-sm text-gray-700'>Depreciation Start</p>
-            <DatePicker dropdownType="modal" size="sm" // value={props.value}
-              onChange={value => {// setValue("hired_date", value)
-              }} classNames={{
-                input: 'border-2 border-gray-400 h-11 rounded-md px-2'
-              }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-            />
+        <div className="grid grid-cols-9 gap-2">
+          <div className="col-span-3">
+            <InputField register={props.register} label="Financial Year Start" name="category" />
+            <AlertInput>{props.errors?.name?.message}</AlertInput>
           </div>
-          <div className="col-span-4 space-y-2">
-            <p className='text-sm text-gray-700'>Depreciation End</p>
-            <DatePicker dropdownType="modal" size="sm" // value={props.value}
-              onChange={value => {// setValue("hired_date", value)
-              }} classNames={{
-                input: 'border-2 border-gray-400 h-11 rounded-md px-2'
-              }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-            />
+          <div className="col-span-3">
+            <TypeSelect title={"Annual Method Entry"} placeholder={"Pick annual method entry"} data={['Method 1', 'Method 2']} />
           </div>
-          <div className="col-span-4">
+          <div className="col-span-3">
+            <InputField register={props.register} label="Convention" name="category" />
+            <AlertInput>{props.errors?.name?.message}</AlertInput>
+          </div>
+          <div className="col-span-3">
+            <InputField register={props.register} label="Period Convention" name="category" />
+            <AlertInput>{props.errors?.name?.message}</AlertInput>
+          </div>
+          <div className="col-span-3">
             <InputField register={props.register} label="Depreciation Period" name="category" />
             <AlertInput>{props.errors?.name?.message}</AlertInput>
           </div>
-          <div className="col-span-4">
-            <InputField register={props.register} label="Asset Lifetime Usage" name="category" />
-            <AlertInput>{props.errors?.name?.message}</AlertInput>
+          <div className="col-span-3 grid grid-cols-2 gap-2">
+            <div className='col-span-1'>
+              <InputField register={props.register} label="Prior Year NBV" name="category" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
+            </div>
+            <div className='col-span-1'>
+              <InputField register={props.register} label="Group Depreciation" name="category" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
+            </div>
           </div>
-          <div className="col-span-4">
-            <InputField register={props.register} label="Residual Value" name="category" />
-            <AlertInput>{props.errors?.name?.message}</AlertInput>
-          </div>
-          <div className="col-span-4">
-            <InputField register={props.register} label="Residual Percentage" name="category" />
-            <AlertInput>{props.errors?.name?.message}</AlertInput>
+          <div className="col-span-9 grid grid-cols-7 gap-2">
+            <div className="col-span-2">
+              <InputField register={props.register} label="Group Master" name="category" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
+            </div>
+            <div className="col-span-2">
+              <InputField register={props.register} label="Allow Override" name="category" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
+            </div>
+            <div className="col-span-2">
+              <InputField register={props.register} label="Add Alternate Method" name="category" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
+            </div>
+            <div className='col-span-1'>
+              <p className='text-sm text-gray-700'>Store History</p>
+              <Switch color={'yellow'} size="md" />
+            </div>
           </div>
         </div>
       </Accordion.Panel>
@@ -176,7 +194,7 @@ function GeneralSubtab(props: { register: any, errors: any }) {
   </Accordion>);
 }
 function AssetInfo(props: { register: any, errors: any }) {
-  return (<Accordion transitionDuration={500} classNames={{}}>
+  return (<Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
     <Accordion.Item value={"1"}>
       <Accordion.Control className='uppercase'>
         <div className="flex gap-2 text-gray-700 items-center">
@@ -297,12 +315,65 @@ function AssetInfo(props: { register: any, errors: any }) {
   </Accordion>);
 }
 
+type Asset = z.infer<typeof AssetCreateInput>
 
-const CreateAssetAccordion = ({ form, register, errors }: { form: string, register: any, errors: any }) => {
+
+const CreateAssetAccordion = ({ form }: { form: string }) => {
+
+  const { mutate, isLoading, error } = trpc.vendor.create.useMutation()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Asset>({
+    resolver: zodResolver(AssetCreateInput),
+    // defaultValues: {
+    //   name: "",
+    //   email: "",
+    // },
+  })
+
+  const onSubmit = async (asset: Asset) => {
+    // Register function;
+
+    //mutate({
+    // name: vendor.name,
+    // email: vendor.email,
+    //})
+    reset()
+  }
+
 
   return (
     form === "asset info" ?
-      <AssetInfo register={register} errors={errors}></AssetInfo> : <GeneralSubtab register={register} errors={errors}></GeneralSubtab>
+      <div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col space-y-4 p-4"
+          noValidate
+        >
+          <AssetInfo register={register} errors={errors} />
+          <div className="w-full flex gap-2 text-lg justify-end mt-2">
+            <button className="underline px-4 py-2">Discard</button>
+            <button className="rounded-md bg-tangerine-300 hover:bg-tangerine-400 font-medium text-dark-primary px-6 py-2">Save</button>
+          </div>
+        </form>
+      </div>
+      :
+      <div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col space-y-4 p-4"
+          noValidate
+        >
+          <GeneralSubtab register={register} errors={errors} />
+          <div className="w-full flex gap-2 text-lg justify-end mt-2">
+            <button className="underline px-4 py-2">Discard</button>
+            <button className="rounded-md bg-tangerine-300 hover:bg-tangerine-400 font-medium text-dark-primary px-6 py-2">Save</button>
+          </div>
+        </form>
+      </div>
   );
 }
 

@@ -106,7 +106,17 @@ const DisplayEmployees = (props: {
                   if (employee?.['address'] && employee?.['profile']) {
 
                     const { address, profile, ...rest } = employee
-                    return { ...rest, ...address, ...profile, id: rest.id }
+                    return {
+                      ...rest,
+                      address_id: address.id,
+                      ...address,
+                      address_deleted: address.deleted,
+                      address_deletedAt: address.deletedAt,
+                      profile_id: profile.id,
+                      ...profile,
+                      profile_employeeId: profile.employeeId,
+                      id: rest.id
+                    }
                   }
 
                 }) as ExcelExportType[]

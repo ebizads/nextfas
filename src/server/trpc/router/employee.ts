@@ -52,6 +52,10 @@ export const employeeRouter = t.router({
                 employee_id: { contains: input?.search?.employee_id },
                 email: { contains: input?.search?.email },
               },
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+              take: input?.limit ?? 10,
             }),
             ctx.prisma.employee.count({
               where: {

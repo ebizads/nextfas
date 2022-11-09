@@ -1,16 +1,22 @@
 import { z } from "zod"
 
-export const AddressCreateInput = z
-  .object({
-    street: z.string().nullish(),
-    city: z.string().nullish(),
-    state: z.string().nullish(),
-    zip: z.string().nullish(),
-    country: z.string().nullish(),
-    shipping_address: z.string().nullish(),
-    billing_address: z.string().nullish(),
-  })
-  .optional()
+export const AddressCreateInput = z.object({
+  street: z.string().nullish(),
+  city: z
+    .string({ required_error: "City is required" })
+    .min(1, "City is required"),
+  state: z
+    .string({ required_error: "Barangay is required" })
+    .min(1, "Barangay is required"),
+  zip: z
+    .string({ required_error: "Zip is required" })
+    .min(1, "Zip is required"),
+  country: z
+    .string({ required_error: "Country is required" })
+    .min(1, "Country is required"),
+  shipping_address: z.string().nullish(),
+  billing_address: z.string().nullish(),
+})
 
 export const AddressEditInput = z
   .object({

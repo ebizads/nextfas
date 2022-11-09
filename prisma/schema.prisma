@@ -213,41 +213,30 @@ model vendor {
 }
 
 model asset {
-  id                        Int                 @id @default(autoincrement())
-  name                      String
-  number                    String              @unique
-  description               String?
-  serial_number             String?
-  original_cost             Float?
-  current_netbook_value     Float?
-  current_cost              Float?
-  createdAt                 DateTime            @default(now())
-  updatedAt                 DateTime            @updatedAt
-  deletedAt                 DateTime?
-  deleted                   Boolean             @default(false)
-  typeId                    Int?
-  modelId                   Int?
-  categoryId                Int?
-  manufacturerId            Int?
-  vendorId                  Int?
-  barcode                   String?
-  accounting_method         String?
-  alt_number                String?
-  asset_lifetime            String?
-  parentId                  Int?
-  project                   String?
-  residual_value            Float?
-  residual_value_percentage Float?
-  category                  category?           @relation(fields: [categoryId], references: [id])
-  manufacturer              manufacturer?       @relation(fields: [manufacturerId], references: [id])
-  model                     model?              @relation(fields: [modelId], references: [id])
-  asset                     asset?              @relation("assetToasset", fields: [parentId], references: [id])
-  type                      type?               @relation(fields: [typeId], references: [id])
-  vendor                    vendor?             @relation(fields: [vendorId], references: [id])
-  other_asset               asset[]             @relation("assetToasset")
-  depreciation_rules        depreciation_rules?
-  general                   general?
-  revision_rules            revision_rules?
+  id                    Int           @id @default(autoincrement())
+  name                  String
+  number                String        @unique
+  description           String?
+  serial_number         String?
+  original_cost         Float?
+  current_netbook_value Float?
+  current_cost          Float?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  deletedAt             DateTime?
+  deleted               Boolean       @default(false)
+  typeId                Int?
+  modelId               Int?
+  categoryId            Int?
+  manufacturerId        Int?
+  vendorId              Int?
+  barcode               String?
+  category              category?     @relation(fields: [categoryId], references: [id])
+  manufacturer          manufacturer? @relation(fields: [manufacturerId], references: [id])
+  model                 model?        @relation(fields: [modelId], references: [id])
+  type                  type?         @relation(fields: [typeId], references: [id])
+  vendor                vendor?       @relation(fields: [vendorId], references: [id])
+  general               general?
 
   @@index([name, number, serial_number, typeId, categoryId])
 }

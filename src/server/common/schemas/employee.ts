@@ -17,13 +17,22 @@ export const EmployeeCreateInput = z.object({
     middle_name: z.string().nullish(),
     suffix: z.string().nullish(),
     date_of_birth: z.date().nullish(),
-    phone_no: z.string().nullish(),
+    phone_no: z
+      .string({ required_error: "Last Name is required" })
+      .min(11, "Not a valid mobile number")
+      .max(11, "Not a valid mobile number"),
     gender: z.string().nullish(),
   }),
   hired_date: z.date().nullish(),
-  subsidiary: z.string().nullish(),
-  department: z.string().nullish(),
-  position: z.string().nullish(),
+  subsidiary: z
+    .string({ required_error: "Subsidiary is required" })
+    .min(1, "Subsidiary is required"),
+  department: z
+    .string({ required_error: "Department is required" })
+    .min(1, "Department is required"),
+  position: z
+    .string({ required_error: "Position is required" })
+    .min(1, "Position is required"),
   address: AddressCreateInput,
 })
 

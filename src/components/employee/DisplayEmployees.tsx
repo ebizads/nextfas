@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Select, Popover, Checkbox, Pagination } from "@mantine/core"
+import { Select, Pagination } from "@mantine/core"
 import EmployeeTable from "../atoms/table/EmployeeTable"
 import { EmployeeType } from "../../types/generic"
 import { columns } from "../../lib/employeeTable"
@@ -13,6 +13,7 @@ import { employeeColumns } from "../../lib/table"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import AddEmployeePopOver from "../atoms/popover/AddEmployeePopOver"
 import DropZone from "../dropzone/DropZone"
+import { trpc } from "../../utils/trpc"
 
 type SearchType = {
   value: string
@@ -53,9 +54,17 @@ const DisplayEmployees = (props: {
   const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
-  const value = new Date()
+  const [date, setDate] = useState<Date>(new Date())
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const utils = trpc.useContext();
+
+  const { mutate } = trpc.employee.deleteMany.useMutation({
+    onSuccess: () => {
+      utils.employee.findAll.invalidate();
+    }
+  })
+
   return (
     <div>
       <section className="space-y-4">
@@ -83,7 +92,7 @@ const DisplayEmployees = (props: {
               />
             </div>
             {checkboxes.length > 0 && (
-              <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
+              <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none" onClick={() => { mutate(checkboxes); setCheckboxes([]) }}>
                 {checkboxes.includes(-1)
                   ? `Delete all record/s ( ${props.employees.length} ) ?`
                   : `Delete selected record/s ( ${checkboxes.length} )`}
@@ -111,7 +120,6 @@ const DisplayEmployees = (props: {
                   }
 
                 }) as ExcelExportType[]
-                console.log("opo: ", downloadableEmployees)
                 downloadExcel(downloadableEmployees)
               }}
               className="-md flex gap-2 bg-tangerine-500 py-2 px-4 text-xs rounded-md text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
@@ -159,14 +167,15 @@ const DisplayEmployees = (props: {
         isVisible={addSingleRecord}
         setIsVisible={setAddSingleRecord}
         className="max-w-4xl"
-
       >
         <CreateEmployeeModal
-          value={value}
+          date={date}
+          setDate={setDate}
           setImage={setImage}
           images={images}
           setIsLoading={setIsLoading}
           isLoading={isLoading}
+          setIsVisible={setAddSingleRecord}
         />
       </Modal>
       <Modal
@@ -177,7 +186,6 @@ const DisplayEmployees = (props: {
       >
         <DropZone file_type="xlsx" acceptingMany={false} loading={isLoading} setIsLoading={setIsLoading} />
       </Modal>
-
     </div>
   )
 }

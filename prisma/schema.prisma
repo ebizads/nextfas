@@ -47,12 +47,12 @@ model user {
   image          String?
   deleted        Boolean   @default(false)
   deletedAt      DateTime?
+  lockedUntil    DateTime?
+  attempts       Int       @default(0)
   accounts       Account[]
   sessions       Session[]
   address        address?
   profile        profile?
-  lockedUntil    DateTime?
-  attempts       Int       @default(0)
 }
 
 model employee {
@@ -72,8 +72,8 @@ model employee {
   work_calendarId Int?
   calendar        calendar? @relation(fields: [work_calendarId], references: [id])
   address         address?
-  profile         profile?
   general         general[]
+  profile         profile?
 
   @@index([employee_id, name, email, hired_date, subsidiary], map: "employee_index")
 }
@@ -134,8 +134,8 @@ model location {
   updatedAt          DateTime  @updatedAt
   deletedAt          DateTime?
   deleted            Boolean   @default(false)
-  physical_locations general[] @relation(name: "physical_location")
-  locations          general[] @relation(name: "locations")
+  locations          general[] @relation("locations")
+  physical_locations general[] @relation("physical_location")
 }
 
 model type {
@@ -329,7 +329,6 @@ model calendar {
   endDate   DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
   deletedAt DateTime?
   deleted   Boolean    @default(false)
   employee  employee[]

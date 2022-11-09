@@ -1,7 +1,15 @@
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import React, { useMemo } from "react"
+import React, { useMemo, useState } from "react"
+import LogOutPopOver from "../atoms/popover/LogOutPopOver"
 
 const TopBar = () => {
+
+
+  const { data: session } = useSession()
+
+  const [openLogoutPopover, setOpenLogoutPopover] = useState<boolean>(false)
+
   const { pathname } = useRouter()
   const paths = useMemo(() => {
     const path_array = pathname
@@ -34,11 +42,10 @@ const TopBar = () => {
       <div className="flex items-center gap-2">
         <i className="fa-solid fa-bell text-lg text-gray-500" />
         <div className="rounded-full border border-gray-400 px-2 py-1">
-          <p className="text-xs">Juan Dela Cruz</p>
+          <p className="text-xs">{session?.user?.name}</p>
+
         </div>
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-full border-4 border-tangerine-500 bg-tangerine-400">
-          <i className="fa-solid fa-user-ninja text-2xl" />
-        </div>
+        <LogOutPopOver openPopover={openLogoutPopover} setOpenPopover={setOpenLogoutPopover} />
       </div>
     </div>
   )

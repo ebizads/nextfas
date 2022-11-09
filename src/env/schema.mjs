@@ -19,6 +19,7 @@ export const serverSchema = z.object({
  */
 export const clientSchema = z.object({
   NEXT_PUBLIC_CLIENT_EMAIL: z.string(),
+  NEXT_PUBLIC_CLIENT_EMPLOYEE_ID: z.string(),
 })
 
 /**
@@ -29,4 +30,5 @@ export const clientSchema = z.object({
  */
 export const clientEnv = {
   NEXT_PUBLIC_CLIENT_EMAIL: process.env.NEXT_PUBLIC_CLIENT_EMAIL,
+  NEXT_PUBLIC_CLIENT_EMPLOYEE_ID: process.env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID,
 }

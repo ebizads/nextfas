@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import { getProperty } from "../../../lib/functions"
 import { vendorColumns } from "../../../lib/table"
 import { useMinimizeStore } from "../../../store/useStore"
-import { VendorType } from "../../../types/assets"
+import { VendorType } from "../../../types/generic"
 import { ColumnType } from "../../../types/table"
 import Modal from "../../asset/Modal"
 
@@ -113,7 +113,7 @@ const VendorTable = (props: {
                       setSelectedAsset(row)
                     }}
                   >
-                    {getProperty(col.value, row)}
+                    {getProperty(col.value, row) ?? "Invalid data"}
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
@@ -133,6 +133,7 @@ const VendorTable = (props: {
           ))}
         </tbody>
       </table>
+      {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <Modal isOpen={openModalDesc} setIsOpen={setOpenModalDesc} size={8} >
         <pre>{JSON.stringify(selectedAsset, null, 2)}</pre>
       </Modal>

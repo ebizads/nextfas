@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import VendorTable from "../components/atoms/table/VendorTable"
 import DashboardLayout from "../layouts/DashboardLayout"
 import { vendorColumns } from "../lib/table"
-import { VendorType } from "../types/assets"
+import { VendorType } from "../types/generic"
 import { trpc } from "../utils/trpc"
 import { Pagination } from "@mantine/core"
 import PaginationPopOver from "../components/atoms/popover/PaginationPopOver"
@@ -18,6 +18,7 @@ import AlertInput from "../components/atoms/forms/AlertInput"
 import { Textarea } from '@mantine/core';
 import { ImageJSON } from "../types/table"
 import DropZoneComponent from "../components/dropzone/DropZoneComponent"
+import TypeSelect from "../components/atoms/select/TypeSelect"
 
 
 const Vendors = () => {
@@ -62,9 +63,7 @@ const Vendors = () => {
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
 
-  const [filterBy, setFilterBy] = useState<string[]>([
-    ...vendorColumns.map((i) => i.value),
-  ])
+  const [filterBy, setFilterBy] = useState<string[]>(vendorColumns.map((i) => i.value))
 
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -178,13 +177,7 @@ const Vendors = () => {
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
                 <div className="col-span-5">
-                  <InputField
-                    register={register}
-                    label="Type"
-                    name="type"
-                    type="text"
-                  />
-                  <AlertInput>{errors?.type?.message}</AlertInput>
+                  <TypeSelect title={"Type"} placeholder={"Pick asset type"} data={['Company', 'Individual']} />
                 </div>
                 <div className="col-span-5">
                   <InputField
@@ -249,7 +242,7 @@ const Vendors = () => {
                     classNames={{ input: "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2", label: "font-sans text-sm text-gray-600 text-light" }}
                   />
                 </div>
-                <DropZoneComponent images={images} setImage={setImage} isLoading={isLoading} setIsLoading={setIsLoading} />
+                <DropZoneComponent images={images} setImage={setImage} isLoading={isLoading} setIsLoading={setIsLoading} acceptingMany={true} />
 
               </div>
               <div className="w-full flex justify-end gap-2 py-4">

@@ -15,9 +15,9 @@ export const columns = [
 
 export const vendorColumns = [
   { value: "id", name: "Vendor ID." },
-  { value: "type", name: "Type" },
+  { value: "type/name", name: "Type" },
   { value: "name", name: "Company Name" },
-  { value: "category", name: "Category" },
+  { value: "category/name", name: "Category" },
   { value: "url", name: "Web Address" },
   { value: "email", name: "Email" },
   { value: "phone_no", name: "Phone Number" },
@@ -26,6 +26,17 @@ export const vendorColumns = [
   { value: "address", name: "Address" },
   { value: "image", name: "Image" },
   { value: "comments", name: "Comments" },
+] as ColumnType[]
+
+export const employeeColumns = [
+  { value: "employee_id", name: "Employee ID" },
+  { value: "first_name", name: "First Name" },
+  { value: "middle_name", name: "Middle Name" },
+  { value: "last_name", name: "Last Name" },
+  { value: "city", name: "Street Address" },
+  { value: "hired_date", name: "Hire Date" },
+  { value: "subsidiary", name: "Subsidiary" },
+  { value: "email", name: "Email" },
 ] as ColumnType[]
 
 export const showAssetsBy = [5, 10, 20, 50] as number[]
@@ -84,11 +95,6 @@ export const navigations = [
     name: "Employees",
     icon: "fa-users",
     link: "/employees",
-  },
-  {
-    name: "Accounting",
-    icon: "fa-calculator-simple",
-    link: "/accounting",
   },
   {
     name: "Vendors",

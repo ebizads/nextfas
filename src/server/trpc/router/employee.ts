@@ -41,7 +41,6 @@ export const employeeRouter = t.router({
               include: {
                 address: true,
                 profile: true,
-                owned_assets: true,
               },
               where: {
                 NOT: {
@@ -53,6 +52,10 @@ export const employeeRouter = t.router({
                 employee_id: { contains: input?.search?.employee_id },
                 email: { contains: input?.search?.email },
               },
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+              take: input?.limit ?? 10,
             }),
             ctx.prisma.employee.count({
               where: {
@@ -114,6 +117,50 @@ export const employeeRouter = t.router({
       } catch (error) {
         console.log(error)
 
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  checkDuplicates: authedProcedure
+    .input(z.array(z.string()))
+    .query(async ({ ctx, input }) => {
+      const employees = await ctx.prisma.employee.findMany({
+        where: {
+          employee_id: { in: input },
+        },
+        include: {
+          address: true,
+          profile: true,
+        },
+      })
+      return employees
+    }),
+  createMany: authedProcedure
+    .input(z.array(EmployeeCreateInput))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.employee.createMany({
+          data: input.map((employee) => {
+            const { profile, address, ...rest } = employee
+
+            return {
+              ...rest,
+              profile: {
+                create: profile ?? undefined,
+              },
+              address: {
+                create: address ?? undefined,
+              },
+            }
+          }),
+          skipDuplicates: true,
+        })
+
+        return "Employees successfully created"
+      } catch (error) {
+        console.log(error)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),

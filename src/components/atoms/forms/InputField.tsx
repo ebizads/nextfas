@@ -39,7 +39,7 @@ export function InputField({
             className={
               className
                 ? className +
-                  " peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                " peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                 : "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             }
             placeholder=" "

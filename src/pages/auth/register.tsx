@@ -44,6 +44,12 @@ const Register = () => {
         first_name: user.profile.first_name,
         last_name: user.profile.last_name,
       },
+      address: {
+        city: "Manila",
+        country: "Philippines",
+        state: "Metro Manila",
+        zip: "1000",
+      },
     })
     reset()
   }

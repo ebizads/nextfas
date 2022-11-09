@@ -20,19 +20,23 @@ export const EmployeeCreateInput = z.object({
     phone_no: z
       .string({ required_error: "Last Name is required" })
       .min(11, "Not a valid mobile number")
-      .max(11, "Not a valid mobile number"),
+      .max(11, "Not a valid mobile number")
+      .nullish(),
     gender: z.string().nullish(),
   }),
   hired_date: z.date().nullish(),
   subsidiary: z
     .string({ required_error: "Subsidiary is required" })
-    .min(1, "Subsidiary is required"),
+    .min(1, "Subsidiary is required")
+    .nullish(),
   department: z
     .string({ required_error: "Department is required" })
-    .min(1, "Department is required"),
+    .min(1, "Department is required")
+    .nullish(),
   position: z
     .string({ required_error: "Position is required" })
-    .min(1, "Position is required"),
+    .min(1, "Position is required")
+    .nullish(),
   address: AddressCreateInput,
 })
 

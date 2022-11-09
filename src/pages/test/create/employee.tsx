@@ -39,6 +39,12 @@ const Register = () => {
         first_name: employee.profile.first_name,
         last_name: employee.profile.last_name,
       },
+      address: {
+        city: "Manila",
+        country: "Philippines",
+        state: "Metro Manila",
+        zip: "1000",
+      },
     })
     reset()
   }

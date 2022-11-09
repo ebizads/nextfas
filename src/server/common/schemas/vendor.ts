@@ -12,7 +12,7 @@ export const VendorCreateInput = z.object({
   alt_phone_no: z.string().nullish(),
   phone_no: z.string().nullish(),
 
-  address: AddressCreateInput,
+  address: AddressCreateInput.nullish(),
 })
 
 export const VendorEditInput = z.object({

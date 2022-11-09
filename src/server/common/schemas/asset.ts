@@ -56,7 +56,7 @@ export const AssetCreateInput = z.object({
   residual_value: z.number().nullish(),
   residual_value_percentage: z.number().nullish(),
   accounting_method: z.string().nullish(),
-  asset_lifetime: z.number().nullish(),
+  asset_lifetime: z.string().nullish(),
 
   parentId: z.number().nullish(),
   typeId: z.number().nullish(),

@@ -55,7 +55,7 @@ Using `t3-stack` will give you the following benefits:
 
 You can now view the app at http://localhost:3000.
 
-## Depoloyment
+## Deployment
 
 ### Vercel
 

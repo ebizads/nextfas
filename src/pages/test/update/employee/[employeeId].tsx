@@ -8,7 +8,7 @@ import { trpc } from "../../../../utils/trpc"
 import { InputField } from "../../../../components/atoms/forms/InputField"
 import AlertInput from "../../../../components/atoms/forms/AlertInput"
 import { useRouter } from "next/router"
-import { EmployeeEditInput } from "../../../../server/common/schemas/employee"
+import { EmployeeEditInput } from "../../../../server/schemas/employee"
 
 type Employee = z.infer<typeof EmployeeEditInput>
 

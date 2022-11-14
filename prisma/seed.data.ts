@@ -1,7 +1,7 @@
 import { z } from "zod"
-import { AssetCreateInput } from "../src/server/common/schemas/asset"
-import { EmployeeCreateInput } from "../src/server/common/schemas/employee"
-import { RegisterUserInput } from "../src/server/common/schemas/user"
+import { AssetCreateInput } from "../src/server/schemas/asset"
+import { EmployeeCreateInput } from "../src/server/schemas/employee"
+import { RegisterUserInput } from "../src/server/schemas/user"
 
 export const userSeed: z.infer<typeof RegisterUserInput>[] = [
   {

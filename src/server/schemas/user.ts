@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { AddressCreateInput, AddressEditInput } from "./address"
 
-export const RegisterUserInput = z.object({
+export const CreateUserInput = z.object({
   name: z.string({ required_error: "Name is required" }).min(1),
   email: z.string({ required_error: "Email is required" }).email().min(1),
   password: z

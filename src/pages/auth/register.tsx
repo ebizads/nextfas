@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
-import { RegisterUserInput } from "../../server/common/schemas/user"
+import { RegisterUserInput } from "../../server/schemas/user"
 
 type User = z.infer<typeof RegisterUserInput>
 

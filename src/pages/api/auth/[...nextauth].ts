@@ -70,7 +70,11 @@ export const authOptions: NextAuthOptions = {
             // locks user if user reached 5 attempts
             const lock_date = dayjs().add(60, "day").toDate()
             // console.log(lock_date)
-            data = { lockedUntil: lock_date }
+            data = {
+              lockedUntil: lock_date,
+              lockedReason: "Too many attempts",
+              lockedAt: new Date(),
+            }
           }
 
           await prisma.user.update({

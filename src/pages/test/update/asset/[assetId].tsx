@@ -8,7 +8,7 @@ import { trpc } from "../../../../utils/trpc"
 import { InputField } from "../../../../components/atoms/forms/InputField"
 import AlertInput from "../../../../components/atoms/forms/AlertInput"
 import { useRouter } from "next/router"
-import { AssetEditInput } from "../../../../server/common/schemas/asset"
+import { AssetEditInput } from "../../../../server/schemas/asset"
 
 type Asset = z.infer<typeof AssetEditInput>
 

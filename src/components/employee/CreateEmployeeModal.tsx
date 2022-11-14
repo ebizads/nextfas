@@ -3,7 +3,7 @@ import { DatePicker } from "@mantine/dates"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { EmployeeCreateInput } from "../../server/common/schemas/employee"
+import { EmployeeCreateInput } from "../../server/schemas/employee"
 import { ImageJSON } from "../../types/table"
 import { trpc } from "../../utils/trpc"
 import AlertInput from "../atoms/forms/AlertInput"
@@ -11,7 +11,7 @@ import { InputField } from "../atoms/forms/InputField"
 import { Select } from "@mantine/core"
 import DropZoneComponent from "../dropzone/DropZoneComponent"
 import { env } from "../../env/client.mjs"
-import moment from "moment";
+import moment from "moment"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -25,14 +25,18 @@ export const CreateEmployeeModal = (props: {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [searchValue, onSearchChange] = useState("")
-  const [empId] = useState<string>(moment().format('YY-MDhms'))
+  const [empId] = useState<string>(moment().format("YY-MDhms"))
   const utils = trpc.useContext()
-  const { mutate, isLoading: employeeLoading, error } = trpc.employee.create.useMutation({
+  const {
+    mutate,
+    isLoading: employeeLoading,
+    error,
+  } = trpc.employee.create.useMutation({
     onSuccess: () => {
       utils.employee.findAll.invalidate()
       props.setIsVisible(false)
       props.setImage([])
-    }
+    },
   })
   const {
     register,
@@ -96,7 +100,6 @@ export const CreateEmployeeModal = (props: {
       },
     })
     reset()
-
   }
 
   return (
@@ -117,7 +120,6 @@ export const CreateEmployeeModal = (props: {
               label={""}
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
-
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Middle Name (Optional)</label>
@@ -128,7 +130,6 @@ export const CreateEmployeeModal = (props: {
               name={"profile.middle_name"}
               register={register}
             />
-
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Last Name</label>
@@ -140,7 +141,6 @@ export const CreateEmployeeModal = (props: {
               register={register}
             />
             <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
-
           </div>
         </div>
 
@@ -179,7 +179,6 @@ export const CreateEmployeeModal = (props: {
               className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-[.28%] px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
             />
             <AlertInput>{errors?.department?.message}</AlertInput>
-
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Employee Number</label>
@@ -190,8 +189,7 @@ export const CreateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-[3.23%] px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-            >{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
+            <p className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-[3.23%] px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0">{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -221,7 +219,9 @@ export const CreateEmployeeModal = (props: {
               value={props.date}
               onChange={(value) => {
                 setValue("hired_date", value)
-                value === null ? props.setDate(new Date()) : props.setDate(value);
+                value === null
+                  ? props.setDate(new Date())
+                  : props.setDate(value)
               }}
               className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-[.28%] px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
             />

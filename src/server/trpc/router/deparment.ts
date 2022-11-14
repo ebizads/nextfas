@@ -1,18 +1,20 @@
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { VendorCreateInput } from "../../schemas/vendor"
+import { DepartmentCreateInput } from "../../schemas/department"
 import { authedProcedure, t } from "../trpc"
 
-export const vendorRouter = t.router({
+export const departmentRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
-    const vendor = await ctx.prisma.vendor.findUnique({
+    const department = await ctx.prisma.department.findUnique({
       where: { id: input },
       include: {
-        address: true,
+        company: true,
+        location: true,
+        teams: true,
       },
     })
-    return vendor
+    return department
   }),
   findAll: authedProcedure
     .input(
@@ -30,14 +32,15 @@ export const vendorRouter = t.router({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const [vendors, count] = await ctx.prisma.$transaction(
+        const [departments, count] = await ctx.prisma.$transaction(
           [
-            ctx.prisma.vendor.findMany({
+            ctx.prisma.department.findMany({
               orderBy: {
                 createdAt: "desc",
               },
               include: {
-                address: true,
+                company: true,
+                location: true,
               },
               skip: input?.page ? input.page * (input.limit ?? 10) : 0,
               take: input?.limit ? input.limit : 10,
@@ -47,14 +50,14 @@ export const vendorRouter = t.router({
                 },
               },
             }),
-            ctx.prisma.vendor.count(),
+            ctx.prisma.department.count(),
           ],
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           }
         )
         return {
-          vendors,
+          departments,
           count,
         }
       } catch (error) {
@@ -65,23 +68,33 @@ export const vendorRouter = t.router({
       }
     }),
   create: authedProcedure
-    .input(VendorCreateInput)
+    .input(DepartmentCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { address, ...rest } = input
-
-      const vendor = await ctx.prisma.vendor.create({
+      const department = await ctx.prisma.department.create({
         data: {
-          ...rest,
-          address: {
+          name: input.name,
+          company: {
             connectOrCreate: {
               where: {
-                id: undefined,
+                id: input.companyId ?? undefined,
               },
-              create: address,
+              create: { name: "" },
+            },
+          },
+          location: {
+            connectOrCreate: {
+              where: {
+                id: input.locationId ?? undefined,
+              },
+              create:
+                {
+                  floor: input.location?.floor ?? "",
+                  room: input.location?.room ?? "",
+                } ?? undefined,
             },
           },
         },
       })
-      return vendor
+      return department
     }),
 })

@@ -31,6 +31,7 @@
     "bcrypt": "^5.1.0",
     "dayjs": "^1.11.5",
     "framer-motion": "^7.5.3",
+    "headless-stepper": "^1.6.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "next": "12.3.1",

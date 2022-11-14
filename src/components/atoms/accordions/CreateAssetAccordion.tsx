@@ -9,7 +9,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AssetCreateInput } from '../../../server/common/schemas/asset';
-import { IconCalendar } from '@tabler/icons';
 
 
 function AdditionalInfo(props: { register: any, errors: any }) {
@@ -237,7 +236,7 @@ function AssetInfo(props: { register: any, errors: any }) {
             <AlertInput>{props.errors?.name?.message}</AlertInput>
           </div>
           <div className="col-span-3">
-            <InputField register={props.register} label="Residual Value" name="location" />
+            <InputField register={props.register} label="Residual Value Percentage" name="location" />
             <AlertInput>{props.errors?.name?.message}</AlertInput>
           </div>
 

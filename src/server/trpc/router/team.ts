@@ -1,18 +1,19 @@
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { VendorCreateInput } from "../../schemas/vendor"
+import { TeamCreateInput } from "../../schemas/team"
 import { authedProcedure, t } from "../trpc"
 
-export const vendorRouter = t.router({
+export const teamRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
-    const vendor = await ctx.prisma.vendor.findUnique({
+    const team = await ctx.prisma.team.findUnique({
       where: { id: input },
       include: {
-        address: true,
+        department: true,
+        members: true,
       },
     })
-    return vendor
+    return team
   }),
   findAll: authedProcedure
     .input(
@@ -30,14 +31,14 @@ export const vendorRouter = t.router({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const [vendors, count] = await ctx.prisma.$transaction(
+        const [teams, count] = await ctx.prisma.$transaction(
           [
-            ctx.prisma.vendor.findMany({
+            ctx.prisma.team.findMany({
               orderBy: {
                 createdAt: "desc",
               },
               include: {
-                address: true,
+                department: true,
               },
               skip: input?.page ? input.page * (input.limit ?? 10) : 0,
               take: input?.limit ? input.limit : 10,
@@ -47,14 +48,14 @@ export const vendorRouter = t.router({
                 },
               },
             }),
-            ctx.prisma.vendor.count(),
+            ctx.prisma.team.count(),
           ],
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           }
         )
         return {
-          vendors,
+          teams,
           count,
         }
       } catch (error) {
@@ -65,23 +66,21 @@ export const vendorRouter = t.router({
       }
     }),
   create: authedProcedure
-    .input(VendorCreateInput)
+    .input(TeamCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { address, ...rest } = input
-
-      const vendor = await ctx.prisma.vendor.create({
-        data: {
-          ...rest,
-          address: {
-            connectOrCreate: {
-              where: {
-                id: undefined,
-              },
-              create: address,
-            },
+      try {
+        const team = await ctx.prisma.team.create({
+          data: {
+            name: input.name,
+            departmentId: input.departmentId,
           },
-        },
-      })
-      return vendor
+        })
+        return team
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
     }),
 })

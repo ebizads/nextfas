@@ -1,18 +1,27 @@
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { VendorCreateInput } from "../../schemas/vendor"
+import { CompanyCreateInput } from "../../schemas/company"
 import { authedProcedure, t } from "../trpc"
 
-export const vendorRouter = t.router({
+export const companyRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
-    const vendor = await ctx.prisma.vendor.findUnique({
+    const company = await ctx.prisma.company.findUnique({
       where: { id: input },
       include: {
+        subsidiaries: true,
         address: true,
+        departments: {
+          select: {
+            name: true,
+          },
+          include: {
+            teams: true,
+          },
+        },
       },
     })
-    return vendor
+    return company
   }),
   findAll: authedProcedure
     .input(
@@ -30,9 +39,9 @@ export const vendorRouter = t.router({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const [vendors, count] = await ctx.prisma.$transaction(
+        const [companies, count] = await ctx.prisma.$transaction(
           [
-            ctx.prisma.vendor.findMany({
+            ctx.prisma.company.findMany({
               orderBy: {
                 createdAt: "desc",
               },
@@ -47,14 +56,14 @@ export const vendorRouter = t.router({
                 },
               },
             }),
-            ctx.prisma.vendor.count(),
+            ctx.prisma.company.count(),
           ],
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
           }
         )
         return {
-          vendors,
+          companies,
           count,
         }
       } catch (error) {
@@ -65,11 +74,11 @@ export const vendorRouter = t.router({
       }
     }),
   create: authedProcedure
-    .input(VendorCreateInput)
+    .input(CompanyCreateInput)
     .mutation(async ({ ctx, input }) => {
       const { address, ...rest } = input
 
-      const vendor = await ctx.prisma.vendor.create({
+      const company = await ctx.prisma.company.create({
         data: {
           ...rest,
           address: {
@@ -82,6 +91,6 @@ export const vendorRouter = t.router({
           },
         },
       })
-      return vendor
+      return company
     }),
 })

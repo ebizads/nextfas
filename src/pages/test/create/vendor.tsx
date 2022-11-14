@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../../components/atoms/forms/InputField"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
-import { VendorCreateInput } from "../../../server/common/schemas/vendor"
+import { VendorCreateInput } from "../../../server/schemas/vendor"
 
 type Vendor = z.infer<typeof VendorCreateInput>
 

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../../components/atoms/forms/InputField"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
-import { AssetCreateInput } from "../../../server/common/schemas/asset"
+import { AssetCreateInput } from "../../../server/schemas/asset"
 
 type Asset = z.infer<typeof AssetCreateInput>
 

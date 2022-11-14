@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../../components/atoms/forms/InputField"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
-import { EmployeeCreateInput } from "../../../server/common/schemas/employee"
+import { EmployeeCreateInput } from "../../../server/schemas/employee"
 
 type Employee = z.infer<typeof EmployeeCreateInput>
 

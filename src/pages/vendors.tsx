@@ -10,16 +10,15 @@ import FilterPopOver from "../components/atoms/popover/FilterPopOver"
 import Search from "../components/atoms/search/Search"
 import Modal from "../components/asset/Modal"
 import { z } from "zod"
-import { VendorCreateInput } from "../server/common/schemas/vendor"
+import { VendorCreateInput } from "../server/schemas/vendor"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { InputField } from "../components/atoms/forms/InputField"
 import AlertInput from "../components/atoms/forms/AlertInput"
-import { Textarea } from '@mantine/core';
+import { Textarea } from "@mantine/core"
 import { ImageJSON } from "../types/table"
 import DropZoneComponent from "../components/dropzone/DropZoneComponent"
 import TypeSelect from "../components/atoms/select/TypeSelect"
-
 
 const Vendors = () => {
   const [page, setPage] = useState(1)
@@ -53,8 +52,7 @@ const Vendors = () => {
     formState: { errors, isSubmitting },
   } = useForm<Vendor>({
     resolver: zodResolver(VendorCreateInput), // Configuration the validation with the zod schema.
-    defaultValues: {
-    },
+    defaultValues: {},
   })
 
   const [checkboxes, setCheckboxes] = useState<number[]>([])
@@ -63,7 +61,9 @@ const Vendors = () => {
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
 
-  const [filterBy, setFilterBy] = useState<string[]>(vendorColumns.map((i) => i.value))
+  const [filterBy, setFilterBy] = useState<string[]>(
+    vendorColumns.map((i) => i.value)
+  )
 
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -163,9 +163,18 @@ const Vendors = () => {
             <section className="flex items-center justify-between border-b py-2 text-light-primary">
               <h4>Add New Vendor</h4>
               {/* TODO: Reset form */}
-              <i onClick={() => setOpenModalAdd(false)} className="cursor-pointer fa-solid fa-xmark text-lg text-gray-500" />
+              <i
+                onClick={() => setOpenModalAdd(false)}
+                className="fa-solid fa-xmark cursor-pointer text-lg text-gray-500"
+              />
             </section>
-            <form className="p-2" onSubmit={(e) => { e.preventDefault(); }} noValidate>
+            <form
+              className="p-2"
+              onSubmit={(e) => {
+                e.preventDefault()
+              }}
+              noValidate
+            >
               <div className="grid grid-cols-10 gap-4">
                 <div className="col-span-5">
                   <InputField
@@ -177,7 +186,11 @@ const Vendors = () => {
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
                 <div className="col-span-5">
-                  <TypeSelect title={"Type"} placeholder={"Pick asset type"} data={['Company', 'Individual']} />
+                  <TypeSelect
+                    title={"Type"}
+                    placeholder={"Pick asset type"}
+                    data={["Company", "Individual"]}
+                  />
                 </div>
                 <div className="col-span-5">
                   <InputField
@@ -239,16 +252,34 @@ const Vendors = () => {
                     label="Remarks"
                     minRows={6}
                     maxRows={6}
-                    classNames={{ input: "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2", label: "font-sans text-sm text-gray-600 text-light" }}
+                    classNames={{
+                      input:
+                        "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+                      label: "font-sans text-sm text-gray-600 text-light",
+                    }}
                   />
                 </div>
-                <DropZoneComponent images={images} setImage={setImage} isLoading={isLoading} setIsLoading={setIsLoading} acceptingMany={true} />
-
+                <DropZoneComponent
+                  images={images}
+                  setImage={setImage}
+                  isLoading={isLoading}
+                  setIsLoading={setIsLoading}
+                  acceptingMany={true}
+                />
               </div>
-              <div className="w-full flex justify-end gap-2 py-4">
+              <div className="flex w-full justify-end gap-2 py-4">
                 {/* TODO: Reset form */}
-                <button onClick={() => setOpenModalAdd(false)} className="py-2 px-4 underline font-medium">Discard</button>
-                <button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} className="rounded-md bg-tangerine-500 py-2 px-6 font-semibold text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
+                <button
+                  onClick={() => setOpenModalAdd(false)}
+                  className="py-2 px-4 font-medium underline"
+                >
+                  Discard
+                </button>
+                <button
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                  className="rounded-md bg-tangerine-500 py-2 px-6 font-semibold text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
+                >
                   Add Vendor
                 </button>
               </div>

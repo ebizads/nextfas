@@ -18,11 +18,11 @@ export const ModelCreateInput = z.object({
   number: z.string().optional(),
 
   asset_class: AssetClassCreateInput.optional(),
-  assetClassId: z.number().optional(),
+  classId: z.number().optional(),
   asset_category: AssetCategoryInput.optional(),
-  assetCategoryId: z.number().optional(),
+  categoryId: z.number().optional(),
   asset_type: AssetTypeCreateInput.optional(),
-  assetTypeId: z.number().optional(),
+  typeId: z.number().optional(),
 })
 
 export const ModelEditInput = z.object({

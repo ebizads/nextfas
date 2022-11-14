@@ -1,10 +1,13 @@
 import { PrismaClient } from "@prisma/client"
 import {
+  assetSeed,
   categorySeed,
   classSeed,
   employeeSeed,
+  locationSeed,
   typeSeed,
   userSeed,
+  vendorSeed,
 } from "./seed.data"
 import bcrypt from "bcrypt"
 
@@ -32,32 +35,132 @@ const main = async () => {
   }
 
   for (const e of employeeSeed) {
-    const { address, profile, ...rest } = e
+    const {
+      address,
+      profile,
+      supervisee,
+      team,
+      teamId,
+      superviseeId,
+      ...rest
+    } = e
 
     await prisma.employee.create({
       data: {
         ...rest,
-        address: {
-          create: address,
-        },
         profile: {
-          create: profile,
+          connectOrCreate: {
+            where: {
+              id: 0,
+            },
+            create: profile,
+          },
+        },
+        address: {
+          connectOrCreate: {
+            where: {
+              id: 0,
+            },
+            create: address,
+          },
+        },
+        supervisee: {
+          connectOrCreate: {
+            where: {
+              id: superviseeId ?? 0,
+            },
+            create: {
+              name: supervisee?.name ?? "DevOps",
+            },
+          },
+        },
+        team: {
+          connectOrCreate: {
+            where: {
+              id: teamId ?? 0,
+            },
+            create: {
+              name: team?.name ?? "DevOps",
+            },
+          },
         },
       },
     })
   }
 
   await prisma.$transaction([
-    prisma.category.createMany({
-      data: categorySeed,
-    }),
-    prisma.asset_class.createMany({
+    prisma.assetClass.createMany({
       data: classSeed,
     }),
-    prisma.type.createMany({
+    prisma.assetCategory.createMany({
+      data: categorySeed,
+    }),
+    prisma.assetType.createMany({
       data: typeSeed,
     }),
+    prisma.location.createMany({
+      data: locationSeed,
+    }),
   ])
+
+  for (const v of vendorSeed) {
+    const { address, ...rest } = v
+
+    await prisma.vendor.create({
+      data: {
+        ...rest,
+        address: {
+          connectOrCreate: {
+            where: {
+              id: 0,
+            },
+            create: address,
+          },
+        },
+      },
+    })
+  }
+
+  for (const a of assetSeed) {
+    const { management, model, custodianId, locationId, vendorId, ...rest } = a
+
+    await prisma.asset.create({
+      data: {
+        ...rest,
+        model: {
+          connectOrCreate: {
+            where: {
+              id: 0,
+            },
+            create: model,
+          },
+        },
+        management: {
+          connectOrCreate: {
+            where: {
+              id: 0,
+            },
+            create: management,
+          },
+        },
+        custodian: {
+          connect: {
+            id: custodianId,
+          },
+        },
+        location: {
+          connect: {
+            id: locationId,
+          },
+        },
+        vendor: {
+          connect: {
+            id: vendorId,
+          },
+        },
+      },
+    })
+  }
 
   console.log("Seeding successful!")
 }

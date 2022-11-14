@@ -55,10 +55,11 @@ export const modelRouter = t.router({
         assetCategoryId,
         assetClassId,
         assetTypeId,
+        id,
         ...rest
       } = input
       const model = await ctx.prisma.model.update({
-        where: { id: input.id },
+        where: { id },
         data: {
           ...rest,
           class: {

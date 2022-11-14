@@ -2,7 +2,7 @@ import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
 import { InputField } from "../forms/InputField"
 import TypeSelect from "../select/TypeSelect"
-import { Textarea, Switch } from "@mantine/core"
+import { Textarea } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
 import { useForm } from "react-hook-form"
@@ -64,34 +64,34 @@ function AssetInfo(props: { register: any, errors: any }) {
             }} />
           </div>
 
-          <div className='col-span-9 grid grid-cols-9 gap-2'>
-            <div className='col-span-6 grid grid-cols-6 gap-2'>
-              <div className="col-span-3">
-                <InputField register={props.register} label="Original Cost" name="cost" />
-                <AlertInput>{props.errors?.name?.message}</AlertInput>
-              </div>
-              <div className="col-span-3">
-                <InputField register={props.register} label="Current Cost" name="cost" />
-                <AlertInput>{props.errors?.name?.message}</AlertInput>
-              </div>
-              <div className="col-span-3">
-                <InputField register={props.register} label="Accounting Method" name="cost" />
-                <AlertInput>{props.errors?.name?.message}</AlertInput>
-              </div>
-              <div className="col-span-3">
-                <InputField register={props.register} label="Asset Lifetime" name="cost" />
-                <AlertInput>{props.errors?.name?.message}</AlertInput>
-              </div>
+          {/* <div className='col-span-9 grid grid-cols-9 gap-2'> */}
+          <div className='col-span-9 grid grid-cols-6 gap-2'>
+            <div className="col-span-3">
+              <InputField register={props.register} label="Original Cost" name="cost" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
             </div>
-            <div className="col-span-3 flex flex-col gap-2">
+            <div className="col-span-3">
+              <InputField register={props.register} label="Current Cost" name="cost" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
+            </div>
+            <div className="col-span-3">
+              <InputField register={props.register} label="Accounting Method" name="cost" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
+            </div>
+            <div className="col-span-3">
+              <InputField register={props.register} label="Asset Lifetime" name="cost" />
+              <AlertInput>{props.errors?.name?.message}</AlertInput>
+            </div>
+          </div>
+          {/* <div className="col-span-3 flex flex-col gap-2">
               <div className='rounded-md flex items-center text-center text-sm justify-center border-2 border-dashed w-full h-[65%] text-light-muted'>
                 <p>Preview of Barcode will appear here</p>
               </div>
               <button className="rounded-md border bg-tangerine-400 hover:bg-tangerine-500 outline-none focus:outline-none text-dark-primary h-[35%] font-semibold w-full px-4 py-2">
                 Generate Barcode
               </button>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
 
         </div>
       </Accordion.Panel>
@@ -208,7 +208,7 @@ function AssetInfo(props: { register: any, errors: any }) {
 type Asset = z.infer<typeof AssetCreateInput>
 
 const CreateAssetAccordion = ({ form }: { form: string }) => {
-  const { mutate, isLoading, error } = trpc.vendor.create.useMutation()
+  const { mutate, isLoading, error } = trpc.asset.create.useMutation()
   const {
     register,
     handleSubmit,

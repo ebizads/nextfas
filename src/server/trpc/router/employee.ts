@@ -9,6 +9,7 @@ export const employeeRouter = t.router({
     const employee = await ctx.prisma.employee.findUnique({
       where: { id: input },
       include: {
+        address: true,
         profile: true,
         team: {
           include: {
@@ -71,13 +72,7 @@ export const employeeRouter = t.router({
                       include: {
                         location: true,
                       },
-                      select: {
-                        name: true,
-                      },
                     },
-                  },
-                  select: {
-                    name: true,
                   },
                 },
                 supervisee: true,
@@ -115,6 +110,7 @@ export const employeeRouter = t.router({
           total: count,
         }
       } catch (error) {
+        console.log(error)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),

@@ -10,7 +10,7 @@ const CreateAsset = () => {
         <h3 className="text-xl font-medium">Add Asset</h3>
         <div className="h-full w-full">
           <div className="rounded-md h-full bg-white border p-4 flex flex-col gap-2">
-            <CreateAssetAccordion form={"asset info"} />
+            <CreateAssetAccordion />
           </div>
         </div>
 

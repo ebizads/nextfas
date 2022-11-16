@@ -68,8 +68,8 @@ model Employee {
   name        String?
   hired_date  DateTime?
   position    String?
-  employee_id String?
-  email       String?
+  employee_id String?   @unique
+  email       String?   @unique
 
   locked       Boolean   @default(false)
   lockedAt     DateTime?
@@ -240,6 +240,7 @@ model Company {
   subsidiaries Company[]    @relation("subsidiaries")
   parent       Company?     @relation("subsidiaries", fields: [parentId], references: [id])
   parentId     Int?
+  assets       Asset[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -280,6 +281,18 @@ model Team {
   deleted   Boolean   @default(false)
 }
 
+model AssetProject {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  assets Asset[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
 model Vendor {
   id       Int      @id @default(autoincrement())
   name     String
@@ -305,22 +318,28 @@ model Asset {
   id          Int     @id @default(autoincrement())
   name        String
   number      String
+  alt_number  String?
   serial_no   String?
   barcode     String?
   description String?
+  remarks     String?
 
-  parent      Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
-  parentId    Int?
-  children    Asset[]          @relation("children")
-  model       Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
-  modelId     Int?             @unique
-  custodian   Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
-  custodianId Int?
-  location    Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  locationId  Int?
-  vendor      Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  vendorId    Int?
-  management  AssetManagement?
+  parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId       Int?
+  children       Asset[]          @relation("children")
+  model          Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  modelId        Int?             @unique
+  custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
+  custodianId    Int?
+  location       Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId     Int?
+  vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId       Int?
+  management     AssetManagement?
+  project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
+  assetProjectId Int?
+  subisidiary    Company?         @relation(fields: [subisidiaryId], references: [id], onDelete: Cascade)
+  subisidiaryId  Int?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

@@ -153,7 +153,7 @@ export const employeeRouter = t.router({
             profile: {
               connectOrCreate: {
                 where: {
-                  id: undefined,
+                  id: 0,
                 },
                 create: profile,
               },
@@ -161,7 +161,7 @@ export const employeeRouter = t.router({
             address: {
               connectOrCreate: {
                 where: {
-                  id: undefined,
+                  id: 0,
                 },
                 create: address,
               },
@@ -217,7 +217,7 @@ export const employeeRouter = t.router({
             profile: {
               connectOrCreate: {
                 where: {
-                  id: undefined,
+                  id: 0,
                 },
                 create: profile,
               },
@@ -225,7 +225,7 @@ export const employeeRouter = t.router({
             address: {
               connectOrCreate: {
                 where: {
-                  id: undefined,
+                  id: 0,
                 },
                 create: address,
               },

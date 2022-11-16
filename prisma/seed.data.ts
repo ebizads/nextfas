@@ -246,6 +246,13 @@ export const typeSeed: { name: string }[] = [
   { name: "Camera" },
 ]
 
+
+export const projectSeed: { name: string }[] = [
+  { name: "BSP" },
+  { name: "CAD" },
+  { name: "FAS" },
+]
+
 export const locationSeed: z.infer<typeof LocationCreateInput>[] = [
   {
     floor: "1st",

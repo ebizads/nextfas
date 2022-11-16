@@ -5,6 +5,7 @@ import {
   classSeed,
   employeeSeed,
   locationSeed,
+  projectSeed,
   typeSeed,
   userSeed,
   vendorSeed,
@@ -100,6 +101,9 @@ const main = async () => {
     }),
     prisma.location.createMany({
       data: locationSeed,
+    }),
+    prisma.assetProject.createMany({
+      data: projectSeed,
     }),
   ])
 

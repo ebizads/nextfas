@@ -13,5 +13,7 @@ export const AssetCreateInput = z.object({
   custodianId: z.number().optional(),
   locationId: z.number().optional(),
   vendorId: z.number().optional(),
+  subsidiaryId: z.number().optional(),
+  projectId: z.number().optional(),
   management: ManagementCreateInput,
 })

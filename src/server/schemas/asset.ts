@@ -15,6 +15,7 @@ export const AssetCreateInput = z.object({
   vendorId: z.number().optional(),
   subsidiaryId: z.number().optional(),
   projectId: z.number().optional(),
+  parentId: z.number().optional(),
   management: z.object({
     currency: z.string().nullish(),
     original_cost: z.number().nullish(),

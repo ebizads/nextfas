@@ -11,8 +11,12 @@ export const assetProjectRouter = t.router({
     return assetProject
   }),
   findAll: authedProcedure.query(async ({ ctx }) => {
-    const assetProject = await ctx.prisma.assetProject.findMany()
-    return assetProject
+    try {
+      const assetProject = await ctx.prisma.assetProject.findMany({})
+      return assetProject
+    } catch (error) {
+      console.log(error)
+    }
   }),
   create: authedProcedure
     .input(

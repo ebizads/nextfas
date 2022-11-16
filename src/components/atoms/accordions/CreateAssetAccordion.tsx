@@ -1,7 +1,7 @@
 import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
 import { InputField } from "../forms/InputField"
-import TypeSelect from "../select/TypeSelect"
+import TypeSelect, { SelectValueType } from "../select/TypeSelect"
 import { Textarea } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
@@ -12,21 +12,26 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetFieldValues } from "../../../types/generic"
 import { getAllISOCodes } from "iso-country-currency"
-import { useEffect } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 
 
 const CreateAssetAccordion = () => {
 
-  // const { data: currency, isLoading: currencyLoading } = useQuery(['currency'], async () => {
-  //   return await fetch(
-  //     `https://api.cloudmersive.com`
-  //   );
-  // })
-
-  // console.log(currency)
-
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
+
+  //gets and sets all assets
+  const { data: assetsData, isLoading: assetsDataLoading, error: assetsDataError } = trpc.asset.findAll.useQuery()
+  const assetsList = useMemo(() => assetsData?.assets.map((asset) => { return { value: asset.id.toString(), label: asset.name } }), [assetsData]) as SelectValueType[] | undefined
+
+  //gets and sets all projects
+  const { data: projectsData, isLoading: projectsDataLoading, error: projectsDataError } = trpc.assetProject.findAll.useQuery()
+  const projectsList = useMemo(() => projectsData?.map((project) => { return { value: project.id.toString(), label: project.name } }), [projectsData]) as SelectValueType[] | undefined
+
+  //gets and sets all projects
+  const { data: vendorsData, isLoading: vendorsDataLoading, error: vendorsDataError } = trpc.vendor.findAll.useQuery()
+  const vendorsList = useMemo(() => vendorsData?.vendors.map((vendor) => { return { value: vendor.id.toString(), label: vendor.name } }), [vendorsData]) as SelectValueType[] | undefined
+
   const {
     register,
     handleSubmit,
@@ -42,6 +47,8 @@ const CreateAssetAccordion = () => {
 
     },
   })
+
+  console.log(watch())
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (data: AssetFieldValues) => {
     console.log("Submitting: ", data)
@@ -87,16 +94,16 @@ const CreateAssetAccordion = () => {
               <div className="col-span-6 grid grid-cols-9 gap-2">
 
                 <div className="col-span-3">
-                  <TypeSelect name={"name"} setValue={setValue} title={"Parent Asset"} placeholder={"Select parent asset"} data={['Parent 1', 'Parent 2']} />
-                  <AlertInput>{errors?.name?.message}</AlertInput>
+                  <TypeSelect name={"parentId"} setValue={setValue} title={"Parent Asset"} placeholder={"Select parent asset"} data={assetsList ? assetsList : ['Parent 1', 'Parent 2']} />
+                  <AlertInput>{errors?.parentId?.message}</AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <TypeSelect name={"name"} setValue={setValue} title={"Project"} placeholder={"Select project"} data={['Project 1', 'Project 2']} />
-                  <AlertInput>{errors?.name?.message}</AlertInput>
+                  <TypeSelect name={"projectId"} setValue={setValue} title={"Project"} placeholder={"Select project"} data={projectsList ? projectsList : ['Project 1', 'Project 2']} />
+                  <AlertInput>{errors?.projectId?.message}</AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <TypeSelect required name={"name"} setValue={setValue} title={"Vendor"} placeholder={"Select vendor"} data={['Vendor 1', 'Vendor 2']} />
-                  <AlertInput>{errors?.name?.message}</AlertInput>
+                  <TypeSelect required name={"vendorId"} setValue={setValue} title={"Vendor"} placeholder={"Select vendor"} data={vendorsList ? vendorsList : ['Vendor 1', 'Vendor 2']} />
+                  <AlertInput>{errors?.vendorId?.message}</AlertInput>
                 </div>
               </div>
               <div className="col-span-3">
@@ -112,24 +119,16 @@ const CreateAssetAccordion = () => {
                 <AlertInput>{errors?.name?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <InputField register={register} label="Model Name" placeholder="Model Name" name="serial_no" />
-                <AlertInput>{errors?.serial_no?.message}</AlertInput>
+                <InputField register={register} label="Model Name" placeholder="Model Name" name="model.name" />
+                <AlertInput>{errors?.model?.name?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <InputField register={register} label="Model Brand" placeholder="Model Brand" name="serial_no" />
-                <AlertInput>{errors?.serial_no?.message}</AlertInput>
+                <InputField register={register} label="Model Brand" placeholder="Model Brand" name="model.brand" />
+                <AlertInput>{errors?.model?.brand?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <InputField register={register} label="Model Number" placeholder="Model Number" name="serial_no" />
-                <AlertInput>{errors?.serial_no?.message}</AlertInput>
-              </div>
-              <div className="col-span-9 grid grid-cols-2 gap-2">
-
-
-                {/* <div className="col-span-3">
-                <InputField register={register} label="Residual Value Percentage" name="name" />
-                <AlertInput>{errors?.name?.message}</AlertInput>
-              </div> */}
+                <InputField register={register} label="Model Number" placeholder="Model Number" name="model.number" />
+                <AlertInput>{errors?.model?.number?.message}</AlertInput>
               </div>
 
               <div className="col-span-10">

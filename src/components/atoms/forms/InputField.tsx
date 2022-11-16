@@ -11,8 +11,10 @@ type InputFieldType = {
   className?: string
   withIcon?: string
   isPassword?: boolean
-  register: UseFormRegister<AssetFieldValues>
+  register: UseFormRegister<any>
   required?: boolean
+  placeholder?: string
+  disabled?: boolean
 }
 
 export function InputField({
@@ -23,7 +25,9 @@ export function InputField({
   withIcon,
   isPassword,
   register,
-  required
+  required,
+  placeholder,
+  disabled
 }: InputFieldType) {
   const [inputType, setInputType] = useState<string>(type ?? "text")
 
@@ -39,13 +43,15 @@ export function InputField({
           <input
             type={inputType}
             id={name}
-            {...register(name as (keyof AssetFieldValues))}
+            {...register(name)}
             className={
               className
                 ? className +
-                " peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                : "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                " peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0 placeholder:text-sm"
+                : "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm"
             }
+            placeholder={placeholder ?? ""}
+            disabled={disabled}
           />
           {className && (
             <label

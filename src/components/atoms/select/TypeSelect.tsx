@@ -4,13 +4,13 @@ import { UseFormSetValue } from "react-hook-form"
 import { AssetFieldValues } from '../../../types/generic';
 
 //keyof returns strict keys of an object
-const TypeSelect = (props: { name: keyof AssetFieldValues, setValue: UseFormSetValue<AssetFieldValues>, title: string, placeholder: string, data: string[] }) => {
+const TypeSelect = (props: { name: keyof AssetFieldValues, setValue: UseFormSetValue<AssetFieldValues>, title: string, placeholder: string, data: string[], required?: boolean }) => {
 
   const [query, setQuery] = useState<string | null>(null)
 
   return (
     <div className='flex flex-col gap-2'>
-      <p className='text-sm text-gray-700'>{props.title}</p>
+      <p className='text-sm text-gray-700'>{props.title}{props.required && <span className='text-red-400'>*</span>}</p>
       <Select
         placeholder={props.placeholder}
         searchable

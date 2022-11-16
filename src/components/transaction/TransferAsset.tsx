@@ -244,6 +244,19 @@ const Transfer = () => {
                                     </Accordion.Panel>
                                 </Accordion.Item>
                             </Accordion>
+
+                            <hr className="w-full"></hr>
+                            <div className="flex w-full justify-end py-3">
+
+                                <button
+                                    // type="submit"
+                                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                    onClick={nextStep}
+                                >
+                                    {/* {employeeLoading ? "Loading..." : "Register"} */}
+                                    Next
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>}
@@ -271,10 +284,131 @@ const Transfer = () => {
                             </div>
                         </div>
                     </div>
+                    <hr className="w-full"></hr>
+                    <div className="flex w-full justify-between py-3">
+                        <button
+                            // type="submit"
+                            className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                            onClick={prevStep}
+                        >
+                            {/* {employeeLoading ? "Loading..." : "Register"} */}
+                            Back
+                        </button>
+                        <button
+                            // type="submit"
+                            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                            onClick={nextStep}
+                        >
+                            {/* {employeeLoading ? "Loading..." : "Register"} */}
+                            Next
+                        </button>
+                    </div>
                 </div>
             </div>}
-            <button onClick={prevStep} disabled={!state.hasPreviousStep}>Back</button>
-            <button onClick={nextStep} disabled={!state.hasNextStep}>Next</button>
+
+            {state.currentStep == 2 && <div className="bg-white rounded-md drop-shadow-lg">
+                <div className="p-5">
+                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Asset Serial Number</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Asset Name</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Alternate Asset Number</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                    </div>
+                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Parent Asset</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-[60%] py-2">
+                            <label className="font-semibold">Project</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-[60%] py-2">
+                            <label className="font-semibold">Asset Type</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                    </div>
+                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Residual Value</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Residual Value Percentage</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                    </div>
+                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                        <div className="flex flex-col w-[60%] py-2">
+                            <label className="font-semibold">Asset Description</label >
+                            <textarea className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
+                        </div>
+                    </div>
+                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Accounting Method</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Asset Lifetime</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Generate Asset Number</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                    </div>
+                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Department</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Employee</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                        <div className="flex flex-col w-full py-2">
+                            <label className="font-semibold">Supervisor</label >
+                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        </div>
+                    </div>
+                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                        <div className="flex flex-col w-[60%] py-2">
+                            <label className="font-semibold">Remarks</label >
+                            <textarea rows={6} className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
+                        </div>
+                    </div>
+                    <hr className="w-full"></hr>
+                    <div className="flex w-full justify-between py-3">
+                        <button
+                            // type="submit"
+                            className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                            onClick={prevStep}
+                        >
+                            {/* {employeeLoading ? "Loading..." : "Register"} */}
+                            Back
+                        </button>
+                        <button
+                            // type="submit"
+                            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                            onClick={nextStep}
+                        >
+                            {/* {employeeLoading ? "Loading..." : "Register"} */}
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+            }
         </div >
     )
 }

@@ -105,15 +105,15 @@ export const AssetDeleteModal = (props: {
 
   //trpc utils for delete
   const utils = trpc.useContext()
-  const { mutate, isLoading } = trpc.asset.deleteMany.useMutation({
-    onSuccess() {
-      utils.asset.findAll.invalidate()
-    },
-  })
+  // const { mutate, isLoading } = trpc.asset.deleteMany.useMutation({
+  //   onSuccess() {
+  //     utils.asset.findAll.invalidate()
+  //   },
+  // })
   const handleDelete = () => {
     const id_array = [...props.checkboxes]
     //delete function
-    mutate([...id_array])
+    // mutate([...id_array])
     props.setCheckboxes([])
     props.setOpenModalDel(false)
   }
@@ -153,7 +153,7 @@ export const AssetDeleteModal = (props: {
                     className="flex items-center gap-2 text-red-500"
                   >
                     <i className="fa-solid fa-circle text-xs" />
-                    {asset?.serial_number ?? "asset[serial_number]"}
+                    {asset?.serial_no ?? "asset[serial_no]"}
                   </li>
                 ))}
             </ul>
@@ -171,7 +171,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-              disabled={isLoading}
+            // disabled={isLoading}
             >
               Yes, delete records
             </button>

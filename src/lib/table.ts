@@ -3,8 +3,8 @@
 import { ColumnType, DetailType, NavType } from "../types/table"
 
 export const columns = [
-  { value: "serial_number", name: "Serial No." },
-  { value: "bar_code", name: "Bar Code" },
+  { value: "serial_no", name: "Serial No." },
+  { value: "barcode", name: "Bar Code" },
   { value: "type", name: "Type" },
   { value: "category", name: "Category" },
   { value: "name", name: "Name" },
@@ -45,7 +45,7 @@ export const asset_info = [
   { type: "description", label: "Description" },
   { type: "type", label: "Type" },
   { type: "manufacturer-name", label: "Manufacturer" },
-  { type: "serial_number", label: "Serial Number" },
+  { type: "serial_no", label: "Serial Number" },
   { type: "vendor-name", label: "Vendor" },
   { type: "original_cost", label: "Original Cost" },
   { type: "category-name", label: "Category" },

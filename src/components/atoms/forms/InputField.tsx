@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react"
+import { UseFormRegister } from "react-hook-form"
 
 type InputFieldType = {
   label: string
@@ -9,7 +10,7 @@ type InputFieldType = {
   withIcon?: string
   isPassword?: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: any
+  register: UseFormRegister<any>
 }
 
 export function InputField({

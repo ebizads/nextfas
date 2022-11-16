@@ -179,7 +179,7 @@ function ShowDetails({
         ) : (
           <div>
             <div className="flex flex-row items-center gap-4 py-5">
-              <Avatar src={info.image} alt="it's me" radius={200} size={100} />
+              <Avatar src={info.profile?.image ?? ""} alt="it's me" radius={200} size={100} />
               <div className="flex flex-col">
                 <div className="flex flex-row">
                   <p className="text-xl font-bold">
@@ -234,11 +234,11 @@ function ShowDetails({
                   </p>
                 </div>
                 <div className="py-3">
-                  <p className="text-sm font-semibold">SUBSIDIARY</p>
+                  <p className="text-sm font-semibold">TEAM</p>
                 </div>
                 <div className="py-3">
                   <p className="col-span-2 text-sm">
-                    {info.subsidiary ?? "NO DATA"}
+                    {info.team?.name ?? "NO DATA"}
                   </p>
                 </div>
                 <div className="py-3">

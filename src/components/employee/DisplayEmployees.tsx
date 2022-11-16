@@ -77,7 +77,7 @@ const DisplayEmployees = (props: {
                     ...props.employees?.map((obj) => {
                       return {
                         value: obj?.id.toString() ?? "",
-                        label: obj?.name.toString() ?? "",
+                        label: obj?.name ?? "",
                       }
                     }),
                   ]}

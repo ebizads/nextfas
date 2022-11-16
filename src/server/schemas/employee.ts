@@ -15,6 +15,7 @@ export const EmployeeCreateInput = z.object({
     date_of_birth: z.date().nullish(),
     phone_no: z.string().nullish(),
     gender: z.string().nullish(),
+    image: z.string().nullish(),
   }),
   address: AddressCreateInput,
   team: z
@@ -47,6 +48,7 @@ export const EmployeeEditInput = z.object({
       date_of_birth: z.date().nullish().optional(),
       phone_no: z.string().nullish().optional(),
       gender: z.string().nullish().optional(),
+      image: z.string().nullish().optional(),
     })
     .optional(),
   address: AddressEditInput,

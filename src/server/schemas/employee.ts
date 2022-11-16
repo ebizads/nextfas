@@ -2,6 +2,7 @@ import { z } from "zod"
 import { AddressCreateInput, AddressEditInput } from "./address"
 
 export const EmployeeCreateInput = z.object({
+  name: z.string().min(1),
   employee_id: z.string().nullish(),
   email: z.string().email().nullish(),
   hired_date: z.date().nullish(),
@@ -14,6 +15,7 @@ export const EmployeeCreateInput = z.object({
     date_of_birth: z.date().nullish(),
     phone_no: z.string().nullish(),
     gender: z.string().nullish(),
+    image: z.string().nullish(),
   }),
   address: AddressCreateInput,
   team: z
@@ -32,6 +34,7 @@ export const EmployeeCreateInput = z.object({
 
 export const EmployeeEditInput = z.object({
   id: z.number(),
+  name: z.string().min(1),
   employee_id: z.string().nullish().optional(),
   email: z.string().email().nullish().optional(),
   hired_date: z.date().nullish().optional(),
@@ -45,6 +48,7 @@ export const EmployeeEditInput = z.object({
       date_of_birth: z.date().nullish().optional(),
       phone_no: z.string().nullish().optional(),
       gender: z.string().nullish().optional(),
+      image: z.string().nullish().optional(),
     })
     .optional(),
   address: AddressEditInput,

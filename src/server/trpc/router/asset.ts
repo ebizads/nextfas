@@ -83,6 +83,7 @@ export const assetRouter = t.router({
         vendorId,
         subsidiaryId,
         projectId,
+        parentId,
         ...rest
       } = input
 
@@ -128,6 +129,11 @@ export const assetRouter = t.router({
           project: {
             connect: {
               id: projectId,
+            },
+          },
+          parent: {
+            connect: {
+              id: parentId,
             },
           },
         },

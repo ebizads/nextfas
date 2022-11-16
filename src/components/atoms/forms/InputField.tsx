@@ -3,7 +3,6 @@ import { useState } from "react"
 import { UseFormRegister } from "react-hook-form"
 import { AssetFieldValues, EmployeeFieldValues } from "../../../types/generic"
 
-
 type InputFieldType = {
   label: string
   name: string

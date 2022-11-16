@@ -7,6 +7,7 @@ export const AssetCreateInput = z.object({
   serial_no: z.string().nullish(),
   barcode: z.string().nullish(),
   description: z.string().nullish(),
+  remarks: z.string().nullish(),
 
   model: ModelCreateInput,
   custodianId: z.number().optional(),

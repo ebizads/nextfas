@@ -8,7 +8,7 @@ export const columns = [
   { value: "last_name", name: "Last Name" },
   { value: "city", name: "Street Address" },
   { value: "hired_date", name: "Hire Date" },
-  { value: "subsidiary", name: "Subsidiary" },
+  { value: "team", name: "Team" },
   { value: "email", name: "Email" },
 ] as ColumnType[]
 

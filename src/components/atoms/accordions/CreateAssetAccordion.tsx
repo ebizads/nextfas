@@ -1,7 +1,7 @@
 import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
 import { InputField } from "../forms/InputField"
-import TypeSelect, { SelectValueType } from "../select/TypeSelect"
+import TypeSelect, { ClassTypeSelect, SelectValueType } from "../select/TypeSelect"
 import { Textarea } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
@@ -20,18 +20,6 @@ const CreateAssetAccordion = () => {
 
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
 
-  //gets and sets all assets
-  const { data: assetsData, isLoading: assetsDataLoading, error: assetsDataError } = trpc.asset.findAll.useQuery()
-  const assetsList = useMemo(() => assetsData?.assets.map((asset) => { return { value: asset.id.toString(), label: asset.name } }), [assetsData]) as SelectValueType[] | undefined
-
-  //gets and sets all projects
-  const { data: projectsData, isLoading: projectsDataLoading, error: projectsDataError } = trpc.assetProject.findAll.useQuery()
-  const projectsList = useMemo(() => projectsData?.map((project) => { return { value: project.id.toString(), label: project.name } }), [projectsData]) as SelectValueType[] | undefined
-
-  //gets and sets all projects
-  const { data: vendorsData, isLoading: vendorsDataLoading, error: vendorsDataError } = trpc.vendor.findAll.useQuery()
-  const vendorsList = useMemo(() => vendorsData?.vendors.map((vendor) => { return { value: vendor.id.toString(), label: vendor.name } }), [vendorsData]) as SelectValueType[] | undefined
-
   const {
     register,
     handleSubmit,
@@ -48,7 +36,39 @@ const CreateAssetAccordion = () => {
     },
   })
 
-  console.log(watch())
+
+  //gets and sets all assets
+  const { data: assetsData, isLoading: assetsDataLoading, error: assetsDataError } = trpc.asset.findAll.useQuery()
+  const assetsList = useMemo(() => assetsData?.assets.map((asset) => { return { value: asset.id.toString(), label: asset.name } }), [assetsData]) as SelectValueType[] | undefined
+
+  //gets and sets all projects
+  const { data: projectsData, isLoading: projectsDataLoading, error: projectsDataError } = trpc.assetProject.findAll.useQuery()
+  const projectsList = useMemo(() => projectsData?.map((project) => { return { value: project.id.toString(), label: project.name } }), [projectsData]) as SelectValueType[] | undefined
+
+  //gets and sets all projects
+  const { data: vendorsData, isLoading: vendorsDataLoading, error: vendorsDataError } = trpc.vendor.findAll.useQuery()
+  const vendorsList = useMemo(() => vendorsData?.vendors.map((vendor) => { return { value: vendor.id.toString(), label: vendor.name } }), [vendorsData]) as SelectValueType[] | undefined
+
+  //gets and sets all class, categories, and types
+  const { data: classData, isLoading: classDataLoading, error: classDataError } = trpc.assetClass.findAll.useQuery()
+  const classList = useMemo(() => classData?.map((classItem) => { return { value: classItem.id.toString(), label: classItem.name } }), [classData]) as SelectValueType[] | undefined
+
+  const [classId, setClassId] = useState<string | null>(null)
+  const [categories, setCategories] = useState<SelectValueType[] | null>(null)
+  const [types, setTypes] = useState<SelectValueType[] | null>(null)
+
+  useEffect(() => {
+    if (classId && classData) {
+      const selectedClass = classData.filter((classItem) => classItem.id === Number(classId))[0]
+      if (selectedClass) {
+        const categories = selectedClass.categories.map((category) => { return { value: category.id.toString(), label: category.name } }) as SelectValueType[]
+        setCategories(categories)
+      }
+    }
+  }, [classId, classData])
+
+  console.log(classData)
+  // console.log(watch())
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (data: AssetFieldValues) => {
     console.log("Submitting: ", data)
@@ -83,8 +103,8 @@ const CreateAssetAccordion = () => {
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <InputField register={register} label="Alternate Asset Number" placeholder="Alternate Asset Number" name="number" />
-                  <AlertInput>{errors?.number?.message}</AlertInput>
+                  <InputField register={register} label="Alternate Asset Number" placeholder="Alternate Asset Number" name="alt_number" />
+                  <AlertInput>{errors?.alt_number?.message}</AlertInput>
                 </div>
               </div>
               <div className="col-span-3">
@@ -107,16 +127,16 @@ const CreateAssetAccordion = () => {
                 </div>
               </div>
               <div className="col-span-3">
-                <TypeSelect required name={"name"} setValue={setValue} title={"Class"} placeholder={"Select class type"} data={['Class A', 'Class B']} />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <ClassTypeSelect query={classId} setQuery={setClassId} required name={"model.classId"} setValue={setValue} title={"Class"} placeholder={"Select class type"} data={classList ? classList : ['Class A', 'Class B']} />
+                <AlertInput>{errors?.model?.classId?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <TypeSelect required name={"name"} setValue={setValue} title={"Category"} placeholder={"Select category type"} data={['Category A', 'Category B']} />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <TypeSelect required name={"model.categoryId"} setValue={setValue} title={"Category"} placeholder={"Select category type"} data={categories ? categories : ['Category A', 'Category B']} />
+                <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <TypeSelect required name={"name"} setValue={setValue} title={"Type"} placeholder={"Select asset type"} data={['Type 1', 'Type 2']} />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <TypeSelect required name={"model.typeId"} setValue={setValue} title={"Type"} placeholder={"Select asset type"} data={['Type 1', 'Type 2']} />
+                <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
               </div>
               <div className="col-span-3">
                 <InputField register={register} label="Model Name" placeholder="Model Name" name="model.name" />

@@ -22,7 +22,7 @@ const Assets = () => {
     if (data) {
 
       setAssets(data.assets)
-      setAccessiblePage(Math.ceil(data?.total / limit))
+      setAccessiblePage(Math.ceil(data?.count / limit))
     }
   }, [data, limit])
 
@@ -32,7 +32,7 @@ const Assets = () => {
       <div className="space-y-6">
         <h3 className="text-xl font-medium">Assets</h3>
         <DisplayAssets
-          total={data?.total ?? 0}
+          total={data?.count ?? 0}
           assets={assets}
           accessiblePage={accessiblePage}
           page={page}

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react"
 import { UseFormRegister } from "react-hook-form"
+import { AssetFieldValues, EmployeeFieldValues } from "../../../types/generic"
 
 type InputFieldType = {
   label: string
@@ -9,8 +10,10 @@ type InputFieldType = {
   className?: string
   withIcon?: string
   isPassword?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: UseFormRegister<any>
+  required?: boolean
+  placeholder?: string
+  disabled?: boolean
 }
 
 export function InputField({
@@ -21,6 +24,9 @@ export function InputField({
   withIcon,
   isPassword,
   register,
+  required,
+  placeholder,
+  disabled
 }: InputFieldType) {
   const [inputType, setInputType] = useState<string>(type ?? "text")
 
@@ -30,7 +36,7 @@ export function InputField({
         <div className="flex flex-1 flex-col gap-2">
           {!className && (
             <label htmlFor={name} className="text-sm">
-              {label}
+              {label}{required && <span className="text-sm text-red-500">*</span>}
             </label>
           )}
           <input
@@ -40,10 +46,11 @@ export function InputField({
             className={
               className
                 ? className +
-                " peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                : "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                " peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0 placeholder:text-sm"
+                : "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm"
             }
-            placeholder=" "
+            placeholder={placeholder ?? ""}
+            disabled={disabled}
           />
           {className && (
             <label

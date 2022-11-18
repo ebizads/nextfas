@@ -75,8 +75,17 @@ export const assetRouter = t.router({
   create: authedProcedure
     .input(AssetCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { management, custodianId, locationId, model, vendorId, ...rest } =
-        input
+      const {
+        management,
+        custodianId,
+        locationId,
+        model,
+        vendorId,
+        subsidiaryId,
+        projectId,
+        parentId,
+        ...rest
+      } = input
 
       const asset = await ctx.prisma.asset.create({
         data: {
@@ -84,7 +93,7 @@ export const assetRouter = t.router({
           model: {
             connectOrCreate: {
               where: {
-                id: undefined,
+                id: 0,
               },
               create: model,
             },
@@ -92,7 +101,7 @@ export const assetRouter = t.router({
           management: {
             connectOrCreate: {
               where: {
-                id: undefined,
+                id: 0,
               },
               create: management,
             },
@@ -110,6 +119,21 @@ export const assetRouter = t.router({
           vendor: {
             connect: {
               id: vendorId,
+            },
+          },
+          subisidiary: {
+            connect: {
+              id: subsidiaryId,
+            },
+          },
+          project: {
+            connect: {
+              id: projectId,
+            },
+          },
+          parent: {
+            connect: {
+              id: parentId,
             },
           },
         },

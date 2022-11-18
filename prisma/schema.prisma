@@ -64,12 +64,13 @@ model User {
 }
 
 model Employee {
-  id           Int       @id @default(autoincrement())
-  name         String?
-  hired_date   DateTime?
-  position     String?
-  employee_id  String?   @unique
-  email        String?   @unique
+  id          Int       @id @default(autoincrement())
+  name        String?
+  hired_date  DateTime?
+  position    String?
+  employee_id String?   @unique
+  email       String?   @unique
+
   locked       Boolean   @default(false)
   lockedAt     DateTime?
   lockedReason String?
@@ -219,6 +220,7 @@ model Company {
   website      String?
   remarks      String?
   parentId     Int?
+  assets       Asset[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   deletedAt    DateTime?
@@ -255,6 +257,18 @@ model Team {
   department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   supervisors  Employee[]  @relation("supervisors")
   members      Employee[]  @relation("members")
+}
+
+model AssetProject {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  assets Asset[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
 }
 
 model Vendor {
@@ -306,12 +320,3 @@ model Asset {
   management     AssetManagement?
 }
 
-model AssetProject {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime
-  deletedAt DateTime?
-  deleted   Boolean   @default(false)
-  Asset     Asset[]
-}

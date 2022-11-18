@@ -1,10 +1,11 @@
 import { AssetType, EmployeeType, VendorType } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
+import { disposeTMP } from "../pages/transactions/disposal"
 
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType,
+  type: AssetType | EmployeeType | VendorType | disposeTMP,
   subfilter?: string
 ) => {
   //get object property

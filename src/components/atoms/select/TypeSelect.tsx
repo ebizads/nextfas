@@ -8,7 +8,7 @@ export type SelectValueType = {
 }
 
 //keyof returns strict keys of an object
-const TypeSelect = (props: { disabled?: boolean, name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
+const TypeSelect = (props: { isString?: boolean, disabled?: boolean, name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
 
   const [query, setQuery] = useState<string | null>(null)
 
@@ -23,7 +23,13 @@ const TypeSelect = (props: { disabled?: boolean, name: any, setValue: UseFormSet
           if (q) {
             setQuery(q)
             //q(string) to number, q stands for query or value 
-            props.setValue(props.name, Number(q), { shouldValidate: true })
+            if (props.isString) {
+
+              props.setValue(props.name, q, { shouldValidate: true })
+            } else {
+
+              props.setValue(props.name, Number(q), { shouldValidate: true })
+            }
           } else {
             //on clear event
             setQuery(null)

@@ -203,6 +203,7 @@ model AssetManagement {
   depreciation_status String?
   depreciation_period Int?
   depreciation_rule   String?
+  accounting_method   String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   deletedAt           DateTime?

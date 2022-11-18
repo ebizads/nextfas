@@ -28,7 +28,11 @@ const CreateAssetAccordion = () => {
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
     defaultValues: {
-      management: {}
+      management: {
+        original_cost: 0,
+        current_cost: 0,
+        residual_value: 0
+      }
     },
   })
 
@@ -100,12 +104,14 @@ const CreateAssetAccordion = () => {
 
 
   // console.log(classData)
-  // console.log(watch())
+  console.log(watch())
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (data: AssetFieldValues) => {
     console.log("Submitting: ", data)
     reset()
   }
+
+
 
   return (
 
@@ -210,20 +216,20 @@ const CreateAssetAccordion = () => {
           <Accordion.Panel>
             <div className="grid grid-cols-9 gap-2">
               <div className="col-span-3">
-                <TypeSelect name={"management.currency"} setValue={setValue} title={"Currency"} placeholder={"Select currency type"} data={[{ value: "PHP", label: 'Philippine Peso (Php)' }, { value: "USD", label: 'US Dollar (USD)' }]} />
+                <TypeSelect isString name={"management.currency"} setValue={setValue} title={"Currency"} placeholder={"Select currency type"} data={[{ value: "PHP", label: 'Philippine Peso (Php)' }, { value: "USD", label: 'US Dollar (USD)' }]} />
                 <AlertInput>{errors?.management?.currency?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <InputField register={register} label="Original Cost" placeholder="Original Cost" name="name" />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <InputField register={register} label="Original Cost" placeholder="Original Cost" name="management.original_cost" />
+                <AlertInput>{errors?.management?.original_cost?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <InputField register={register} label="Current Cost" placeholder="Current Cost" name="name" />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <InputField register={register} label="Current Cost" placeholder="Current Cost" name="management.current_cost" />
+                <AlertInput>{errors?.management?.current_cost?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <TypeSelect name={"name"} setValue={setValue} title={"Accounting Method"} placeholder={"Select accounting method"} data={['Accrual Basis', 'Cash Basis', 'Modified Cash Basis']} />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <TypeSelect isString name={"management.accounting"} setValue={setValue} title={"Accounting Method"} placeholder={"Select accounting method"} data={['Accrual Basis', 'Cash Basis', 'Modified Cash Basis']} />
+                <AlertInput>{errors?.management?.accounting_method?.message}</AlertInput>
               </div>
               <div className="col-span-3">
                 <InputField register={register} label="Residual Value" placeholder="Residual Value" name={"management.residual_value"} />
@@ -232,7 +238,8 @@ const CreateAssetAccordion = () => {
               <div className="col-span-3 space-y-2">
                 <p className='text-sm text-gray-700'>Purchase Date</p>
                 <DatePicker placeholder="Month Day, Year" allowFreeInput size="sm" // value={value}
-                  onChange={value => {// setValue("hired_date", value)
+                  onChange={value => {
+                    setValue("management.purchase_date", value)
                   }} classNames={{
                     input: 'border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400'
                   }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"

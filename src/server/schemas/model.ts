@@ -26,9 +26,9 @@ export const ModelCreateInput = z.object({
 })
 
 export const ManagementCreateInput = z.object({
-  currency: z.string().nullish(),
-  original_cost: z.number().nullish(),
-  current_cost: z.number().nullish(),
+  currency: z.string().optional(),
+  original_cost: z.number().optional(),
+  current_cost: z.number().optional(),
   residual_value: z.number().nullish(),
   purchase_date: z.date().nullish(),
 
@@ -37,6 +37,7 @@ export const ManagementCreateInput = z.object({
   depreciation_status: z.string().nullish(),
   depreciation_period: z.number().nullish(),
   depreciation_rule: z.string().nullish(),
+  accounting_method: z.string().nullish(),
 })
 
 export const ModelEditInput = z.object({

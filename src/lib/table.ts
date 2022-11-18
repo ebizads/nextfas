@@ -38,6 +38,16 @@ export const employeeColumns = [
   { value: "email", name: "Email" },
 ] as ColumnType[]
 
+export const disposalColumn = [
+  { value: "departmentCode", name: "Department Code" },
+  { value: "id", name: "Asset No." },
+  { value: "assetDesc", name: "Asset Description" },
+  { value: "disposalDate", name: "Disposal Date" },
+  { value: "authorizeBy", name: "Disposal Authorized By" },
+  { value: "jobTitle", name: "Job Title" },
+  { value: "disposalType", name: "Disposal Type" },
+] as ColumnType[]
+
 export const showAssetsBy = [5, 10, 20, 50] as number[]
 
 export const asset_info = [

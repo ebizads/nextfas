@@ -13,7 +13,7 @@ export const AssetCategoryCreateInput = z.object({
 })
 
 export const ModelCreateInput = z.object({
-  name: z.string(),
+  name: z.string().min(1, "Please provide model name"),
   brand: z.string().optional(),
   number: z.string().optional(),
 

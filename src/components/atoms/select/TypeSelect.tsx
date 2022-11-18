@@ -1,7 +1,6 @@
 import { Select } from '@mantine/core';
 import { useState } from 'react';
 import { UseFormSetValue } from "react-hook-form"
-import { AssetFieldValues } from '../../../types/generic';
 
 export type SelectValueType = {
   value: string,
@@ -9,7 +8,7 @@ export type SelectValueType = {
 }
 
 //keyof returns strict keys of an object
-const TypeSelect = (props: { name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
+const TypeSelect = (props: { disabled?: boolean, name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
 
   const [query, setQuery] = useState<string | null>(null)
 
@@ -31,6 +30,7 @@ const TypeSelect = (props: { name: any, setValue: UseFormSetValue<any>, title: s
             props.setValue(props.name, undefined, { shouldValidate: true })
           }
         }}
+        disabled={props.disabled}
         styles={(theme) => ({
           item: {
             // applies styles to selected item
@@ -63,7 +63,7 @@ const TypeSelect = (props: { name: any, setValue: UseFormSetValue<any>, title: s
     </div>
   );
 }
-export const ClassTypeSelect = (props: { query: string | null, setQuery: React.Dispatch<React.SetStateAction<string | null>>, name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
+export const ClassTypeSelect = (props: { disabled?: boolean, query: string | null, setQuery: React.Dispatch<React.SetStateAction<string | null>>, name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
 
   return (
     <div className='flex flex-col gap-2'>
@@ -83,6 +83,7 @@ export const ClassTypeSelect = (props: { query: string | null, setQuery: React.D
             props.setValue(props.name, undefined, { shouldValidate: true })
           }
         }}
+        disabled={props.disabled}
         styles={(theme) => ({
           item: {
             // applies styles to selected item

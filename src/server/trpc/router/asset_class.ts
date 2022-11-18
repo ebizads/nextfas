@@ -10,6 +10,7 @@ export const assetClassRouter = t.router({
       select: {
         categories: {
           select: {
+            id: true,
             name: true,
             types: true,
           },

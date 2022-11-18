@@ -10,10 +10,8 @@ import {
 } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
-import { AssetFieldValues } from "../../../types/generic"
-import { getAllISOCodes } from "iso-country-currency"
-import { useEffect, useMemo, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { AssetClassType, AssetFieldValues } from "../../../types/generic"
+import { useMemo, useState } from "react"
 
 
 const CreateAssetAccordion = () => {
@@ -30,9 +28,7 @@ const CreateAssetAccordion = () => {
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
     defaultValues: {
-      model: { name: "test" },
       management: {}
-
     },
   })
 
@@ -54,20 +50,56 @@ const CreateAssetAccordion = () => {
   const classList = useMemo(() => classData?.map((classItem) => { return { value: classItem.id.toString(), label: classItem.name } }), [classData]) as SelectValueType[] | undefined
 
   const [classId, setClassId] = useState<string | null>(null)
-  const [categories, setCategories] = useState<SelectValueType[] | null>(null)
-  const [types, setTypes] = useState<SelectValueType[] | null>(null)
+  const [categoryId, setCategoryId] = useState<string | null>(null)
+  const [typeId, setTypeId] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (classId && classData) {
-      const selectedClass = classData.filter((classItem) => classItem.id === Number(classId))[0]
+  //asset description
+  const [description, setDescription] = useState<string | null>(null)
+
+  const [selectedClass, setSelectedClass] = useState<AssetClassType | undefined>(undefined)
+  // const [types, setTypes] = useState<SelectValueType[] | null>(null)
+
+  const categories = useMemo(() => {
+    if (classId) {
+      const selectedClass = classData?.filter((classItem) => classItem.id === Number(classId))[0]
       if (selectedClass) {
+
+        //sets selected class
+        setSelectedClass(selectedClass)
+
+        //filters all the categories based on the selected class
         const categories = selectedClass.categories.map((category) => { return { value: category.id.toString(), label: category.name } }) as SelectValueType[]
-        setCategories(categories)
+        return categories ?? null
       }
+    } else {
+      //clears category selection
+      setCategoryId(null)
+      return null
     }
+
+    console.error("Error loading categories")
+    return null
   }, [classId, classData])
 
-  console.log(classData)
+  const types = useMemo(() => {
+    if (categoryId) {
+      const selectedCategory = selectedClass?.categories.filter((category) => category.id === Number(categoryId))[0]
+      if (selectedCategory) {
+
+        //filters all types in the selected category based on the selected class
+        const types = selectedCategory?.types.map((type) => { return { value: type.id.toString(), label: type.name } }) as SelectValueType[]
+        return types ?? null
+
+      }
+    } else {
+      //clears type selection
+      setTypeId(null)
+      return null
+    }
+  }, [categoryId, classData])
+
+
+  // console.log(classData)
   // console.log(watch())
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (data: AssetFieldValues) => {
@@ -131,15 +163,15 @@ const CreateAssetAccordion = () => {
                 <AlertInput>{errors?.model?.classId?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <TypeSelect required name={"model.categoryId"} setValue={setValue} title={"Category"} placeholder={"Select category type"} data={categories ? categories : ['Category A', 'Category B']} />
+                <ClassTypeSelect disabled={!Boolean(classId)} query={categoryId} setQuery={setCategoryId} required name={"model.categoryId"} setValue={setValue} title={"Category"} placeholder={"Select category type"} data={categories ? categories : ['Category A', 'Category B']} />
                 <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <TypeSelect required name={"model.typeId"} setValue={setValue} title={"Type"} placeholder={"Select asset type"} data={['Type 1', 'Type 2']} />
+                <ClassTypeSelect disabled={!Boolean(categoryId)} query={typeId} setQuery={setTypeId} required name={"model.typeId"} setValue={setValue} title={"Type"} placeholder={"Select asset type"} data={types ? types : ['Type 1', 'Type 2']} />
                 <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
               </div>
               <div className="col-span-3">
-                <InputField register={register} label="Model Name" placeholder="Model Name" name="model.name" />
+                <InputField required register={register} label="Model Name" placeholder="Model Name" name="model.name" />
                 <AlertInput>{errors?.model?.name?.message}</AlertInput>
               </div>
               <div className="col-span-3">
@@ -152,10 +184,16 @@ const CreateAssetAccordion = () => {
               </div>
 
               <div className="col-span-10">
-                <Textarea placeholder="Asset Description" label="Asset Description" minRows={6} maxRows={6} classNames={{
-                  input: "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
-                  label: "font-sans text-sm font-normal text-gray-600 text-light"
-                }} />
+                <Textarea
+                  value={description ?? ""} onChange={(event) => {
+                    const text = event.currentTarget.value
+                    setDescription(text)
+                    setValue("description", text)
+                  }}
+                  placeholder="Asset Description" label="Asset Description" minRows={6} maxRows={6} classNames={{
+                    input: "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+                    label: "font-sans text-sm font-normal text-gray-600 text-light"
+                  }} />
               </div>
             </div>
           </Accordion.Panel>
@@ -172,8 +210,8 @@ const CreateAssetAccordion = () => {
           <Accordion.Panel>
             <div className="grid grid-cols-9 gap-2">
               <div className="col-span-3">
-                <TypeSelect name={"name"} setValue={setValue} title={"Currency"} placeholder={"Select currency type"} data={['Philippine Peso (Php)', 'US Dollar (USD)']} />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <TypeSelect name={"management.currency"} setValue={setValue} title={"Currency"} placeholder={"Select currency type"} data={[{ value: "PHP", label: 'Philippine Peso (Php)' }, { value: "USD", label: 'US Dollar (USD)' }]} />
+                <AlertInput>{errors?.management?.currency?.message}</AlertInput>
               </div>
               <div className="col-span-3">
                 <InputField register={register} label="Original Cost" placeholder="Original Cost" name="name" />

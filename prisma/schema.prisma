@@ -64,13 +64,12 @@ model User {
 }
 
 model Employee {
-  id          Int       @id @default(autoincrement())
-  name        String?
-  hired_date  DateTime?
-  position    String?
-  employee_id String?   @unique
-  email       String?   @unique
-
+  id           Int       @id @default(autoincrement())
+  name         String?
+  hired_date   DateTime?
+  position     String?
+  employee_id  String?   @unique
+  email        String?   @unique
   locked       Boolean   @default(false)
   lockedAt     DateTime?
   lockedReason String?
@@ -193,48 +192,50 @@ model AssetType {
 }
 
 model AssetManagement {
-  id                  Int       @id @default(autoincrement())
-  currency            String?
-  original_cost       Float?
-  current_cost        Float?
-  residual_value      Float?
-  purchase_date       DateTime?
-  depreciation_start  DateTime?
-  depreciation_end    DateTime?
-  depreciation_status String?
-  depreciation_period Int?
-  depreciation_rule   String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  deletedAt           DateTime?
-  deleted             Boolean   @default(false)
-  assetId             Int?      @unique
-  asset               Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  id                    Int       @id @default(autoincrement())
+  currency              String?
+  original_cost         Float?
+  current_cost          Float?
+  residual_value        Float?
+  purchase_date         DateTime?
+  depreciation_start    DateTime?
+  depreciation_end      DateTime?
+  depreciation_status   String?
+  depreciation_period   Int?
+  depreciation_rule     String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  deletedAt             DateTime?
+  deleted               Boolean   @default(false)
+  assetId               Int?      @unique
+  accounting_method     String?
+  depreciation_lifetime Int?
+  asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
 model Company {
-  id           Int         @id @default(autoincrement())
+  id           Int          @id @default(autoincrement())
   name         String
   phone_no     String[]
   email        String?
   website      String?
   remarks      String?
   parentId     Int?
-  assets       Asset[]
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
-  deleted      Boolean     @default(false)
-  parent       Company?    @relation("subsidiaries", fields: [parentId], references: [id])
+  deleted      Boolean      @default(false)
+  parent       Company?     @relation("subsidiaries", fields: [parentId], references: [id])
   address      Address?
-  subsidiaries Company[]   @relation("subsidiaries")
-  departments  Department?
+  assets       Asset[]
+  subsidiaries Company[]    @relation("subsidiaries")
+  departments  Department[]
 }
 
 model Department {
   id         Int       @id @default(autoincrement())
   name       String
-  companyId  Int?      @unique
+  companyId  Int?
   locationId Int?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -259,15 +260,13 @@ model Team {
 }
 
 model AssetProject {
-  id   Int    @id @default(autoincrement())
-  name String
-
-  assets Asset[]
-
+  id        Int       @id @default(autoincrement())
+  name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
+  assets    Asset[]
 }
 
 model Vendor {
@@ -308,14 +307,13 @@ model Asset {
   updatedAt      DateTime         @updatedAt
   deletedAt      DateTime?
   deleted        Boolean          @default(false)
-  AssetProject   AssetProject?    @relation(fields: [assetProjectId], references: [id])
+  project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
   location       Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade)
   model          Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
   parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
-  Company        Company?         @relation(fields: [subisidiaryId], references: [id], onDelete: Cascade)
+  subisidiary    Company?         @relation(fields: [subisidiaryId], references: [id], onDelete: Cascade)
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   children       Asset[]          @relation("children")
   management     AssetManagement?
 }
-

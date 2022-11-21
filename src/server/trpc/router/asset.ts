@@ -12,7 +12,7 @@ export const assetRouter = t.router({
       include: {
         model: true,
         custodian: true,
-        location: true,
+        department: true,
         vendor: true,
         management: true,
       },
@@ -58,7 +58,7 @@ export const assetRouter = t.router({
           include: {
             model: true,
             custodian: true,
-            location: true,
+            department: true,
             vendor: true,
             management: true,
           },
@@ -121,7 +121,7 @@ export const assetRouter = t.router({
               id: custodianId,
             },
           },
-          location: {
+          department: {
             connect: {
               id: departmentId,
             },
@@ -150,7 +150,7 @@ export const assetRouter = t.router({
         include: {
           model: true,
           custodian: true,
-          location: true,
+          department: true,
           vendor: true,
           management: true,
         },
@@ -196,7 +196,7 @@ export const assetRouter = t.router({
                 id: custodianId,
               },
             },
-            location: {
+            department: {
               connect: {
                 id: departmentId,
               },
@@ -255,7 +255,7 @@ export const assetRouter = t.router({
                 id: custodianId,
               },
             },
-            location: {
+            department: {
               update: {
                 id: departmentId,
               },

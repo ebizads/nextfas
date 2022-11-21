@@ -133,7 +133,7 @@ model Location {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
   deleted     Boolean      @default(false)
-  assets      Asset[]
+  // assets      Asset[]
   departments Department[]
 }
 
@@ -193,6 +193,7 @@ model AssetType {
 
 model AssetManagement {
   id                  Int       @id @default(autoincrement())
+  assetId             Int       @unique
   currency            String?
   original_cost       Float?
   current_cost        Float?
@@ -203,14 +204,8 @@ model AssetManagement {
   depreciation_status String?
   depreciation_period Int?
   depreciation_lifetime Int?
-  depreciation_rule   String?
-  accounting_method   String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  deletedAt           DateTime?
-  deleted             Boolean   @default(false)
-  assetId             Int?      @unique
-  asset               Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  remarks               String?
 }
 
 model Company {
@@ -244,6 +239,7 @@ model Department {
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
   teams      Team?
+  assets      Asset[]
 }
 
 model Team {
@@ -299,7 +295,8 @@ model Asset {
   parentId       Int?
   modelId        Int?             @unique
   custodianId    Int?
-  locationId     Int?
+  // locationId     Int?
+  departmentId  Int?
   vendorId       Int?
   assetProjectId Int?
   subisidiaryId  Int?
@@ -309,7 +306,8 @@ model Asset {
   deleted        Boolean          @default(false)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
-  location       Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  // location       Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  department     Department?        @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   model          Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
   parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
   subisidiary    Company?         @relation(fields: [subisidiaryId], references: [id], onDelete: Cascade)
@@ -317,3 +315,5 @@ model Asset {
   children       Asset[]          @relation("children")
   management     AssetManagement?
 }
+
+

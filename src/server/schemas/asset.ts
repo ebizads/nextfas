@@ -12,7 +12,7 @@ export const AssetCreateInput = z.object({
 
   model: ModelCreateInput,
   custodianId: z.number().optional(),
-  locationId: z.number().optional(),
+  departmentId: z.number().optional(),
   vendorId: z.number().optional(),
   subsidiaryId: z.number().optional(),
   projectId: z.number().optional(),
@@ -31,7 +31,7 @@ export const AssetEditInput = z.object({
 
   model: ModelCreateInput,
   custodianId: z.number().optional(),
-  locationId: z.number().optional(),
+  departmentId: z.number().optional(),
   vendorId: z.number().optional(),
   subsidiaryId: z.number().optional(),
   projectId: z.number().optional(),

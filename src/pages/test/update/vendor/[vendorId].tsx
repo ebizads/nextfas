@@ -23,11 +23,11 @@ const EmployeeEdit = () => {
     enabled: !!vendorId,
   })
 
-  const { mutate } = trpc.vendor.delete.useMutation({
-    onSuccess: () => {
-      utils.vendor.findOne.invalidate(Number(vendor?.id))
-    },
-  })
+  // const { mutate } = trpc.vendor.delete.useMutation({
+  //   onSuccess: () => {
+  //     utils.vendor.findOne.invalidate(Number(vendor?.id))
+  //   },
+  // })
 
   return (
     <>
@@ -40,17 +40,17 @@ const EmployeeEdit = () => {
         <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
           Update Vendor - {vendor?.name} - {vendor?.deleted ? "Deleted" : ""}
         </h3>
-        <EditForm
+        {/* <EditForm
           vendor={
             {
               id: vendor?.id ?? 0,
               ...vendor,
             } ?? ({} as Vendor)
           }
-        />
+        /> */}
         <button
           className="my-2 bg-amber-300 px-8 py-2 text-white"
-          onClick={() => mutate(Number(vendorId))}
+        // onClick={() => mutate(Number(vendorId))}
         >
           Delete Vendor
         </button>
@@ -64,12 +64,12 @@ export default EmployeeEdit
 const EditForm = ({ vendor }: { vendor: Vendor }) => {
   // use utils from use context
   const utils = trpc.useContext()
-  const { mutate, isLoading, error } = trpc.vendor.edit.useMutation({
-    onSuccess() {
-      // invalidate query of vendor id when mutations is successful
-      utils.vendor.findOne.invalidate(Number(vendor?.id))
-    },
-  })
+  // const { mutate, isLoading, error } = trpc.vendor.edit.useMutation({
+  //   onSuccess() {
+  //     // invalidate query of vendor id when mutations is successful
+  //     utils.vendor.findOne.invalidate(Number(vendor?.id))
+  //   },
+  // })
   const {
     register,
     handleSubmit,
@@ -87,7 +87,7 @@ const EditForm = ({ vendor }: { vendor: Vendor }) => {
 
   const onSubmit = async (employee: Vendor) => {
     // Register function
-    mutate(employee)
+    // mutate(employee)
     reset()
   }
 
@@ -117,17 +117,17 @@ const EditForm = ({ vendor }: { vendor: Vendor }) => {
         <button
           type="submit"
           className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-          disabled={isLoading}
+        // disabled={isLoading}
         >
-          {isLoading ? "Loading..." : "Update Vendor"}
+          {/* {isLoading ? "Loading..." : "Update Vendor"} */}
         </button>
       </form>
-      {error && (
+      {/* {error && (
         <pre className="mt-2 text-sm italic text-red-500">
           Something went wrong!
           {JSON.stringify(error, null, 2)}
         </pre>
-      )}
+      )} */}
     </>
   )
 }

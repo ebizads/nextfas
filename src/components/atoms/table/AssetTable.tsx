@@ -104,14 +104,14 @@ export const AssetDeleteModal = (props: {
   const [showList, setShowList] = useState<boolean>(false)
 
   //trpc utils for delete
-  const utils = trpc.useContext()
+  // const utils = trpc.useContext()
   // const { mutate, isLoading } = trpc.asset.deleteMany.useMutation({
   //   onSuccess() {
   //     utils.asset.findAll.invalidate()
   //   },
   // })
   const handleDelete = () => {
-    const id_array = [...props.checkboxes]
+    // const id_array = [...props.checkboxes]
     //delete function
     // mutate([...id_array])
     props.setCheckboxes([])

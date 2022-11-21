@@ -227,7 +227,6 @@ model Company {
   deleted      Boolean     @default(false)
   parent       Company?    @relation("subsidiaries", fields: [parentId], references: [id])
   address      Address?
-  Asset        Asset[]
   subsidiaries Company[]   @relation("subsidiaries")
   departments  Department?
 }

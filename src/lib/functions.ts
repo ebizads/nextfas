@@ -1,10 +1,11 @@
 import { AssetType, EmployeeType, VendorType } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
+import { disposeTMP } from "../pages/transactions/disposal"
 
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType,
+  type: AssetType | EmployeeType | VendorType | disposeTMP,
   subfilter?: string
 ) => {
   //get object property
@@ -71,4 +72,39 @@ export const downloadExcel = (data: ExcelExportType[]) => {
   // }
 
   return
+}
+
+export const straightLine = (
+  cost: number,
+  salvage: number,
+  lifetime: number,
+  period: number
+) => {
+  const depreciation_value = (cost - salvage) / lifetime
+
+  return depreciation_value * period
+}
+
+export const currentValue = (
+  cost: number,
+  depreciation_value: number,
+  start_date: Date
+) => {
+  const differenceInTime = start_date.getTime() - new Date().getTime()
+
+  const differenceInDay = differenceInTime / (1000 * 3600 * 24)
+
+  const year = convertDaysToYears(differenceInDay)
+
+  const current_value = cost - depreciation_value * year
+
+  return current_value
+}
+
+export const convertDaysToYears = (days: number) => {
+  return days / 365
+}
+
+export const convertMonthsToYears = (months: number) => {
+  return months / 12
 }

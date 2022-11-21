@@ -202,6 +202,7 @@ model AssetManagement {
   depreciation_end    DateTime?
   depreciation_status String?
   depreciation_period Int?
+  depreciation_lifetime Int?
   depreciation_rule   String?
   accounting_method   String?
   createdAt           DateTime  @default(now())
@@ -228,13 +229,13 @@ model Company {
   address      Address?
   assets       Asset[]
   subsidiaries Company[]   @relation("subsidiaries")
-  departments  Department?
+  departments  Department[]
 }
 
 model Department {
   id         Int       @id @default(autoincrement())
   name       String
-  companyId  Int?      @unique
+  companyId  Int?
   locationId Int?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

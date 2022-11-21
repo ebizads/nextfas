@@ -36,6 +36,7 @@ export const ManagementCreateInput = z.object({
   depreciation_end: z.date().nullish(),
   depreciation_status: z.string().nullish(),
   depreciation_period: z.number().nullish(),
+  depreciation_lifetime: z.number().nullish(),
   depreciation_rule: z.string().nullish(),
   accounting_method: z.string().nullish(),
 })

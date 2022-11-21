@@ -7,7 +7,7 @@ export type SelectValueType = {
   label: string
 }
 
-//keyof returns strict keys of an object
+/* tslint:disable-next-line */
 const TypeSelect = (props: { isString?: boolean, disabled?: boolean, name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
 
   const [query, setQuery] = useState<string | null>(null)

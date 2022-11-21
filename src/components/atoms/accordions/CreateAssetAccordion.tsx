@@ -12,22 +12,25 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
 import { useMemo, useState } from "react"
+import { getAddress } from "../../../lib/functions"
+import { Location } from "@prisma/client"
 
 
 const CreateAssetAccordion = () => {
 
-  const { mutate, isLoading, error } = trpc.asset.create.useMutation()
+  // const { mutate, isLoading, error } = trpc.asset.create.useMutation()
 
   const {
     register,
     handleSubmit,
     reset,
     setValue,
-    watch,
+    // watch,
     formState: { errors },
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
     defaultValues: {
+      // subsidiaryId: undefined,
       management: {
         original_cost: 0,
         current_cost: 0,
@@ -36,26 +39,61 @@ const CreateAssetAccordion = () => {
     },
   })
 
-
-  //gets and sets all assets
-  const { data: assetsData, isLoading: assetsDataLoading, error: assetsDataError } = trpc.asset.findAll.useQuery()
-  const assetsList = useMemo(() => assetsData?.assets.map((asset) => { return { value: asset.id.toString(), label: asset.name } }), [assetsData]) as SelectValueType[] | undefined
-
-  //gets and sets all projects
-  const { data: projectsData, isLoading: projectsDataLoading, error: projectsDataError } = trpc.assetProject.findAll.useQuery()
-  const projectsList = useMemo(() => projectsData?.map((project) => { return { value: project.id.toString(), label: project.name } }), [projectsData]) as SelectValueType[] | undefined
-
-  //gets and sets all projects
-  const { data: vendorsData, isLoading: vendorsDataLoading, error: vendorsDataError } = trpc.vendor.findAll.useQuery()
-  const vendorsList = useMemo(() => vendorsData?.vendors.map((vendor) => { return { value: vendor.id.toString(), label: vendor.name } }), [vendorsData]) as SelectValueType[] | undefined
-
-  //gets and sets all class, categories, and types
-  const { data: classData, isLoading: classDataLoading, error: classDataError } = trpc.assetClass.findAll.useQuery()
-  const classList = useMemo(() => classData?.map((classItem) => { return { value: classItem.id.toString(), label: classItem.name } }), [classData]) as SelectValueType[] | undefined
-
   const [classId, setClassId] = useState<string | null>(null)
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [typeId, setTypeId] = useState<string | null>(null)
+  const [companyId, setCompanyId] = useState<string | null>(null)
+  const [departmentId, setDepartmentId] = useState<string | null>(null)
+
+  //gets and sets all assets
+  const { data: assetsData } = trpc.asset.findAll.useQuery()
+  const assetsList = useMemo(() => assetsData?.assets.map((asset) => { return { value: asset.id.toString(), label: asset.name } }), [assetsData]) as SelectValueType[] | undefined
+
+  //gets and sets all projects
+  const { data: projectsData } = trpc.assetProject.findAll.useQuery()
+  const projectsList = useMemo(() => projectsData?.map((project) => { return { value: project.id.toString(), label: project.name } }), [projectsData]) as SelectValueType[] | undefined
+
+  //gets and sets all projects
+  const { data: vendorsData } = trpc.vendor.findAll.useQuery()
+  const vendorsList = useMemo(() => vendorsData?.vendors.map((vendor) => { return { value: vendor.id.toString(), label: vendor.name } }), [vendorsData]) as SelectValueType[] | undefined
+
+  //gets and sets all companies
+  const { data: companyData } = trpc.company.findAll.useQuery()
+  const companyList = useMemo(() => companyData?.companies.map((company) => { return { value: company.id.toString(), label: company.name } }), [companyData]) as SelectValueType[] | undefined
+
+  //gets and sets all class, categories, and types
+  const { data: classData } = trpc.assetClass.findAll.useQuery()
+  const classList = useMemo(() => classData?.map((classItem) => { return { value: classItem.id.toString(), label: classItem.name } }), [classData]) as SelectValueType[] | undefined
+
+  //gets and sets all employee
+  const { data: employeeData } = trpc.employee.findAll.useQuery()
+  const employeeList = useMemo(() => employeeData?.employees.map((employeeItem) => { return { value: employeeItem.id.toString(), label: employeeItem.name } }), [employeeData]) as SelectValueType[] | undefined
+
+  //gets and sets all class, categories, and types
+  const { data: departmentData } = trpc.department.findAll.useQuery()
+
+  const selectedDepartment = useMemo(() => {
+    const department = departmentData?.departments
+      .filter((department) => department.id === Number(departmentId))[0]
+    return department?.location
+  }, [departmentId, departmentData]) as Location
+
+
+  const departmentList = useMemo(() => {
+    if (companyId) {
+      const dept = departmentData?.departments.filter((department) => department.companyId === Number(companyId))
+      if (dept) {
+        const departments = dept?.map((department) => {
+          return { value: department.id.toString(), label: department.name }
+        }) as SelectValueType[]
+        return departments ?? null
+      }
+    }
+    // console.log(departmentData)
+    setDepartmentId(null)
+    // console.error("Error loading departments")
+    return null
+  }, [companyId, departmentData])
 
   //asset description
   const [description, setDescription] = useState<string | null>(null)
@@ -100,11 +138,22 @@ const CreateAssetAccordion = () => {
       setTypeId(null)
       return null
     }
-  }, [categoryId, classData])
+
+    console.error("Error loading types")
+    return null
+  }, [categoryId, selectedClass])
 
 
-  // console.log(classData)
-  console.log(watch())
+  const company_address = useMemo(() => {
+    if (companyId) {
+      const address = companyData?.companies.filter((company) => company.id === Number(companyId))[0]
+      return address ?? null
+    }
+  }, [companyId, companyData])
+
+
+  // console.log(companyData)
+  // console.log(watch())
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (data: AssetFieldValues) => {
     console.log("Submitting: ", data)
@@ -260,29 +309,65 @@ const CreateAssetAccordion = () => {
           <Accordion.Panel>
             <div className="grid grid-cols-9 gap-2">
               <div className="col-span-3">
-                <TypeSelect required name={"name"} setValue={setValue} title={"Company"} placeholder={"Select company or subsidiary"} data={['Company A', 'Company B']} />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <ClassTypeSelect query={companyId} setQuery={setCompanyId} required name={"subsidiaryId"} setValue={setValue} title={"Company"} placeholder={"Select company or subsidiary"} data={companyList ? companyList : ['Company A', 'Company B']} />
+                <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
               </div>
               <div className="col-span-6">
-                <InputField disabled register={register} label="Company address" placeholder="Company Address " name="name" />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <div className="text-gray-700">
+                  <div className="flex flex-1 flex-col gap-2">
+                    <label htmlFor="address" className="text-sm">Company Address</label>
+                    <input
+                      type="text"
+                      id={"address"}
+                      className={"w-full rounded-md border-2 border-gray-400 disabled:bg-gray-200 disabled:text-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm"
+                      }
+                      placeholder="Company Address will appear here"
+                      value={company_address?.address ? getAddress(company_address) : ""}
+                      disabled
+                    />
+                  </div>
+                </div>
               </div>
               <div className="col-span-9 grid grid-cols-8 gap-2">
                 <div className="col-span-2">
-                  <TypeSelect name={"name"} setValue={setValue} title={"Department"} placeholder={"Select department type"} data={['Department A', 'Department B']} />
+                  <ClassTypeSelect query={departmentId} setQuery={setDepartmentId} disabled={!Boolean(companyId)} name={"manage"} setValue={setValue} title={"Department"} placeholder={"Select department type"} data={departmentList ? departmentList : ['Department A', 'Department B']} />
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
                 <div className="col-span-2">
-                  <TypeSelect name={"name"} setValue={setValue} title={"Floor"} placeholder={"Select floor"} data={['Department A', 'Department B']} />
-                  <AlertInput>{errors?.name?.message}</AlertInput>
+                  <div className="text-gray-700">
+                    <div className="flex flex-1 flex-col gap-2">
+                      <label htmlFor="address" className="text-sm">Floor</label>
+                      <input
+                        type="text"
+                        id={"address"}
+                        className={"w-full rounded-md border-2 border-gray-400 disabled:bg-gray-200 disabled:text-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm"
+                        }
+                        placeholder="Floor no."
+                        value={selectedDepartment.floor ? selectedDepartment?.floor : ""}
+                        disabled
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="col-span-2">
-                  <TypeSelect name={"name"} setValue={setValue} title={"Room"} placeholder={"Select room"} data={['Room A', 'Room B']} />
-                  <AlertInput>{errors?.name?.message}</AlertInput>
+                  <div className="text-gray-700">
+                    <div className="flex flex-1 flex-col gap-2">
+                      <label htmlFor="address" className="text-sm">Room</label>
+                      <input
+                        type="text"
+                        id={"address"}
+                        className={"w-full rounded-md border-2 border-gray-400 disabled:bg-gray-200 disabled:text-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm"
+                        }
+                        placeholder="Room no."
+                        value={selectedDepartment.room ? selectedDepartment?.room : ""}
+                        disabled
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="col-span-2">
-                  <TypeSelect name={"name"} setValue={setValue} title={"Custodian"} placeholder={"Assign custodian"} data={['Employee A', 'Employee B']} />
-                  <AlertInput>{errors?.name?.message}</AlertInput>
+                  <TypeSelect name={"name"} setValue={setValue} title={"Custodian"} placeholder={"Assign custodian"} data={employeeList ? employeeList : ['Employee A', 'Employee B']} />
+                  <AlertInput>{errors?.custodianId?.message}</AlertInput>
                 </div>
               </div>
               <div className="col-span-2">
@@ -292,8 +377,8 @@ const CreateAssetAccordion = () => {
               <div className="col-span-3 space-y-2">
                 <p className='text-sm text-gray-700'>Depreciation Start Date</p>
                 <DatePicker placeholder="Month Day, Year" allowFreeInput size="sm" // value={value}
-                  onChange={value => {// setValue("hired_date", value)
-                  }} classNames={{
+                  // onChange={value => { setValue("hired_date", value)}}
+                  classNames={{
                     input: 'border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400'
                   }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                 />
@@ -301,8 +386,7 @@ const CreateAssetAccordion = () => {
               <div className="col-span-3 space-y-2">
                 <p className='text-sm text-gray-700'>Depreciation End Date</p>
                 <DatePicker placeholder="Month Day, Year" allowFreeInput size="sm" // value={value}
-                  onChange={value => {// setValue("hired_date", value)
-                  }} classNames={{
+                  classNames={{
                     input: 'border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400'
                   }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                 />

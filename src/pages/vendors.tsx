@@ -37,7 +37,7 @@ const Vendors = () => {
     //get and parse all data
     if (data) {
       setVendors(data.vendors)
-      setAccessiblePage(Math.ceil(data?.total / limit))
+      setAccessiblePage(Math.ceil(data?.count / limit))
     }
   }, [data, limit])
 
@@ -49,6 +49,7 @@ const Vendors = () => {
     handleSubmit,
     // watch,
     // clearErrors,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<Vendor>({
     resolver: zodResolver(VendorCreateInput), // Configuration the validation with the zod schema.
@@ -147,7 +148,7 @@ const Vendors = () => {
               limit={limit}
               setLimit={setLimit}
             />
-            <p> of {data?.total} entries</p>
+            <p> of {data?.count} entries</p>
           </div>
           <Pagination
             page={page}
@@ -187,6 +188,8 @@ const Vendors = () => {
                 </div>
                 <div className="col-span-5">
                   <TypeSelect
+                    name={"name"}
+                    setValue={setValue}
                     title={"Type"}
                     placeholder={"Pick asset type"}
                     data={["Company", "Individual"]}
@@ -226,7 +229,7 @@ const Vendors = () => {
                     name="alt_phone_no"
                     type="text"
                   />
-                  <AlertInput>{errors?.alt_phone_no?.message}</AlertInput>
+                  {/* <AlertInput>{errors?.alt_phone_no?.message}</AlertInput> */}
                 </div>
                 <div className="col-span-5">
                   <InputField
@@ -235,7 +238,7 @@ const Vendors = () => {
                     name="url"
                     type="text"
                   />
-                  <AlertInput>{errors?.url?.message}</AlertInput>
+                  {/* <AlertInput>{errors?.url?.message}</AlertInput> */}
                 </div>
                 <div className="col-span-5">
                   <InputField

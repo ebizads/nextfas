@@ -1,12 +1,14 @@
 import { AssetType, EmployeeType, VendorType } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
+
+import { Address, Company } from "@prisma/client"
 import { disposeTMP } from "../pages/transactions/disposal"
 
 export const getProperty = (
   filter: string,
   type: AssetType | EmployeeType | VendorType | disposeTMP,
-  subfilter?: string
+  //subfilter?: string
 ) => {
   //get object property
   const property =
@@ -44,8 +46,14 @@ export const getName = (filter: string, type: EmployeeType) => {
     : Object.getOwnPropertyDescriptor(type?.profile, "last_name")?.value
 }
 
-export const getAddress = (type: EmployeeType) => {
-  return `${type?.address?.state} ${type?.address?.street}, ${type?.address?.city}, ${type?.address?.country} `
+export const getAddress = (
+  type:
+    | EmployeeType
+    | (Company & {
+        address: Address | null
+      })
+) => {
+  return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
 }
 
 export const formatBytes = (bytes: number) => {

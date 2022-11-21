@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { Group, Text } from "@mantine/core"
 import { IconUpload, IconX } from "@tabler/icons"
 import { Dropzone, IMAGE_MIME_TYPE, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone"
 import { ImageJSON } from "../../types/table"
 import Image from "next/image"
 import * as XLSX from "xlsx";
-import { EmployeeType } from "../../types/generic"
 import { ExcelExportType } from "../../types/employee"
 import { trpc } from "../../utils/trpc"
-import { employee } from "@prisma/client"
 import DuplicateAccordion from "../atoms/accordions/DuplicateAccordion"
 
 
@@ -26,24 +24,24 @@ export default function DropZone({
   acceptingMany?: boolean
 }) {
 
-  const [idList, setIdList] = useState<string[]>([])
+  const [idList, setIdList] = useState<number[]>([])
 
   const { data: duplicates } = trpc.employee.checkDuplicates.useQuery(idList)
   const [duplicatedEmployees, setDuplicatedEmployees] = useState<ExcelExportType[]>([])
-  const { mutate: create } = trpc.employee.createMany.useMutation()
+  // const { mutate: create } = trpc.employee.createMany.useMutation()
 
 
   const parseEmployeesData = (data: unknown[]) => {
 
     //returns all id of parsed employees
     const id_list = data.map((employee) => {
-      return (employee as string[])[8] as string
-    }) as string[]
+      return Number((employee as string[])[8] as string)
+    }) as number[]
     setIdList(id_list)
 
     //filters duplicated ID
     const dupEmployeeList = data.filter(employee => {
-      return id_list.includes(employee ? (employee as string[])[8] as string : "N/A")
+      return id_list.includes(employee ? Number((employee as string[])[8] as string) : -1)
     }) as any[]
 
     const final_dupList = [] as ExcelExportType[]
@@ -100,7 +98,7 @@ export default function DropZone({
     })
 
     setDuplicatedEmployees(final_dupList.sort((a, b) => {
-      return a.id! - b.id!
+      return a.id - b.id
     }))
 
 

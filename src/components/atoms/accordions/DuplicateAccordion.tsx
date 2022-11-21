@@ -1,8 +1,7 @@
 import { Accordion } from '@mantine/core';
-import { employee } from '@prisma/client';
-import { useEffect } from 'react';
+import { Employee } from '@prisma/client';
 
-const DuplicateAccordion = (props: { currentRecords: employee[], incomingChanges: unknown[] }) => {
+const DuplicateAccordion = (props: { currentRecords: Employee[], incomingChanges: unknown[] }) => {
 
   return (
     <Accordion>

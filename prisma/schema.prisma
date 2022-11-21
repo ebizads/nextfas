@@ -317,3 +317,4 @@ model Asset {
   children       Asset[]          @relation("children")
   management     AssetManagement?
 }
+

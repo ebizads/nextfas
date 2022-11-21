@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react"
 import { UseFormRegister } from "react-hook-form"
-import { AssetFieldValues, EmployeeFieldValues } from "../../../types/generic"
 
 type InputFieldType = {
   label: string
@@ -14,6 +13,7 @@ type InputFieldType = {
   required?: boolean
   placeholder?: string
   disabled?: boolean
+  displayOnly?: boolean
 }
 
 export function InputField({
@@ -26,7 +26,9 @@ export function InputField({
   register,
   required,
   placeholder,
-  disabled
+  disabled,
+  // displayOnly
+
 }: InputFieldType) {
   const [inputType, setInputType] = useState<string>(type ?? "text")
 

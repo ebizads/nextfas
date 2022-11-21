@@ -8,9 +8,9 @@ export const assetClassRouter = t.router({
         id: input,
       },
       select: {
-        name: true,
         categories: {
           select: {
+            id: true,
             name: true,
             types: true,
           },
@@ -21,10 +21,10 @@ export const assetClassRouter = t.router({
   }),
   findAll: authedProcedure.query(async ({ ctx }) => {
     const assetClasses = await ctx.prisma.assetClass.findMany({
-      select: {
-        name: true,
+      include: {
         categories: {
           select: {
+            id: true,
             name: true,
             types: true,
           },

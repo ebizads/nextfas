@@ -214,7 +214,7 @@ model AssetManagement {
 }
 
 model Company {
-  id           Int         @id @default(autoincrement())
+  id           Int          @id @default(autoincrement())
   name         String
   phone_no     String[]
   email        String?
@@ -224,8 +224,8 @@ model Company {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   deletedAt    DateTime?
-  deleted      Boolean     @default(false)
-  parent       Company?    @relation("subsidiaries", fields: [parentId], references: [id])
+  deleted      Boolean      @default(false)
+  parent       Company?     @relation("subsidiaries", fields: [parentId], references: [id])
   address      Address?
   assets       Asset[]
   subsidiaries Company[]   @relation("subsidiaries")
@@ -317,4 +317,3 @@ model Asset {
   children       Asset[]          @relation("children")
   management     AssetManagement?
 }
-

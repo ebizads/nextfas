@@ -27,14 +27,22 @@ export const assetRouter = t.router({
           search: z
             .object({
               name: z.string().optional(),
-              employee_id: z.string().optional(),
-              email: z.string().optional(),
+              number: z.string(),
+              serial_no: z.string().optional(),
+              barcode: z.string().optional(),
+              description: z.string().optional(),
+              remarks: z.string().optional(),
+              custodianId: z.number().optional(),
+              locationId: z.number().optional(),
+              vendorId: z.number().optional(),
+              subsidiaryId: z.number().optional(),
+              projectId: z.number().optional(),
+              parentId: z.number().optional(),
             })
             .optional(),
           filter: z
             .object({
-              hired_date: z.date().optional(),
-              subsidiary: z.string().optional(),
+              updatedAt: z.date().optional(),
             })
             .optional(),
         })

@@ -18,3 +18,18 @@ export const AssetCreateInput = z.object({
   parentId: z.number().optional(),
   management: ManagementCreateInput,
 })
+
+export const AssetSearchInput = z.object({
+  name: z.string().optional(),
+  number: z.string(),
+  serial_no: z.string().optional(),
+  barcode: z.string().optional(),
+  description: z.string().optional(),
+  remarks: z.string().optional(),
+  custodianId: z.number().optional(),
+  locationId: z.number().optional(),
+  vendorId: z.number().optional(),
+  subsidiaryId: z.number().optional(),
+  projectId: z.number().optional(),
+  parentId: z.number().optional(),
+})

@@ -243,9 +243,8 @@ model Department {
   deleted    Boolean   @default(false)
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  // Asset      Asset[]
+  assets     Asset[]
   teams      Team?
-  assets      Asset[]
 }
 
 model Team {
@@ -292,7 +291,7 @@ model Vendor {
 model Asset {
   id             Int              @id @default(autoincrement())
   name           String
-  number         String
+  number         String?
   alt_number     String?
   serial_no      String?
   barcode        String?
@@ -301,7 +300,6 @@ model Asset {
   parentId       Int?
   modelId        Int?             @unique
   custodianId    Int?
-  // locationId     Int?
   vendorId       Int?
   assetProjectId Int?
   subisidiaryId  Int?
@@ -309,11 +307,10 @@ model Asset {
   updatedAt      DateTime         @updatedAt
   deletedAt      DateTime?
   deleted        Boolean          @default(false)
-  departmentId   Int?
+  departmentId   Int?             
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
-  // location       Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  department     Department?        @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  department     Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   model          Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
   parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
   subisidiary    Company?         @relation(fields: [subisidiaryId], references: [id], onDelete: Cascade)
@@ -321,5 +318,3 @@ model Asset {
   children       Asset[]          @relation("children")
   management     AssetManagement?
 }
-
-

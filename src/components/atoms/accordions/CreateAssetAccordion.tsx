@@ -14,10 +14,7 @@ import { AssetClassType, AssetFieldValues } from "../../../types/generic"
 import { useEffect, useMemo, useState } from "react"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
-import dayjs from "dayjs"
-import Modal from "../../headless/modal/modal"
 import moment from "moment"
-import { env } from "process"
 
 
 const CreateAssetAccordion = () => {
@@ -29,7 +26,7 @@ const CreateAssetAccordion = () => {
     handleSubmit,
     reset,
     setValue,
-    watch,
+    // watch,
     formState: { errors, isDirty, isValid },
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
@@ -82,7 +79,7 @@ const CreateAssetAccordion = () => {
       .filter((department) => department.id === Number(departmentId))[0]
 
     //set location === floor and room number
-    setValue('locationId', department?.locationId ?? undefined)
+    // setValue('locationId', department?.locationId ?? undefined)
     return department?.location
   }, [departmentId, departmentData]) as Location
 
@@ -166,9 +163,9 @@ const CreateAssetAccordion = () => {
 
 
   //submit modal trigger
-  const [confirming, setConfirming] = useState<boolean>(false)
-  const [submitting, setSubmitting] = useState<boolean>(false)
-  const [data, setData] = useState<AssetFieldValues | null>(null)
+  // const [confirming, setConfirming] = useState<boolean>(false)
+  // const [submitting, setSubmitting] = useState<boolean>(false)
+  // const [data, setData] = useState<AssetFieldValues | null>(null)
   const [loading, setIsLoading] = useState<boolean>(false)
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (form_data: AssetFieldValues) => {
@@ -177,7 +174,7 @@ const CreateAssetAccordion = () => {
       console.log("ERROR ENCOUNTERED")
       console.error(error)
     } else {
-      setData(form_data)
+      // setData(form_data)
       // console.log("omsim")
       // if (confirming) {
       console.log("Submitting: ", form_data)
@@ -193,10 +190,6 @@ const CreateAssetAccordion = () => {
   // useEffect(() => {
   //   console.log(watch())
   // }, [watch()])
-
-  useEffect(() => {
-
-  }, [selectedDepartment])
 
   return (
 
@@ -368,8 +361,8 @@ const CreateAssetAccordion = () => {
                 </div>
                 <div className="col-span-9 grid grid-cols-8 gap-2">
                   <div className="col-span-2">
-                    <ClassTypeSelect query={departmentId} setQuery={setDepartmentId} disabled={!Boolean(companyId)} name={"locationId"} setValue={setValue} title={"Department"} placeholder={"Select department type"} data={departmentList ? departmentList : ['Department A', 'Department B']} />
-                    <AlertInput>{errors?.locationId?.message}</AlertInput>
+                    <ClassTypeSelect query={departmentId} setQuery={setDepartmentId} disabled={!Boolean(companyId)} name={"departmentId"} setValue={setValue} title={"Department"} placeholder={"Select department type"} data={departmentList ? departmentList : ['Department A', 'Department B']} />
+                    <AlertInput>{errors?.departmentId?.message}</AlertInput>
                   </div>
                   <div className="col-span-2">
                     <div className="text-gray-700">
@@ -474,7 +467,7 @@ const CreateAssetAccordion = () => {
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
           <button className="px-4 py-2 underline">Discard</button>
-          <button disabled={!isValid && !isDirty} onClick={() => {
+          <button disabled={(!isValid && !isDirty) || isLoading} onClick={() => {
             // console.log(JSON.stringify(errors))
             //no form errors
             if (JSON.stringify(errors) !== "{}") {
@@ -482,11 +475,11 @@ const CreateAssetAccordion = () => {
             } else {
               const id = `FAS-${moment().format("YY-MDhms")}`
               setValue('number', id)
-              setSubmitting(true)
+              // setSubmitting(true)
             }
           }}
             className="rounded-md disabled:cursor-not-allowed disabled:bg-tangerine-200 bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400">
-            Save
+            {isLoading || loading ? "Saving..." : "Save"}
           </button>
         </div>
         {/* 

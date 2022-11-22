@@ -133,7 +133,6 @@ model Location {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
   deleted     Boolean      @default(false)
-  // assets      Asset[]
   departments Department[]
 }
 
@@ -192,20 +191,26 @@ model AssetType {
 }
 
 model AssetManagement {
-  id                  Int       @id @default(autoincrement())
-  assetId             Int       @unique
-  currency            String?
-  original_cost       Float?
-  current_cost        Float?
-  residual_value      Float?
-  purchase_date       DateTime?
-  depreciation_start  DateTime?
-  depreciation_end    DateTime?
-  depreciation_status String?
-  depreciation_period Int?
+  id                    Int       @id @default(autoincrement())
+  currency              String?
+  original_cost         Float?
+  current_cost          Float?
+  residual_value        Float?
+  purchase_date         DateTime?
+  depreciation_start    DateTime?
+  depreciation_end      DateTime?
+  depreciation_status   String?
+  depreciation_period   Int?
+  depreciation_rule     String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  deletedAt             DateTime?
+  deleted               Boolean   @default(false)
+  assetId               Int?      @unique
+  accounting_method     String?
   depreciation_lifetime Int?
-  asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
   remarks               String?
+  asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
 model Company {
@@ -216,14 +221,14 @@ model Company {
   website      String?
   remarks      String?
   parentId     Int?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
   deleted      Boolean      @default(false)
   parent       Company?     @relation("subsidiaries", fields: [parentId], references: [id])
   address      Address?
   assets       Asset[]
-  subsidiaries Company[]   @relation("subsidiaries")
+  subsidiaries Company[]    @relation("subsidiaries")
   departments  Department[]
 }
 
@@ -238,6 +243,7 @@ model Department {
   deleted    Boolean   @default(false)
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  // Asset      Asset[]
   teams      Team?
   assets      Asset[]
 }
@@ -296,7 +302,6 @@ model Asset {
   modelId        Int?             @unique
   custodianId    Int?
   // locationId     Int?
-  departmentId  Int?
   vendorId       Int?
   assetProjectId Int?
   subisidiaryId  Int?
@@ -304,6 +309,7 @@ model Asset {
   updatedAt      DateTime         @updatedAt
   deletedAt      DateTime?
   deleted        Boolean          @default(false)
+  departmentId   Int?
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
   // location       Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade)

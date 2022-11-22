@@ -3,8 +3,8 @@ import { ManagementCreateInput, ModelCreateInput } from "./model"
 
 export const AssetCreateInput = z.object({
   name: z.string().min(1, "Please provide name"),
-  number: z.string(),
-  alt_number: z.string(),
+  number: z.string().nullish(),
+  alt_number: z.string().nullish(),
   serial_no: z.string().nullish(),
   barcode: z.string().nullish(),
   description: z.string().nullish(),

@@ -120,31 +120,33 @@ export const assetRouter = t.router({
             },
           },
           custodian: {
-            connect: { id: custodianId },
+            connect: {
+              id: custodianId ?? 1,
+            },
           },
           department: {
             connect: {
-              id: departmentId,
+              id: departmentId ?? 1,
             },
           },
           vendor: {
             connect: {
-              id: vendorId,
+              id: vendorId ?? 1,
             },
           },
           subsidiary: {
             connect: {
-              id: subsidiaryId,
+              id: subsidiaryId ?? 1,
             },
           },
           project: {
             connect: {
-              id: projectId,
+              id: projectId ?? 1,
             },
           },
           parent: {
             connect: {
-              id: parentId,
+              id: parentId ?? 1,
             },
           },
           ...rest,
@@ -198,32 +200,32 @@ export const assetRouter = t.router({
             },
             custodian: {
               connect: {
-                id: custodianId,
+                id: custodianId ?? 1,
               },
             },
             department: {
               connect: {
-                id: departmentId,
+                id: departmentId ?? 1,
               },
             },
             vendor: {
               connect: {
-                id: vendorId,
+                id: vendorId ?? 1,
               },
             },
             subsidiary: {
               connect: {
-                id: subsidiaryId,
+                id: subsidiaryId ?? 1,
               },
             },
             project: {
               connect: {
-                id: projectId,
+                id: projectId ?? 1,
               },
             },
             parent: {
               connect: {
-                id: parentId,
+                id: parentId ?? 1,
               },
             },
           }
@@ -296,6 +298,50 @@ export const assetRouter = t.router({
         })
 
         return "Asset updated successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
+    try {
+      await ctx.prisma.asset.update({
+        where: {
+          id: input,
+        },
+        data: {
+          deleted: true,
+          deletedAt: new Date(),
+        },
+      })
+
+      return "Asset deleted successfully"
+    } catch (error) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: JSON.stringify(error),
+      })
+    }
+  }),
+  deleteMany: authedProcedure
+    .input(z.array(z.number()))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.asset.updateMany({
+          where: {
+            id: {
+              in: input,
+            },
+          },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+          },
+        })
+
+        return "Assets deleted successfully"
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",

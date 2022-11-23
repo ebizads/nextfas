@@ -278,7 +278,7 @@ const CreateAssetAccordion = () => {
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
         <Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
-          <Accordion.Item value={"1"}>
+          <Accordion.Item value={"1"} className="outline-none active:outline-none">
             <Accordion.Control className="uppercase">
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">

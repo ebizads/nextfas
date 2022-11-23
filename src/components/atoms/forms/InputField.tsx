@@ -44,7 +44,11 @@ export function InputField({
           <input
             type={inputType}
             id={name}
-            {...register(name)}
+            {...register(name, {
+              //validate number type of inputs
+              valueAsNumber: inputType === "number" ? true : false,
+              validate: inputType === "number" ? (value) => value > 0 : undefined,
+            })}
             className={
               className
                 ? className +

@@ -1,15 +1,15 @@
 import { z } from "zod"
 
 export const AssetClassCreateInput = z.object({
-  name: z.string(),
+  name: z.string().nullish(),
 })
 
 export const AssetTypeCreateInput = z.object({
-  name: z.string(),
+  name: z.string().nullish(),
 })
 
 export const AssetCategoryCreateInput = z.object({
-  name: z.string(),
+  name: z.string().nullish(),
 })
 
 export const ModelCreateInput = z.object({
@@ -17,11 +17,11 @@ export const ModelCreateInput = z.object({
   brand: z.string().optional(),
   number: z.string().optional(),
 
-  asset_class: AssetClassCreateInput.optional(),
+  // asset_class: AssetClassCreateInput.optional(),
   classId: z.number().optional(),
-  asset_category: AssetCategoryCreateInput.optional(),
+  //asset_category: AssetCategoryCreateInput.optional(),
   categoryId: z.number().optional(),
-  asset_type: AssetTypeCreateInput.optional(),
+  //asset_type: AssetTypeCreateInput.optional(),
   typeId: z.number().optional(),
 })
 
@@ -39,6 +39,7 @@ export const ManagementCreateInput = z.object({
   depreciation_lifetime: z.number().nullish(),
   depreciation_rule: z.string().nullish(),
   accounting_method: z.string().nullish(),
+  remarks: z.string().nullish(),
 })
 
 export const ModelEditInput = z.object({

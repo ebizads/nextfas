@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { number, z } from "zod"
 import { AssetCreateInput, AssetEditInput } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
@@ -58,7 +58,11 @@ export const assetRouter = t.router({
           include: {
             model: true,
             custodian: true,
-            department: true,
+            department: {
+              include: {
+                location: true,
+              },
+            },
             vendor: true,
             management: true,
           },
@@ -99,7 +103,6 @@ export const assetRouter = t.router({
 
       const asset = await ctx.prisma.asset.create({
         data: {
-          ...rest,
           model: {
             connectOrCreate: {
               where: {
@@ -117,9 +120,7 @@ export const assetRouter = t.router({
             },
           },
           custodian: {
-            connect: {
-              id: custodianId,
-            },
+            connect: { id: custodianId },
           },
           department: {
             connect: {
@@ -131,7 +132,7 @@ export const assetRouter = t.router({
               id: vendorId,
             },
           },
-          subisidiary: {
+          subsidiary: {
             connect: {
               id: subsidiaryId,
             },
@@ -146,10 +147,14 @@ export const assetRouter = t.router({
               id: parentId,
             },
           },
+          ...rest,
         },
         include: {
           model: true,
           custodian: true,
+          subsidiary: true,
+          project: true,
+          parent: true,
           department: true,
           vendor: true,
           management: true,
@@ -206,7 +211,7 @@ export const assetRouter = t.router({
                 id: vendorId,
               },
             },
-            subisidiary: {
+            subsidiary: {
               connect: {
                 id: subsidiaryId,
               },
@@ -265,7 +270,7 @@ export const assetRouter = t.router({
                 id: vendorId,
               },
             },
-            subisidiary: {
+            subsidiary: {
               update: {
                 id: subsidiaryId,
               },

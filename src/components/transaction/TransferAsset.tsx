@@ -1,10 +1,75 @@
-import React from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { useStepper } from "headless-stepper";
 import { ArrowsExchange, Check, Checks, Circle1, Circle2, Circle3, Search, } from "tabler-icons-react";
-import { Accordion } from "@mantine/core";
+import { Accordion, Select } from "@mantine/core";
+import { trpc } from "../../utils/trpc";
+import { InputField } from "../atoms/forms/InputField";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AssetEditInput } from "../../server/schemas/asset";
+import { z } from "zod";
+import { DatePicker } from "@mantine/dates";
+import { SelectValueType } from "../atoms/select/TypeSelect";
 
+export type Assets = z.infer<typeof AssetEditInput>
 
 const Transfer = () => {
+
+    const { data: asset } = trpc.asset.findOne.useQuery(2);
+    const { data: departmentData } = trpc.department.findAll.useQuery()
+
+    const [selectedDept, setSelectedDept] = useState<string>(asset?.department?.name ?? "");
+    const [selectedEMP, setSelectedEMP] = useState<string>("");
+
+    const { data: employeeData } = trpc.employee.findAll.useQuery({
+        search: {
+            team: {
+                department: {
+                    name: selectedDept
+                }
+            }
+        }
+    })
+
+    const employeeList = useMemo(() => {
+        const list = employeeData?.employees.map((employee) => { return { value: employee.id.toString(), label: employee.name } }) as SelectValueType[]
+        return list ?? []
+    }, [employeeData]) as SelectValueType[]
+
+
+    const [assetNumber, setAssetNumber] = useState<string>('');
+
+    const utils = trpc.useContext()
+
+    const {
+        mutate,
+        error,
+    } = trpc.asset.edit.useMutation({
+        onSuccess() {
+            // invalidate query of asset id when mutations is successful
+            utils.asset.findAll.invalidate()
+        },
+    })
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+        formState: { errors },
+    } = useForm<Assets>({
+        resolver: zodResolver(AssetEditInput),
+    })
+
+    useEffect(() => reset(asset as Assets), [asset, reset])
+
+    const onSubmit = async (asset: Assets) => {
+        // Register function
+        mutate({
+            ...asset,
+        })
+        reset()
+    }
+
 
     const steps = React.useMemo(
         () => [
@@ -94,8 +159,10 @@ const Transfer = () => {
                 <div>
                     <div className="w-full py-4">
                         <div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm px-4 py-2">
-                            <input type="text" placeholder="Search/Input Asset Number" className="bg-transparent w-[100%] outline-none focus:outline-none text-sm" />
-                            <button><Search className="bg-transparent outline-none focus:outline-none" /></button>
+                            <input type="text" onChange={(event) => setAssetNumber(event.currentTarget.value)} placeholder="Search/Input Asset Number" className="bg-transparent w-[100%] outline-none focus:outline-none text-sm" />
+                            <button onClick={() => {
+                                console.log(asset);
+                            }}><Search className="bg-transparent outline-none focus:outline-none" /></button>
                         </div>
                     </div>
                     <div className="bg-white rounded-md drop-shadow-lg">
@@ -107,60 +174,115 @@ const Transfer = () => {
                                         <div className="py-2 flex flex-wrap">
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                                 <div className="flex flex-col w-full py-2">
-                                                    <label className="font-semibold">Asset Serial Number</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <label className="font-semibold">Asset Number</label >
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="number"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Asset Name</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Alternate Asset Number</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="alt_number"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Parent Asset</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="parent.name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-[60%] py-2">
                                                     <label className="font-semibold">Project</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="project.name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-[60%] py-2">
                                                     <label className="font-semibold">Asset Type</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="model.type.name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Residual Value</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.residual_value"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Residual Value Percentage</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                                 <div className="flex flex-col w-[60%] py-2">
                                                     <label className="font-semibold">Asset Description</label >
-                                                    <textarea className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
+                                                    <textarea value={asset?.description ?? ""} readOnly className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
                                                 </div>
                                             </div>
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Accounting Method</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.depreciation_rule"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Asset Lifetime</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="serial_no"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
-                                                    <label className="font-semibold">Generate Asset Number</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <label className="font-semibold">Asset Serial Number</label >
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="serial_no"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -174,43 +296,63 @@ const Transfer = () => {
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Subsidiary</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="subsidiary.name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Currency</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.currency"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Custodian</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="custodian.name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
-                                                <div className="flex flex-col w-[60%] py-2">
-                                                    <label className="font-semibold">Purchase Date</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                                                </div>
                                                 <div className="flex flex-col w-full py-2">
-                                                    <label className="font-semibold">Physical Location</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <label className="font-semibold">Purchase Date</label >
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.purchase_date"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
-
                                             </div>
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Department</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="department.name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Class</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                                                </div>
-                                                <div className="flex flex-col w-full py-2">
-                                                    <label className="font-semibold">Location</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="model.class.name"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                             </div>
-
 
                                         </div>
                                     </Accordion.Panel>
@@ -222,22 +364,64 @@ const Transfer = () => {
                                         <div className="py-2 flex flex-wrap">
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                                 <div className="flex flex-col w-full py-2">
-                                                    <label className="font-semibold">Date</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <label className="font-semibold">Depreciation Start Date</label >
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.depreciation_start"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col w-full py-2">
+                                                    <label className="font-semibold">Depreciation End Date</label >
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.depreciation_end"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                                 <div className="flex flex-col w-full py-2">
                                                     <label className="font-semibold">Period</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                                                </div>
-                                                <div className="flex flex-col w-full py-2">
-                                                    <label className="font-semibold">Unit Head</label >
-                                                    <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.depreciation_period"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
-                                                <div className="flex flex-col w-[60%] py-2">
-                                                    <label className="font-semibold">Comments</label >
-                                                    <textarea rows={6} className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
+                                                <div className="flex flex-col w-full py-2">
+                                                    <label className="font-semibold">Original Cost</label >
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.original_cost"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col w-full py-2">
+                                                    <label className="font-semibold">Current Cost</label >
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.current_cost"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col w-full py-2">
+                                                    <label className="font-semibold">Depreciation Method</label >
+                                                    <InputField disabled={true}
+                                                        register={register}
+                                                        name="management.depreciation_rule"
+                                                        type={"text"}
+                                                        label={""}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                                                <div className="flex flex-col w-full py-2">
                                                 </div>
                                             </div>
                                         </div>
@@ -266,16 +450,76 @@ const Transfer = () => {
                         <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                             <div className="flex flex-col w-full py-2">
                                 <label className="font-semibold">Department</label >
-                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                <Select
+                                    placeholder="Select Department"
+                                    onChange={(value) => {
+                                        setSelectedDept(value ?? "");
+                                        setSelectedEMP("");
+                                        console.log(value);
+
+                                    }}
+                                    value={selectedDept ?? ""}
+                                    data={departmentData?.departments.map((value) => value.name) ?? []}
+                                    styles={(theme) => ({
+                                        item: {
+                                            // applies styles to selected item
+                                            "&[data-selected]": {
+                                                "&, &:hover": {
+                                                    backgroundColor:
+                                                        theme.colorScheme === "light"
+                                                            ? theme.colors.orange[3]
+                                                            : theme.colors.orange[1],
+                                                    color:
+                                                        theme.colorScheme === "dark"
+                                                            ? theme.white
+                                                            : theme.black,
+                                                },
+                                            },
+
+                                            // applies styles to hovered item (with mouse or keyboard)
+                                            "&[data-hovered]": {},
+                                        },
+                                    })}
+                                    variant="unstyled"
+                                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 p-0.5 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                />
                             </div>
                             <div className="flex flex-col w-full py-2">
                                 <label className="font-semibold">Employee</label >
-                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                                <Select
+                                    placeholder="Select Employee"
+                                    onChange={(value) => {
+                                        setSelectedEMP(value ?? "");
+                                        console.log(employeeList);
+
+                                    }}
+                                    value={selectedEMP}
+                                    data={employeeList}
+                                    styles={(theme) => ({
+                                        item: {
+                                            // applies styles to selected item
+                                            "&[data-selected]": {
+                                                "&, &:hover": {
+                                                    backgroundColor:
+                                                        theme.colorScheme === "light"
+                                                            ? theme.colors.orange[3]
+                                                            : theme.colors.orange[1],
+                                                    color:
+                                                        theme.colorScheme === "dark"
+                                                            ? theme.white
+                                                            : theme.black,
+                                                },
+                                            },
+
+                                            // applies styles to hovered item (with mouse or keyboard)
+                                            "&[data-hovered]": {},
+                                        },
+                                    })}
+                                    variant="unstyled"
+                                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 p-0.5 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                />
                             </div>
-                            <div className="flex flex-col w-full py-2">
-                                <label className="font-semibold">Supervisor</label >
-                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                            </div>
+
                         </div>
                         <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                             <div className="flex flex-col w-[60%] py-2">
@@ -306,108 +550,326 @@ const Transfer = () => {
                 </div>
             </div>}
 
-            {state.currentStep == 2 && <div className="bg-white rounded-md drop-shadow-lg">
-                <div className="p-5">
-                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+            {state.currentStep == 2 &&
+                <div className="bg-white rounded-md drop-shadow-lg">
+                    <div className="p-5">
+                        {/* <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
 
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Asset Serial Number</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Asset Serial Number</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Asset Name</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Alternate Asset Number</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
                         </div>
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Asset Name</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Parent Asset</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-[60%] py-2">
+                                <label className="font-semibold">Project</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-[60%] py-2">
+                                <label className="font-semibold">Asset Type</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
                         </div>
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Alternate Asset Number</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Residual Value</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Residual Value Percentage</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
                         </div>
-                    </div>
-                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Parent Asset</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-[60%] py-2">
+                                <label className="font-semibold">Asset Description</label >
+                                <textarea className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
+                            </div>
                         </div>
-                        <div className="flex flex-col w-[60%] py-2">
-                            <label className="font-semibold">Project</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Accounting Method</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Asset Lifetime</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Generate Asset Number</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
                         </div>
-                        <div className="flex flex-col w-[60%] py-2">
-                            <label className="font-semibold">Asset Type</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Department</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Employee</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
+                            <div className="flex flex-col w-full py-2">
+                                <label className="font-semibold">Supervisor</label >
+                                <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                            </div>
                         </div>
-                    </div>
-                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Residual Value</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-[60%] py-2">
+                                <label className="font-semibold">Remarks</label >
+                                <textarea rows={6} className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
+                            </div>
                         </div>
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Residual Value Percentage</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
+                        <hr className="w-full"></hr>
+                        <div className="flex w-full justify-between py-3">
+                            <button
+                                // type="submit"
+                                className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                onClick={prevStep}
+                            >
+
+                                Back
+                            </button>
+                            <button
+                                // type="submit"
+                                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                onClick={nextStep}
+                            >
+
+                                Next
+                            </button>
+                        </div> */}
+                        <div className="py-2 flex flex-wrap">
+                            <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Asset Number</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="number"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Asset Name</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="name"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Alternate Asset Number</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="alt_number"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                            </div>
+                            <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Parent Asset</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="parent.name"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-[60%] py-2">
+                                    <label className="font-semibold">Project</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="project.name"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-[60%] py-2">
+                                    <label className="font-semibold">Asset Type</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="model.type.name"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                            </div>
+                            <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Residual Value</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="management.residual_value"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Residual Value Percentage</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="name"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                            </div>
+                            <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-[60%] py-2">
+                                    <label className="font-semibold">Asset Description</label >
+                                    <textarea value={asset?.description ?? ""} readOnly className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
+                                </div>
+                            </div>
+                            <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Accounting Method</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="management.depreciation_rule"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Asset Lifetime</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="serial_no"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Asset Serial Number</label >
+                                    <InputField disabled={true}
+                                        register={register}
+                                        name="serial_no"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+
+                            </div>
+                            <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Department</label >
+                                    <Select
+                                        placeholder="Select Department"
+                                        onChange={(value) => {
+                                            setSelectedDept(value ?? "");
+                                            setSelectedEMP("");
+                                            console.log(value);
+
+                                        }}
+                                        value={selectedDept ?? ""}
+                                        data={departmentData?.departments.map((value) => value.name) ?? []}
+                                        styles={(theme) => ({
+                                            item: {
+                                                // applies styles to selected item
+                                                "&[data-selected]": {
+                                                    "&, &:hover": {
+                                                        backgroundColor:
+                                                            theme.colorScheme === "light"
+                                                                ? theme.colors.orange[3]
+                                                                : theme.colors.orange[1],
+                                                        color:
+                                                            theme.colorScheme === "dark"
+                                                                ? theme.white
+                                                                : theme.black,
+                                                    },
+                                                },
+
+                                                // applies styles to hovered item (with mouse or keyboard)
+                                                "&[data-hovered]": {},
+                                            },
+                                        })}
+                                        variant="unstyled"
+                                        className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 p-0.5 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Employee</label >
+                                    <Select
+                                        placeholder="Select Employee"
+                                        onChange={(value) => {
+                                            setSelectedEMP(value ?? "");
+                                            console.log(employeeList);
+
+                                        }}
+                                        value={selectedEMP}
+                                        data={employeeList}
+                                        styles={(theme) => ({
+                                            item: {
+                                                // applies styles to selected item
+                                                "&[data-selected]": {
+                                                    "&, &:hover": {
+                                                        backgroundColor:
+                                                            theme.colorScheme === "light"
+                                                                ? theme.colors.orange[3]
+                                                                : theme.colors.orange[1],
+                                                        color:
+                                                            theme.colorScheme === "dark"
+                                                                ? theme.white
+                                                                : theme.black,
+                                                    },
+                                                },
+
+                                                // applies styles to hovered item (with mouse or keyboard)
+                                                "&[data-hovered]": {},
+                                            },
+                                        })}
+                                        variant="unstyled"
+                                        className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 p-0.5 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                    />
+                                </div>
+
+                            </div>
+                            <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-[60%] py-2">
+                                    <label className="font-semibold">Remarks</label >
+                                    <textarea rows={6} className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
+                                </div>
+                            </div>
+
+                            <hr className="w-full"></hr>
+                            <div className="flex w-full justify-between py-3">
+                                <button
+                                    // type="submit"
+                                    className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                    onClick={prevStep}
+                                >
+
+                                    Back
+                                </button>
+                                <button
+                                    // type="submit"
+                                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                    onClick={nextStep}
+                                >
+
+                                    Next
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
-                        <div className="flex flex-col w-[60%] py-2">
-                            <label className="font-semibold">Asset Description</label >
-                            <textarea className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
-                        </div>
-                    </div>
-                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Accounting Method</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                        </div>
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Asset Lifetime</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                        </div>
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Generate Asset Number</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                        </div>
-                    </div>
-                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Department</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                        </div>
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Employee</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                        </div>
-                        <div className="flex flex-col w-full py-2">
-                            <label className="font-semibold">Supervisor</label >
-                            <input className="rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></input>
-                        </div>
-                    </div>
-                    <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
-                        <div className="flex flex-col w-[60%] py-2">
-                            <label className="font-semibold">Remarks</label >
-                            <textarea rows={6} className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
-                        </div>
-                    </div>
-                    <hr className="w-full"></hr>
-                    <div className="flex w-full justify-between py-3">
-                        <button
-                            // type="submit"
-                            className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                            onClick={prevStep}
-                        >
-                            {/* {employeeLoading ? "Loading..." : "Register"} */}
-                            Back
-                        </button>
-                        <button
-                            // type="submit"
-                            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                            onClick={nextStep}
-                        >
-                            {/* {employeeLoading ? "Loading..." : "Register"} */}
-                            Next
-                        </button>
+
                     </div>
                 </div>
-            </div>
             }
         </div >
     )

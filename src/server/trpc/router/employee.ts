@@ -43,6 +43,16 @@ export const employeeRouter = t.router({
               name: z.string().optional(),
               employee_id: z.string().optional(),
               email: z.string().optional(),
+              team: z
+                .object({
+                  name: z.string().optional(),
+                  department: z
+                    .object({
+                      name: z.string(),
+                    })
+                    .optional(),
+                })
+                .optional(),
             })
             .optional(),
           filter: z
@@ -85,6 +95,13 @@ export const employeeRouter = t.router({
                 name: { contains: input?.search?.name },
                 employee_id: { contains: input?.search?.employee_id },
                 email: { contains: input?.search?.email },
+                team: {
+                  department: {
+                    name: {
+                      contains: input?.search?.team?.department?.name,
+                    },
+                  },
+                },
               },
               skip: input?.page
                 ? (input.page - 1) * (input.limit ?? 10)

@@ -10,10 +10,17 @@ export const assetRouter = t.router({
         id: input,
       },
       include: {
-        model: true,
+        model: {
+          include: {
+            type: true,
+            category: true,
+            class: true,
+          },
+        },
         custodian: true,
         department: true,
         vendor: true,
+        subsidiary: true,
         management: true,
       },
     })

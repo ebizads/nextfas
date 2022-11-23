@@ -17,11 +17,11 @@ export const ModelCreateInput = z.object({
   brand: z.string().optional(),
   number: z.string().optional(),
 
-  asset_class: AssetClassCreateInput.optional(),
+  // asset_class: AssetClassCreateInput.optional(),
   classId: z.number().optional(),
-  asset_category: AssetCategoryCreateInput.optional(),
+  //asset_category: AssetCategoryCreateInput.optional(),
   categoryId: z.number().optional(),
-  asset_type: AssetTypeCreateInput.optional(),
+  //asset_type: AssetTypeCreateInput.optional(),
   typeId: z.number().optional(),
 })
 

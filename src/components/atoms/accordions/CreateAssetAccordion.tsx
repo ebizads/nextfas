@@ -31,6 +31,37 @@ const CreateAssetAccordion = () => {
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
     defaultValues: {
+      name: "",
+      alt_number: "",
+      barcode: "",
+      custodianId: 0,
+      departmentId: 0,
+      description: "",
+      model: {
+        name: "",
+        brand: "",
+        number: "",
+        // asset_category: {
+        //   name: ""
+        // },
+        // asset_class: {
+        //   name: ""
+        // },
+        // typeId: 0,
+        // asset_type: {
+        //   name: ""
+        // },
+        typeId: 0,
+        categoryId: 0,
+        classId: 0,
+      },
+      number: "",
+      parentId: 0,
+      projectId: 0,
+      remarks: "",
+      serial_no: "",
+      subsidiaryId: 0,
+      vendorId: 0,
       // subsidiaryId: undefined,
       management: {
         original_cost: 0,

@@ -297,12 +297,12 @@ model Asset {
   barcode        String?
   description    String?
   remarks        String?
-  parentId       Int?
-  modelId        Int?             @unique
-  custodianId    Int?
-  vendorId       Int?
-  assetProjectId Int?
-  subisidiaryId  Int?
+  parentId       Int?             
+  modelId        Int?            @unique 
+  custodianId    Int?             
+  vendorId       Int?             
+  assetProjectId Int?             
+  subsidiaryId  Int?             
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   deletedAt      DateTime?
@@ -313,7 +313,7 @@ model Asset {
   department     Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   model          Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
   parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
-  subisidiary    Company?         @relation(fields: [subisidiaryId], references: [id], onDelete: Cascade)
+  subsidiary    Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   children       Asset[]          @relation("children")
   management     AssetManagement?

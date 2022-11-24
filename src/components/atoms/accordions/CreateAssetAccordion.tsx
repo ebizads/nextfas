@@ -1,6 +1,6 @@
 import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
-import { InputField } from "../forms/InputField"
+import { InputField, InputNumberField } from "../forms/InputField"
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
@@ -12,7 +12,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import moment from "moment"
@@ -63,9 +63,9 @@ const CreateAssetAccordion = () => {
       // vendorId: 0,
       // subsidiaryId: undefined,
       management: {
-        original_cost: 0,
-        current_cost: 0,
-        residual_value: 0,
+        // original_cost: 0,
+        // current_cost: 0,
+        // residual_value: 0,
         depreciation_period: 1,
       },
     },
@@ -173,7 +173,7 @@ const CreateAssetAccordion = () => {
   const [remarks, setRemarks] = useState<string | null>(null)
 
   //depreciation start and end period
-  const [dep_start, setDepStart] = useState<Date | null>(new Date())
+  const [dep_start, setDepStart] = useState<Date | null>(null)
   const [dep_end, setDepEnd] = useState<Date | null>(null)
 
   const [selectedClass, setSelectedClass] = useState<
@@ -246,26 +246,19 @@ const CreateAssetAccordion = () => {
   const onSubmit: SubmitHandler<AssetFieldValues> = (
     form_data: AssetFieldValues
   ) => {
-    if (error) {
+    if (error || errors) {
       console.log("ERROR ENCOUNTERED")
-      console.error(error)
+      console.error("Prisma Error: ", error)
+      console.error("Form Error:", errors)
     } else {
-      // setData(form_data)
-      // console.log("omsim")
-      // if (confirming) {
       console.log("Submitting: ", form_data)
       mutate(form_data)
       setTimeout(function () {
         setIsLoading(false)
       }, 3000)
       reset()
-      // }
     }
   }
-
-  // useEffect(() => {
-  //   console.log(watch())
-  // }, [watch()])
 
   return (
     <div>
@@ -277,7 +270,7 @@ const CreateAssetAccordion = () => {
         {/* <InputField register={register} label="Name" name="name" />
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
-        <Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
+        <Accordion transitionDuration={300} defaultValue={"2"} classNames={{}}>
           <Accordion.Item value={"1"} className="outline-none active:outline-none">
             <Accordion.Control className="uppercase">
               <div className="flex items-center gap-2 text-gray-700">
@@ -326,7 +319,7 @@ const CreateAssetAccordion = () => {
                       setValue={setValue}
                       title={"Parent Asset"}
                       placeholder={"Select parent asset"}
-                      data={assetsList ? assetsList : ["Parent 1", "Parent 2"]}
+                      data={assetsList ?? []}
                     />
                     <AlertInput>{errors?.parentId?.message}</AlertInput>
                   </div>
@@ -337,20 +330,19 @@ const CreateAssetAccordion = () => {
                       title={"Project"}
                       placeholder={"Select project"}
                       data={
-                        projectsList ? projectsList : ["Project 1", "Project 2"]
+                        projectsList ?? []
                       }
                     />
                     <AlertInput>{errors?.projectId?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
                     <TypeSelect
-                      required
                       name={"vendorId"}
                       setValue={setValue}
                       title={"Vendor"}
                       placeholder={"Select vendor"}
                       data={
-                        vendorsList ? vendorsList : ["Vendor 1", "Vendor 2"]
+                        vendorsList ?? []
                       }
                     />
                     <AlertInput>{errors?.vendorId?.message}</AlertInput>
@@ -360,12 +352,12 @@ const CreateAssetAccordion = () => {
                   <ClassTypeSelect
                     query={classId}
                     setQuery={setClassId}
-                    required
+
                     name={"model.classId"}
                     setValue={setValue}
                     title={"Class"}
                     placeholder={"Select class type"}
-                    data={classList ? classList : ["Class A", "Class B"]}
+                    data={classList ?? []}
                   />
                   <AlertInput>{errors?.model?.classId?.message}</AlertInput>
                 </div>
@@ -374,13 +366,13 @@ const CreateAssetAccordion = () => {
                     disabled={!Boolean(classId)}
                     query={categoryId}
                     setQuery={setCategoryId}
-                    required
+
                     name={"model.categoryId"}
                     setValue={setValue}
                     title={"Category"}
                     placeholder={"Select category type"}
                     data={
-                      categories ? categories : ["Category A", "Category B"]
+                      categories ?? []
                     }
                   />
                   <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
@@ -390,12 +382,12 @@ const CreateAssetAccordion = () => {
                     disabled={!Boolean(categoryId)}
                     query={typeId}
                     setQuery={setTypeId}
-                    required
+
                     name={"model.typeId"}
                     setValue={setValue}
                     title={"Type"}
                     placeholder={"Select asset type"}
-                    data={types ? types : ["Type 1", "Type 2"]}
+                    data={types ?? []}
                   />
                   <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                 </div>
@@ -479,9 +471,8 @@ const CreateAssetAccordion = () => {
                   </AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <InputField
+                  <InputNumberField
                     register={register}
-                    type={"number"}
                     label="Original Cost"
                     placeholder="Original Cost"
                     name="management.original_cost"
@@ -491,9 +482,8 @@ const CreateAssetAccordion = () => {
                   </AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <InputField
+                  <InputNumberField
                     register={register}
-                    type={"number"}
                     label="Current Cost"
                     placeholder="Current Cost"
                     name="management.current_cost"
@@ -520,9 +510,8 @@ const CreateAssetAccordion = () => {
                   </AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <InputField
+                  <InputNumberField
                     register={register}
-                    type={"number"}
                     label="Residual Value"
                     placeholder="Residual Value"
                     name={"management.residual_value"}
@@ -564,13 +553,13 @@ const CreateAssetAccordion = () => {
                   <ClassTypeSelect
                     query={companyId}
                     setQuery={setCompanyId}
-                    required
+
                     name={"subsidiaryId"}
                     setValue={setValue}
                     title={"Company"}
                     placeholder={"Select company or subsidiary"}
                     data={
-                      companyList ? companyList : ["Company A", "Company B"]
+                      companyList ?? []
                     }
                   />
                   <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
@@ -607,11 +596,10 @@ const CreateAssetAccordion = () => {
                       name={"departmentId"}
                       setValue={setValue}
                       title={"Department"}
-                      placeholder={"Select department type"}
+                      placeholder={!Boolean(companyId) ? "Select company first" : "Select department type"}
                       data={
                         departmentList
-                          ? departmentList
-                          : ["Department A", "Department B"]
+                        ?? []
                       }
                     />
                     <AlertInput>{errors?.departmentId?.message}</AlertInput>
@@ -659,11 +647,11 @@ const CreateAssetAccordion = () => {
                       name={"custodianId"}
                       setValue={setValue}
                       title={"Custodian"}
-                      placeholder={"Assign custodian"}
+                      disabled={!Boolean(departmentId)}
+                      placeholder={!Boolean(departmentId) ? "Select department first" : "Assign custodian"}
                       data={
                         employeeList
-                          ? employeeList
-                          : ["Employee A", "Employee B"]
+                        ?? []
                       }
                     />
                     <AlertInput>{errors?.custodianId?.message}</AlertInput>
@@ -728,11 +716,10 @@ const CreateAssetAccordion = () => {
                     />
                   </div>
                   <div className="col-span-2">
-                    <InputField
-                      type={"number"}
+                    <InputNumberField
                       placeholder="Month/s"
                       register={register}
-                      label="Period"
+                      label="Period (month/s)"
                       name="management.depreciation_period"
                     />
                     <AlertInput>
@@ -769,15 +756,9 @@ const CreateAssetAccordion = () => {
           <button
             disabled={(!isValid && !isDirty) || isLoading}
             onClick={() => {
-              // console.log(JSON.stringify(errors))
               //no form errors
-              if (JSON.stringify(errors) !== "{}") {
-                console.error(errors)
-              } else {
-                const id = `FAS-${moment().format("YY-MDhms")}`
-                setValue("number", id)
-                // setSubmitting(true)
-              }
+              const id = `FAS-${moment().format("YY-MDhms")}`
+              setValue("number", id)
             }}
             className="rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400 disabled:cursor-not-allowed disabled:bg-tangerine-200"
           >

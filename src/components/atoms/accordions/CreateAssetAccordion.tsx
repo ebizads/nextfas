@@ -25,6 +25,7 @@ const CreateAssetAccordion = () => {
     handleSubmit,
     reset,
     setValue,
+    getValues,
     // watch,
     formState: { errors, isDirty, isValid },
   } = useForm<AssetFieldValues>({
@@ -237,16 +238,12 @@ const CreateAssetAccordion = () => {
     }
   }, [companyId, companyData])
 
-  //submit modal trigger
-  // const [confirming, setConfirming] = useState<boolean>(false)
-  // const [submitting, setSubmitting] = useState<boolean>(false)
-  // const [data, setData] = useState<AssetFieldValues | null>(null)
   const [loading, setIsLoading] = useState<boolean>(false)
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (
     form_data: AssetFieldValues
   ) => {
-    if (error || errors) {
+    if (error) {
       console.log("ERROR ENCOUNTERED")
       console.error("Prisma Error: ", error)
       console.error("Form Error:", errors)
@@ -257,6 +254,11 @@ const CreateAssetAccordion = () => {
         setIsLoading(false)
       }, 3000)
       reset()
+      setClassId(null)
+      setCategoryId(null)
+      setTypeId(null)
+      setCompanyId(null)
+      setDepartmentId(null)
     }
   }
 
@@ -270,7 +272,7 @@ const CreateAssetAccordion = () => {
         {/* <InputField register={register} label="Name" name="name" />
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
-        <Accordion transitionDuration={300} defaultValue={"2"} classNames={{}}>
+        <Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
           <Accordion.Item value={"1"} className="outline-none active:outline-none">
             <Accordion.Control className="uppercase">
               <div className="flex items-center gap-2 text-gray-700">
@@ -317,6 +319,7 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"parentId"}
                       setValue={setValue}
+                      value={getValues('parentId')?.toString()}
                       title={"Parent Asset"}
                       placeholder={"Select parent asset"}
                       data={assetsList ?? []}
@@ -327,6 +330,7 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"projectId"}
                       setValue={setValue}
+                      value={getValues('projectId')?.toString()}
                       title={"Project"}
                       placeholder={"Select project"}
                       data={
@@ -339,6 +343,7 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"vendorId"}
                       setValue={setValue}
+                      value={getValues('vendorId')?.toString()}
                       title={"Vendor"}
                       placeholder={"Select vendor"}
                       data={
@@ -355,6 +360,7 @@ const CreateAssetAccordion = () => {
 
                     name={"model.classId"}
                     setValue={setValue}
+                    value={getValues('model.classId')?.toString()}
                     title={"Class"}
                     placeholder={"Select class type"}
                     data={classList ?? []}
@@ -369,6 +375,7 @@ const CreateAssetAccordion = () => {
 
                     name={"model.categoryId"}
                     setValue={setValue}
+                    value={getValues('model.categoryId')?.toString()}
                     title={"Category"}
                     placeholder={"Select category type"}
                     data={
@@ -385,6 +392,7 @@ const CreateAssetAccordion = () => {
 
                     name={"model.typeId"}
                     setValue={setValue}
+                    value={getValues('model.typeId')?.toString()}
                     title={"Type"}
                     placeholder={"Select asset type"}
                     data={types ?? []}
@@ -459,6 +467,7 @@ const CreateAssetAccordion = () => {
                     isString
                     name={"management.currency"}
                     setValue={setValue}
+                    value={getValues('management.currency')}
                     title={"Currency"}
                     placeholder={"Select currency type"}
                     data={[
@@ -495,8 +504,9 @@ const CreateAssetAccordion = () => {
                 <div className="col-span-3">
                   <TypeSelect
                     isString
-                    name={"management.accounting"}
+                    name={"management.accounting_method"}
                     setValue={setValue}
+                    value={getValues("management.accounting_method")}
                     title={"Accounting Method"}
                     placeholder={"Select accounting method"}
                     data={[
@@ -556,6 +566,7 @@ const CreateAssetAccordion = () => {
 
                     name={"subsidiaryId"}
                     setValue={setValue}
+                    value={getValues("subsidiaryId")?.toString()}
                     title={"Company"}
                     placeholder={"Select company or subsidiary"}
                     data={
@@ -595,6 +606,7 @@ const CreateAssetAccordion = () => {
                       disabled={!Boolean(companyId)}
                       name={"departmentId"}
                       setValue={setValue}
+                      value={getValues("departmentId")?.toString()}
                       title={"Department"}
                       placeholder={!Boolean(companyId) ? "Select company first" : "Select department type"}
                       data={
@@ -646,6 +658,7 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"custodianId"}
                       setValue={setValue}
+                      value={getValues('custodianId')?.toString()}
                       title={"Custodian"}
                       disabled={!Boolean(departmentId)}
                       placeholder={!Boolean(departmentId) ? "Select department first" : "Assign custodian"}
@@ -663,6 +676,7 @@ const CreateAssetAccordion = () => {
                       isString
                       name={"management.depreciation_rule"}
                       setValue={setValue}
+                      value={getValues("management.depreciation_rule")}
                       title={"Depreciation Method"}
                       placeholder={"Select method"}
                       data={["Straight Line", "Others"]}

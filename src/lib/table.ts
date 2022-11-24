@@ -9,7 +9,7 @@ export const columns = [
   { value: "category", name: "Category" },
   { value: "name", name: "Name" },
   { value: "description", name: "Description" },
-  { value: "owner", name: "Owner" },
+  { value: "custodian", name: "Owner" },
   { value: "added_date", name: "Added Date" },
 ] as ColumnType[]
 

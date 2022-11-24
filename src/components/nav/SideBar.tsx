@@ -17,8 +17,8 @@ const SideBar = () => {
   return (
     <div
       className={`max-w-md duration-300 ${minimize
-          ? "w-[10vw] min-w-[10vw]"
-          : "w-[25vw] min-w-[25vw] xl:w-[20vw] xl:min-w-[20vw]"
+        ? "w-[10vw] min-w-[10vw]"
+        : "w-[25vw] min-w-[25vw] xl:w-[20vw] xl:min-w-[20vw]"
         } flex min-h-screen flex-col space-y-4 overflow-hidden border-r px-2 py-4`}
     >
       <div
@@ -27,13 +27,14 @@ const SideBar = () => {
           setMinimize((prev) => !prev)
         }}
       >
-        <Image
-          src={"/FASlogo.svg"}
-          alt="This is a FAS Logo"
-          width={110}
-          height={60}
-          className=""
-        />
+        {/* <Image
+        src={"/FASlogo.svg"}
+        alt="This is a FAS Logo"
+        width={110}
+        height={60}
+        className=""
+      /> */}
+        <p className="text-2xl font-semibold">Fixed Assets System</p>
       </div>
       <div className="flex w-full flex-col border-b">
         {!minimize && (
@@ -41,8 +42,8 @@ const SideBar = () => {
         )}
         <div
           className={`py-4 px-2 ${paths[paths.length - 1] === "dashboard"
-              ? "bg-tangerine-50 font-medium text-tangerine-500"
-              : "text-light-secondary"
+            ? "bg-tangerine-50 font-medium text-tangerine-500"
+            : "text-light-secondary"
             }`}
         >
           <Link href={"/dashboard"}>
@@ -67,8 +68,8 @@ const SideBar = () => {
         )}
         <div
           className={`py-4 px-2 ${paths[paths.length - 1] === "assets"
-              ? "bg-tangerine-50 font-medium text-tangerine-500"
-              : "text-light-secondary"
+            ? "bg-tangerine-50 font-medium text-tangerine-500"
+            : "text-light-secondary"
             }`}
         >
           <Link href={"/assets"}>
@@ -93,8 +94,8 @@ const SideBar = () => {
           <div
             key={idx}
             className={`py-4 px-2 ${paths[paths.length - 1]?.toUpperCase() === page.name.toUpperCase()
-                ? "bg-tangerine-50 font-medium text-tangerine-500"
-                : ""
+              ? "bg-tangerine-50 font-medium text-tangerine-500"
+              : ""
               }`}
           >
             <Link href={page.link}>
@@ -104,9 +105,9 @@ const SideBar = () => {
               >
                 <i
                   className={`${page.icon} ${paths[paths.length - 1]?.toUpperCase() ===
-                      page.name.toUpperCase()
-                      ? "bg-tangerine-50 font-medium text-tangerine-500"
-                      : "text-light-secondary"
+                    page.name.toUpperCase()
+                    ? "bg-tangerine-50 font-medium text-tangerine-500"
+                    : "text-light-secondary"
                     } w-8 ${minimize ? "fa-regular text-2xl" : "fa-light"
                     } text-left`}
                 />

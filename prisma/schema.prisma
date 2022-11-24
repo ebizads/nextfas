@@ -291,7 +291,7 @@ model Vendor {
 model Asset {
   id             Int              @id @default(autoincrement())
   name           String
-  number         String?
+  number         String?          @unique
   alt_number     String?
   serial_no      String?
   barcode        String?

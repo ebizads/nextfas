@@ -78,7 +78,13 @@ export const assetRouter = t.router({
             : undefined,
           take: input?.limit ?? 10,
         }),
-        ctx.prisma.asset.count(),
+        ctx.prisma.asset.count({
+          where: {
+            NOT: {
+              deleted: true,
+            },
+          },
+        }),
       ])
 
       return {

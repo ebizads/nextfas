@@ -19,17 +19,17 @@ export const TypeEditInput = z.object({
 })
 
 export const AssetClassEditInput = z.object({
-  id: z.number().optional(),
+  id: z.number(),
   name: z.string().optional(),
 })
 
 export const AssetTypeEditInput = z.object({
-  id: z.number().optional(),
+  id: z.number(),
   name: z.string().optional(),
 })
 
 export const AssetCategoryEditInput = z.object({
-  id: z.number().optional(),
+  id: z.number(),
   name: z.string().optional(),
 })
 
@@ -56,13 +56,13 @@ export const ModelEditInput = z.object({
   brand: z.string().optional(),
   number: z.string().optional(),
 
-  asset_class: AssetClassEditInput.optional(),
+  asset_class: AssetClassCreateInput.optional(),
   classId: z.number().optional(),
-  asset_category: AssetCategoryEditInput.optional(),
+  asset_category: AssetCategoryCreateInput.optional(),
   categoryId: z.number().optional(),
-  asset_type: AssetTypeEditInput.optional(),
+  asset_type: AssetTypeCreateInput.optional(),
   typeId: z.number().optional(),
-  type: TypeEditInput,
+  type: TypeEditInput.optional(),
 })
 
 export const ManagementCreateInput = z.object({

@@ -203,7 +203,7 @@ model AssetManagement {
   depreciation_period   Int?
   depreciation_rule     String?
   createdAt             DateTime  @default(now())
-  updatedAt             DateTime
+  updatedAt             DateTime  @updatedAt
   deletedAt             DateTime?
   deleted               Boolean   @default(false)
   assetId               Int?      @unique

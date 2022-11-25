@@ -81,7 +81,7 @@ const CreateAssetAccordion = () => {
   const { data: assetsData } = trpc.asset.findAll.useQuery()
   const assetsList = useMemo(
     () =>
-      assetsData?.assets.map((asset) => {
+      assetsData?.assets.filter((item) => item.id != 1).map((asset) => {
         return { value: asset.id.toString(), label: asset.name }
       }),
     [assetsData]
@@ -91,7 +91,7 @@ const CreateAssetAccordion = () => {
   const { data: projectsData } = trpc.assetProject.findAll.useQuery()
   const projectsList = useMemo(
     () =>
-      projectsData?.map((project) => {
+      projectsData?.filter((item) => item.id != 1).map((project) => {
         return { value: project.id.toString(), label: project.name }
       }),
     [projectsData]
@@ -101,7 +101,7 @@ const CreateAssetAccordion = () => {
   const { data: vendorsData } = trpc.vendor.findAll.useQuery()
   const vendorsList = useMemo(
     () =>
-      vendorsData?.vendors.map((vendor) => {
+      vendorsData?.vendors.filter((item) => item.id != 1).map((vendor) => {
         return { value: vendor.id.toString(), label: vendor.name }
       }),
     [vendorsData]
@@ -111,7 +111,7 @@ const CreateAssetAccordion = () => {
   const { data: companyData } = trpc.company.findAll.useQuery()
   const companyList = useMemo(
     () =>
-      companyData?.companies.map((company) => {
+      companyData?.companies.filter((item) => item.id != 1).map((company) => {
         return { value: company.id.toString(), label: company.name }
       }),
     [companyData]
@@ -131,7 +131,7 @@ const CreateAssetAccordion = () => {
   const { data: employeeData } = trpc.employee.findAll.useQuery()
   const employeeList = useMemo(
     () =>
-      employeeData?.employees.map((employeeItem) => {
+      employeeData?.employees.filter((item) => item.id != 1).map((employeeItem) => {
         return { value: employeeItem.id.toString(), label: employeeItem.name }
       }),
     [employeeData]
@@ -278,7 +278,7 @@ const CreateAssetAccordion = () => {
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
         <Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
-          <Accordion.Item value={"1"}>
+          <Accordion.Item value={"1"} className="outline-none active:outline-none">
             <Accordion.Control className="uppercase">
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">

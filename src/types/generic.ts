@@ -1,6 +1,6 @@
 import { inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { AssetCreateInput } from "../server/schemas/asset"
+import { AssetCreateInput, AssetEditInput } from "../server/schemas/asset"
 import { EmployeeCreateInput } from "../server/schemas/employee"
 import {
   ManagementCreateInput,
@@ -26,7 +26,9 @@ export type EmployeeType = inferProcedureOutput<
 export type EmployeeFieldValues = z.infer<typeof EmployeeCreateInput>
 
 //asset field types
-export type AssetFieldValues = z.infer<typeof AssetCreateInput>
+export type AssetFieldValues = z.infer<
+  typeof AssetCreateInput | typeof AssetEditInput
+>
 // export type ModelFieldValues = z.infer<typeof ModelCreateInput>
 // // export type ManagementFieldValues = z.infer<typeof ManagementCreateInput>
 

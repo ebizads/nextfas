@@ -4,16 +4,23 @@ import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
 
 export const assetRouter = t.router({
-  findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
+  findOne: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const asset = await ctx.prisma.asset.findUnique({
       where: {
-        id: input,
+        number: input,
       },
       include: {
-        model: true,
+        model: {
+          include: {
+            type: true,
+            category: true,
+            class: true,
+          },
+        },
         custodian: true,
         department: true,
         vendor: true,
+        subsidiary: true,
         management: true,
       },
     })

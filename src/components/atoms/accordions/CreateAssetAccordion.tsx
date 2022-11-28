@@ -12,10 +12,12 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import moment from "moment"
+import JsBarcode from 'jsbarcode';
+
 
 const CreateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
@@ -239,6 +241,40 @@ const CreateAssetAccordion = () => {
   }, [companyId, companyData])
 
   const [loading, setIsLoading] = useState<boolean>(false)
+  const [assetId, setAssetId] = useState<string>(`-${moment().format("YY-MDhms")}`)
+
+  const asset_number = useMemo(() => {
+    const parseId = (id: string | null) => {
+      if (!id) {
+        return "00"
+      }
+      if (id?.length === 1) {
+        return 0 + id
+      } else {
+        return id
+      }
+    }
+
+    if (typeId && departmentId) {
+      return parseId(departmentId) + parseId(typeId)
+    }
+
+    return null
+  }, [typeId, departmentId]) as string | null
+
+  useEffect(() => {
+    if (asset_number) {
+      const id = `FAS-${asset_number}${assetId}`
+      setValue("number", id)
+      JsBarcode("#barcode2", id, {
+        textAlign: "left",
+        textPosition: "bottom",
+        fontOptions: "",
+        fontSize: 16,
+        textMargin: 6,
+      });
+    }
+  }, [assetId, asset_number])
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (
     form_data: AssetFieldValues
@@ -249,10 +285,13 @@ const CreateAssetAccordion = () => {
       console.error("Form Error:", errors)
     } else {
       console.log("Submitting: ", form_data)
+
       mutate(form_data)
+
       setTimeout(function () {
         setIsLoading(false)
       }, 3000)
+
       reset()
       setClassId(null)
       setCategoryId(null)
@@ -260,6 +299,18 @@ const CreateAssetAccordion = () => {
       setCompanyId(null)
       setDepartmentId(null)
     }
+  }
+
+  function printDiv(divName: string) {
+
+    let printContents = document.getElementById(divName)?.innerHTML as string;
+    let originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
   }
 
   return (
@@ -273,8 +324,8 @@ const CreateAssetAccordion = () => {
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
         <Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
-          <Accordion.Item value={"1"} className="outline-none active:outline-none">
-            <Accordion.Control className="uppercase">
+          <Accordion.Item value={"1"} className="">
+            <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
                   1
@@ -357,12 +408,12 @@ const CreateAssetAccordion = () => {
                   <ClassTypeSelect
                     query={classId}
                     setQuery={setClassId}
-
+                    required
                     name={"model.classId"}
                     setValue={setValue}
                     value={getValues('model.classId')?.toString()}
                     title={"Class"}
-                    placeholder={"Select class type"}
+                    placeholder={"Select asset class"}
                     data={classList ?? []}
                   />
                   <AlertInput>{errors?.model?.classId?.message}</AlertInput>
@@ -372,12 +423,12 @@ const CreateAssetAccordion = () => {
                     disabled={!Boolean(classId)}
                     query={categoryId}
                     setQuery={setCategoryId}
-
+                    required
                     name={"model.categoryId"}
                     setValue={setValue}
                     value={getValues('model.categoryId')?.toString()}
                     title={"Category"}
-                    placeholder={"Select category type"}
+                    placeholder={!Boolean(classId) ? "Select asset class first" : "Select asset category"}
                     data={
                       categories ?? []
                     }
@@ -389,12 +440,12 @@ const CreateAssetAccordion = () => {
                     disabled={!Boolean(categoryId)}
                     query={typeId}
                     setQuery={setTypeId}
-
+                    required
                     name={"model.typeId"}
                     setValue={setValue}
                     value={getValues('model.typeId')?.toString()}
                     title={"Type"}
-                    placeholder={"Select asset type"}
+                    placeholder={!Boolean(classId) ? "Select asset category first" : "Select asset type"}
                     data={types ?? []}
                   />
                   <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
@@ -451,8 +502,8 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
-          <Accordion.Item value={"2"}>
-            <Accordion.Control className="uppercase">
+          <Accordion.Item value={"2"} className="">
+            <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
                   2
@@ -548,8 +599,8 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
-          <Accordion.Item value={"3"}>
-            <Accordion.Control className="uppercase">
+          <Accordion.Item value={"3"} className="">
+            <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
                   3
@@ -563,7 +614,7 @@ const CreateAssetAccordion = () => {
                   <ClassTypeSelect
                     query={companyId}
                     setQuery={setCompanyId}
-
+                    required
                     name={"subsidiaryId"}
                     setValue={setValue}
                     value={getValues("subsidiaryId")?.toString()}
@@ -603,6 +654,7 @@ const CreateAssetAccordion = () => {
                     <ClassTypeSelect
                       query={departmentId}
                       setQuery={setDepartmentId}
+                      required
                       disabled={!Boolean(companyId)}
                       name={"departmentId"}
                       setValue={setValue}
@@ -658,6 +710,7 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"custodianId"}
                       setValue={setValue}
+
                       value={getValues('custodianId')?.toString()}
                       title={"Custodian"}
                       disabled={!Boolean(departmentId)}
@@ -764,17 +817,44 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
+          <Accordion.Item value={"4"} className="">
+            <Accordion.Control disabled={!Boolean(typeId) || !Boolean(departmentId)} className="uppercase outline-none focus:outline-none active:outline-none">
+              <div className="flex items-center gap-2 text-gray-700">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
+                  4
+                </div>
+                <p>Print Bar Code</p>
+              </div>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <div className="flex justify-center items-center">
+                {!Boolean(typeId) || !Boolean(departmentId) ?
+                  <div id="printableArea" className="border-2 border-dashed border-neutral-400 rounded-md w-[25rem] h-[10rem] flex justify-center items-center">
+                    <p className="text-center italic text-neutral-400">Barcode will appear here, please select company and department</p>
+                  </div> :
+                  <div className="relative">
+                    <div id="printSVG">
+                      <svg id="barcode2" />
+                      <p>{getValues("number")}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { printDiv('printSVG') }}
+                      disabled={!Boolean(typeId) || !Boolean(departmentId)}
+                      className="disabled:cursor-not-allowed disabled:bg-tangerine-200 outline-none focus:outline-none h-10 w-10 rounded-full bg-tangerine-300 hover:bg-tangerine-400 absolute bottom-1 right-1">
+                      <i className="fa-solid fa-print" />
+                    </button>
+                  </div>}
+              </div>
+            </Accordion.Panel>
+          </Accordion.Item>
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
           <button className="px-4 py-2 underline">Discard</button>
           <button
+            type="submit"
             disabled={(!isValid && !isDirty) || isLoading}
-            onClick={() => {
-              //no form errors
-              const id = `FAS-${moment().format("YY-MDhms")}`
-              setValue("number", id)
-            }}
-            className="rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400 disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            className="focus:outline-none outline-none  rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400 disabled:cursor-not-allowed disabled:bg-tangerine-200"
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

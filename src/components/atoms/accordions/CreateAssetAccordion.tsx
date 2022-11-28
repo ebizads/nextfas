@@ -303,8 +303,8 @@ const CreateAssetAccordion = () => {
 
   function printDiv(divName: string) {
 
-    let printContents = document.getElementById(divName)?.innerHTML as string;
-    let originalContents = document.body.innerHTML;
+    const printContents = document.getElementById(divName)?.innerHTML as string;
+    const originalContents = document.body.innerHTML;
 
     document.body.innerHTML = printContents;
 

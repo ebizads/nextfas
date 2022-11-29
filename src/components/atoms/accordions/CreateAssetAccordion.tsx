@@ -12,11 +12,12 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import moment from "moment"
 import JsBarcode from 'jsbarcode';
+import { useReactToPrint } from "react-to-print"
 
 
 const CreateAssetAccordion = () => {
@@ -241,7 +242,7 @@ const CreateAssetAccordion = () => {
   }, [companyId, companyData])
 
   const [loading, setIsLoading] = useState<boolean>(false)
-  const [assetId, setAssetId] = useState<string>(`-${moment().format("YY-MDhms")}`)
+  const [assetId, setAssetId] = useState<string>(`-${moment().format("YYMDhms")}`)
 
   const asset_number = useMemo(() => {
     const parseId = (id: string | null) => {
@@ -264,14 +265,16 @@ const CreateAssetAccordion = () => {
 
   useEffect(() => {
     if (asset_number) {
-      const id = `FAS-${asset_number}${assetId}`
+      const id = `${asset_number}${assetId}`
       setValue("number", id)
       JsBarcode("#barcode2", id, {
         textAlign: "left",
         textPosition: "bottom",
         fontOptions: "",
-        fontSize: 16,
+        fontSize: 12,
         textMargin: 6,
+        height: 50,
+        width: 1
       });
     }
   }, [assetId, asset_number])
@@ -301,20 +304,26 @@ const CreateAssetAccordion = () => {
     }
   }
 
-  function printDiv(divName: string) {
+  const componentRef = useRef(null);
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
-    const printContents = document.getElementById(divName)?.innerHTML as string;
-    const originalContents = document.body.innerHTML;
+  function printDiv() {
 
-    document.body.innerHTML = printContents;
 
-    window.print();
+    // const printContents = document.getElementById(divName)?.innerHTML as string;
+    // const originalContents = document.body.innerHTML;
 
-    document.body.innerHTML = originalContents;
+    // document.body.innerHTML = printContents;
+
+    // window.print();
+
+    // document.body.innerHTML = originalContents;
   }
 
   return (
-    <div>
+    <div id="contents">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-4 p-4"
@@ -445,7 +454,7 @@ const CreateAssetAccordion = () => {
                     setValue={setValue}
                     value={getValues('model.typeId')?.toString()}
                     title={"Type"}
-                    placeholder={!Boolean(classId) ? "Select asset category first" : "Select asset type"}
+                    placeholder={!Boolean(categoryId) ? "Select asset category first" : "Select asset type"}
                     data={types ?? []}
                   />
                   <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
@@ -832,25 +841,29 @@ const CreateAssetAccordion = () => {
                   <div id="printableArea" className="border-2 border-dashed border-neutral-400 rounded-md w-[25rem] h-[10rem] flex justify-center items-center">
                     <p className="text-center italic text-neutral-400">Barcode will appear here, please select company and department</p>
                   </div> :
-                  <div className="relative">
-                    <div id="printSVG">
-                      <svg id="barcode2" />
-                      <p>{getValues("number")}</p>
+
+                  <div>
+                    <div className="space-y-2">
+                      <div id="printSVG" ref={componentRef}>
+                        <svg id="barcode2" />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => { handlePrint(); console.log("printing barcode") }}
+                        disabled={!Boolean(typeId) || !Boolean(departmentId)}
+                        className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none py-1 px-4 rounded-md m-2 bg-tangerine-300 hover:bg-tangerine-400">
+                        <p>Print Barcode</p> <i className="fa-solid fa-print" />
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => { printDiv('printSVG') }}
-                      disabled={!Boolean(typeId) || !Boolean(departmentId)}
-                      className="disabled:cursor-not-allowed disabled:bg-tangerine-200 outline-none focus:outline-none h-10 w-10 rounded-full bg-tangerine-300 hover:bg-tangerine-400 absolute bottom-1 right-1">
-                      <i className="fa-solid fa-print" />
-                    </button>
-                  </div>}
+                  </div>
+                }
               </div>
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
-          <button className="px-4 py-2 underline">Discard</button>
+          <button type="button" className="px-4 py-2 underline">Discard</button>
           <button
             type="submit"
             disabled={(!isValid && !isDirty) || isLoading}

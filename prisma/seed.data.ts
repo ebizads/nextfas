@@ -246,7 +246,6 @@ export const typeSeed: { name: string }[] = [
   { name: "Camera" },
 ]
 
-
 export const projectSeed: { name: string }[] = [
   { name: "BSP" },
   { name: "CAD" },
@@ -335,7 +334,7 @@ export const assetSeed: z.infer<typeof AssetCreateInput>[] = [
     description: "lorem ipsum",
     barcode: "THL-001",
     custodianId: 1,
-    locationId: 1,
+    departmentId: 1,
     vendorId: 1,
     model: {
       name: "Inspiron 15 3000",
@@ -365,7 +364,7 @@ export const assetSeed: z.infer<typeof AssetCreateInput>[] = [
     description: "lorem ipsum",
     barcode: "THC-002",
     custodianId: 1,
-    locationId: 1,
+    departmentId: 1,
     vendorId: 1,
     model: {
       name: "Auros M15",
@@ -395,7 +394,7 @@ export const assetSeed: z.infer<typeof AssetCreateInput>[] = [
     description: "lorem ipsum",
     barcode: "THC-003",
     custodianId: 4,
-    locationId: 2,
+    departmentId: 2,
     vendorId: 3,
     model: {
       name: "EPSON L3110",

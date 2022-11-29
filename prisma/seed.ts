@@ -126,7 +126,17 @@ const main = async () => {
   }
 
   for (const a of assetSeed) {
-    const { management, model, custodianId, locationId, vendorId, ...rest } = a
+    const {
+      management,
+      model,
+      custodianId,
+      departmentId,
+      vendorId,
+      subsidiaryId,
+      projectId,
+      parentId,
+      ...rest
+    } = a
 
     await prisma.asset.create({
       data: {
@@ -149,17 +159,32 @@ const main = async () => {
         },
         custodian: {
           connect: {
-            id: custodianId,
+            id: custodianId ?? 1,
           },
         },
-        location: {
+        department: {
           connect: {
-            id: locationId,
+            id: departmentId ?? 1,
           },
         },
         vendor: {
           connect: {
-            id: vendorId,
+            id: vendorId ?? 1,
+          },
+        },
+        subsidiary: {
+          connect: {
+            id: subsidiaryId ?? 1,
+          },
+        },
+        project: {
+          connect: {
+            id: projectId ?? 1,
+          },
+        },
+        parent: {
+          connect: {
+            id: parentId ?? 1,
           },
         },
       },

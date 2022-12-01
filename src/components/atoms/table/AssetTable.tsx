@@ -1,13 +1,15 @@
-import React, { useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
-import { Checkbox } from "@mantine/core"
+import { Checkbox, Loader } from "@mantine/core"
 import Modal from "../../asset/Modal"
 import { AssetType } from "../../../types/generic"
 import { asset_information, columns } from "../../../lib/table"
 import { getProperty } from "../../../lib/functions"
 import { navigations } from "../accordions/NavAccordion"
 import { trpc } from "../../../utils/trpc"
+import { useReactToPrint } from "react-to-print"
+import JsBarcode from "jsbarcode"
 
 const Detail = (props: {
   key?: number
@@ -35,62 +37,230 @@ const AssetDetailsModal = (props: {
   openModalDesc: boolean
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
+
+  const componentRef = useRef(null);
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+  useEffect(() => {
+    if (props.asset) {
+
+      setTimeout(() => {
+        JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
+          textAlign: "left",
+          textPosition: "bottom",
+          fontOptions: "",
+          fontSize: 12,
+          textMargin: 6,
+          height: 50,
+          width: 1
+        });
+      }, 0)
+    }
+  }, [props.asset])
+
+
   return (
     <Modal
       size={13}
       isOpen={props.openModalDesc}
       setIsOpen={props.setOpenModalDesc}
     >
-      <div className="m-4 ">
-        <div className="flex w-full">
-          <div className="w-[80%]">
-            {/* {asset_information.map((info, idx) => (
-              <section
-                key={idx}
-                className={`flex flex-col gap-2 ${
-                  idx === 0 ? "" : "border-t"
-                } py-4 text-light-primary`}
-              >
-                <h3 className="font-medium xl:text-lg">{info_names[idx]}</h3>
-                {props.asset && (
-                  <div className="grid grid-cols-4 gap-4 pl-2 text-xs xl:text-sm">
-                    {info.map((detail, idx) => (
-                      <Detail
-                        key={idx}
-                        className=""
-                        label={detail.label}
-                        value={
-                          props.asset
-                            ? getProperty(detail.type, props.asset)
-                            : ""
-                        }
-                      />
-                    ))}
+      <div className="px-8 py-6">
+        <div className="flex w-full text-light-primary text-sm">
+          <div className="w-[80%] flex flex-col gap-2">
+            <section className="border-b pb-4">
+              <p className="font-medium text-neutral-600 text-base">Asset Information</p>
+              <div className="text-sm mt-4 flex flex-col gap-4">
+                <section className="grid grid-cols-4 gap-2">
+                  <div className="col-span-1">
+                    <p className="font-light">Asset Number</p>
+                    <p className="font-medium">{props.asset?.number}</p>
+                    <p className="text-[0.6rem] text-neutral-500 italic">{props.asset?.alt_number !== "" ? props.asset?.alt_number : "no alternate number"}</p>
                   </div>
-                )}
-              </section>
-            ))} */}
-            <pre>{JSON.stringify(props.asset, null, 2)}</pre>
+                  <div className="col-span-1">
+                    <p className="font-light">Name</p>
+                    <p className="font-medium">{props.asset?.name}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Serial No.</p>
+                    <p className="font-medium">{props.asset?.serial_no !== "" ? props.asset?.serial_no : "--"}</p>
+                  </div>
+                </section>
+                <section className="grid grid-cols-4">
+                  <div className="col-span-1">
+                    <p className="font-light">Parent Asset</p>
+                    <p className="font-medium">{props.asset?.parentId}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Model Name</p>
+                    <p className="font-medium">{props.asset?.model?.name}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Model Brand</p>
+                    <p className="font-medium">{props.asset?.model?.brand}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Model Number</p>
+                    <p className="font-medium">{props.asset?.model?.number}</p>
+                  </div>
+                </section>
+                <section>
+                  <p className="font-light">Description</p>
+                  <p className="font-medium">{props.asset?.description ?? "--"}</p>
+                </section>
+              </div>
+            </section>
+            <section className="border-b pb-4">
+              <p className="font-medium text-neutral-600 text-base">Custodian Information</p>
+              <div className="text-sm mt-4">
+                <section className="grid grid-cols-4 gap-2 space-y-2">
+                  <div className="col-span-1">
+                    <p className="font-light">Employee ID</p>
+                    <p className="font-medium">{props.asset?.custodian?.employee_id}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Name</p>
+                    <p className="font-medium">{props.asset?.custodian?.name}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Position</p>
+                    <p className="font-medium">{props.asset?.custodian?.position}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Team</p>
+                    <p className="font-medium">{props.asset?.custodian?.teamId}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Location</p>
+                    <p className="font-medium">{props.asset?.department?.locationId}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Department</p>
+                    <p className="font-medium">{props.asset?.department?.name}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Company</p>
+                    <p className="font-medium">{props.asset?.department?.companyId}</p>
+                  </div>
+                </section>
+              </div>
+            </section>
+            <section className="border-b pb-4">
+              <p className="font-medium text-neutral-600 text-base">Accounting Information</p>
+              <div className="text-sm mt-4">
+                <section className="grid grid-cols-4 gap-2 space-y-2">
+                  <div className="col-span-1">
+                    <p className="font-light">Currency</p>
+                    <p className="font-medium">{props.asset?.management?.currency}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Method</p>
+                    <p className="font-medium">{props.asset?.management?.accounting_method}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Original Cost</p>
+                    <p className="font-medium">{props.asset?.management?.original_cost}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Current Cost</p>
+                    <p className="font-medium">{props.asset?.management?.current_cost}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Purchased Date</p>
+                    <p className="font-medium">{props.asset?.management?.purchase_date ? (props.asset?.management?.purchase_date?.toLocaleDateString()) : "--"}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Purchased From</p>
+                    <p className="font-medium">{props.asset?.vendor?.name}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Purchased By</p>
+                    <p className="font-medium">Arvae</p>
+                  </div>
+                </section>
+              </div>
+            </section>
+            <section className="pb-4">
+              <p className="font-medium text-neutral-600 text-base">Depreciation Information</p>
+              <div className="text-sm mt-4 flex flex-col gap-2">
+                <section className="grid grid-cols-4 gap-2 space-y-2">
+                  <div className="col-span-1">
+                    <p className="font-light">Start Date</p>
+                    <p className="font-medium">{props.asset?.management?.depreciation_start?.toLocaleDateString()}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">End Date</p>
+                    <p className="font-medium">{props.asset?.management?.depreciation_end?.toLocaleDateString()}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Residual Value</p>
+                    <p className="font-medium">{props.asset?.management?.residual_value}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Period</p>
+                    <p className="font-medium">{props.asset?.management?.depreciation_period}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="font-light">Method</p>
+                    <p className="font-medium">{props.asset?.management?.depreciation_rule}</p>
+                  </div>
+                </section>
+                <section>
+                  <p className="font-light">Remarks</p>
+                  <p className="font-medium">{props.asset?.description ?? "--"}</p>
+                </section>
+              </div>
+            </section>
           </div>
-          <nav className="relative my-2 flex flex-1 flex-col gap-2 border-l pl-2 text-light-primary">
-            <button
-              className="outline-none focus:outline-none"
-              onClick={() => props.setOpenModalDesc(false)}
-            >
-              {""}
-              <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
-            </button>
-            <p className="font-medium xl:text-lg">Asset Transactions</p>
-            {navigations[0]?.subType?.map((action, idx) => (
+          <div className="mt-4 px-6 border-l">
+            <section className="relative">
+              <div id="printSVG" className="p-2 border-2 border-tangerine-300" ref={componentRef}>
+                <svg id="barcode" />
+              </div>
               <button
-                key={idx}
-                className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
-              >
-                <i className={action.icon} />
-                {action.name}
+                type="button"
+                onClick={() => { handlePrint(); console.log("printing barcode") }}
+                className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none p-2 rounded-full absolute bottom-3 right-2 bg-tangerine-300 hover:bg-tangerine-400">
+                {""} <i className="fa-solid fa-print" />
               </button>
-            ))}
-          </nav>
+            </section>
+            <section className="flex flex-col gap-2 p-2">
+
+              <div className="">
+                <p className="font-medium">Class</p>
+                <p className="font-light">{props.asset?.model?.classId}</p>
+              </div>
+              <div className="">
+                <p className="font-medium">Category</p>
+                <p className="font-light">{props.asset?.model?.categoryId}</p>
+              </div>
+              <div className="">
+                <p className="font-medium">Type</p>
+                <p className="font-light">{props.asset?.model?.typeId}</p>
+              </div>
+            </section>
+            <nav className="relative my-2 flex flex-1 flex-col gap-2 ">
+              <button
+                className="outline-none focus:outline-none"
+                onClick={() => props.setOpenModalDesc(false)}
+              >
+                {""}
+                <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
+              </button>
+              <p className="font-medium xl:text-lg">Asset Transactions</p>
+              {navigations[0]?.subType?.map((action, idx) => (
+                <button
+                  key={idx}
+                  className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
+                >
+                  <i className={action.icon} />
+                  {action.name}
+                </button>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
     </Modal>
@@ -127,7 +297,7 @@ export const AssetDeleteModal = (props: {
       isOpen={props.openModalDel}
       setIsOpen={props.setOpenModalDel}
     >
-      <div className="m-4 flex flex-col text-light-primary">
+      <div className="m-4 flex flex-col ">
         <div className="flex flex-col items-center gap-8 text-center">
           <div>
             You are about to permanently delete{" "}

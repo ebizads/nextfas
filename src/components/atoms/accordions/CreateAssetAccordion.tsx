@@ -309,19 +309,6 @@ const CreateAssetAccordion = () => {
     content: () => componentRef.current,
   });
 
-  function printDiv() {
-
-
-    // const printContents = document.getElementById(divName)?.innerHTML as string;
-    // const originalContents = document.body.innerHTML;
-
-    // document.body.innerHTML = printContents;
-
-    // window.print();
-
-    // document.body.innerHTML = originalContents;
-  }
-
   return (
     <div id="contents">
       <form

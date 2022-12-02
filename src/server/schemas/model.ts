@@ -35,7 +35,7 @@ export const AssetCategoryEditInput = z.object({
 
 export const SubsidiaryEditInput = z.object({
   id: z.number().optional(),
-  name: z.string().optional(),
+  name: z.string().optional().nullish(),
 })
 
 export const ModelCreateInput = z.object({
@@ -66,10 +66,10 @@ export const ModelEditInput = z.object({
 })
 
 export const ManagementCreateInput = z.object({
-  currency: z.string().optional(),
-  original_cost: z.number().optional(),
-  current_cost: z.number().optional(),
-  residual_value: z.number().nullish(),
+  currency: z.string().optional().nullish(),
+  original_cost: z.number().optional().nullish(),
+  current_cost: z.number().optional().nullish(),
+  residual_value: z.number().nullish().nullish(),
   purchase_date: z.date().nullish(),
 
   depreciation_start: z.date().nullish(),
@@ -82,10 +82,10 @@ export const ManagementCreateInput = z.object({
 })
 
 export const ManagementEditInput = z.object({
-  currency: z.string().optional(),
-  original_cost: z.number().optional(),
-  current_cost: z.number().optional(),
-  residual_value: z.number().nullish(),
+  currency: z.string().optional().nullish(),
+  original_cost: z.number().optional().nullish(),
+  current_cost: z.number().optional().nullish(),
+  residual_value: z.number().nullish().nullish(),
   purchase_date: z.date().nullish(),
 
   depreciation_start: z.date().nullish(),

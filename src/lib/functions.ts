@@ -7,7 +7,7 @@ import { disposeTMP } from "../pages/transactions/disposal"
 
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType | disposeTMP,
+  type: AssetType | EmployeeType | VendorType | disposeTMP
   //subfilter?: string
 ) => {
   //get object property
@@ -98,7 +98,7 @@ export const currentValue = (
   depreciation_value: number,
   start_date: Date
 ) => {
-  const differenceInTime = start_date.getTime() - new Date().getTime()
+  const differenceInTime = new Date().getTime() - start_date.getTime()
 
   const differenceInDay = differenceInTime / (1000 * 3600 * 24)
 
@@ -109,10 +109,26 @@ export const currentValue = (
   return current_value
 }
 
+export const getLifetime = (start_date: Date, end_date: Date) => {
+  const differenceInTime = end_date.getTime() - start_date.getTime()
+
+  const differenceInDay = differenceInTime / (1000 * 3600 * 24)
+
+  return differenceInDay > 364
+    ? `${convertDaysToYears(differenceInDay)} year/s`
+    : differenceInDay > 30
+    ? `${convertDaysToMonths(differenceInDay)} month/s`
+    : `${differenceInDay} day/s`
+}
+
 export const convertDaysToYears = (days: number) => {
-  return days / 365
+  return Math.floor(days / 365)
 }
 
 export const convertMonthsToYears = (months: number) => {
-  return months / 12
+  return Math.floor(months / 12)
+}
+
+export const convertDaysToMonths = (days: number) => {
+  return Math.floor(days / 30)
 }

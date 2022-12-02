@@ -238,18 +238,9 @@ export const assetRouter = t.router({
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const {
-        id,
-        management,
-        model,
-        custodianId,
-        departmentId,
-        vendorId,
-        subsidiaryId,
-        projectId,
-        parentId,
-        ...rest
-      } = input
+      const { id, ...rest } = input
+
+      console.log("pakyou", input)
 
       try {
         await ctx.prisma.asset.update({
@@ -257,52 +248,46 @@ export const assetRouter = t.router({
             id,
           },
           data: {
-            custodian: {
-              update: {
-                id: custodianId,
-              },
-            },
-            department: {
-              update: {
-                id: departmentId,
-              },
-            },
-            vendor: {
-              update: {
-                id: vendorId,
-              },
-            },
-            subisidiary: {
-              update: {
-                id: subsidiaryId,
-              },
-            },
-            project: {
-              update: {
-                id: projectId,
-              },
-            },
-            parent: {
-              update: {
-                id: parentId,
-              },
-            },
-            management: {
-              update: management,
-            },
-            model: {
-              update: model,
-            },
             ...rest,
           },
         })
 
         return "Asset updated successfully"
       } catch (error) {
+        console.log("NAG ERROR TANGA")
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
         })
       }
     }),
+  // editCustodian: authedProcedure
+  //   .input(AssetEditKevinInput)
+  //   .mutation(async ({ ctx, input }) => {
+  //     const { id, departmentId, ...rest } = input
+
+  //     try {
+  //       await ctx.prisma.asset.update({
+  //         where: {
+  //           id,
+  //         },
+  //         data: {
+  //           department: {
+  //             update: {
+  //               id: departmentId ?? 1,
+  //             },
+  //           },
+
+  //           ...rest,
+  //         },
+  //       })
+
+  //       return "Asset updated successfully"
+  //     } catch (error) {
+  //       throw new TRPCError({
+  //         code: "BAD_REQUEST",
+  //         message: JSON.stringify(error),
+  //       })
+  //     }
+  //   }),
 })

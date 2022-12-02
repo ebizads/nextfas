@@ -47,8 +47,9 @@ const AssetDetailsModal = (props: {
             {asset_information.map((info, idx) => (
               <section
                 key={idx}
-                className={`flex flex-col gap-2 ${idx === 0 ? "" : "border-t"
-                  } py-4 text-light-primary`}
+                className={`flex flex-col gap-2 ${
+                  idx === 0 ? "" : "border-t"
+                } py-4 text-light-primary`}
               >
                 <h3 className="font-medium xl:text-lg">{info_names[idx]}</h3>
                 {props.asset && (
@@ -75,6 +76,7 @@ const AssetDetailsModal = (props: {
               className="outline-none focus:outline-none"
               onClick={() => props.setOpenModalDesc(false)}
             >
+              {""}
               <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
             </button>
             <p className="font-medium xl:text-lg">Asset Transactions</p>
@@ -104,16 +106,16 @@ export const AssetDeleteModal = (props: {
   const [showList, setShowList] = useState<boolean>(false)
 
   //trpc utils for delete
-  // const utils = trpc.useContext()
-  // const { mutate, isLoading } = trpc.asset.deleteMany.useMutation({
-  //   onSuccess() {
-  //     utils.asset.findAll.invalidate()
-  //   },
-  // })
+  const utils = trpc.useContext()
+  const { mutate, isLoading } = trpc.asset.deleteMany.useMutation({
+    onSuccess() {
+      utils.asset.findAll.invalidate()
+    },
+  })
   const handleDelete = () => {
-    // const id_array = [...props.checkboxes]
+    const id_array = [...props.checkboxes]
     //delete function
-    // mutate([...id_array])
+    mutate([...id_array])
     props.setCheckboxes([])
     props.setOpenModalDel(false)
   }
@@ -137,8 +139,9 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}{" "}
               {props.checkboxes.length > 1 ? "records" : "record"}{" "}
               <i
-                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
-                  }`}
+                className={`fa-solid ${
+                  showList ? " fa-caret-up" : " fa-caret-down"
+                }`}
               />
             </button>{" "}
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -171,7 +174,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete records
             </button>
@@ -215,8 +218,9 @@ const AssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -241,7 +245,7 @@ const AssetTable = (props: {
               <th
                 key={col.name}
                 scope="col"
-                className="px-6 duration-150 max-w-[10rem] truncate"
+                className="max-w-[10rem] truncate px-6 duration-150"
               >
                 {col.name}
               </th>
@@ -289,9 +293,9 @@ const AssetTable = (props: {
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
-                <button>
+                {/* <button>
                   <i className="fa-light fa-pen-to-square" />
-                </button>
+                </button> */}
                 <button
                   onClick={() => {
                     setOpenModalDel(true)

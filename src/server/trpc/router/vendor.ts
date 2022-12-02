@@ -39,15 +39,26 @@ export const vendorRouter = t.router({
               include: {
                 address: true,
               },
-              skip: input?.page ? input.page * (input.limit ?? 10) : 0,
-              take: input?.limit ? input.limit : 10,
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+              take: input?.limit ?? 10,
               where: {
                 name: {
                   contains: input?.search?.name ? input.search.name : undefined,
                 },
+                NOT: {
+                  deleted: true,
+                },
               },
             }),
-            ctx.prisma.vendor.count(),
+            ctx.prisma.vendor.count({
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+              },
+            }),
           ],
           {
             isolationLevel: Prisma.TransactionIsolationLevel.Serializable,

@@ -3,14 +3,13 @@
 import { ColumnType, DetailType, NavType } from "../types/table"
 
 export const columns = [
+  { value: "number", name: "Asset No." },
   { value: "serial_no", name: "Serial No." },
-  { value: "barcode", name: "Bar Code" },
   { value: "type", name: "Type" },
-  { value: "category", name: "Category" },
   { value: "name", name: "Name" },
   { value: "description", name: "Description" },
-  { value: "custodian", name: "Owner" },
-  { value: "added_date", name: "Added Date" },
+  { value: "custodian", name: "Custodian" },
+  { value: "createdAt", name: "Added Date" },
 ] as ColumnType[]
 
 export const vendorColumns = [
@@ -22,7 +21,7 @@ export const vendorColumns = [
   { value: "email", name: "Email" },
   { value: "phone_no", name: "Phone Number" },
   { value: "alt_phone_no", name: "Alternate Number" },
-  { value: "fax_no", name: "Fax Number" },
+  // { value: "fax_no", name: "Fax Number" },
   { value: "address", name: "Address" },
   { value: "image", name: "Image" },
   { value: "comments", name: "Comments" },

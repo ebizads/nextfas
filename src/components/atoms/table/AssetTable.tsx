@@ -45,7 +45,6 @@ const AssetDetailsModal = (props: {
 
   useEffect(() => {
     if (props.asset) {
-
       setTimeout(() => {
         JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
           textAlign: "left",
@@ -56,7 +55,7 @@ const AssetDetailsModal = (props: {
           height: 50,
           width: 1
         });
-      }, 0)
+      }, 1000)
     }
   }, [props.asset])
 
@@ -216,8 +215,10 @@ const AssetDetailsModal = (props: {
           </div>
           <div className="mt-4 px-6 border-l">
             <section className="relative">
-              <div id="printSVG" className="p-2 border-2 border-tangerine-300" ref={componentRef}>
-                <svg id="barcode" />
+              <div className="p-2 border-2 border-tangerine-300">
+                <div id="printSVG" ref={componentRef}>
+                  <svg id="barcode" />
+                </div>
               </div>
               <button
                 type="button"

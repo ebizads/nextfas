@@ -37,7 +37,7 @@ const Transfer = () => {
         search: {
             team: {
                 department: {
-                    id: Number(selectedDept) ?? 1
+                    id: Number(selectedDept) ?? 0
                 }
             }
         }
@@ -564,8 +564,8 @@ const Transfer = () => {
                             <div className="px-4 flex flex-row justify-between w-full gap-7">
                                 <Checkbox checked={checked} onChange={(event) => {
                                     setChecked(event.currentTarget.checked);
-                                    setValue('departmentId', 1);
-                                    setValue("custodianId", 1);
+                                    setValue('departmentId', 0);
+                                    setValue("custodianId", 0);
                                     setSelectedDept('')
                                     setSelectedEMP('')
 

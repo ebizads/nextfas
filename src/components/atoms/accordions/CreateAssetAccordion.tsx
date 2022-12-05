@@ -135,7 +135,7 @@ const CreateAssetAccordion = () => {
   const { data: employeeData } = trpc.employee.findAll.useQuery()
   const employeeList = useMemo(
     () =>
-      employeeData?.employees.filter((item) => item.id != 1).map((employeeItem) => {
+      employeeData?.employees.filter((item) => item.id != 0).map((employeeItem) => {
         return { value: employeeItem.id.toString(), label: employeeItem.name }
       }),
     [employeeData]

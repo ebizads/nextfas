@@ -26,9 +26,7 @@ export type EmployeeType = inferProcedureOutput<
 export type EmployeeFieldValues = z.infer<typeof EmployeeCreateInput>
 
 //asset field types
-export type AssetFieldValues = z.infer<
-  typeof AssetCreateInput | typeof AssetEditInput
->
+export type AssetFieldValues = z.infer<typeof AssetCreateInput>
 // export type ModelFieldValues = z.infer<typeof ModelCreateInput>
 // // export type ManagementFieldValues = z.infer<typeof ManagementCreateInput>
 

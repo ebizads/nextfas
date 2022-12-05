@@ -134,32 +134,32 @@ export const assetRouter = t.router({
           },
           custodian: {
             connect: {
-              id: custodianId ?? 1,
+              id: custodianId ?? 0,
             },
           },
           department: {
             connect: {
-              id: departmentId ?? 1,
+              id: departmentId ?? 0,
             },
           },
           vendor: {
             connect: {
-              id: vendorId ?? 1,
+              id: vendorId ?? 0,
             },
           },
           subsidiary: {
             connect: {
-              id: subsidiaryId ?? 1,
+              id: subsidiaryId ?? 0,
             },
           },
           project: {
             connect: {
-              id: projectId ?? 1,
+              id: projectId ?? 0,
             },
           },
           parent: {
             connect: {
-              id: parentId ?? 1,
+              id: parentId ?? 0,
             },
           },
           ...rest,
@@ -213,32 +213,32 @@ export const assetRouter = t.router({
             },
             custodian: {
               connect: {
-                id: custodianId ?? 1,
+                id: custodianId ?? 0,
               },
             },
             department: {
               connect: {
-                id: departmentId ?? 1,
+                id: departmentId ?? 0,
               },
             },
             vendor: {
               connect: {
-                id: vendorId ?? 1,
+                id: vendorId ?? 0,
               },
             },
             subsidiary: {
               connect: {
-                id: subsidiaryId ?? 1,
+                id: subsidiaryId ?? 0,
               },
             },
             project: {
               connect: {
-                id: projectId ?? 1,
+                id: projectId ?? 0,
               },
             },
             parent: {
               connect: {
-                id: parentId ?? 1,
+                id: parentId ?? 0,
               },
             },
           }
@@ -287,7 +287,7 @@ export const assetRouter = t.router({
   //         data: {
   //           department: {
   //             update: {
-  //               id: departmentId ?? 1,
+  //               id: departmentId ?? 0,
   //             },
   //           },
 

@@ -43,12 +43,12 @@ export const ModelCreateInput = z.object({
   brand: z.string().optional(),
   number: z.string().optional(),
 
-  // asset_class: AssetClassCreateInput.optional(),
-  classId: z.number().optional(),
-  //asset_category: AssetCategoryCreateInput.optional(),
-  categoryId: z.number().optional(),
-  //asset_type: AssetTypeCreateInput.optional(),
-  typeId: z.number().optional(),
+  // asset_class: AssetClassCreateInput
+  classId: z.number({ required_error: "Please select asset class" }),
+  //asset_category: AssetCategoryCreateInput,
+  categoryId: z.number({ required_error: "Please select asset category" }),
+  //asset_type: AssetTypeCreateInput,
+  typeId: z.number({ required_error: "Please select asset type" }),
 })
 
 export const ModelEditInput = z.object({

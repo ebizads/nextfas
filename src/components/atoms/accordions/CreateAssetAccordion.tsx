@@ -1,6 +1,6 @@
 import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
-import { InputField } from "../forms/InputField"
+import { InputField, InputNumberField } from "../forms/InputField"
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
@@ -12,10 +12,13 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import moment from "moment"
+import JsBarcode from 'jsbarcode';
+import { useReactToPrint } from "react-to-print"
+
 
 const CreateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
@@ -25,6 +28,7 @@ const CreateAssetAccordion = () => {
     handleSubmit,
     reset,
     setValue,
+    getValues,
     // watch,
     formState: { errors, isDirty, isValid },
   } = useForm<AssetFieldValues>({
@@ -63,9 +67,9 @@ const CreateAssetAccordion = () => {
       // vendorId: 0,
       // subsidiaryId: undefined,
       management: {
-        original_cost: 0,
-        current_cost: 0,
-        residual_value: 0,
+        // original_cost: 0,
+        // current_cost: 0,
+        // residual_value: 0,
         depreciation_period: 1,
       },
     },
@@ -173,7 +177,7 @@ const CreateAssetAccordion = () => {
   const [remarks, setRemarks] = useState<string | null>(null)
 
   //depreciation start and end period
-  const [dep_start, setDepStart] = useState<Date | null>(new Date())
+  const [dep_start, setDepStart] = useState<Date | null>(null)
   const [dep_end, setDepEnd] = useState<Date | null>(null)
 
   const [selectedClass, setSelectedClass] = useState<
@@ -237,38 +241,76 @@ const CreateAssetAccordion = () => {
     }
   }, [companyId, companyData])
 
-  //submit modal trigger
-  // const [confirming, setConfirming] = useState<boolean>(false)
-  // const [submitting, setSubmitting] = useState<boolean>(false)
-  // const [data, setData] = useState<AssetFieldValues | null>(null)
   const [loading, setIsLoading] = useState<boolean>(false)
+  const [assetId, setAssetId] = useState<string>(`-${moment().format("YYMDhms")}`)
+
+  const asset_number = useMemo(() => {
+    const parseId = (id: string | null) => {
+      if (!id) {
+        return "00"
+      }
+      if (id?.length === 1) {
+        return 0 + id
+      } else {
+        return id
+      }
+    }
+
+    if (typeId && departmentId) {
+      return parseId(departmentId) + parseId(typeId)
+    }
+
+    return null
+  }, [typeId, departmentId]) as string | null
+
+  useEffect(() => {
+    if (asset_number) {
+      const id = `${asset_number}${assetId}`
+      setValue("number", id)
+      JsBarcode("#barcode2", id, {
+        textAlign: "left",
+        textPosition: "bottom",
+        fontOptions: "",
+        fontSize: 12,
+        textMargin: 6,
+        height: 50,
+        width: 1
+      });
+    }
+  }, [assetId, asset_number])
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (
     form_data: AssetFieldValues
   ) => {
     if (error) {
       console.log("ERROR ENCOUNTERED")
-      console.error(error)
+      console.error("Prisma Error: ", error)
+      console.error("Form Error:", errors)
     } else {
-      // setData(form_data)
-      // console.log("omsim")
-      // if (confirming) {
       console.log("Submitting: ", form_data)
+
       mutate(form_data)
+
       setTimeout(function () {
         setIsLoading(false)
       }, 3000)
+
       reset()
-      // }
+      setClassId(null)
+      setCategoryId(null)
+      setTypeId(null)
+      setCompanyId(null)
+      setDepartmentId(null)
     }
   }
 
-  // useEffect(() => {
-  //   console.log(watch())
-  // }, [watch()])
+  const componentRef = useRef(null);
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   return (
-    <div>
+    <div id="contents">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-4 p-4"
@@ -278,8 +320,8 @@ const CreateAssetAccordion = () => {
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
         <Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
-          <Accordion.Item value={"1"} className="outline-none active:outline-none">
-            <Accordion.Control className="uppercase">
+          <Accordion.Item value={"1"} className="">
+            <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
                   1
@@ -324,9 +366,10 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"parentId"}
                       setValue={setValue}
+                      value={getValues('parentId')?.toString()}
                       title={"Parent Asset"}
                       placeholder={"Select parent asset"}
-                      data={assetsList ? assetsList : ["Parent 1", "Parent 2"]}
+                      data={assetsList ?? []}
                     />
                     <AlertInput>{errors?.parentId?.message}</AlertInput>
                   </div>
@@ -334,23 +377,24 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"projectId"}
                       setValue={setValue}
+                      value={getValues('projectId')?.toString()}
                       title={"Project"}
                       placeholder={"Select project"}
                       data={
-                        projectsList ? projectsList : ["Project 1", "Project 2"]
+                        projectsList ?? []
                       }
                     />
                     <AlertInput>{errors?.projectId?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
                     <TypeSelect
-                      required
                       name={"vendorId"}
                       setValue={setValue}
+                      value={getValues('vendorId')?.toString()}
                       title={"Vendor"}
                       placeholder={"Select vendor"}
                       data={
-                        vendorsList ? vendorsList : ["Vendor 1", "Vendor 2"]
+                        vendorsList ?? []
                       }
                     />
                     <AlertInput>{errors?.vendorId?.message}</AlertInput>
@@ -363,9 +407,10 @@ const CreateAssetAccordion = () => {
                     required
                     name={"model.classId"}
                     setValue={setValue}
+                    value={getValues('model.classId')?.toString()}
                     title={"Class"}
-                    placeholder={"Select class type"}
-                    data={classList ? classList : ["Class A", "Class B"]}
+                    placeholder={"Select asset class"}
+                    data={classList ?? []}
                   />
                   <AlertInput>{errors?.model?.classId?.message}</AlertInput>
                 </div>
@@ -377,10 +422,11 @@ const CreateAssetAccordion = () => {
                     required
                     name={"model.categoryId"}
                     setValue={setValue}
+                    value={getValues('model.categoryId')?.toString()}
                     title={"Category"}
-                    placeholder={"Select category type"}
+                    placeholder={!Boolean(classId) ? "Select asset class first" : "Select asset category"}
                     data={
-                      categories ? categories : ["Category A", "Category B"]
+                      categories ?? []
                     }
                   />
                   <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
@@ -393,9 +439,10 @@ const CreateAssetAccordion = () => {
                     required
                     name={"model.typeId"}
                     setValue={setValue}
+                    value={getValues('model.typeId')?.toString()}
                     title={"Type"}
-                    placeholder={"Select asset type"}
-                    data={types ? types : ["Type 1", "Type 2"]}
+                    placeholder={!Boolean(categoryId) ? "Select asset category first" : "Select asset type"}
+                    data={types ?? []}
                   />
                   <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                 </div>
@@ -451,8 +498,8 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
-          <Accordion.Item value={"2"}>
-            <Accordion.Control className="uppercase">
+          <Accordion.Item value={"2"} className="">
+            <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
                   2
@@ -467,6 +514,7 @@ const CreateAssetAccordion = () => {
                     isString
                     name={"management.currency"}
                     setValue={setValue}
+                    value={getValues('management.currency')}
                     title={"Currency"}
                     placeholder={"Select currency type"}
                     data={[
@@ -479,9 +527,8 @@ const CreateAssetAccordion = () => {
                   </AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <InputField
+                  <InputNumberField
                     register={register}
-                    type={"number"}
                     label="Original Cost"
                     placeholder="Original Cost"
                     name="management.original_cost"
@@ -491,9 +538,8 @@ const CreateAssetAccordion = () => {
                   </AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <InputField
+                  <InputNumberField
                     register={register}
-                    type={"number"}
                     label="Current Cost"
                     placeholder="Current Cost"
                     name="management.current_cost"
@@ -505,8 +551,9 @@ const CreateAssetAccordion = () => {
                 <div className="col-span-3">
                   <TypeSelect
                     isString
-                    name={"management.accounting"}
+                    name={"management.accounting_method"}
                     setValue={setValue}
+                    value={getValues("management.accounting_method")}
                     title={"Accounting Method"}
                     placeholder={"Select accounting method"}
                     data={[
@@ -520,9 +567,8 @@ const CreateAssetAccordion = () => {
                   </AlertInput>
                 </div>
                 <div className="col-span-3">
-                  <InputField
+                  <InputNumberField
                     register={register}
-                    type={"number"}
                     label="Residual Value"
                     placeholder="Residual Value"
                     name={"management.residual_value"}
@@ -549,8 +595,8 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
-          <Accordion.Item value={"3"}>
-            <Accordion.Control className="uppercase">
+          <Accordion.Item value={"3"} className="">
+            <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
                   3
@@ -567,10 +613,11 @@ const CreateAssetAccordion = () => {
                     required
                     name={"subsidiaryId"}
                     setValue={setValue}
+                    value={getValues("subsidiaryId")?.toString()}
                     title={"Company"}
                     placeholder={"Select company or subsidiary"}
                     data={
-                      companyList ? companyList : ["Company A", "Company B"]
+                      companyList ?? []
                     }
                   />
                   <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
@@ -603,15 +650,16 @@ const CreateAssetAccordion = () => {
                     <ClassTypeSelect
                       query={departmentId}
                       setQuery={setDepartmentId}
+                      required
                       disabled={!Boolean(companyId)}
                       name={"departmentId"}
                       setValue={setValue}
+                      value={getValues("departmentId")?.toString()}
                       title={"Department"}
-                      placeholder={"Select department type"}
+                      placeholder={!Boolean(companyId) ? "Select company first" : "Select department type"}
                       data={
                         departmentList
-                          ? departmentList
-                          : ["Department A", "Department B"]
+                        ?? []
                       }
                     />
                     <AlertInput>{errors?.departmentId?.message}</AlertInput>
@@ -658,12 +706,14 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"custodianId"}
                       setValue={setValue}
+
+                      value={getValues('custodianId')?.toString()}
                       title={"Custodian"}
-                      placeholder={"Assign custodian"}
+                      disabled={!Boolean(departmentId)}
+                      placeholder={!Boolean(departmentId) ? "Select department first" : "Assign custodian"}
                       data={
                         employeeList
-                          ? employeeList
-                          : ["Employee A", "Employee B"]
+                        ?? []
                       }
                     />
                     <AlertInput>{errors?.custodianId?.message}</AlertInput>
@@ -675,6 +725,7 @@ const CreateAssetAccordion = () => {
                       isString
                       name={"management.depreciation_rule"}
                       setValue={setValue}
+                      value={getValues("management.depreciation_rule")}
                       title={"Depreciation Method"}
                       placeholder={"Select method"}
                       data={["Straight Line", "Others"]}
@@ -728,11 +779,10 @@ const CreateAssetAccordion = () => {
                     />
                   </div>
                   <div className="col-span-2">
-                    <InputField
-                      type={"number"}
+                    <InputNumberField
                       placeholder="Month/s"
                       register={register}
-                      label="Period"
+                      label="Period (month/s)"
                       name="management.depreciation_period"
                     />
                     <AlertInput>
@@ -763,23 +813,48 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
+          <Accordion.Item value={"4"} className="">
+            <Accordion.Control disabled={!Boolean(typeId) || !Boolean(departmentId)} className="uppercase outline-none focus:outline-none active:outline-none">
+              <div className="flex items-center gap-2 text-gray-700">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
+                  4
+                </div>
+                <p>Print Bar Code</p>
+              </div>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <div className="flex justify-center items-center">
+                {!Boolean(typeId) || !Boolean(departmentId) ?
+                  <div id="printableArea" className="border-2 border-dashed border-neutral-400 rounded-md w-[25rem] h-[10rem] flex justify-center items-center">
+                    <p className="text-center italic text-neutral-400">Barcode will appear here, please select company and department</p>
+                  </div> :
+
+                  <div>
+                    <div className="space-y-2">
+                      <div id="printSVG" ref={componentRef}>
+                        <svg id="barcode2" />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => { handlePrint(); console.log("printing barcode") }}
+                        disabled={!Boolean(typeId) || !Boolean(departmentId)}
+                        className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none py-1 px-4 rounded-md m-2 bg-tangerine-300 hover:bg-tangerine-400">
+                        <p>Print Barcode</p> <i className="fa-solid fa-print" />
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </Accordion.Panel>
+          </Accordion.Item>
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
-          <button className="px-4 py-2 underline">Discard</button>
+          <button type="button" className="px-4 py-2 underline">Discard</button>
           <button
+            type="submit"
             disabled={(!isValid && !isDirty) || isLoading}
-            onClick={() => {
-              // console.log(JSON.stringify(errors))
-              //no form errors
-              if (JSON.stringify(errors) !== "{}") {
-                console.error(errors)
-              } else {
-                const id = `FAS-${moment().format("YY-MDhms")}`
-                setValue("number", id)
-                // setSubmitting(true)
-              }
-            }}
-            className="rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400 disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            className="focus:outline-none outline-none  rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400 disabled:cursor-not-allowed disabled:bg-tangerine-200"
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

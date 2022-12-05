@@ -8,9 +8,9 @@ export type SelectValueType = {
 }
 
 /* tslint:disable-next-line */
-const TypeSelect = (props: { isString?: boolean, disabled?: boolean, name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
+const TypeSelect = (props: { isString?: boolean, disabled?: boolean, name: any, setValue: UseFormSetValue<any>, value?: string | null | undefined, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
 
-  const [query, setQuery] = useState<string | null>(null)
+  const [query, setQuery] = useState<string | null>(props.value ?? null)
 
   return (
     <div className='flex flex-col gap-2'>
@@ -18,7 +18,7 @@ const TypeSelect = (props: { isString?: boolean, disabled?: boolean, name: any, 
       <Select
         placeholder={props.placeholder}
         searchable
-        value={query}
+        value={props.value}
         onChange={(q) => {
           if (q) {
             setQuery(q)
@@ -69,7 +69,7 @@ const TypeSelect = (props: { isString?: boolean, disabled?: boolean, name: any, 
     </div>
   );
 }
-export const ClassTypeSelect = (props: { disabled?: boolean, query: string | null, setQuery: React.Dispatch<React.SetStateAction<string | null>>, name: any, setValue: UseFormSetValue<any>, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
+export const ClassTypeSelect = (props: { disabled?: boolean, query: string | null, setQuery: React.Dispatch<React.SetStateAction<string | null>>, name: any, setValue: UseFormSetValue<any>, value?: string | null | undefined, title: string, placeholder: string, data: string[] | SelectValueType[], required?: boolean }) => {
 
   return (
     <div className='flex flex-col gap-2'>

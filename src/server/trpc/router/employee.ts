@@ -18,14 +18,14 @@ export const employeeRouter = t.router({
               include: {
                 location: true,
               },
-              select: {
-                name: true,
-              },
+              // select: {
+              //   name: true,
+              // },
             },
           },
-          select: {
-            name: true,
-          },
+          // select: {
+          //   name: true,
+          // },
         },
         supervisee: true,
       },
@@ -48,7 +48,7 @@ export const employeeRouter = t.router({
                   name: z.string().optional(),
                   department: z
                     .object({
-                      name: z.string(),
+                      id: z.number(),
                     })
                     .optional(),
                 })
@@ -97,8 +97,8 @@ export const employeeRouter = t.router({
                 email: { contains: input?.search?.email },
                 team: {
                   department: {
-                    name: {
-                      contains: input?.search?.team?.department?.name,
+                    id: {
+                      equals: input?.search?.team?.department?.id,
                     },
                   },
                 },

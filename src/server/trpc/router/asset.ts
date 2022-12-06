@@ -286,6 +286,50 @@ export const assetRouter = t.router({
         })
       }
     }),
+  delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
+    try {
+      await ctx.prisma.asset.update({
+        where: {
+          id: input,
+        },
+        data: {
+          deleted: true,
+          deletedAt: new Date(),
+        },
+      })
+
+      return "Asset deleted successfully"
+    } catch (error) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: JSON.stringify(error),
+      })
+    }
+  }),
+  deleteMany: authedProcedure
+    .input(z.array(z.number()))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.asset.updateMany({
+          where: {
+            id: {
+              in: input,
+            },
+          },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+          },
+        })
+
+        return "Assets deleted successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
   // editCustodian: authedProcedure
   //   .input(AssetEditKevinInput)
   //   .mutation(async ({ ctx, input }) => {

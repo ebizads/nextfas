@@ -38,26 +38,34 @@ const AssetDetailsModal = (props: {
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
 
+  useEffect(() => {
+    console.log(props.asset)
+  }, [])
+
   const componentRef = useRef(null);
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
 
+  const [genBarcode, setGenBarcode] = useState(false)
+  const genBar = () => {
+    setGenBarcode(true)
+    JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
+      textAlign: "left",
+      textPosition: "bottom",
+      fontOptions: "",
+      fontSize: 12,
+      textMargin: 6,
+      height: 50,
+      width: 1
+    })
+  }
+
   useEffect(() => {
-    if (props.asset) {
-      setTimeout(() => {
-        JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
-          textAlign: "left",
-          textPosition: "bottom",
-          fontOptions: "",
-          fontSize: 12,
-          textMargin: 6,
-          height: 50,
-          width: 1
-        });
-      }, 1000)
+    if (!props.openModalDesc) {
+      setGenBarcode(false)
     }
-  }, [props.asset])
+  }, [props.openModalDesc])
 
 
   return (
@@ -90,19 +98,19 @@ const AssetDetailsModal = (props: {
                 <section className="grid grid-cols-4">
                   <div className="col-span-1">
                     <p className="font-light">Parent Asset</p>
-                    <p className="font-medium">{props.asset?.parentId}</p>
+                    <p className="font-medium">{props.asset?.parentId !== 0 ? props.asset?.parentId : "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Model Name</p>
-                    <p className="font-medium">{props.asset?.model?.name}</p>
+                    <p className="font-medium">{props.asset?.model?.name ? props.asset?.model?.name : "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Model Brand</p>
-                    <p className="font-medium">{props.asset?.model?.brand}</p>
+                    <p className="font-medium">{props.asset?.model?.brand ? props.asset?.model?.brand : "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Model Number</p>
-                    <p className="font-medium">{props.asset?.model?.number}</p>
+                    <p className="font-medium">{props.asset?.model?.number ? props.asset?.model?.number : "--"}</p>
                   </div>
                 </section>
                 <section>
@@ -129,11 +137,11 @@ const AssetDetailsModal = (props: {
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Team</p>
-                    <p className="font-medium">{props.asset?.custodian?.teamId}</p>
+                    <p className="font-medium">{props.asset?.department?.teams?.name}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Location</p>
-                    <p className="font-medium">{props.asset?.department?.locationId}</p>
+                    <p className="font-medium">{props.asset?.department?.location?.floor}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Department</p>
@@ -141,7 +149,7 @@ const AssetDetailsModal = (props: {
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Company</p>
-                    <p className="font-medium">{props.asset?.department?.companyId}</p>
+                    <p className="font-medium">{props.asset?.department?.company?.name !== "" ? props.asset?.department?.company?.name : "--"}</p>
                   </div>
                 </section>
               </div>
@@ -152,19 +160,19 @@ const AssetDetailsModal = (props: {
                 <section className="grid grid-cols-4 gap-2 space-y-2">
                   <div className="col-span-1">
                     <p className="font-light">Currency</p>
-                    <p className="font-medium">{props.asset?.management?.currency}</p>
+                    <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Method</p>
-                    <p className="font-medium">{props.asset?.management?.accounting_method}</p>
+                    <p className="font-medium">{props.asset?.management?.accounting_method ?? "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Original Cost</p>
-                    <p className="font-medium">{props.asset?.management?.original_cost}</p>
+                    <p className="font-medium">{props.asset?.management?.original_cost ?? "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Current Cost</p>
-                    <p className="font-medium">{props.asset?.management?.current_cost}</p>
+                    <p className="font-medium">{props.asset?.management?.current_cost ?? "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Purchased Date</p>
@@ -172,11 +180,11 @@ const AssetDetailsModal = (props: {
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Purchased From</p>
-                    <p className="font-medium">{props.asset?.vendor?.name}</p>
+                    <p className="font-medium">{props.asset?.vendor?.id !== 0 ? props.asset?.vendor?.name : "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Purchased By</p>
-                    <p className="font-medium">Arvae</p>
+                    <p className="font-medium">Arvae (to add)</p>
                   </div>
                 </section>
               </div>
@@ -187,23 +195,23 @@ const AssetDetailsModal = (props: {
                 <section className="grid grid-cols-4 gap-2 space-y-2">
                   <div className="col-span-1">
                     <p className="font-light">Start Date</p>
-                    <p className="font-medium">{props.asset?.management?.depreciation_start?.toLocaleDateString()}</p>
+                    <p className="font-medium">{props.asset?.management?.depreciation_start ? props.asset?.management?.depreciation_start?.toLocaleDateString() : "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">End Date</p>
-                    <p className="font-medium">{props.asset?.management?.depreciation_end?.toLocaleDateString()}</p>
+                    <p className="font-medium">{props.asset?.management?.depreciation_end ? props.asset?.management?.depreciation_end?.toLocaleDateString() : "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Residual Value</p>
-                    <p className="font-medium">{props.asset?.management?.residual_value}</p>
+                    <p className="font-medium">{props.asset?.management?.residual_value ? props.asset?.management?.residual_value : "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Period</p>
-                    <p className="font-medium">{props.asset?.management?.depreciation_period}</p>
+                    <p className="font-medium">{props.asset?.management?.depreciation_period ? props.asset?.management?.depreciation_period : "--"}</p>
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Method</p>
-                    <p className="font-medium">{props.asset?.management?.depreciation_rule}</p>
+                    <p className="font-medium">{props.asset?.management?.depreciation_rule ? props.asset?.management?.depreciation_rule : "--"}</p>
                   </div>
                 </section>
                 <section>
@@ -215,31 +223,38 @@ const AssetDetailsModal = (props: {
           </div>
           <div className="mt-4 px-6 border-l">
             <section className="relative">
-              <div className="p-2 border-2 border-tangerine-300">
+              <div className="p-2 border-2 w-[195.2px] h-[107.2px] border-tangerine-300 relative">
+                {
+                  !genBarcode && <button onClick={genBar} className="absolute top-8 left-4 z-[10000] outline-none focus:outline-none text-neutral-50 bg-tangerine-400 hover:bg-tangerine-500 rounded-lg px-5 py-2">
+                    Generate Barcode
+                  </button>
+                }
+
                 <div id="printSVG" ref={componentRef}>
                   <svg id="barcode" />
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => { handlePrint(); console.log("printing barcode") }}
-                className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none p-2 rounded-full absolute bottom-3 right-2 bg-tangerine-300 hover:bg-tangerine-400">
-                {""} <i className="fa-solid fa-print" />
-              </button>
+              {
+                genBarcode && <button
+                  type="button"
+                  onClick={() => { handlePrint(); console.log("printing barcode") }}
+                  className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none p-2 rounded-full absolute bottom-3 right-2 bg-tangerine-300 hover:bg-tangerine-400">
+                  {""} <i className="fa-solid fa-print" />
+                </button>}
             </section>
             <section className="flex flex-col gap-2 p-2">
 
               <div className="">
                 <p className="font-medium">Class</p>
-                <p className="font-light">{props.asset?.model?.classId}</p>
+                <p className="font-light">{props.asset?.model?.class ? props.asset?.model?.class?.name : "--"}</p>
               </div>
               <div className="">
                 <p className="font-medium">Category</p>
-                <p className="font-light">{props.asset?.model?.categoryId}</p>
+                <p className="font-light">{props.asset?.model?.category ? props.asset?.model?.category?.name : "--"}</p>
               </div>
               <div className="">
                 <p className="font-medium">Type</p>
-                <p className="font-light">{props.asset?.model?.typeId}</p>
+                <p className="font-light">{props.asset?.model?.type ? props.asset?.model?.type?.name : "--"}</p>
               </div>
             </section>
             <nav className="relative my-2 flex flex-1 flex-col gap-2 ">
@@ -327,7 +342,7 @@ export const AssetDeleteModal = (props: {
                     className="flex items-center gap-2 text-red-500"
                   >
                     <i className="fa-solid fa-circle text-xs" />
-                    {asset?.serial_no ?? "asset[serial_no]"}
+                    {asset?.number ?? "--"}
                   </li>
                 ))}
             </ul>
@@ -347,7 +362,7 @@ export const AssetDeleteModal = (props: {
               onClick={() => handleDelete()}
             // disabled={isLoading}
             >
-              Yes, delete records
+              Yes, delete record/s
             </button>
           </div>
         </div>

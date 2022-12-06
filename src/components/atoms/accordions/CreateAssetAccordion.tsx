@@ -85,7 +85,7 @@ const CreateAssetAccordion = () => {
   const { data: assetsData } = trpc.asset.findAll.useQuery()
   const assetsList = useMemo(
     () =>
-      assetsData?.assets.filter((item) => item.id != 1).map((asset) => {
+      assetsData?.assets.filter((item) => item.id != 0).map((asset) => {
         return { value: asset.id.toString(), label: asset.name }
       }),
     [assetsData]
@@ -95,7 +95,7 @@ const CreateAssetAccordion = () => {
   const { data: projectsData } = trpc.assetProject.findAll.useQuery()
   const projectsList = useMemo(
     () =>
-      projectsData?.filter((item) => item.id != 1).map((project) => {
+      projectsData?.filter((item) => item.id != 0).map((project) => {
         return { value: project.id.toString(), label: project.name }
       }),
     [projectsData]
@@ -105,7 +105,7 @@ const CreateAssetAccordion = () => {
   const { data: vendorsData } = trpc.vendor.findAll.useQuery()
   const vendorsList = useMemo(
     () =>
-      vendorsData?.vendors.filter((item) => item.id != 1).map((vendor) => {
+      vendorsData?.vendors.filter((item) => item.id != 0).map((vendor) => {
         return { value: vendor.id.toString(), label: vendor.name }
       }),
     [vendorsData]
@@ -115,7 +115,7 @@ const CreateAssetAccordion = () => {
   const { data: companyData } = trpc.company.findAll.useQuery()
   const companyList = useMemo(
     () =>
-      companyData?.companies.filter((item) => item.id != 1).map((company) => {
+      companyData?.companies.filter((item) => item.id != 0).map((company) => {
         return { value: company.id.toString(), label: company.name }
       }),
     [companyData]

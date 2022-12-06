@@ -5,11 +5,11 @@ import { ColumnType, DetailType, NavType } from "../types/table"
 export const columns = [
   { value: "number", name: "Asset No." },
   { value: "serial_no", name: "Serial No." },
-  { value: "type", name: "Type" },
+  // { value: "type", name: "Type" },
   { value: "name", name: "Name" },
-  { value: "description", name: "Description" },
+  // { value: "description", name: "Description" },
   { value: "custodian", name: "Custodian" },
-  { value: "createdAt", name: "Added Date" },
+  // { value: "createdAt", name: "Added Date" },
 ] as ColumnType[]
 
 export const vendorColumns = [

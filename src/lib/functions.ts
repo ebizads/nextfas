@@ -11,17 +11,18 @@ export const getProperty = (
   //subfilter?: string
 ) => {
   //get object property
-  const property =
-    Object.getOwnPropertyDescriptor(type, filter)?.value ?? "No value"
+  const property = Object.getOwnPropertyDescriptor(type, filter)?.value ?? "--"
 
   //returns the actual property as string
-  if (typeof property === "string" || typeof property === "number")
-    return property.toString()
+  if (typeof property === "string" || typeof property === "number") {
+    const value = property.toString()
+    return value.length > 0 ? property.toString() : "--"
+  }
 
   //dig deeper if obj is an actual obj
   return property
-    ? Object.getOwnPropertyDescriptor(property, "name")?.value
-    : "No Value"
+    ? Object.getOwnPropertyDescriptor(property, "name")?.value ?? "--"
+    : "--"
 
   // Allen's approach
   // if (typeof type?.[filter as keyof typeof type] === "object") {

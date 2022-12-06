@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
-import { Checkbox, Loader } from "@mantine/core"
+import { Checkbox } from "@mantine/core"
 import Modal from "../../asset/Modal"
 import { AssetType } from "../../../types/generic"
-import { asset_information, columns } from "../../../lib/table"
+import { columns } from "../../../lib/table"
 import { getProperty } from "../../../lib/functions"
 import { navigations } from "../accordions/NavAccordion"
 import { trpc } from "../../../utils/trpc"
@@ -333,7 +333,7 @@ export const AssetDeleteModal = (props: {
             from <span className="text-tangerine-600">Assets Table</span>.
           </div>
           {showList && props.assets && (
-            <ul className="min-h-10 flex h-fit max-h-20 w-fit flex-col ">
+            <ul className="min-h-10 flex max-h-20 w-fit flex-col overflow-y-auto px-4">
               {props.assets
                 .filter((asset) => props.checkboxes.includes(asset?.id ?? 0))
                 .map((asset, idx) => (
@@ -348,7 +348,7 @@ export const AssetDeleteModal = (props: {
             </ul>
           )}
           <p className="text-neutral-500">
-            This action is irrevokable, please carefully review the action.
+            <i className="fa-regular fa-circle-exclamation" /> This action is irrevokable, please carefully review the action.
           </p>
           <div className="flex items-center justify-end gap-2">
             <button

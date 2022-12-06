@@ -17,15 +17,12 @@ export const assetRouter = t.router({
             class: true,
           },
         },
-        custodian: {
-          include: {
-            team: true,
-            address: true,
-          },
-        },
+        custodian: true,
         department: {
           include: {
             location: true,
+            company: true,
+            teams: true,
           },
         },
         vendor: true,

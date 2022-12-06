@@ -18,7 +18,11 @@ export const assetRouter = t.router({
           },
         },
         custodian: true,
-        department: true,
+        department: {
+          include: {
+            location: true,
+          },
+        },
         vendor: true,
         subsidiary: true,
         management: true,

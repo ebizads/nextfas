@@ -127,6 +127,7 @@ export const assetRouter = t.router({
         subsidiaryId,
         projectId,
         parentId,
+        addedById,
         ...rest
       } = input
 
@@ -178,6 +179,11 @@ export const assetRouter = t.router({
               id: parentId ?? 0,
             },
           },
+          addedBy: {
+            connect: {
+              id: addedById ?? 0,
+            },
+          },
           ...rest,
         },
         include: {
@@ -189,6 +195,7 @@ export const assetRouter = t.router({
           department: true,
           vendor: true,
           management: true,
+          addedBy: true,
         },
       })
       return asset

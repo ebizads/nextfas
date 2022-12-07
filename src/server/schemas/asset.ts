@@ -19,6 +19,7 @@ export const AssetCreateInput = z.object({
   }),
   projectId: z.number().optional(),
   parentId: z.number().optional(),
+  addedById: z.number().optional(),
   management: ManagementCreateInput,
 })
 
@@ -43,6 +44,34 @@ export const AssetEditInput = z.object({
   //management: ManagementEditInput.optional(),
 })
 
+export const AssetDisposalCreateInput = z.object({
+  disposalDate: z.date().optional(),
+  disposalStatus: z.string().optional(),
+  departmentCode: z.string().optional(),
+  customerName: z.string().optional(),
+  salesAmount: z.number().optional(),
+  salesInvoice: z.string().optional(),
+  agreedPrice: z.number().optional(),
+  cufsCodeString: z.string().optional(),
+
+  assetId: z.number().optional(),
+  disposalTypeId: z.number().optional(),
+})
+
+export const AssetDisposalEditInput = z.object({
+  id: z.number(),
+  disposalDate: z.date().optional(),
+  disposalStatus: z.string().optional(),
+  departmentCode: z.string().optional(),
+  customerName: z.string().optional(),
+  salesAmount: z.number().optional(),
+  salesInvoice: z.string().optional(),
+  agreedPrice: z.number().optional(),
+  cufsCodeString: z.string().optional(),
+
+  assetId: z.number().optional(),
+  disposalTypeId: z.number().optional(),
+})
 // export const AssetEditKevinInput = z.object({
 //   id: z.number(),
 //   name: z.string().min(1, "Please provide name"),

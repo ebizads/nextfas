@@ -25,6 +25,7 @@ export const assetRouter = t.router({
             teams: true,
           },
         },
+        parent: true,
         vendor: true,
         subsidiary: true,
         management: true,

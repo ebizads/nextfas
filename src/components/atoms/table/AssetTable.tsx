@@ -98,7 +98,9 @@ const AssetDetailsModal = (props: {
                 <section className="grid grid-cols-4">
                   <div className="col-span-1">
                     <p className="font-light">Parent Asset</p>
-                    <p className="font-medium">{props.asset?.parentId !== 0 ? props.asset?.parentId : "--"}</p>
+                    <p className="font-medium">{props.asset?.parentId !== 0 ? props.asset?.parent?.name : "--"}</p>
+                    <p className="text-[0.6rem] text-neutral-500 italic">{props.asset?.parentId !== 0 && props.asset?.parent?.number}</p>
+
                   </div>
                   <div className="col-span-1">
                     <p className="font-light">Model Name</p>
@@ -183,7 +185,7 @@ const AssetDetailsModal = (props: {
                     <p className="font-medium">{props.asset?.vendor?.id !== 0 ? props.asset?.vendor?.name : "--"}</p>
                   </div>
                   <div className="col-span-1">
-                    <p className="font-light">Purchased By</p>
+                    <p className="font-light">Added By</p>
                     <p className="font-medium">Arvae (to add)</p>
                   </div>
                 </section>

@@ -1,0 +1,134 @@
+import { z } from "zod"
+import { authedProcedure, t } from "../trpc"
+import {
+  AssetDisposalCreateInput,
+  AssetDisposalEditInput,
+} from "../../schemas/asset"
+import { TRPCError } from "@trpc/server"
+
+export const assetDisposalRouter = t.router({
+  findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
+    const assetDisposal = await ctx.prisma.assetDisposal.findUnique({
+      where: {
+        id: input,
+      },
+      include: {
+        asset: true,
+        disposalType: true,
+      },
+    })
+    return assetDisposal
+  }),
+  findAll: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              disposalDate: z.date().optional(),
+              disposalStatus: z.string().optional(),
+              departmentCode: z.string().optional(),
+              customerName: z.string().optional(),
+              salesAmount: z.number().optional(),
+              salesInvoice: z.string().optional(),
+              agreedPrice: z.number().optional(),
+              cufsCodeString: z.string().optional(),
+              assetId: z.number().optional(),
+              disposalTypeId: z.number().optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              updatedAt: z.date().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const [assetDisposals, count] = await ctx.prisma.$transaction([
+        ctx.prisma.assetDisposal.findMany({
+          orderBy: {
+            createdAt: "asc",
+          },
+          include: {
+            asset: true,
+            disposalType: true,
+          },
+          where: {
+            NOT: {
+              deleted: true,
+            },
+            customerName: { contains: input?.search?.customerName },
+            departmentCode: { contains: input?.search?.departmentCode },
+          },
+          skip: input?.page
+            ? (input.page - 1) * (input.limit ?? 10)
+            : undefined,
+          take: input?.limit ?? 10,
+        }),
+        ctx.prisma.assetDisposal.count({
+          where: {
+            NOT: {
+              deleted: true,
+            },
+          },
+        }),
+      ])
+
+      return {
+        assetDisposals,
+        count,
+      }
+    }),
+  create: authedProcedure
+    .input(AssetDisposalCreateInput)
+    .mutation(async ({ ctx, input }) => {
+      const { assetId, disposalTypeId, ...rest } = input
+
+      const assetDisposal = await ctx.prisma.assetDisposal.create({
+        data: {
+          asset: {
+            connect: {
+              id: assetId,
+            },
+          },
+          disposalType: {
+            connect: {
+              id: disposalTypeId,
+            },
+          },
+          ...rest,
+        },
+        include: {
+          asset: true,
+          disposalType: true,
+        },
+      })
+      return assetDisposal
+    }),
+  edit: authedProcedure
+    .input(AssetDisposalEditInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...rest } = input
+      try {
+        await ctx.prisma.assetDisposal.update({
+          where: {
+            id,
+          },
+          data: {
+            ...rest,
+          },
+        })
+
+        return "Asset updated successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+})

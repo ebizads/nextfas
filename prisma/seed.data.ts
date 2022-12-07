@@ -227,8 +227,8 @@ export const employeeSeed: z.infer<typeof EmployeeCreateInput>[] = [
 ]
 
 export const classSeed: { name: string }[] = [
-  { name: "Techonology" },
-  { name: "Utitility" },
+  { name: "Technology" },
+  { name: "Utility" },
 ]
 
 export const categorySeed: { name: string }[] = [
@@ -333,16 +333,17 @@ export const assetSeed: z.infer<typeof AssetCreateInput>[] = [
     number: "THL-001",
     description: "lorem ipsum",
     barcode: "THL-001",
-    custodianId: 1,
-    departmentId: 1,
-    vendorId: 1,
+    custodianId: 0,
+    departmentId: 0,
+    vendorId: 0,
+    subsidiaryId: 0,
     model: {
       name: "Inspiron 15 3000",
       brand: "Dell",
       number: "15 3000",
-      classId: 1,
-      categoryId: 1,
-      typeId: 1,
+      classId: 0,
+      categoryId: 0,
+      typeId: 0,
     },
     management: {
       currency: "PHP",
@@ -363,16 +364,17 @@ export const assetSeed: z.infer<typeof AssetCreateInput>[] = [
     number: "THC-002",
     description: "lorem ipsum",
     barcode: "THC-002",
-    custodianId: 1,
-    departmentId: 1,
-    vendorId: 1,
+    custodianId: 0,
+    departmentId: 0,
+    vendorId: 0,
+    subsidiaryId: 0,
     model: {
       name: "Auros M15",
       brand: "Auros",
       number: "M15",
-      classId: 1,
-      categoryId: 1,
-      typeId: 2,
+      classId: 0,
+      categoryId: 0,
+      typeId: 0,
     },
     management: {
       currency: "PHP",
@@ -393,16 +395,17 @@ export const assetSeed: z.infer<typeof AssetCreateInput>[] = [
     number: "THC-003",
     description: "lorem ipsum",
     barcode: "THC-003",
-    custodianId: 4,
-    departmentId: 2,
-    vendorId: 3,
+    custodianId: 0,
+    departmentId: 0,
+    vendorId: 0,
+    subsidiaryId: 0,
     model: {
       name: "EPSON L3110",
       brand: "EPSON",
       number: "L3110",
-      classId: 1,
-      categoryId: 1,
-      typeId: 2,
+      classId: 0,
+      categoryId: 0,
+      typeId: 0,
     },
     management: {
       currency: "PHP",

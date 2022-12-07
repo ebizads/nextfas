@@ -59,6 +59,7 @@ model User {
   attempts       Int       @default(0)
   accounts       Account[]
   address        Address?
+  created_assets Asset[]
   profile        Profile?
   sessions       Session[]
 }
@@ -213,6 +214,37 @@ model AssetManagement {
   asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
+model AssetDisposal {
+  id             Int           @id @default(autoincrement())
+  disposalDate   DateTime?
+  disposalStatus String?
+  departmentCode String?
+  customerName   String?
+  salesAmount    Float?
+  salesInvoice   String?
+  agreedPrice    Float?
+  cufsCodeString String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+  deleted        Boolean       @default(false)
+  disposalTypeId Int?
+  assetId        Int?          @unique
+  remarks        String?
+  asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
+}
+
+model DisposalType {
+  id        Int             @id @default(autoincrement())
+  name      String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean         @default(false)
+  disposal  AssetDisposal[]
+}
+
 model Company {
   id           Int          @id @default(autoincrement())
   name         String
@@ -308,6 +340,8 @@ model Asset {
   deleted        Boolean          @default(false)
   departmentId   Int?
   subsidiaryId   Int?
+  addedById      Int?
+  addedBy        User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
   department     Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
@@ -316,6 +350,7 @@ model Asset {
   subsidiary     Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   children       Asset[]          @relation("children")
+  disposal       AssetDisposal?
   management     AssetManagement?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])

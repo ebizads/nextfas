@@ -18,7 +18,14 @@ export const assetRouter = t.router({
           },
         },
         custodian: true,
-        department: true,
+        department: {
+          include: {
+            location: true,
+            company: true,
+            teams: true,
+          },
+        },
+        parent: true,
         vendor: true,
         subsidiary: true,
         management: true,
@@ -63,13 +70,22 @@ export const assetRouter = t.router({
             createdAt: "asc",
           },
           include: {
-            model: true,
-            custodian: true,
+            model: {
+              include: {
+                class: true,
+                category: true,
+                type: true,
+              },
+            },
             department: {
               include: {
                 location: true,
+                company: true,
+                teams: true,
               },
             },
+            parent: true,
+            custodian: true,
             vendor: true,
             management: true,
           },
@@ -111,6 +127,7 @@ export const assetRouter = t.router({
         subsidiaryId,
         projectId,
         parentId,
+        addedById,
         ...rest
       } = input
 
@@ -162,6 +179,11 @@ export const assetRouter = t.router({
               id: parentId ?? 0,
             },
           },
+          addedBy: {
+            connect: {
+              id: addedById ?? 0,
+            },
+          },
           ...rest,
         },
         include: {
@@ -173,6 +195,7 @@ export const assetRouter = t.router({
           department: true,
           vendor: true,
           management: true,
+          addedBy: true,
         },
       })
       return asset
@@ -268,6 +291,50 @@ export const assetRouter = t.router({
         return "Asset updated successfully"
       } catch (error) {
         console.log("NAG ERROR TANGA")
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
+    try {
+      await ctx.prisma.asset.update({
+        where: {
+          id: input,
+        },
+        data: {
+          deleted: true,
+          deletedAt: new Date(),
+        },
+      })
+
+      return "Asset deleted successfully"
+    } catch (error) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: JSON.stringify(error),
+      })
+    }
+  }),
+  deleteMany: authedProcedure
+    .input(z.array(z.number()))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.asset.updateMany({
+          where: {
+            id: {
+              in: input,
+            },
+          },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+          },
+        })
+
+        return "Assets deleted successfully"
+      } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),

@@ -59,6 +59,7 @@ model User {
   attempts       Int       @default(0)
   accounts       Account[]
   address        Address?
+  Asset          Asset[]
   profile        Profile?
   sessions       Session[]
 }
@@ -308,6 +309,8 @@ model Asset {
   deleted        Boolean          @default(false)
   departmentId   Int?
   subsidiaryId   Int?
+  addedById      Int?
+  User           User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
   department     Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
@@ -316,7 +319,39 @@ model Asset {
   subsidiary     Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   children       Asset[]          @relation("children")
+  AssetDisposal  AssetDisposal?
   management     AssetManagement?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
+}
+
+model AssetDisposal {
+  id             Int           @id @default(autoincrement())
+  disposalDate   DateTime?
+  disposalStatus String?
+  departmentCode String?
+  customerName   String?
+  salesAmount    Float?
+  salesInvoice   String?
+  agreedPrice    Float?
+  cufsCodeString String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime
+  deletedAt      DateTime?
+  deleted        Boolean       @default(false)
+  disposalTypeId Int?
+  assetId        Int?          @unique
+  remarks        String?
+  Asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  DisposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
+}
+
+model DisposalType {
+  id            Int             @id @default(autoincrement())
+  name          String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  deletedAt     DateTime?
+  deleted       Boolean         @default(false)
+  AssetDisposal AssetDisposal[]
 }

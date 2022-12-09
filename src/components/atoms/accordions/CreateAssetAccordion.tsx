@@ -21,7 +21,7 @@ import { useReactToPrint } from "react-to-print"
 
 
 const CreateAssetAccordion = () => {
-  const { mutate, isLoading, error } = trpc.asset.create.useMutation()
+  const { mutate, isLoading, error } = trpc.asset.edit.useMutation()
 
   const {
     register,
@@ -289,7 +289,7 @@ const CreateAssetAccordion = () => {
     } else {
       console.log("Submitting: ", form_data)
 
-      mutate(form_data)
+      // mutate(form_data)
 
       setTimeout(function () {
         setIsLoading(false)

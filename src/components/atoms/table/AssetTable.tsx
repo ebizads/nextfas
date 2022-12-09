@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import { useMinimizeStore } from "../../../store/useStore"
+import { useMinimizeStore, useUpdateAssetStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
 import Modal from "../../asset/Modal"
@@ -384,7 +384,9 @@ const AssetTable = (props: {
 
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-  const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
+  // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
+
+  const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {

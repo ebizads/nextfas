@@ -31,6 +31,7 @@ export const assetDisposalRouter = t.router({
               disposalStatus: z.string().optional(),
               departmentCode: z.string().optional(),
               customerName: z.string().optional(),
+              telephoneNo: z.string().optional(),
               salesAmount: z.number().optional(),
               salesInvoice: z.string().optional(),
               agreedPrice: z.number().optional(),

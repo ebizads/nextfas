@@ -231,6 +231,7 @@ model AssetDisposal {
   disposalTypeId Int?
   assetId        Int?          @unique
   remarks        String?
+  telephoneNo    String?
   asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }

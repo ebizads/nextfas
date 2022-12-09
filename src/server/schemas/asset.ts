@@ -52,6 +52,7 @@ export const AssetDisposalCreateInput = z.object({
   customerName: z.string().optional(),
   salesAmount: z.number().optional(),
   salesInvoice: z.string().optional(),
+  apInvoice: z.string().optional(),
   agreedPrice: z.number().optional(),
   cufsCodeString: z.string().optional(),
 
@@ -68,6 +69,7 @@ export const AssetDisposalEditInput = z.object({
   customerName: z.string().optional(),
   salesAmount: z.number().optional(),
   salesInvoice: z.string().optional(),
+  apInvoice: z.string().optional(),
   agreedPrice: z.number().optional(),
   cufsCodeString: z.string().optional(),
 

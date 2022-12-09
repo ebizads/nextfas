@@ -34,6 +34,7 @@ export const assetDisposalRouter = t.router({
               telephoneNo: z.string().optional(),
               salesAmount: z.number().optional(),
               salesInvoice: z.string().optional(),
+              apInvoice: z.string().optional(),
               agreedPrice: z.number().optional(),
               cufsCodeString: z.string().optional(),
               assetId: z.number().optional(),

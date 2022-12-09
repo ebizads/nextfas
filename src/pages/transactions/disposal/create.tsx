@@ -1,12 +1,20 @@
 import { Select } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import React from "react";
+import CreateDisposeAccordion from "../../../components/atoms/accordions/CreateDisposeAccordion";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 
 const DisposeNew = () => {
     return (
         <DashboardLayout>
             <div className="rounded-lg p-8 m-2 bg-white">
+
+
+                <div className="py-2">
+                    <CreateDisposeAccordion />
+
+                </div>
+
                 <h1> DISPOSAL </h1>
                 <form>
                     <div className="py-2 flex flex-wrap px-2">
@@ -208,6 +216,8 @@ const DisposeNew = () => {
                         </button>
                     </div>
                 </form>
+
+
             </div>
         </DashboardLayout>
     )

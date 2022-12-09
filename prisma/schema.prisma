@@ -82,10 +82,10 @@ model Employee {
   updatedAt    DateTime  @updatedAt
   deleted      Boolean   @default(false)
   deletedAt    DateTime?
-  supervisee   Team?     @relation("supervisors", fields: [superviseeId], references: [id])
-  team         Team?     @relation("members", fields: [teamId], references: [id])
   address      Address?
   owned_assets Asset[]
+  supervisee   Team?     @relation("supervisors", fields: [superviseeId], references: [id])
+  team         Team?     @relation("members", fields: [teamId], references: [id])
   profile      Profile?
 }
 
@@ -149,10 +149,10 @@ model Model {
   updatedAt  DateTime       @updatedAt
   deletedAt  DateTime?
   deleted    Boolean        @default(false)
+  assets     Asset?
   category   AssetCategory? @relation(fields: [categoryId], references: [id])
   class      AssetClass?    @relation(fields: [classId], references: [id])
   type       AssetType?     @relation(fields: [typeId], references: [id])
-  assets     Asset?
 }
 
 model AssetClass {
@@ -257,9 +257,9 @@ model Company {
   updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
   deleted      Boolean      @default(false)
-  parent       Company?     @relation("subsidiaries", fields: [parentId], references: [id])
   address      Address?
   assets       Asset[]
+  parent       Company?     @relation("subsidiaries", fields: [parentId], references: [id])
   subsidiaries Company[]    @relation("subsidiaries")
   departments  Department[]
 }
@@ -273,9 +273,9 @@ model Department {
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
   deleted    Boolean   @default(false)
+  assets     Asset[]
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  assets     Asset[]
   teams      Team?
 }
 
@@ -287,9 +287,9 @@ model Team {
   updatedAt    DateTime    @updatedAt
   deletedAt    DateTime?
   deleted      Boolean     @default(false)
-  department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   supervisors  Employee[]  @relation("supervisors")
   members      Employee[]  @relation("members")
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 }
 
 model AssetProject {
@@ -347,9 +347,9 @@ model Asset {
   department     Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   model          Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
   parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
+  children       Asset[]          @relation("children")
   subsidiary     Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  children       Asset[]          @relation("children")
   disposal       AssetDisposal?
   management     AssetManagement?
 

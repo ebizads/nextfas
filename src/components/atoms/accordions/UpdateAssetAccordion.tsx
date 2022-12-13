@@ -21,8 +21,8 @@ import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
 
 
-const CreateAssetAccordion = () => {
-  const { mutate, isLoading, error } = trpc.asset.create.useMutation()
+const UpdateAssetAccordion = () => {
+  const { mutate, isLoading, error } = trpc.asset.edit.useMutation()
 
   const { selectedAsset } = useUpdateAssetStore()
 
@@ -37,12 +37,12 @@ const CreateAssetAccordion = () => {
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
     defaultValues: {
-      // name: "",
-      // alt_number: "",
+      name: selectedAsset?.name,
+      alt_number: selectedAsset?.alt_number,
       // barcode: "",
-      // custodianId: 0,
-      // departmentId: 0,
-      // description: "",
+      custodianId: selectedAsset?.custodianId ?? undefined,
+      departmentId: selectedAsset?.departmentId ?? undefined,
+      description: selectedAsset?.description,
       // model: {
       //   name: "",
       //   brand: "",
@@ -61,22 +61,30 @@ const CreateAssetAccordion = () => {
       //   categoryId: 0,
       //   classId: 0,
       // },
-      // number: "",
-      // parentId: 0,
-      // projectId: 0,
-      // remarks: "",
-      // serial_no: "",
-      // subsidiaryId: 0,
-      // vendorId: 0,
-      // subsidiaryId: undefined,
+      number: selectedAsset?.number,
+      parentId: selectedAsset?.parentId ?? undefined,
+      projectId: selectedAsset?.parent?.assetProjectId ?? undefined,
+      remarks: selectedAsset?.remarks,
+      serial_no: selectedAsset?.serial_no,
+      subsidiaryId: selectedAsset?.subsidiaryId ?? undefined,
+      vendorId: selectedAsset?.vendorId ?? undefined,
       management: {
-        // original_cost: 0,
-        // current_cost: 0,
-        // residual_value: 0,
-        depreciation_period: 1,
+        original_cost: selectedAsset?.management?.original_cost,
+        current_cost: selectedAsset?.management?.current_cost,
+        residual_value: selectedAsset?.management?.residual_value,
+        depreciation_period: selectedAsset?.management?.depreciation_period,
       },
     },
   })
+
+  // useEffect(() => {
+  //   if (selectedAsset) {
+
+  //     reset()
+  //   }
+  // }
+  //   , [selectedAsset, reset])
+
 
   const [classId, setClassId] = useState<string | null>(null)
   const [categoryId, setCategoryId] = useState<string | null>(null)
@@ -115,14 +123,14 @@ const CreateAssetAccordion = () => {
   ) as SelectValueType[] | undefined
 
   //gets and sets all companies
-  const { data: companyData } = trpc.company.findAll.useQuery()
-  const companyList = useMemo(
-    () =>
-      companyData?.companies.filter((item) => item.id != 0).map((company) => {
-        return { value: company.id.toString(), label: company.name }
-      }),
-    [companyData]
-  ) as SelectValueType[] | undefined
+  // const { data: companyData } = trpc.company.findAll.useQuery()
+  // const companyList = useMemo(
+  //   () =>
+  //     companyData?.companies.filter((item) => item.id != 0).map((company) => {
+  //       return { value: company.id.toString(), label: company.name }
+  //     }),
+  //   [companyData]
+  // ) as SelectValueType[] | undefined
 
   //gets and sets all class, categories, and types
   const { data: classData } = trpc.assetClass.findAll.useQuery()
@@ -135,45 +143,45 @@ const CreateAssetAccordion = () => {
   ) as SelectValueType[] | undefined
 
   //gets and sets all employee
-  const { data: employeeData } = trpc.employee.findAll.useQuery()
-  const employeeList = useMemo(
-    () =>
-      employeeData?.employees.filter((item) => item.id != 0).map((employeeItem) => {
-        return { value: employeeItem.id.toString(), label: employeeItem.name }
-      }),
-    [employeeData]
-  ) as SelectValueType[] | undefined
+  // const { data: employeeData } = trpc.employee.findAll.useQuery()
+  // const employeeList = useMemo(
+  //   () =>
+  //     employeeData?.employees.filter((item) => item.id != 0).map((employeeItem) => {
+  //       return { value: employeeItem.id.toString(), label: employeeItem.name }
+  //     }),
+  //   [employeeData]
+  // ) as SelectValueType[] | undefined
 
   //gets and sets all class, categories, and types
-  const { data: departmentData } = trpc.department.findAll.useQuery()
+  // const { data: departmentData } = trpc.department.findAll.useQuery()
 
-  const selectedDepartment = useMemo(() => {
-    const department = departmentData?.departments.filter(
-      (department) => department.id === Number(departmentId)
-    )[0]
+  // const selectedDepartment = useMemo(() => {
+  //   const department = departmentData?.departments.filter(
+  //     (department) => department.id === Number(departmentId)
+  //   )[0]
 
-    //set location === floor and room number
-    // setValue('locationId', department?.locationId ?? undefined)
-    return department?.location
-  }, [departmentId, departmentData]) as Location
+  //   //set location === floor and room number
+  //   // setValue('locationId', department?.locationId ?? undefined)
+  //   return department?.location
+  // }, [departmentId, departmentData]) as Location
 
-  const departmentList = useMemo(() => {
-    if (companyId) {
-      const dept = departmentData?.departments.filter(
-        (department) => department.companyId === Number(companyId)
-      )
-      if (dept) {
-        const departments = dept?.map((department) => {
-          return { value: department.id.toString(), label: department.name }
-        }) as SelectValueType[]
-        return departments ?? null
-      }
-    }
-    // console.log(departmentData)
-    setDepartmentId(null)
-    // console.error("Error loading departments")
-    return null
-  }, [companyId, departmentData])
+  // const departmentList = useMemo(() => {
+  //   if (companyId) {
+  //     const dept = departmentData?.departments.filter(
+  //       (department) => department.companyId === Number(companyId)
+  //     )
+  //     if (dept) {
+  //       const departments = dept?.map((department) => {
+  //         return { value: department.id.toString(), label: department.name }
+  //       }) as SelectValueType[]
+  //       return departments ?? null
+  //     }
+  //   }
+  //   // console.log(departmentData)
+  //   setDepartmentId(null)
+  //   // console.error("Error loading departments")
+  //   return null
+  // }, [companyId, departmentData])
 
   //asset description
   const [description, setDescription] = useState<string | null>(null)
@@ -235,14 +243,14 @@ const CreateAssetAccordion = () => {
     return null
   }, [categoryId, selectedClass])
 
-  const company_address = useMemo(() => {
-    if (companyId) {
-      const address = companyData?.companies.filter(
-        (company) => company.id === Number(companyId)
-      )[0]
-      return address ?? null
-    }
-  }, [companyId, companyData])
+  // const company_address = useMemo(() => {
+  //   if (companyId) {
+  //     const address = companyData?.companies.filter(
+  //       (company) => company.id === Number(companyId)
+  //     )[0]
+  //     return address ?? null
+  //   }
+  // }, [companyId, companyData])
 
   const [loading, setIsLoading] = useState<boolean>(false)
   const [assetId, setAssetId] = useState<string>(`-${moment().format("YYMDhms")}`)
@@ -609,7 +617,7 @@ const CreateAssetAccordion = () => {
             </Accordion.Control>
             <Accordion.Panel>
               <div className="grid grid-cols-9 gap-2">
-                <div className="col-span-3">
+                {/* <div className="col-span-3">
                   <ClassTypeSelect
                     query={companyId}
                     setQuery={setCompanyId}
@@ -721,7 +729,7 @@ const CreateAssetAccordion = () => {
                     />
                     <AlertInput>{errors?.custodianId?.message}</AlertInput>
                   </div>
-                </div>
+                </div> */}
                 <div className="col-span-9 grid grid-cols-8 gap-2">
                   <div className="col-span-2">
                     <TypeSelect
@@ -885,4 +893,4 @@ const CreateAssetAccordion = () => {
   )
 }
 
-export default CreateAssetAccordion
+export default UpdateAssetAccordion

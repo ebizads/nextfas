@@ -23,24 +23,18 @@ export const assetDisposalRouter = t.router({
     .input(
       z
         .object({
-          page: z.number().optional(),
-          limit: z.number().optional(),
-          search: z
-            .object({
-              disposalDate: z.date().optional(),
-              disposalStatus: z.string().optional(),
-              departmentCode: z.string().optional(),
-              customerName: z.string().optional(),
-              telephoneNo: z.string().optional(),
-              salesAmount: z.number().optional(),
-              salesInvoice: z.string().optional(),
-              apInvoice: z.string().optional(),
-              agreedPrice: z.number().optional(),
-              cufsCodeString: z.string().optional(),
-              assetId: z.number().optional(),
-              disposalTypeId: z.number().optional(),
-            })
-            .optional(),
+          disposalDate: z.date().optional(),
+          disposalStatus: z.string().optional(),
+          departmentCode: z.string().optional(),
+          customerName: z.string().optional(),
+          telephoneNo: z.string().optional(),
+          salesAmount: z.number().optional(),
+          salesInvoice: z.string().optional(),
+          apInvoice: z.string().optional(),
+          agreedPrice: z.number().optional(),
+          cufsCodeString: z.string().optional(),
+          assetId: z.number().optional(),
+          disposalTypeId: z.number().optional(),
           filter: z
             .object({
               updatedAt: z.date().optional(),
@@ -63,13 +57,7 @@ export const assetDisposalRouter = t.router({
             NOT: {
               deleted: true,
             },
-            customerName: { contains: input?.search?.customerName },
-            departmentCode: { contains: input?.search?.departmentCode },
           },
-          skip: input?.page
-            ? (input.page - 1) * (input.limit ?? 10)
-            : undefined,
-          take: input?.limit ?? 10,
         }),
         ctx.prisma.assetDisposal.count({
           where: {

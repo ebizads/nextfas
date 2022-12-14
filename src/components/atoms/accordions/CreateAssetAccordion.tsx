@@ -24,8 +24,6 @@ import { useUpdateAssetStore } from "../../../store/useStore"
 const CreateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
 
-  const { selectedAsset } = useUpdateAssetStore()
-
   const {
     register,
     handleSubmit,
@@ -128,7 +126,7 @@ const CreateAssetAccordion = () => {
   const { data: classData } = trpc.assetClass.findAll.useQuery()
   const classList = useMemo(
     () =>
-      classData?.map((classItem) => {
+      classData?.filter((item) => item.id != 0).map((classItem) => {
         return { value: classItem.id.toString(), label: classItem.name }
       }),
     [classData]
@@ -292,7 +290,7 @@ const CreateAssetAccordion = () => {
     } else {
       console.log("Submitting: ", form_data)
 
-      // mutate(form_data)
+      mutate(form_data)
 
       setTimeout(function () {
         setIsLoading(false)

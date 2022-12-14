@@ -203,7 +203,7 @@ const AssetDetailsModal = (props: {
                   </section>
                   <section>
                     <p className="font-light">Remarks</p>
-                    <p className="font-medium">{props.asset?.description ?? "--"}</p>
+                    <p className="font-medium">{props.asset?.management?.remarks ?? "--"}</p>
                   </section>
                 </div>
               </section>

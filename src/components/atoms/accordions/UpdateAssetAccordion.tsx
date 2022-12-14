@@ -36,61 +36,75 @@ const UpdateAssetAccordion = () => {
     formState: { errors, isDirty, isValid },
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
-    defaultValues: {
-      name: selectedAsset?.name,
-      alt_number: selectedAsset?.alt_number,
-      // barcode: "",
-      custodianId: selectedAsset?.custodianId ?? undefined,
-      departmentId: selectedAsset?.departmentId ?? undefined,
-      description: selectedAsset?.description,
-      // model: {
-      //   name: "",
-      //   brand: "",
-      //   number: "",
-      // asset_category: {
-      //   name: ""
-      // },
-      // asset_class: {
-      //   name: ""
-      // },
-      // typeId: 0,
-      // asset_type: {
-      //   name: ""
-      // },
-      //   typeId: 0,
-      //   categoryId: 0,
-      //   classId: 0,
-      // },
-      number: selectedAsset?.number,
-      parentId: selectedAsset?.parentId ?? undefined,
-      projectId: selectedAsset?.parent?.assetProjectId ?? undefined,
-      remarks: selectedAsset?.remarks,
-      serial_no: selectedAsset?.serial_no,
-      subsidiaryId: selectedAsset?.subsidiaryId ?? undefined,
-      vendorId: selectedAsset?.vendorId ?? undefined,
-      management: {
-        original_cost: selectedAsset?.management?.original_cost,
-        current_cost: selectedAsset?.management?.current_cost,
-        residual_value: selectedAsset?.management?.residual_value,
-        depreciation_period: selectedAsset?.management?.depreciation_period,
-      },
-    },
+    // defaultValues: {
+    //   name: selectedAsset?.name,
+    //   alt_number: selectedAsset?.alt_number,
+    //   // barcode: "",
+    //   custodianId: selectedAsset?.custodianId ?? undefined,
+    //   departmentId: selectedAsset?.departmentId ?? undefined,
+    //   description: selectedAsset?.description,
+    //   // model: {
+    //   //   name: "",
+    //   //   brand: "",
+    //   //   number: "",
+    //   // asset_category: {
+    //   //   name: ""
+    //   // },
+    //   // asset_class: {
+    //   //   name: ""
+    //   // },
+    //   // typeId: 0,
+    //   // asset_type: {
+    //   //   name: ""
+    //   // },
+    //   //   typeId: 0,
+    //   //   categoryId: 0,
+    //   //   classId: 0,
+    //   // },
+    //   number: selectedAsset?.number,
+    //   parentId: selectedAsset?.parentId ?? undefined,
+    //   projectId: selectedAsset?.parent?.assetProjectId ?? undefined,
+    //   remarks: selectedAsset?.remarks,
+    //   serial_no: selectedAsset?.serial_no,
+    //   subsidiaryId: selectedAsset?.subsidiaryId ?? undefined,
+    //   vendorId: selectedAsset?.vendorId ?? undefined,
+    //   management: {
+    //     original_cost: selectedAsset?.management?.original_cost,
+    //     current_cost: selectedAsset?.management?.current_cost,
+    //     residual_value: selectedAsset?.management?.residual_value,
+    //     depreciation_period: selectedAsset?.management?.depreciation_period,
+    //   },
+    // },
   })
 
-  // useEffect(() => {
-  //   if (selectedAsset) {
+  useEffect(() => {
+    if (selectedAsset) {
 
-  //     reset()
-  //   }
-  // }
-  //   , [selectedAsset, reset])
+      reset(selectedAsset as AssetFieldValues)
+      setValue("projectId", selectedAsset.assetProjectId ?? 0)
+      setValue("description", selectedAsset.description ?? "")
+
+      console.log(selectedAsset.management)
+
+      setValue("management.original_cost", selectedAsset.management?.original_cost)
+      setValue("management.current_cost", selectedAsset.management?.current_cost)
+      setValue("management.residual_value", selectedAsset.management?.residual_value)
+      setValue("management.purchase_date", selectedAsset.management?.purchase_date)
+      setValue("management.depreciation_start", selectedAsset.management?.depreciation_start)
+      setValue("management.depreciation_end", selectedAsset.management?.depreciation_end)
+      setValue("management.depreciation_period", selectedAsset.management?.depreciation_period)
+      setValue("management.remarks", selectedAsset.management?.remarks)
+
+    }
+  }
+    , [selectedAsset, reset])
 
 
-  const [classId, setClassId] = useState<string | null>(null)
-  const [categoryId, setCategoryId] = useState<string | null>(null)
-  const [typeId, setTypeId] = useState<string | null>(null)
-  const [companyId, setCompanyId] = useState<string | null>(null)
-  const [departmentId, setDepartmentId] = useState<string | null>(null)
+  const [classId, setClassId] = useState<string | null>(selectedAsset?.model?.classId?.toString() ?? null)
+  const [categoryId, setCategoryId] = useState<string | null>(selectedAsset?.model?.categoryId?.toString() ?? null)
+  const [typeId, setTypeId] = useState<string | null>(selectedAsset?.model?.typeId?.toString() ?? null)
+  const [companyId, setCompanyId] = useState<string | null>(selectedAsset?.department?.companyId?.toString() ?? null)
+  const [departmentId, setDepartmentId] = useState<string | null>(selectedAsset?.departmentId?.toString() ?? null)
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAll.useQuery()
@@ -136,7 +150,7 @@ const UpdateAssetAccordion = () => {
   const { data: classData } = trpc.assetClass.findAll.useQuery()
   const classList = useMemo(
     () =>
-      classData?.map((classItem) => {
+      classData?.filter((item) => item.id != 0).map((classItem) => {
         return { value: classItem.id.toString(), label: classItem.name }
       }),
     [classData]
@@ -184,12 +198,12 @@ const UpdateAssetAccordion = () => {
   // }, [companyId, departmentData])
 
   //asset description
-  const [description, setDescription] = useState<string | null>(null)
-  const [remarks, setRemarks] = useState<string | null>(null)
+  const [description, setDescription] = useState<string | null>(selectedAsset?.description ?? null)
+  const [remarks, setRemarks] = useState<string | null>(selectedAsset?.management?.remarks ?? null)
 
   //depreciation start and end period
-  const [dep_start, setDepStart] = useState<Date | null>(null)
-  const [dep_end, setDepEnd] = useState<Date | null>(null)
+  const [dep_start, setDepStart] = useState<Date | null>(selectedAsset?.management?.depreciation_start ?? null)
+  const [dep_end, setDepEnd] = useState<Date | null>(selectedAsset?.management?.depreciation_end ?? null)
 
   const [selectedClass, setSelectedClass] = useState<
     AssetClassType | undefined
@@ -239,7 +253,7 @@ const UpdateAssetAccordion = () => {
       return null
     }
 
-    console.error("Error loading types")
+    // console.error("Error loading types")
     return null
   }, [categoryId, selectedClass])
 
@@ -542,6 +556,7 @@ const UpdateAssetAccordion = () => {
                     register={register}
                     label="Original Cost"
                     placeholder="Original Cost"
+                    value={selectedAsset?.management?.original_cost?.toString()}
                     name="management.original_cost"
                   />
                   <AlertInput>
@@ -553,6 +568,8 @@ const UpdateAssetAccordion = () => {
                     register={register}
                     label="Current Cost"
                     placeholder="Current Cost"
+                    value={selectedAsset?.management?.current_cost?.toString()}
+
                     name="management.current_cost"
                   />
                   <AlertInput>
@@ -582,6 +599,7 @@ const UpdateAssetAccordion = () => {
                     register={register}
                     label="Residual Value"
                     placeholder="Residual Value"
+                    value={selectedAsset?.management?.residual_value?.toString()}
                     name={"management.residual_value"}
                   />
                   <AlertInput>
@@ -594,6 +612,7 @@ const UpdateAssetAccordion = () => {
                     placeholder="Month Day, Year"
                     allowFreeInput
                     size="sm"
+                    value={getValues("management.purchase_date")}
                     onChange={(value) => {
                       setValue("management.purchase_date", value)
                     }}
@@ -794,6 +813,7 @@ const UpdateAssetAccordion = () => {
                       placeholder="Month/s"
                       register={register}
                       label="Period (month/s)"
+                      value={selectedAsset?.management?.depreciation_period?.toString()}
                       name="management.depreciation_period"
                     />
                     <AlertInput>

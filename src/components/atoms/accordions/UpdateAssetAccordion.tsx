@@ -21,8 +21,10 @@ import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
 
 
-const CreateAssetAccordion = () => {
-  const { mutate, isLoading, error } = trpc.asset.create.useMutation()
+const UpdateAssetAccordion = () => {
+  const { mutate, isLoading, error } = trpc.asset.edit.useMutation()
+
+  const { selectedAsset } = useUpdateAssetStore()
 
   const {
     register,
@@ -34,53 +36,75 @@ const CreateAssetAccordion = () => {
     formState: { errors, isDirty, isValid },
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
-    defaultValues: {
-      // name: "",
-      // alt_number: "",
-      // barcode: "",
-      // custodianId: 0,
-      // departmentId: 0,
-      // description: "",
-      // model: {
-      //   name: "",
-      //   brand: "",
-      //   number: "",
-      // asset_category: {
-      //   name: ""
-      // },
-      // asset_class: {
-      //   name: ""
-      // },
-      // typeId: 0,
-      // asset_type: {
-      //   name: ""
-      // },
-      //   typeId: 0,
-      //   categoryId: 0,
-      //   classId: 0,
-      // },
-      // number: "",
-      // parentId: 0,
-      // projectId: 0,
-      // remarks: "",
-      // serial_no: "",
-      // subsidiaryId: 0,
-      // vendorId: 0,
-      // subsidiaryId: undefined,
-      management: {
-        // original_cost: 0,
-        // current_cost: 0,
-        // residual_value: 0,
-        depreciation_period: 1,
-      },
-    },
+    // defaultValues: {
+    //   name: selectedAsset?.name,
+    //   alt_number: selectedAsset?.alt_number,
+    //   // barcode: "",
+    //   custodianId: selectedAsset?.custodianId ?? undefined,
+    //   departmentId: selectedAsset?.departmentId ?? undefined,
+    //   description: selectedAsset?.description,
+    //   // model: {
+    //   //   name: "",
+    //   //   brand: "",
+    //   //   number: "",
+    //   // asset_category: {
+    //   //   name: ""
+    //   // },
+    //   // asset_class: {
+    //   //   name: ""
+    //   // },
+    //   // typeId: 0,
+    //   // asset_type: {
+    //   //   name: ""
+    //   // },
+    //   //   typeId: 0,
+    //   //   categoryId: 0,
+    //   //   classId: 0,
+    //   // },
+    //   number: selectedAsset?.number,
+    //   parentId: selectedAsset?.parentId ?? undefined,
+    //   projectId: selectedAsset?.parent?.assetProjectId ?? undefined,
+    //   remarks: selectedAsset?.remarks,
+    //   serial_no: selectedAsset?.serial_no,
+    //   subsidiaryId: selectedAsset?.subsidiaryId ?? undefined,
+    //   vendorId: selectedAsset?.vendorId ?? undefined,
+    //   management: {
+    //     original_cost: selectedAsset?.management?.original_cost,
+    //     current_cost: selectedAsset?.management?.current_cost,
+    //     residual_value: selectedAsset?.management?.residual_value,
+    //     depreciation_period: selectedAsset?.management?.depreciation_period,
+    //   },
+    // },
   })
 
-  const [classId, setClassId] = useState<string | null>(null)
-  const [categoryId, setCategoryId] = useState<string | null>(null)
-  const [typeId, setTypeId] = useState<string | null>(null)
-  const [companyId, setCompanyId] = useState<string | null>(null)
-  const [departmentId, setDepartmentId] = useState<string | null>(null)
+  useEffect(() => {
+    if (selectedAsset) {
+
+      reset(selectedAsset as AssetFieldValues)
+      setValue("projectId", selectedAsset.assetProjectId ?? 0)
+      setValue("description", selectedAsset.description ?? "")
+
+      console.log(selectedAsset.management)
+
+      setValue("management.original_cost", selectedAsset.management?.original_cost)
+      setValue("management.current_cost", selectedAsset.management?.current_cost)
+      setValue("management.residual_value", selectedAsset.management?.residual_value)
+      setValue("management.purchase_date", selectedAsset.management?.purchase_date)
+      setValue("management.depreciation_start", selectedAsset.management?.depreciation_start)
+      setValue("management.depreciation_end", selectedAsset.management?.depreciation_end)
+      setValue("management.depreciation_period", selectedAsset.management?.depreciation_period)
+      setValue("management.remarks", selectedAsset.management?.remarks)
+
+    }
+  }
+    , [selectedAsset, reset])
+
+
+  const [classId, setClassId] = useState<string | null>(selectedAsset?.model?.classId?.toString() ?? null)
+  const [categoryId, setCategoryId] = useState<string | null>(selectedAsset?.model?.categoryId?.toString() ?? null)
+  const [typeId, setTypeId] = useState<string | null>(selectedAsset?.model?.typeId?.toString() ?? null)
+  const [companyId, setCompanyId] = useState<string | null>(selectedAsset?.department?.companyId?.toString() ?? null)
+  const [departmentId, setDepartmentId] = useState<string | null>(selectedAsset?.departmentId?.toString() ?? null)
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAll.useQuery()
@@ -113,14 +137,14 @@ const CreateAssetAccordion = () => {
   ) as SelectValueType[] | undefined
 
   //gets and sets all companies
-  const { data: companyData } = trpc.company.findAll.useQuery()
-  const companyList = useMemo(
-    () =>
-      companyData?.companies.filter((item) => item.id != 0).map((company) => {
-        return { value: company.id.toString(), label: company.name }
-      }),
-    [companyData]
-  ) as SelectValueType[] | undefined
+  // const { data: companyData } = trpc.company.findAll.useQuery()
+  // const companyList = useMemo(
+  //   () =>
+  //     companyData?.companies.filter((item) => item.id != 0).map((company) => {
+  //       return { value: company.id.toString(), label: company.name }
+  //     }),
+  //   [companyData]
+  // ) as SelectValueType[] | undefined
 
   //gets and sets all class, categories, and types
   const { data: classData } = trpc.assetClass.findAll.useQuery()
@@ -133,53 +157,53 @@ const CreateAssetAccordion = () => {
   ) as SelectValueType[] | undefined
 
   //gets and sets all employee
-  const { data: employeeData } = trpc.employee.findAll.useQuery()
-  const employeeList = useMemo(
-    () =>
-      employeeData?.employees.filter((item) => item.id != 0).map((employeeItem) => {
-        return { value: employeeItem.id.toString(), label: employeeItem.name }
-      }),
-    [employeeData]
-  ) as SelectValueType[] | undefined
+  // const { data: employeeData } = trpc.employee.findAll.useQuery()
+  // const employeeList = useMemo(
+  //   () =>
+  //     employeeData?.employees.filter((item) => item.id != 0).map((employeeItem) => {
+  //       return { value: employeeItem.id.toString(), label: employeeItem.name }
+  //     }),
+  //   [employeeData]
+  // ) as SelectValueType[] | undefined
 
   //gets and sets all class, categories, and types
-  const { data: departmentData } = trpc.department.findAll.useQuery()
+  // const { data: departmentData } = trpc.department.findAll.useQuery()
 
-  const selectedDepartment = useMemo(() => {
-    const department = departmentData?.departments.filter(
-      (department) => department.id === Number(departmentId)
-    )[0]
+  // const selectedDepartment = useMemo(() => {
+  //   const department = departmentData?.departments.filter(
+  //     (department) => department.id === Number(departmentId)
+  //   )[0]
 
-    //set location === floor and room number
-    // setValue('locationId', department?.locationId ?? undefined)
-    return department?.location
-  }, [departmentId, departmentData]) as Location
+  //   //set location === floor and room number
+  //   // setValue('locationId', department?.locationId ?? undefined)
+  //   return department?.location
+  // }, [departmentId, departmentData]) as Location
 
-  const departmentList = useMemo(() => {
-    if (companyId) {
-      const dept = departmentData?.departments.filter(
-        (department) => department.companyId === Number(companyId)
-      )
-      if (dept) {
-        const departments = dept?.map((department) => {
-          return { value: department.id.toString(), label: department.name }
-        }) as SelectValueType[]
-        return departments ?? null
-      }
-    }
-    // console.log(departmentData)
-    setDepartmentId(null)
-    // console.error("Error loading departments")
-    return null
-  }, [companyId, departmentData])
+  // const departmentList = useMemo(() => {
+  //   if (companyId) {
+  //     const dept = departmentData?.departments.filter(
+  //       (department) => department.companyId === Number(companyId)
+  //     )
+  //     if (dept) {
+  //       const departments = dept?.map((department) => {
+  //         return { value: department.id.toString(), label: department.name }
+  //       }) as SelectValueType[]
+  //       return departments ?? null
+  //     }
+  //   }
+  //   // console.log(departmentData)
+  //   setDepartmentId(null)
+  //   // console.error("Error loading departments")
+  //   return null
+  // }, [companyId, departmentData])
 
   //asset description
-  const [description, setDescription] = useState<string | null>(null)
-  const [remarks, setRemarks] = useState<string | null>(null)
+  const [description, setDescription] = useState<string | null>(selectedAsset?.description ?? null)
+  const [remarks, setRemarks] = useState<string | null>(selectedAsset?.management?.remarks ?? null)
 
   //depreciation start and end period
-  const [dep_start, setDepStart] = useState<Date | null>(null)
-  const [dep_end, setDepEnd] = useState<Date | null>(null)
+  const [dep_start, setDepStart] = useState<Date | null>(selectedAsset?.management?.depreciation_start ?? null)
+  const [dep_end, setDepEnd] = useState<Date | null>(selectedAsset?.management?.depreciation_end ?? null)
 
   const [selectedClass, setSelectedClass] = useState<
     AssetClassType | undefined
@@ -229,18 +253,18 @@ const CreateAssetAccordion = () => {
       return null
     }
 
-    console.error("Error loading types")
+    // console.error("Error loading types")
     return null
   }, [categoryId, selectedClass])
 
-  const company_address = useMemo(() => {
-    if (companyId) {
-      const address = companyData?.companies.filter(
-        (company) => company.id === Number(companyId)
-      )[0]
-      return address ?? null
-    }
-  }, [companyId, companyData])
+  // const company_address = useMemo(() => {
+  //   if (companyId) {
+  //     const address = companyData?.companies.filter(
+  //       (company) => company.id === Number(companyId)
+  //     )[0]
+  //     return address ?? null
+  //   }
+  // }, [companyId, companyData])
 
   const [loading, setIsLoading] = useState<boolean>(false)
   const [assetId, setAssetId] = useState<string>(`-${moment().format("YYMDhms")}`)
@@ -290,7 +314,7 @@ const CreateAssetAccordion = () => {
     } else {
       console.log("Submitting: ", form_data)
 
-      mutate(form_data)
+      // mutate(form_data)
 
       setTimeout(function () {
         setIsLoading(false)
@@ -532,6 +556,7 @@ const CreateAssetAccordion = () => {
                     register={register}
                     label="Original Cost"
                     placeholder="Original Cost"
+                    value={selectedAsset?.management?.original_cost?.toString()}
                     name="management.original_cost"
                   />
                   <AlertInput>
@@ -543,6 +568,8 @@ const CreateAssetAccordion = () => {
                     register={register}
                     label="Current Cost"
                     placeholder="Current Cost"
+                    value={selectedAsset?.management?.current_cost?.toString()}
+
                     name="management.current_cost"
                   />
                   <AlertInput>
@@ -572,6 +599,7 @@ const CreateAssetAccordion = () => {
                     register={register}
                     label="Residual Value"
                     placeholder="Residual Value"
+                    value={selectedAsset?.management?.residual_value?.toString()}
                     name={"management.residual_value"}
                   />
                   <AlertInput>
@@ -584,6 +612,7 @@ const CreateAssetAccordion = () => {
                     placeholder="Month Day, Year"
                     allowFreeInput
                     size="sm"
+                    value={getValues("management.purchase_date")}
                     onChange={(value) => {
                       setValue("management.purchase_date", value)
                     }}
@@ -607,7 +636,7 @@ const CreateAssetAccordion = () => {
             </Accordion.Control>
             <Accordion.Panel>
               <div className="grid grid-cols-9 gap-2">
-                <div className="col-span-3">
+                {/* <div className="col-span-3">
                   <ClassTypeSelect
                     query={companyId}
                     setQuery={setCompanyId}
@@ -719,7 +748,7 @@ const CreateAssetAccordion = () => {
                     />
                     <AlertInput>{errors?.custodianId?.message}</AlertInput>
                   </div>
-                </div>
+                </div> */}
                 <div className="col-span-9 grid grid-cols-8 gap-2">
                   <div className="col-span-2">
                     <TypeSelect
@@ -784,6 +813,7 @@ const CreateAssetAccordion = () => {
                       placeholder="Month/s"
                       register={register}
                       label="Period (month/s)"
+                      value={selectedAsset?.management?.depreciation_period?.toString()}
                       name="management.depreciation_period"
                     />
                     <AlertInput>
@@ -883,4 +913,4 @@ const CreateAssetAccordion = () => {
   )
 }
 
-export default CreateAssetAccordion
+export default UpdateAssetAccordion

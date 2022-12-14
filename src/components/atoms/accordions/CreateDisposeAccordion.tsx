@@ -11,6 +11,7 @@ import InputField from "../forms/InputField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getLifetime } from "../../../lib/functions";
 import { DatePicker } from "@mantine/dates";
+import { SelectValueType } from "../select/TypeSelect";
 
 export type Dispose = z.infer<typeof AssetDisposalCreateInput>
 
@@ -22,13 +23,22 @@ const CreateDisposeAccordion = () => {
     const [searchModal, setSearchModal] = useState<boolean>(false);
     const [completeModal, setCompleteModal] = useState<boolean>(false);
 
+    const [selectedType, setSelectedType] = useState<string>("1");
+
     const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase());
+    const { data: disposalTypes } = trpc.disposalType.findAll.useQuery();
 
     const utils = trpc.useContext()
 
+
+    const disposalTypeList = useMemo(() => {
+        const list = disposalTypes?.disposalTypes.map((employee) => { return { value: employee.id.toString(), label: employee.name } }) as SelectValueType[]
+        return list ?? []
+    }, [disposalTypes]) as SelectValueType[]
+
     const {
         mutate,
-    } = trpc.asset.edit.useMutation({
+    } = trpc.assetDisposal.create.useMutation({
         onSuccess() {
             setCompleteModal(true)
             // invalidate query of asset id when mutations is successful
@@ -47,11 +57,9 @@ const CreateDisposeAccordion = () => {
 
     // const onSubmit = () => {
     //     // Register function
-    //     console.log("oms")
+
     //     mutate({
-    //         ...asset,
-    //         departmentId: asset.departmentId ?? 2,
-    //         custodianId: asset.custodianId ?? 2
+    //         ...dispose
     //     })
     //     reset()
     // }
@@ -344,8 +352,14 @@ const CreateDisposeAccordion = () => {
                                     <Select
                                         placeholder="Pick one"
 
-                                        value={"OPO"}
-                                        data={["Throw Away", "Sell", "Trade"]}
+                                        onChange={(value) => {
+                                            setSelectedType(value ?? "");
+                                            setValue("disposalTypeId", Number(value));
+                                            console.log(value);
+                                        }}
+
+                                        value={selectedType}
+                                        data={disposalTypeList}
                                         styles={(theme) => ({
                                             item: {
                                                 // applies styles to selected item
@@ -381,19 +395,157 @@ const CreateDisposeAccordion = () => {
                                     />
                                 </div>
                             </div>
+                            {
+                                selectedType !== '1' && <div>
+                                    <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Customer Name</label >
+                                            <InputField
+                                                register={register}
+                                                name="customerName"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Telephone No.</label >
+                                            <InputField
+                                                register={register}
+                                                name="telephoneNo"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">AP Invoice Number</label >
+                                            <InputField
+                                                register={register}
+                                                name="apInvoice"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Sale Invoice Number</label >
+                                            <InputField
+                                                register={register}
+                                                name="telephoneNo"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Disposal Price</label >
+                                            {/* <InputField
+                                                register={register}
+                                                name="disposalPrice"
+                                                type={"text"}
+                                                label={""}
+                                            /> */}
+                                        </div>
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Agreed Price</label >
+                                            <InputField
+                                                register={register}
+                                                name="agreedPrice"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Date of Completion</label >
+                                            <InputField
+                                                register={register}
+                                                name="customerName"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">CUFS Code String</label >
+                                            <InputField
+                                                register={register}
+                                                name="telephoneNo"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <hr className="w-full"></hr>
+                            <div className="flex w-full justify-end py-3">
+
+                                <button
+                                    type="button"
+                                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                    onClick={nextStep}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {state.currentStep === 2 &&
+                <div>
+                    <div className="bg-white rounded-md drop-shadow-lg">
+                        <div className="p-7">
+                            <div className="flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Asset Number</label >
+                                    <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{asset?.number ?? ""}</p>
+                                </div>
+                                <div className="flex flex-col w-full py-2">
+                                    <label className="font-semibold">Asset Name</label >
+                                    <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{asset?.name ?? ""}</p>
+                                </div>
+                            </div>
                             <div className="py-2 flex flex-row justify-between w-full gap-7">
                                 <div className="flex flex-col w-full">
                                     <label className="font-semibold">Method of Disposal</label >
-                                    <InputField
-                                        register={register}
-                                        name="customerName"
-                                        type={"text"}
-                                        label={""}
+                                    <Select
+                                        placeholder="Pick one"
+
+                                        value={"OPO"}
+                                        data={["Throw Away", "Sell", "Trade"]}
+                                        styles={(theme) => ({
+                                            item: {
+                                                // applies styles to selected item
+                                                "&[data-selected]": {
+                                                    "&, &:hover": {
+                                                        backgroundColor:
+                                                            theme.colorScheme === "light"
+                                                                ? theme.colors.orange[3]
+                                                                : theme.colors.orange[1],
+                                                        color:
+                                                            theme.colorScheme === "dark"
+                                                                ? theme.white
+                                                                : theme.black,
+                                                    },
+                                                },
+
+                                                // applies styles to hovered item (with mouse or keyboard)
+                                                "&[data-hovered]": {},
+                                            },
+                                        })}
+                                        variant="unstyled"
+                                        className="w-full rounded-md border-2 my-2 border-gray-400 bg-transparent px-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                                     />
                                 </div>
                                 <div className="flex flex-col w-full">
                                     <label className="font-semibold">Disposal Date</label >
                                     <DatePicker
+                                        onChange={(value) => {
+                                            setValue("disposalDate", value as Date);
+                                        }}
                                         dropdownType="modal"
                                         placeholder="Pick Date"
                                         size="sm"
@@ -402,6 +554,99 @@ const CreateDisposeAccordion = () => {
                                     />
                                 </div>
                             </div>
+                            <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full">
+                                    <label className="font-semibold">Customer Name</label >
+                                    <InputField
+                                        register={register}
+                                        name="customerName"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full">
+                                    <label className="font-semibold">Telephone No.</label >
+                                    <InputField
+                                        register={register}
+                                        name="telephoneNo"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                            </div>
+                            <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full">
+                                    <label className="font-semibold">AP Invoice Number</label >
+                                    <InputField
+                                        register={register}
+                                        name="customerName"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full">
+                                    <label className="font-semibold">Sale Invoice Number</label >
+                                    <InputField
+                                        register={register}
+                                        name="telephoneNo"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                            </div>
+                            <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full">
+                                    <label className="font-semibold">Disposal Price</label >
+                                    <InputField
+                                        register={register}
+                                        name="customerName"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full">
+                                    <label className="font-semibold">Agreed Price</label >
+                                    <InputField
+                                        register={register}
+                                        name="telephoneNo"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                            </div>
+                            <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                <div className="flex flex-col w-full">
+                                    <label className="font-semibold">Date of Completion</label >
+                                    <InputField
+                                        register={register}
+                                        name="customerName"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full">
+                                    <label className="font-semibold">CUFS Code String</label >
+                                    <InputField
+                                        register={register}
+                                        name="telephoneNo"
+                                        type={"text"}
+                                        label={""}
+                                    />
+                                </div>
+                            </div>
+
+                            <hr className="w-full"></hr>
+                            <div className="flex w-full justify-end py-3">
+
+                                <button
+                                    type="button"
+                                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                    onClick={nextStep}
+                                >
+                                    Next
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </div>

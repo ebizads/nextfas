@@ -19,6 +19,7 @@ export const AssetCreateInput = z.object({
   }),
   projectId: z.number().optional(),
   parentId: z.number().optional(),
+  addedById: z.number().optional(),
   management: ManagementCreateInput,
 })
 
@@ -43,6 +44,59 @@ export const AssetEditInput = z.object({
   //management: ManagementEditInput.optional(),
 })
 
+export const AssetDisposalCreateInput = z.object({
+  disposalDate: z.date().optional(),
+  completionDate: z.date().optional(),
+  disposalStatus: z.string().optional(),
+  departmentCode: z.string().optional(),
+  telephoneNo: z.string().optional(),
+  customerName: z.string().optional(),
+  salesAmount: z.number().optional(),
+  salesInvoice: z.string().optional(),
+  apInvoice: z.string().optional(),
+  agreedPrice: z.number().optional(),
+  disposalPrice: z.number().optional(),
+  cufsCodeString: z.string().optional(),
+
+  assetId: z.number(),
+  disposalTypeId: z.number().optional(),
+})
+
+export const AssetDisposalEditInput = z.object({
+  id: z.number(),
+  disposalDate: z.date().optional(),
+  completionDate: z.date().optional(),
+  disposalStatus: z.string().optional(),
+  departmentCode: z.string().optional(),
+  telephoneNo: z.string().optional(),
+  customerName: z.string().optional(),
+  salesAmount: z.number().optional(),
+  salesInvoice: z.string().optional(),
+  apInvoice: z.string().optional(),
+  agreedPrice: z.number().optional(),
+  disposalPrice: z.number().optional(),
+  cufsCodeString: z.string().optional(),
+
+  assetId: z.number().optional(),
+  disposalTypeId: z.number().optional(),
+})
+
+export const AssetRepairCreateInput = z.object({
+  description: z.string().optional(),
+  assetPart: z.string().optional(),
+  notes: z.string().optional(),
+
+  assetId: z.number().optional(),
+})
+
+export const AssetRepairEditInput = z.object({
+  id: z.number(),
+  description: z.string().optional(),
+  assetPart: z.string().optional(),
+  notes: z.string().optional(),
+
+  assetId: z.number().optional(),
+})
 // export const AssetEditKevinInput = z.object({
 //   id: z.number(),
 //   name: z.string().min(1, "Please provide name"),

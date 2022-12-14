@@ -59,7 +59,7 @@ model User {
   attempts       Int       @default(0)
   accounts       Account[]
   address        Address?
-  Asset          Asset[]
+  created_assets Asset[]
   profile        Profile?
   sessions       Session[]
 }
@@ -82,10 +82,10 @@ model Employee {
   updatedAt    DateTime  @updatedAt
   deleted      Boolean   @default(false)
   deletedAt    DateTime?
-  supervisee   Team?     @relation("supervisors", fields: [superviseeId], references: [id])
-  team         Team?     @relation("members", fields: [teamId], references: [id])
   address      Address?
   owned_assets Asset[]
+  supervisee   Team?     @relation("supervisors", fields: [superviseeId], references: [id])
+  team         Team?     @relation("members", fields: [teamId], references: [id])
   profile      Profile?
 }
 
@@ -149,10 +149,10 @@ model Model {
   updatedAt  DateTime       @updatedAt
   deletedAt  DateTime?
   deleted    Boolean        @default(false)
+  assets     Asset?
   category   AssetCategory? @relation(fields: [categoryId], references: [id])
   class      AssetClass?    @relation(fields: [classId], references: [id])
   type       AssetType?     @relation(fields: [typeId], references: [id])
-  assets     Asset?
 }
 
 model AssetClass {
@@ -214,6 +214,56 @@ model AssetManagement {
   asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
+model AssetDisposal {
+  id             Int           @id @default(autoincrement())
+  disposalDate   DateTime?
+  disposalStatus String?
+  departmentCode String?
+  customerName   String?
+  salesAmount    Float?
+  salesInvoice   String?
+  agreedPrice    Float?
+  cufsCodeString String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+  deleted        Boolean       @default(false)
+  disposalTypeId Int?
+  assetId        Int?          @unique
+  remarks        String?
+  telephoneNo    String?
+  apInvoice      String?
+  disposalPrice  Float?
+  completionDate DateTime?
+  asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
+}
+
+model AssetRepair {
+  id          Int       @id @default(autoincrement())
+  description String?
+  assetPart   String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deleted     Boolean   @default(false)
+  typeId      Int?
+  categoryId  Int?
+  assetId     Int?      @unique
+  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+}
+
+model DisposalType {
+  id        Int             @id @default(autoincrement())
+  name      String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean         @default(false)
+  disposal  AssetDisposal[]
+}
+
 model Company {
   id           Int          @id @default(autoincrement())
   name         String
@@ -226,9 +276,9 @@ model Company {
   updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
   deleted      Boolean      @default(false)
-  parent       Company?     @relation("subsidiaries", fields: [parentId], references: [id])
   address      Address?
   assets       Asset[]
+  parent       Company?     @relation("subsidiaries", fields: [parentId], references: [id])
   subsidiaries Company[]    @relation("subsidiaries")
   departments  Department[]
 }
@@ -242,9 +292,9 @@ model Department {
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
   deleted    Boolean   @default(false)
+  assets     Asset[]
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  assets     Asset[]
   teams      Team?
 }
 
@@ -256,9 +306,9 @@ model Team {
   updatedAt    DateTime    @updatedAt
   deletedAt    DateTime?
   deleted      Boolean     @default(false)
-  department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   supervisors  Employee[]  @relation("supervisors")
   members      Employee[]  @relation("members")
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 }
 
 model AssetProject {
@@ -310,18 +360,19 @@ model Asset {
   departmentId   Int?
   subsidiaryId   Int?
   addedById      Int?
-  User           User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
+  addedBy        User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
   department     Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   model          Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
   parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
+  children       Asset[]          @relation("children")
   subsidiary     Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   children       Asset[]          @relation("children")
-  AssetDisposal  AssetDisposal?
+  disposal       AssetDisposal?
   management     AssetManagement?
-  AssetRepair    AssetRepair?
+  repair         AssetRepair?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }

@@ -237,41 +237,6 @@ export const CreateEmployeeModal = (props: {
               className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 p-0.5 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
-          {/* <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Departments</label>
-            <Select
-              placeholder="Pick one"
-              onChange={(value) => {
-                setValue("team.name", value ?? "")
-                onSearchChange(value ?? "")
-              }}
-              value={searchValue}
-              data={["Human Resource", "Finance", "Accounting", "IT", "Admin"]}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-[.28%] px-0  text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-            />
-            <AlertInput>{errors?.team?.name?.message}</AlertInput>
-          </div> */}
           <div className="flex w-[48%] flex-col">
             <label className="sm:text-sm">Mobile Number</label>
             <InputField

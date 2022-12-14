@@ -58,7 +58,7 @@ export const AssetDisposalCreateInput = z.object({
   disposalPrice: z.number().optional(),
   cufsCodeString: z.string().optional(),
 
-  assetId: z.number().optional(),
+  assetId: z.number(),
   disposalTypeId: z.number().optional(),
 })
 

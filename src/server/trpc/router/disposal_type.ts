@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { authedProcedure, t } from "../trpc"
 
-export const assetDisposalRouter = t.router({
+export const disposalTypeRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const disposalType = await ctx.prisma.disposalType.findUnique({
       where: {

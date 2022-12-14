@@ -1,4 +1,4 @@
-import { number, z } from "zod"
+import { z } from "zod"
 import { AssetCreateInput, AssetEditInput } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
@@ -26,6 +26,7 @@ export const assetRouter = t.router({
           },
         },
         parent: true,
+        project: true,
         vendor: true,
         subsidiary: true,
         management: true,

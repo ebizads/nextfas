@@ -46,6 +46,8 @@ const Transfer = () => {
     const { data: employee } = trpc.employee.findOne.useQuery(Number(selectedEMP))
     const { data: department } = trpc.department.findOne.useQuery(Number(selectedDept))
 
+
+
     const employeeList = useMemo(() => {
         const list = employeeData?.employees.map((employee) => { return { value: employee.id.toString(), label: employee.name } }) as SelectValueType[]
         return list ?? []
@@ -55,6 +57,12 @@ const Transfer = () => {
         const list = departmentData?.departments.map((department) => { return { value: department.id.toString(), label: department.name } }) as SelectValueType[]
         return list ?? []
     }, [departmentData]) as SelectValueType[]
+
+    useMemo(() => {
+        if (asset === null && assetNumber !== "") {
+            setSearchModal(true)
+        }
+    }, [asset, assetNumber])
 
 
 
@@ -71,7 +79,6 @@ const Transfer = () => {
         },
     })
 
-
     const {
         register,
         handleSubmit,
@@ -82,14 +89,6 @@ const Transfer = () => {
     })
 
     useEffect(() => reset(asset as Assets), [asset, reset])
-    useMemo(() => {
-        if (asset === null && assetNumber !== "") {
-            setSearchModal(true)
-        }
-    }, [asset, assetNumber])
-    // const searchedAsset = useMemo(() => { return asset ?? null }, [asset])
-
-
 
     const onSubmit = (asset: Assets) => {
         // Register function
@@ -296,12 +295,8 @@ const Transfer = () => {
                                                     </div>
                                                     <div className="flex flex-col w-full py-2">
                                                         <label className="font-semibold">Asset Lifetime</label >
-                                                        <InputField disabled={true}
-                                                            register={register}
-                                                            name="serial_no"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
+                                                        <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm">{getLifetime(asset?.management?.depreciation_start ?? new Date(), asset?.management?.depreciation_end ?? new Date())}</p>
+
                                                     </div>
                                                     <div className="flex flex-col w-full py-2">
                                                         <label className="font-semibold">Asset Serial Number</label >

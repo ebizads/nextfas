@@ -321,6 +321,7 @@ model Asset {
   children       Asset[]          @relation("children")
   AssetDisposal  AssetDisposal?
   management     AssetManagement?
+  AssetRepair    AssetRepair?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }
@@ -344,6 +345,8 @@ model AssetDisposal {
   remarks        String?
   telephoneNo    String?
   apInvoice      String?
+  disposalPrice  Float?
+  completionDate DateTime?
   Asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
   DisposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }
@@ -356,4 +359,19 @@ model DisposalType {
   deletedAt     DateTime?
   deleted       Boolean         @default(false)
   AssetDisposal AssetDisposal[]
+}
+
+model AssetRepair {
+  id          Int       @id @default(autoincrement())
+  description String?
+  assetPart   String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  deletedAt   DateTime?
+  deleted     Boolean   @default(false)
+  typeId      Int?
+  categoryId  Int?
+  assetId     Int?      @unique
+  Asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }

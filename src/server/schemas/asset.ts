@@ -46,6 +46,7 @@ export const AssetEditInput = z.object({
 
 export const AssetDisposalCreateInput = z.object({
   disposalDate: z.date().optional(),
+  completionDate: z.date().optional(),
   disposalStatus: z.string().optional(),
   departmentCode: z.string().optional(),
   telephoneNo: z.string().optional(),
@@ -64,6 +65,7 @@ export const AssetDisposalCreateInput = z.object({
 export const AssetDisposalEditInput = z.object({
   id: z.number(),
   disposalDate: z.date().optional(),
+  completionDate: z.date().optional(),
   disposalStatus: z.string().optional(),
   departmentCode: z.string().optional(),
   telephoneNo: z.string().optional(),

@@ -234,6 +234,7 @@ model AssetDisposal {
   telephoneNo    String?
   apInvoice      String?
   disposalPrice  Float?
+  completionDate DateTime?
   asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }

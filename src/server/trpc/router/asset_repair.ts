@@ -1,42 +1,31 @@
 import { z } from "zod"
 import { authedProcedure, t } from "../trpc"
 import {
-  AssetDisposalCreateInput,
-  AssetDisposalEditInput,
+  AssetRepairCreateInput,
+  AssetRepairEditInput,
 } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 
-export const assetDisposalRouter = t.router({
+export const assetRepairRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
-    const assetDisposal = await ctx.prisma.assetDisposal.findUnique({
+    const assetRepair = await ctx.prisma.assetRepair.findUnique({
       where: {
         id: input,
       },
       include: {
         asset: true,
-        disposalType: true,
       },
     })
-    return assetDisposal
+    return assetRepair
   }),
   findAll: authedProcedure
     .input(
       z
         .object({
-          disposalDate: z.date().optional(),
-          completionDate: z.date().optional(),
-          disposalStatus: z.string().optional(),
-          departmentCode: z.string().optional(),
-          customerName: z.string().optional(),
-          telephoneNo: z.string().optional(),
-          salesAmount: z.number().optional(),
-          salesInvoice: z.string().optional(),
-          apInvoice: z.string().optional(),
-          agreedPrice: z.number().optional(),
-          disposalPrice: z.number().optional(),
-          cufsCodeString: z.string().optional(),
+          description: z.string().optional(),
+          assetPart: z.string().optional(),
+          notes: z.string().optional(),
           assetId: z.number().optional(),
-          disposalTypeId: z.number().optional(),
           filter: z
             .object({
               updatedAt: z.date().optional(),
@@ -46,14 +35,13 @@ export const assetDisposalRouter = t.router({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      const [assetDisposals, count] = await ctx.prisma.$transaction([
-        ctx.prisma.assetDisposal.findMany({
+      const [assetRepairs, count] = await ctx.prisma.$transaction([
+        ctx.prisma.assetRepair.findMany({
           orderBy: {
             createdAt: "asc",
           },
           include: {
             asset: true,
-            disposalType: true,
           },
           where: {
             NOT: {
@@ -61,7 +49,7 @@ export const assetDisposalRouter = t.router({
             },
           },
         }),
-        ctx.prisma.assetDisposal.count({
+        ctx.prisma.assetRepair.count({
           where: {
             NOT: {
               deleted: true,
@@ -71,42 +59,36 @@ export const assetDisposalRouter = t.router({
       ])
 
       return {
-        assetDisposals,
+        assetRepairs,
         count,
       }
     }),
   create: authedProcedure
-    .input(AssetDisposalCreateInput)
+    .input(AssetRepairCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { assetId, disposalTypeId, ...rest } = input
+      const { assetId, ...rest } = input
 
-      const assetDisposal = await ctx.prisma.assetDisposal.create({
+      const assetRepair = await ctx.prisma.assetRepair.create({
         data: {
           asset: {
             connect: {
               id: assetId,
             },
           },
-          disposalType: {
-            connect: {
-              id: disposalTypeId,
-            },
-          },
           ...rest,
         },
         include: {
           asset: true,
-          disposalType: true,
         },
       })
-      return assetDisposal
+      return assetRepair
     }),
   edit: authedProcedure
-    .input(AssetDisposalEditInput)
+    .input(AssetRepairEditInput)
     .mutation(async ({ ctx, input }) => {
       const { id, ...rest } = input
       try {
-        await ctx.prisma.assetDisposal.update({
+        await ctx.prisma.assetRepair.update({
           where: {
             id,
           },

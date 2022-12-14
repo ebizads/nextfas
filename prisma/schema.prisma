@@ -233,8 +233,24 @@ model AssetDisposal {
   remarks        String?
   telephoneNo    String?
   apInvoice      String?
+  disposalPrice  Float?
   asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
+}
+
+model AssetRepair {
+  id          Int       @id @default(autoincrement())
+  description String?
+  assetPart   String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deleted     Boolean   @default(false)
+  typeId      Int?
+  categoryId  Int?
+  assetId     Int?      @unique
+  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
 model DisposalType {
@@ -354,6 +370,7 @@ model Asset {
   children       Asset[]          @relation("children")
   disposal       AssetDisposal?
   management     AssetManagement?
+  repair         AssetRepair?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }

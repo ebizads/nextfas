@@ -54,6 +54,7 @@ export const AssetDisposalCreateInput = z.object({
   salesInvoice: z.string().optional(),
   apInvoice: z.string().optional(),
   agreedPrice: z.number().optional(),
+  disposalPrice: z.number().optional(),
   cufsCodeString: z.string().optional(),
 
   assetId: z.number().optional(),
@@ -71,10 +72,28 @@ export const AssetDisposalEditInput = z.object({
   salesInvoice: z.string().optional(),
   apInvoice: z.string().optional(),
   agreedPrice: z.number().optional(),
+  disposalPrice: z.number().optional(),
   cufsCodeString: z.string().optional(),
 
   assetId: z.number().optional(),
   disposalTypeId: z.number().optional(),
+})
+
+export const AssetRepairCreateInput = z.object({
+  description: z.string().optional(),
+  assetPart: z.string().optional(),
+  notes: z.string().optional(),
+
+  assetId: z.number().optional(),
+})
+
+export const AssetRepairEditInput = z.object({
+  id: z.number(),
+  description: z.string().optional(),
+  assetPart: z.string().optional(),
+  notes: z.string().optional(),
+
+  assetId: z.number().optional(),
 })
 // export const AssetEditKevinInput = z.object({
 //   id: z.number(),

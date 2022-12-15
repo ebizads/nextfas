@@ -229,13 +229,13 @@ model AssetDisposal {
   deletedAt      DateTime?
   deleted        Boolean       @default(false)
   disposalTypeId Int?
-  assetId        Int?          @unique
   remarks        String?
   telephoneNo    String?
   apInvoice      String?
   disposalPrice  Float?
   completionDate DateTime?
-  asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  assetId        Int?          @unique
+  Asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }
 
@@ -251,7 +251,7 @@ model AssetRepair {
   typeId      Int?
   categoryId  Int?
   assetId     Int?      @unique
-  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  Asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
 model DisposalType {
@@ -369,60 +369,9 @@ model Asset {
   children       Asset[]          @relation("children")
   subsidiary     Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  children       Asset[]          @relation("children")
-  disposal       AssetDisposal?
+  AssetDisposal  AssetDisposal?
   management     AssetManagement?
-  repair         AssetRepair?
+  AssetRepair    AssetRepair?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
-}
-
-model AssetDisposal {
-  id             Int           @id @default(autoincrement())
-  disposalDate   DateTime?
-  disposalStatus String?
-  departmentCode String?
-  customerName   String?
-  salesAmount    Float?
-  salesInvoice   String?
-  agreedPrice    Float?
-  cufsCodeString String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime
-  deletedAt      DateTime?
-  deleted        Boolean       @default(false)
-  disposalTypeId Int?
-  assetId        Int?          @unique
-  remarks        String?
-  telephoneNo    String?
-  apInvoice      String?
-  disposalPrice  Float?
-  completionDate DateTime?
-  Asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
-  DisposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
-}
-
-model DisposalType {
-  id            Int             @id @default(autoincrement())
-  name          String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime
-  deletedAt     DateTime?
-  deleted       Boolean         @default(false)
-  AssetDisposal AssetDisposal[]
-}
-
-model AssetRepair {
-  id          Int       @id @default(autoincrement())
-  description String?
-  assetPart   String?
-  notes       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime
-  deletedAt   DateTime?
-  deleted     Boolean   @default(false)
-  typeId      Int?
-  categoryId  Int?
-  assetId     Int?      @unique
-  Asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }

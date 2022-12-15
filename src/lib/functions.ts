@@ -4,10 +4,11 @@ import { ExcelExportType } from "../types/employee"
 
 import { Address, Company } from "@prisma/client"
 import { disposeTMP } from "../pages/transactions/disposal"
+import { repairTMP } from "../pages/transactions/repair/repair"
 
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType | disposeTMP
+  type: AssetType | EmployeeType | VendorType | disposeTMP | repairTMP
   //subfilter?: string
 ) => {
   //get object property

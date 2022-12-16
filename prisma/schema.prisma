@@ -229,12 +229,12 @@ model AssetDisposal {
   deletedAt      DateTime?
   deleted        Boolean       @default(false)
   disposalTypeId Int?
-  assetId        Int?          @unique
   remarks        String?
   telephoneNo    String?
   apInvoice      String?
   disposalPrice  Float?
   completionDate DateTime?
+  assetId        Int?          @unique
   asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }

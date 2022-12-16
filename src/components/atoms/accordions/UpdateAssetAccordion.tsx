@@ -356,14 +356,34 @@ const UpdateAssetAccordion = () => {
       console.error("Prisma Error: ", error)
       console.error("Form Error:", errors)
     } else {
-      if (form_data.parentId === undefined) {
-        form_data.parentId = 0
-        console.log("Submitting: ", form_data)
-      } else {
-        console.log("ERROR ENCOUNTERED")
-      }
+      // if (form_data.parentId === undefined) {
+      //   form_data.parentId = 0
+      //   console.log("Submitting: ", form_data)
+      // } else {
+      //   console.log("ERROR ENCOUNTERED")
+      // }
+      form_data.parentId === undefined
+        ? (form_data.parentId = 0)
+        : console.log("")
+      form_data.custodianId === undefined
+        ? (form_data.custodianId = 0)
+        : console.log("")
+      form_data.vendorId === undefined
+        ? (form_data.vendorId = 0)
+        : console.log("")
+      form_data.departmentId === undefined
+        ? (form_data.departmentId = 0)
+        : console.log("")
+      form_data.subsidiaryId === undefined
+        ? (form_data.subsidiaryId = 0)
+        : console.log("")
+      form_data.projectId === undefined
+        ? (form_data.projectId = 0)
+        : console.log("")
 
-      // mutate(form_data)
+      console.log("Submitting: ", form_data)
+
+      mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
 
       setTimeout(function () {
         setIsLoading(false)

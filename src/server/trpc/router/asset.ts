@@ -276,9 +276,6 @@ export const assetRouter = t.router({
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
       const { id, ...rest } = input
-
-      console.log("pakyou", input)
-
       try {
         await ctx.prisma.asset.update({
           where: {
@@ -291,7 +288,6 @@ export const assetRouter = t.router({
 
         return "Asset updated successfully"
       } catch (error) {
-        console.log("NAG ERROR TANGA")
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),

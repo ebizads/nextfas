@@ -3,11 +3,11 @@ import Link from "next/link";
 import React, { useState } from "react"
 //import { downloadExcel } from "../../lib/functions";
 import { disposalColumn } from "../../lib/table";
-import { disposeTMP } from "../../pages/transactions/disposal";
 //import { ExcelExportType } from "../../types/employee";
 import FilterPopOver from "../atoms/popover/FilterPopOver";
 import PaginationPopOver from "../atoms/popover/PaginationPopOver";
 import DisposalTable from "../atoms/table/DisposalTable";
+import { DisposeType } from "../../types/generic";
 type SearchType = {
     value: string
     label: string
@@ -32,7 +32,7 @@ const Search = (props: { data: SearchType[] }) => {
 
 const Dispose = (props: {
     total: number
-    asset: disposeTMP[]
+    asset: DisposeType[]
     assetPage: number
     page: number
     setPage: React.Dispatch<React.SetStateAction<number>>
@@ -46,7 +46,6 @@ const Dispose = (props: {
 
     const [activeTab, setActiveTab] = useState<string | null>('pending');
 
-    console.log(props.asset);
 
     return (
         <div className="space-y-4">
@@ -59,8 +58,8 @@ const Dispose = (props: {
                                     data={[
                                         ...props.asset?.map((obj) => {
                                             return {
-                                                value: obj?.id.toString() ?? "",
-                                                label: obj?.assetName ?? "",
+                                                value: obj?.assetId ?? "",
+                                                label: obj?.asset?.name ?? "",
                                             }
                                         }),
                                     ]}

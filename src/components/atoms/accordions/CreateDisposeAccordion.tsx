@@ -40,8 +40,6 @@ const CreateDisposeAccordion = () => {
 
     const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase());
     const { data: disposalTypes } = trpc.disposalType.findAll.useQuery();
-    const { data: disposalAsset } = trpc.assetDisposal.findAsset.useQuery(assetId);
-    const { data: repairAsset } = trpc.assetRepair.findAsset.useQuery(assetId);
 
 
     //const utils = trpc.useContext()

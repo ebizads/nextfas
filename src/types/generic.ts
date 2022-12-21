@@ -22,6 +22,10 @@ export type EmployeeType = inferProcedureOutput<
   AppRouter["employee"]["findOne"]
 >
 
+export type DisposeType = inferProcedureOutput<
+  AppRouter["assetDisposal"]["findOne"]
+>
+
 //employee field types
 export type EmployeeFieldValues = z.infer<typeof EmployeeCreateInput>
 

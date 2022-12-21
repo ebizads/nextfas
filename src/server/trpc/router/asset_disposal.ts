@@ -19,6 +19,14 @@ export const assetDisposalRouter = t.router({
     })
     return assetDisposal
   }),
+  findAsset: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
+    const assetDisposal = await ctx.prisma.assetDisposal.findUnique({
+      where: {
+        assetId: input,
+      },
+    })
+    return assetDisposal
+  }),
   findAll: authedProcedure
     .input(
       z

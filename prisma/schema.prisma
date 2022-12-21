@@ -229,12 +229,12 @@ model AssetDisposal {
   deletedAt      DateTime?
   deleted        Boolean       @default(false)
   disposalTypeId Int?
-  assetId        Int?          @unique
   remarks        String?
   telephoneNo    String?
   apInvoice      String?
   disposalPrice  Float?
   completionDate DateTime?
+  assetId        Int?          @unique
   asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }
@@ -360,6 +360,7 @@ model Asset {
   departmentId   Int?
   subsidiaryId   Int?
   addedById      Int?
+  status         String?
   addedBy        User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)

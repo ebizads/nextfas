@@ -32,6 +32,7 @@ export const AssetEditInput = z.object({
   barcode: z.string().nullish(),
   description: z.string().nullish(),
   remarks: z.string().nullish(),
+  status: z.string().nullish(),
 
   modelId: z.number().optional().nullish(),
   custodianId: z.number().optional().nullish(),
@@ -45,21 +46,21 @@ export const AssetEditInput = z.object({
 })
 
 export const AssetDisposalCreateInput = z.object({
-  disposalDate: z.date().optional(),
-  completionDate: z.date().optional(),
-  disposalStatus: z.string().optional(),
-  departmentCode: z.string().optional(),
-  telephoneNo: z.string().optional(),
-  customerName: z.string().optional(),
+  disposalDate: z.date().default(new Date()),
+  completionDate: z.date().default(new Date()),
+  disposalStatus: z.string().default("pending"),
+  departmentCode: z.string().nullish(),
+  telephoneNo: z.string(),
+  customerName: z.string(),
   salesAmount: z.number().optional(),
-  salesInvoice: z.string().optional(),
-  apInvoice: z.string().optional(),
-  agreedPrice: z.number().optional(),
-  disposalPrice: z.number().optional(),
+  salesInvoice: z.string(),
+  apInvoice: z.string(),
+  agreedPrice: z.number(),
+  disposalPrice: z.number(),
   cufsCodeString: z.string().optional(),
 
   assetId: z.number(),
-  disposalTypeId: z.number().optional(),
+  disposalTypeId: z.number(),
 })
 
 export const AssetDisposalEditInput = z.object({

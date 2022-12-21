@@ -4,6 +4,17 @@ import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
 
 export const assetManagementRouter = t.router({
+  findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
+    const assetManagement = await ctx.prisma.assetManagement.findUnique({
+      where: {
+        assetId: input,
+      },
+      include: {
+        asset: true,
+      },
+    })
+    return assetManagement
+  }),
   findAll: authedProcedure
     .input(
       z

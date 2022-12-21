@@ -1,5 +1,9 @@
 import { z } from "zod"
-import { ManagementCreateInput, ModelCreateInput } from "./model"
+import {
+  ManagementCreateInput,
+  ManagementEditInput,
+  ModelCreateInput,
+} from "./model"
 
 export const AssetCreateInput = z.object({
   name: z.string().min(1, "Please provide name"),
@@ -40,7 +44,6 @@ export const AssetEditInput = z.object({
   subsidiaryId: z.number().optional().nullish(),
   assetProjectId: z.number().optional().nullish(),
   parentId: z.number().optional().nullish(),
-
   //management: ManagementEditInput.optional(),
 })
 

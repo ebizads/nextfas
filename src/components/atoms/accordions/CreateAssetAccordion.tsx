@@ -19,6 +19,7 @@ import moment from "moment"
 import JsBarcode from 'jsbarcode';
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
+import { useRouter } from "next/router"
 
 
 const CreateAssetAccordion = () => {
@@ -280,6 +281,8 @@ const CreateAssetAccordion = () => {
     }
   }, [assetId, asset_number])
 
+  const router = useRouter()
+
   const onSubmit: SubmitHandler<AssetFieldValues> = (
     form_data: AssetFieldValues
   ) => {
@@ -302,6 +305,7 @@ const CreateAssetAccordion = () => {
       setTypeId(null)
       setCompanyId(null)
       setDepartmentId(null)
+      router.push('/assets')
     }
   }
 

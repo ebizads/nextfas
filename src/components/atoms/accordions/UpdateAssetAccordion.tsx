@@ -13,17 +13,16 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { getAddress } from "../../../lib/functions"
-import { Location } from "@prisma/client"
 import moment from "moment"
 import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
+import { useRouter } from "next/router"
 
 const UpdateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.edit.useMutation()
 
-  const { selectedAsset } = useUpdateAssetStore()
+  const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
   const {
     register,
@@ -168,16 +167,6 @@ const UpdateAssetAccordion = () => {
     [vendorsData]
   ) as SelectValueType[] | undefined
 
-  //gets and sets all companies
-  // const { data: companyData } = trpc.company.findAll.useQuery()
-  // const companyList = useMemo(
-  //   () =>
-  //     companyData?.companies.filter((item) => item.id != 0).map((company) => {
-  //       return { value: company.id.toString(), label: company.name }
-  //     }),
-  //   [companyData]
-  // ) as SelectValueType[] | undefined
-
   //gets and sets all class, categories, and types
   const { data: classData } = trpc.assetClass.findAll.useQuery()
   const classList = useMemo(
@@ -190,48 +179,6 @@ const UpdateAssetAccordion = () => {
     [classData]
   ) as SelectValueType[] | undefined
 
-  //gets and sets all employee
-  // const { data: employeeData } = trpc.employee.findAll.useQuery()
-  // const employeeList = useMemo(
-  //   () =>
-  //     employeeData?.employees.filter((item) => item.id != 0).map((employeeItem) => {
-  //       return { value: employeeItem.id.toString(), label: employeeItem.name }
-  //     }),
-  //   [employeeData]
-  // ) as SelectValueType[] | undefined
-
-  //gets and sets all class, categories, and types
-  // const { data: departmentData } = trpc.department.findAll.useQuery()
-
-  // const selectedDepartment = useMemo(() => {
-  //   const department = departmentData?.departments.filter(
-  //     (department) => department.id === Number(departmentId)
-  //   )[0]
-
-  //   //set location === floor and room number
-  //   // setValue('locationId', department?.locationId ?? undefined)
-  //   return department?.location
-  // }, [departmentId, departmentData]) as Location
-
-  // const departmentList = useMemo(() => {
-  //   if (companyId) {
-  //     const dept = departmentData?.departments.filter(
-  //       (department) => department.companyId === Number(companyId)
-  //     )
-  //     if (dept) {
-  //       const departments = dept?.map((department) => {
-  //         return { value: department.id.toString(), label: department.name }
-  //       }) as SelectValueType[]
-  //       return departments ?? null
-  //     }
-  //   }
-  //   // console.log(departmentData)
-  //   setDepartmentId(null)
-  //   // console.error("Error loading departments")
-  //   return null
-  // }, [companyId, departmentData])
-
-  //asset description
   const [description, setDescription] = useState<string | null>(
     selectedAsset?.description ?? null
   )
@@ -309,9 +256,14 @@ const UpdateAssetAccordion = () => {
   // }, [companyId, companyData])
 
   const [loading, setIsLoading] = useState<boolean>(false)
-  const [assetId, setAssetId] = useState<string>(
-    `-${moment().format("YYMDhms")}`
-  )
+  // const [assetId, setAssetId] = useState<string>(
+  //   `-${moment().format("YYMDhms")}`
+  // )
+
+  const assetId = useMemo(() => {
+    const asset_number = selectedAsset ? selectedAsset?.number.split("-") : "-"
+    return "-" + asset_number[1]
+  }, [])
 
   const asset_number = useMemo(() => {
     const parseId = (id: string | null) => {
@@ -348,9 +300,14 @@ const UpdateAssetAccordion = () => {
     }
   }, [assetId, asset_number])
 
+  const router = useRouter()
+
   const onSubmit: SubmitHandler<AssetFieldValues> = (
     form_data: AssetFieldValues
   ) => {
+
+    console.log('Here')
+
     if (error) {
       console.log("ERROR ENCOUNTERED")
       console.error("Prisma Error: ", error)
@@ -395,7 +352,12 @@ const UpdateAssetAccordion = () => {
       setTypeId(null)
       setCompanyId(null)
       setDepartmentId(null)
+      setSelectedAsset(null)
+      router.push('/assets')
+
     }
+
+
   }
 
   const componentRef = useRef(null)
@@ -964,13 +926,14 @@ const UpdateAssetAccordion = () => {
           </Accordion.Item>
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
-          <button type="button" className="px-4 py-2 underline">
+          <button type="button" className="px-4 py-2 underline"
+            onClick={() => console.log(errors)}>
             Discard
           </button>
           <button
             type="submit"
-            disabled={(!isValid && !isDirty) || isLoading}
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            onClick={() => console.log("clicked")}
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>
@@ -993,8 +956,8 @@ const UpdateAssetAccordion = () => {
             </div>
           </div>
         </Modal> */}
-      </form>
-    </div>
+      </form >
+    </div >
   )
 }
 

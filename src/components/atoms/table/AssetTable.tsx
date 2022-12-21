@@ -21,14 +21,16 @@ const AssetDetailsModal = (props: {
 
 }) => {
 
-  useEffect(() => {
-    console.log(props.asset)
-  }, [])
+  // useEffect(() => {
+  //   console.log(props.asset)
+  // }, [])
 
   const componentRef = useRef(null);
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+
+  const { data: addedBy } = trpc.user.findOne.useQuery(Number(props.asset?.addedById) ?? -1)
 
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
@@ -109,18 +111,18 @@ const AssetDetailsModal = (props: {
               <section className="border-b pb-4">
                 <p className="font-medium text-neutral-600 text-base">Custodian Information</p>
                 <div className="text-sm mt-4">
-                  <section className="grid grid-cols-4 gap-2 space-y-2">
+                  <section className="grid grid-cols-4 gap-2">
                     <div className="col-span-1">
                       <p className="font-light">Employee ID</p>
-                      <p className="font-medium">{props.asset?.custodian?.employee_id}</p>
+                      <p className="font-medium">{props.asset?.custodian?.employee_id ?? "--"}</p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Name</p>
-                      <p className="font-medium">{props.asset?.custodian?.name}</p>
+                      <p className="font-medium">{props.asset?.custodian?.name ?? "--"}</p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Position</p>
-                      <p className="font-medium">{props.asset?.custodian?.position}</p>
+                      <p className="font-medium">{props.asset?.custodian?.position ?? "--"}</p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Team</p>
@@ -144,7 +146,7 @@ const AssetDetailsModal = (props: {
               <section className="border-b pb-4">
                 <p className="font-medium text-neutral-600 text-base">Accounting Information</p>
                 <div className="text-sm mt-4">
-                  <section className="grid grid-cols-4 gap-2 space-y-2">
+                  <section className="grid grid-cols-4 gap-2">
                     <div className="col-span-1">
                       <p className="font-light">Currency</p>
                       <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p>
@@ -171,7 +173,7 @@ const AssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Added By</p>
-                      <p className="font-medium">Arvae (to add)</p>
+                      <p className="font-medium">{addedBy?.name ?? "no information"}</p>
                     </div>
                   </section>
                 </div>
@@ -179,7 +181,7 @@ const AssetDetailsModal = (props: {
               <section className="pb-4">
                 <p className="font-medium text-neutral-600 text-base">Depreciation Information</p>
                 <div className="text-sm mt-4 flex flex-col gap-2">
-                  <section className="grid grid-cols-4 gap-2 space-y-2">
+                  <section className="grid grid-cols-4 gap-2">
                     <div className="col-span-1">
                       <p className="font-light">Start Date</p>
                       <p className="font-medium">{props.asset?.management?.depreciation_start ? props.asset?.management?.depreciation_start?.toLocaleDateString() : "--"}</p>

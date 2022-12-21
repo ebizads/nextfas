@@ -360,6 +360,7 @@ model Asset {
   departmentId   Int?
   subsidiaryId   Int?
   addedById      Int?
+  status         String?
   addedBy        User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)

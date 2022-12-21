@@ -32,6 +32,7 @@ export const AssetEditInput = z.object({
   barcode: z.string().nullish(),
   description: z.string().nullish(),
   remarks: z.string().nullish(),
+  status: z.string().nullish(),
 
   modelId: z.number().optional().nullish(),
   custodianId: z.number().optional().nullish(),

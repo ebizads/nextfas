@@ -14,6 +14,7 @@ import { DatePicker } from "@mantine/dates";
 import { SelectValueType } from "../select/TypeSelect";
 import Link from "next/link";
 import AlertInput from "../forms/AlertInput";
+import { AssetFieldValues } from "../../../types/generic";
 
 export type Dispose = z.infer<typeof AssetDisposalCreateInput>
 
@@ -29,12 +30,13 @@ const CreateDisposeAccordion = () => {
     const [completeModal, setCompleteModal] = useState<boolean>(false);
     const [validateModal, setValidateModal] = useState<boolean>(false);
 
+
     const [disposeDate, setDisposeDate] = useState<Date>(new Date());
     const [completionDate, setCompletionDate] = useState<Date>(new Date());
 
     const [selectedType, setSelectedType] = useState<string>("1");
 
-    const [xAsset, setXAsset] = useState<object | undefined | null>(null)
+    // const [xAsset, setXAsset] = useState<object | undefined | null>(null)
 
     const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase());
     const { data: disposalTypes } = trpc.disposalType.findAll.useQuery();
@@ -61,6 +63,12 @@ const CreateDisposeAccordion = () => {
 
     })
 
+    const updateAsset = trpc.asset.edit.useMutation({
+        onSuccess() {
+            console.log("omsim");
+        },
+    })
+
     const {
         register,
         handleSubmit,
@@ -84,6 +92,13 @@ const CreateDisposeAccordion = () => {
             disposalTypeId: Number(selectedType) ?? 0,
             disposalStatus: "pending",
         })
+
+        updateAsset.mutate({
+            ...asset as AssetFieldValues,
+            id: asset?.id ?? 0,
+            status: "disposal"
+        });
+
         reset()
     }
 
@@ -104,37 +119,27 @@ const CreateDisposeAccordion = () => {
 
     useEffect(() => {
         setAssetId(asset?.id ?? 0);
-        setXAsset(asset)
     }, [assetNumber, asset])
 
 
     useEffect(() => {
-        console.log("xAsset", xAsset)
         if (assetNumber !== "") {
-            if (xAsset === null) {
+            if (asset === null) {
                 setSearchModal(true)
+            } else if (asset?.status === "disposal") {
+                setValidateString("The asset is already in for disposal")
+                setValidateModal(true);
+                setAssetNumber("");
+            } else if (asset?.status === "repair") {
+                setValidateString("The asset is in for repair.")
+                setValidateModal(true);
+                setAssetNumber("");
             }
-            console.log("oum", xAsset);
-            if (xAsset !== null) {
-                //disposalAsset ?? setValidateModal(true) asset = null;
 
-                console.log("dispose", disposalAsset)
-                if (disposalAsset !== null) {
-                    setValidateString("The asset is already in for disposal")
-                    setValidateModal(true);
-                    setAssetNumber("");
-                }
-                else if (repairAsset !== null) {
-                    setValidateString("The asset is in for repair.")
-                    setValidateModal(true);
-                    setAssetNumber("");
-                }
-            }
         }
 
 
-    }, [xAsset, assetNumber, disposalAsset, repairAsset, assetId])
-
+    }, [asset, assetNumber, assetId])
 
 
 

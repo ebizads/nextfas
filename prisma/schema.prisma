@@ -235,7 +235,7 @@ model AssetDisposal {
   disposalPrice  Float?
   completionDate DateTime?
   assetId        Int?          @unique
-  Asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset          Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }
 

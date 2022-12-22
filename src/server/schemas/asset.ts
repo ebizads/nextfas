@@ -44,7 +44,7 @@ export const AssetEditInput = z.object({
   subsidiaryId: z.number().optional().nullish(),
   assetProjectId: z.number().optional().nullish(),
   parentId: z.number().optional().nullish(),
-  //management: ManagementEditInput.optional(),
+  management: ManagementEditInput.optional(),
 })
 
 export const AssetDisposalCreateInput = z.object({

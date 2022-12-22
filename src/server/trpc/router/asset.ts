@@ -30,6 +30,7 @@ export const assetRouter = t.router({
         vendor: true,
         subsidiary: true,
         management: true,
+        addedBy: true,
       },
     })
     return asset
@@ -89,6 +90,7 @@ export const assetRouter = t.router({
             custodian: true,
             vendor: true,
             management: true,
+            addedBy: true,
           },
           where: {
             NOT: {

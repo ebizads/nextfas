@@ -22,15 +22,13 @@ const AssetDetailsModal = (props: {
 }) => {
 
   // useEffect(() => {
-  //   console.log(props.asset)
+  //   console.log(props.asset.addedBy)
   // }, [])
 
   const componentRef = useRef(null);
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-
-  const { data: addedBy } = trpc.user.findOne.useQuery(Number(props.asset?.addedById) ?? -1)
 
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
@@ -173,7 +171,7 @@ const AssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Added By</p>
-                      <p className="font-medium">{addedBy?.name ?? "no information"}</p>
+                      <p className="font-medium">{props.asset?.addedBy?.name ?? "no information"}</p>
                     </div>
                   </section>
                 </div>

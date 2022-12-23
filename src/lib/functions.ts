@@ -1,13 +1,17 @@
-import { AssetType, EmployeeType, VendorType } from "../types/generic"
+import {
+  AssetType,
+  DisposeType,
+  EmployeeType,
+  VendorType,
+} from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
 
 import { Address, Company } from "@prisma/client"
-import { disposeTMP } from "../pages/transactions/disposal"
 
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType | disposeTMP
+  type: AssetType | EmployeeType | VendorType | DisposeType
   //subfilter?: string
 ) => {
   //get object property
@@ -23,20 +27,37 @@ export const getProperty = (
   return property
     ? Object.getOwnPropertyDescriptor(property, "name")?.value ?? "--"
     : "--"
+}
 
-  // Allen's approach
-  // if (typeof type?.[filter as keyof typeof type] === "object") {
-  //   return (
-  //     (
-  //       type?.[filter as keyof typeof type] as unknown as Record<
-  //         string,
-  //         unknown
-  //       >
-  //     )?.name ?? "No value"
-  //   )
-  // }
+export const getPropertyDisposal = (
+  filter: string,
+  type: DisposeType
+  //subfilter?: string
+) => {
+  //get object property
 
-  // return type?.[filter as keyof typeof type] ?? "No value"
+  if (filter.includes(".")) {
+    const getObj = filter.split(".")
+
+    const property =
+      Object.getOwnPropertyDescriptor(type, getObj[0] ?? "")?.value ?? "--"
+
+    const value =
+      Object.getOwnPropertyDescriptor(property, getObj[1] ?? "")?.value ?? "--"
+
+    return value ?? "--"
+  }
+
+  const property = Object.getOwnPropertyDescriptor(type, filter)?.value ?? "--"
+
+  //returns the actual property as string
+  if (typeof property === "string" || typeof property === "number") {
+    const value = property.toString()
+    return value.length > 0 ? property.toString() : "--"
+  }
+
+  //dig deeper if obj is an actual obj
+  return property.toString() ?? "--"
 }
 
 export const getName = (filter: string, type: EmployeeType) => {

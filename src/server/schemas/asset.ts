@@ -64,7 +64,7 @@ export const AssetDisposalCreateInput = z.object({
 })
 
 export const AssetDisposalEditInput = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   disposalDate: z.date().optional(),
   completionDate: z.date().optional(),
   disposalStatus: z.string().optional(),
@@ -79,6 +79,17 @@ export const AssetDisposalEditInput = z.object({
   cufsCodeString: z.string().optional(),
 
   assetId: z.number().optional(),
+  asset: z
+    .object({
+      name: z.string().optional(),
+      number: z.string().optional(),
+    })
+    .optional(),
+  disposalType: z
+    .object({
+      name: z.string().optional(),
+    })
+    .optional(),
   disposalTypeId: z.number().optional(),
 })
 

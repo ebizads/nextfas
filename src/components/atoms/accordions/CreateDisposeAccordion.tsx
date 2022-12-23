@@ -36,7 +36,6 @@ const CreateDisposeAccordion = () => {
 
     const [selectedType, setSelectedType] = useState<string>("1");
 
-    // const [xAsset, setXAsset] = useState<object | undefined | null>(null)
 
     const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase());
     const { data: disposalTypes } = trpc.disposalType.findAll.useQuery();
@@ -122,8 +121,9 @@ const CreateDisposeAccordion = () => {
 
     useEffect(() => {
         if (assetNumber !== "") {
-            if (asset === null) {
+            if (asset === null || asset?.deleted === true) {
                 setSearchModal(true)
+                setAssetNumber("");
             } else if (asset?.status === "disposal") {
                 setValidateString("The asset is already in for disposal")
                 setValidateModal(true);
@@ -671,120 +671,121 @@ const CreateDisposeAccordion = () => {
                                     </div>
 
                                 </div>
-
-                                <div className="py-2 flex flex-row justify-between w-full gap-7">
-                                    <div className="flex flex-col w-full">
-                                        <label className="font-semibold">Customer Name</label >
-                                        <InputField disabled
-                                            register={register}
-                                            name="customerName"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                        <AlertInput>{errors?.customerName?.message}</AlertInput>
+                                {selectedType !== '1' && <div>
+                                    <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Customer Name</label >
+                                            <InputField disabled
+                                                register={register}
+                                                name="customerName"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                            <AlertInput>{errors?.customerName?.message}</AlertInput>
+                                        </div>
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Telephone No.</label >
+                                            <InputField disabled
+                                                register={register}
+                                                name="telephoneNo"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                            <AlertInput>{errors?.telephoneNo?.message}</AlertInput>
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col w-full">
-                                        <label className="font-semibold">Telephone No.</label >
-                                        <InputField disabled
-                                            register={register}
-                                            name="telephoneNo"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                        <AlertInput>{errors?.telephoneNo?.message}</AlertInput>
+                                    <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">AP Invoice Number</label >
+                                            <InputField disabled
+                                                register={register}
+                                                name="apInvoice"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                            <AlertInput>{errors?.apInvoice?.message}</AlertInput>
+                                        </div>
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Sale Invoice Number</label >
+                                            <InputField disabled
+                                                register={register}
+                                                name="salesInvoice"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                            <AlertInput>{errors?.salesInvoice?.message}</AlertInput>
+                                        </div>
+                                    </div>
+                                    <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Disposal Price</label >
+                                            <InputField disabled
+                                                register={register}
+                                                name="disposalPrice"
+                                                type={"number"}
+                                                label={""}
+                                            />
+                                            <AlertInput>{errors?.disposalPrice?.message}</AlertInput>
+                                        </div>
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Agreed Price</label >
+                                            <InputField disabled
+                                                register={register}
+                                                name="agreedPrice"
+                                                type={"number"}
+                                                label={""}
+                                            />
+                                            <AlertInput>{errors?.agreedPrice?.message}</AlertInput>
+                                        </div>
+                                    </div>
+                                    <div className="py-2 flex flex-row justify-between w-full gap-7">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">Date of Completion</label >
+                                            <DatePicker
+                                                disabled
+                                                value={completionDate}
+                                                minDate={new Date()}
+                                                dropdownType="modal"
+                                                placeholder="Pick Date"
+                                                size="sm"
+                                                variant="unstyled"
+                                                className="w-full rounded-md border-2 mt-2 border-gray-400 bg-transparent px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                            />
+                                            <AlertInput>{errors?.completionDate?.message}</AlertInput>
+                                        </div>
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-semibold">CUFS Code String</label >
+                                            <InputField
+                                                disabled
+                                                register={register}
+                                                name="cufsCodeString"
+                                                type={"text"}
+                                                label={""}
+                                            />
+                                            <AlertInput>{errors?.cufsCodeString?.message}</AlertInput>
+                                        </div>
+                                    </div>
+
+                                    <hr className="w-full"></hr>
+                                    <div className="flex w-full justify-between py-3">
+                                        <button
+                                            type="button"
+                                            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                            onClick={prevStep}
+                                        >
+                                            Previous
+                                        </button>
+
+                                        <button
+                                            type="submit"
+                                            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+
+                                        >
+                                            Dispose
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="py-2 flex flex-row justify-between w-full gap-7">
-                                    <div className="flex flex-col w-full">
-                                        <label className="font-semibold">AP Invoice Number</label >
-                                        <InputField disabled
-                                            register={register}
-                                            name="apInvoice"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                        <AlertInput>{errors?.apInvoice?.message}</AlertInput>
-                                    </div>
-                                    <div className="flex flex-col w-full">
-                                        <label className="font-semibold">Sale Invoice Number</label >
-                                        <InputField disabled
-                                            register={register}
-                                            name="salesInvoice"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                        <AlertInput>{errors?.salesInvoice?.message}</AlertInput>
-                                    </div>
-                                </div>
-                                <div className="py-2 flex flex-row justify-between w-full gap-7">
-                                    <div className="flex flex-col w-full">
-                                        <label className="font-semibold">Disposal Price</label >
-                                        <InputField disabled
-                                            register={register}
-                                            name="disposalPrice"
-                                            type={"number"}
-                                            label={""}
-                                        />
-                                        <AlertInput>{errors?.disposalPrice?.message}</AlertInput>
-                                    </div>
-                                    <div className="flex flex-col w-full">
-                                        <label className="font-semibold">Agreed Price</label >
-                                        <InputField disabled
-                                            register={register}
-                                            name="agreedPrice"
-                                            type={"number"}
-                                            label={""}
-                                        />
-                                        <AlertInput>{errors?.agreedPrice?.message}</AlertInput>
-                                    </div>
-                                </div>
-                                <div className="py-2 flex flex-row justify-between w-full gap-7">
-                                    <div className="flex flex-col w-full">
-                                        <label className="font-semibold">Date of Completion</label >
-                                        <DatePicker
-                                            disabled
-                                            value={completionDate}
-                                            minDate={new Date()}
-                                            dropdownType="modal"
-                                            placeholder="Pick Date"
-                                            size="sm"
-                                            variant="unstyled"
-                                            className="w-full rounded-md border-2 mt-2 border-gray-400 bg-transparent px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                                        />
-                                        <AlertInput>{errors?.completionDate?.message}</AlertInput>
-                                    </div>
-                                    <div className="flex flex-col w-full">
-                                        <label className="font-semibold">CUFS Code String</label >
-                                        <InputField
-                                            disabled
-                                            register={register}
-                                            name="cufsCodeString"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                        <AlertInput>{errors?.cufsCodeString?.message}</AlertInput>
-                                    </div>
-                                </div>
-
-                                <hr className="w-full"></hr>
-                                <div className="flex w-full justify-between py-3">
-                                    <button
-                                        type="button"
-                                        className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                                        onClick={prevStep}
-                                    >
-                                        Previous
-                                    </button>
-
-                                    <button
-                                        type="submit"
-                                        className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-
-                                    >
-                                        Dispose
-                                    </button>
-                                </div>
-
+                                }
                             </div>
                         </div>
                     </div>
@@ -793,12 +794,12 @@ const CreateDisposeAccordion = () => {
             <Modal isVisible={completeModal} setIsVisible={setCompleteModal} className="max-w-2xl" title="Transfer Complete" >
                 <div className="px-4 py-2 flex flex-col w-full">
                     <div>
-                        <p className="text-center text-lg font-semibold">Asset Transfer successful.</p>
+                        <p className="text-center text-lg font-semibold">Asset successfully added to disposal.</p>
                     </div>
                     <div className="flex justify-end py-2">
                         <Link href={"/assets"}>
                             <button className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                            >babu</button>
+                            >Continue</button>
                         </Link>
                     </div>
                 </div>

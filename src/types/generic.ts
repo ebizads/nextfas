@@ -1,11 +1,7 @@
 import { inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { AssetCreateInput, AssetEditInput } from "../server/schemas/asset"
+import { AssetCreateInput } from "../server/schemas/asset"
 import { EmployeeCreateInput } from "../server/schemas/employee"
-import {
-  ManagementCreateInput,
-  ModelCreateInput,
-} from "../server/schemas/model"
 import { AppRouter } from "../server/trpc/router"
 
 //dynamic inference of type

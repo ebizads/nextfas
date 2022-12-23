@@ -271,7 +271,6 @@ export const assetRouter = t.router({
       })
       return "Assets successfully created"
     }),
-
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
@@ -283,6 +282,33 @@ export const assetRouter = t.router({
           },
           data: {
             ...rest,
+          },
+        })
+
+        return "Asset updated successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  changeStatus: authedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.string().nullish(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, status } = input
+      try {
+        await ctx.prisma.asset.update({
+          where: {
+            id,
+          },
+          data: {
+            status: status,
           },
         })
 

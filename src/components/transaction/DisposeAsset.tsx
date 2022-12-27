@@ -1,13 +1,14 @@
 import { Pagination, Select, Tabs } from "@mantine/core";
 import Link from "next/link";
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 //import { downloadExcel } from "../../lib/functions";
 import { disposalColumn } from "../../lib/table";
-import { disposeTMP } from "../../pages/transactions/disposal";
 //import { ExcelExportType } from "../../types/employee";
 import FilterPopOver from "../atoms/popover/FilterPopOver";
 import PaginationPopOver from "../atoms/popover/PaginationPopOver";
 import DisposalTable from "../atoms/table/DisposalTable";
+import { DisposeType } from "../../types/generic";
+import { useDisposalStatusStore } from "../../store/useStore";
 type SearchType = {
     value: string
     label: string
@@ -32,7 +33,7 @@ const Search = (props: { data: SearchType[] }) => {
 
 const Dispose = (props: {
     total: number
-    asset: disposeTMP[]
+    asset: DisposeType[]
     assetPage: number
     page: number
     setPage: React.Dispatch<React.SetStateAction<number>>
@@ -44,9 +45,13 @@ const Dispose = (props: {
     const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
     const [filterBy, setFilterBy] = useState<string[]>(disposalColumn.map((i) => i.value))
 
-    const [activeTab, setActiveTab] = useState<string | null>('pending');
+    const [activeTab, setActiveTab] = useState<string | null>('pending')
+    const { status, setStatus } = useDisposalStatusStore()
 
-    console.log(props.asset);
+    useEffect(() => {
+        setStatus(activeTab ?? "pending")
+    }, [activeTab, setStatus])
+
 
     return (
         <div className="space-y-4">
@@ -59,11 +64,11 @@ const Dispose = (props: {
                                     data={[
                                         ...props.asset?.map((obj) => {
                                             return {
-                                                value: obj?.id.toString() ?? "",
-                                                label: obj?.assetName ?? "",
+                                                value: obj?.assetId ?? "",
+                                                label: obj?.asset?.name ?? "",
                                             }
                                         }),
-                                    ]}
+                                    ] as SearchType[]}
                                 />
                             </div>
                             <FilterPopOver
@@ -83,12 +88,12 @@ const Dispose = (props: {
                         )}
                     </div>
                     <div className="flex items-center gap-2">
-                        <button
+                        {/* <button
                             className="-md flex gap-2 bg-tangerine-500 py-2 px-4 text-xs rounded-md text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
                         >
                             <i className="fa-solid fa-print text-xs" />
                             Generate CVs
-                        </button>
+                        </button> */}
                         <Link href={"/transactions/disposal/create"}>
                             <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
 
@@ -104,10 +109,12 @@ const Dispose = (props: {
                     <div className="px-4">
                         <Tabs value={activeTab} onTabChange={setActiveTab} color="yellow">
                             <Tabs.List>
-                                <Tabs.Tab value="pending"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'pending' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Pending</p> <div><p className="text-white rounded-full px-2 py-0.5 bg-tangerine-500">1</p></div></div></Tabs.Tab>
-                                <Tabs.Tab value="approved"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'approved' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Approved</p> <div><p className="text-white rounded-full px-2 py-0.5 bg-tangerine-500">1</p></div></div></Tabs.Tab>
-                                <Tabs.Tab value="rejected"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'rejected' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Rejected</p> <div><p className="text-white rounded-full px-2 py-0.5 bg-tangerine-500">1</p></div></div></Tabs.Tab>
-                                <Tabs.Tab value="cancelled"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'cancelled' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Cancelled</p> <div><p className="text-white rounded-full px-2 py-0.5 bg-tangerine-500">1</p></div></div></Tabs.Tab>
+                                <Tabs.Tab value="pending"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'pending' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Pending</p></div></Tabs.Tab>
+                                <Tabs.Tab value="approved"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'approved' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Approved</p></div></Tabs.Tab>
+                                <Tabs.Tab value="rejected"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'rejected' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Rejected</p></div></Tabs.Tab>
+                                <Tabs.Tab value="cancelled"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'cancelled' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Cancelled</p></div></Tabs.Tab>
+                                <Tabs.Tab value="done"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'done' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Done</p></div></Tabs.Tab>
+
                             </Tabs.List>
                         </Tabs>
                         <div className="py-4">
@@ -162,4 +169,5 @@ export default Dispose
 
 
 
+// <div><p className="text-white rounded-full px-2 py-0.5 bg-tangerine-500">1</p></div>
 

@@ -5,6 +5,7 @@ import { assetCategoryRouter } from "./asset_category"
 import { assetClassRouter } from "./asset_class"
 import { assetDisposalRouter } from "./asset_disposal"
 import { assetProjectRouter } from "./asset_project"
+import { assetRepairRouter } from "./asset_repair"
 import { assetTypeRouter } from "./asset_type"
 import { companyRouter } from "./company"
 import { departmentRouter } from "./deparment"
@@ -28,6 +29,7 @@ export const appRouter = t.router({
   assetType: assetTypeRouter,
   assetDisposal: assetDisposalRouter,
   disposalType: disposalTypeRouter,
+  assetRepair: assetRepairRouter,
 })
 
 // export type definition of API

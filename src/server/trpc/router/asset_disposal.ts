@@ -5,6 +5,7 @@ import {
   AssetDisposalEditInput,
 } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
+import { AssetDisposal } from "@prisma/client"
 
 export const assetDisposalRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -62,6 +63,7 @@ export const assetDisposalRouter = t.router({
             disposalType: true,
           },
           where: {
+            disposalStatus: input?.search?.disposalStatus,
             NOT: {
               deleted: true,
             },
@@ -82,7 +84,8 @@ export const assetDisposalRouter = t.router({
 
       return {
         assetDisposals,
-        count,
+        pages: Math.ceil(count / (input?.limit ?? 0)),
+        total: count,
       }
     }),
   create: authedProcedure

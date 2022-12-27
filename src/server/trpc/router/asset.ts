@@ -2,6 +2,7 @@ import { z } from "zod"
 import { AssetCreateInput, AssetEditInput } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
+import { ManagementEditInput } from "../../schemas/model"
 
 export const assetRouter = t.router({
   findOne: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
@@ -30,6 +31,7 @@ export const assetRouter = t.router({
         vendor: true,
         subsidiary: true,
         management: true,
+        addedBy: true,
       },
     })
     return asset
@@ -89,6 +91,7 @@ export const assetRouter = t.router({
             custodian: true,
             vendor: true,
             management: true,
+            addedBy: true,
           },
           where: {
             NOT: {
@@ -271,18 +274,47 @@ export const assetRouter = t.router({
       })
       return "Assets successfully created"
     }),
-
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, ...rest } = input
+      const { id, management, ...rest } = input
       try {
         await ctx.prisma.asset.update({
           where: {
             id,
           },
           data: {
+            management: {
+              update: [management],
+            },
             ...rest,
+          },
+        })
+
+        return "Asset updated successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  changeStatus: authedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.string().nullish(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, status } = input
+      try {
+        await ctx.prisma.asset.update({
+          where: {
+            id,
+          },
+          data: {
+            status: status,
           },
         })
 

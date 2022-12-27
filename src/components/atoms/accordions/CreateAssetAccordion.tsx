@@ -19,6 +19,8 @@ import moment from "moment"
 import JsBarcode from 'jsbarcode';
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
+import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
 
 
 const CreateAssetAccordion = () => {
@@ -280,6 +282,9 @@ const CreateAssetAccordion = () => {
     }
   }, [assetId, asset_number])
 
+  const router = useRouter()
+  const { data: session } = useSession()
+
   const onSubmit: SubmitHandler<AssetFieldValues> = (
     form_data: AssetFieldValues
   ) => {
@@ -288,8 +293,8 @@ const CreateAssetAccordion = () => {
       console.error("Prisma Error: ", error)
       console.error("Form Error:", errors)
     } else {
+      form_data.addedById = Number(session?.user?.id)
       console.log("Submitting: ", form_data)
-
       mutate(form_data)
 
       setTimeout(function () {
@@ -302,6 +307,7 @@ const CreateAssetAccordion = () => {
       setTypeId(null)
       setCompanyId(null)
       setDepartmentId(null)
+      router.push('/assets')
     }
   }
 

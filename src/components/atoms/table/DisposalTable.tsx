@@ -1,28 +1,27 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React from "react"
+import React, { useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
-// import Modal from "../../headless/modal/modal"
-// import { EmployeeType } from "../../../types/generic"
-import { disposeTMP } from "../../../pages/transactions/disposal"
 import { disposalColumn } from "../../../lib/table";
-import { getProperty } from "../../../lib/functions"
-import { SquareCheck, SquareX } from "tabler-icons-react"
+import { getPropertyDisposal } from "../../../lib/functions"
+import { DisposeType } from "../../../types/generic";
+import Modal from "../../headless/modal/modal";
+import { DisposeDetailsModal, DisposeEdit } from "../../transaction/Disposal/Modal";
 
 const DisposalTable = (props: {
     checkboxes: number[]
     setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
     filterBy: string[]
-    rows: disposeTMP[]
+    rows: DisposeType[]
     columns: ColumnType[]
     // status: string
 }) => {
-    const { minimize } = useMinimizeStore()
-    // const [isVisible, setIsVisible] = useState<boolean>(false)
-    // const [updateRecord, setUpdateRecord] = useState<boolean>(false)
-    // const [details, setDetails] = useState<disposeTMP>()
 
+    const [isVisible, setIsVisible] = useState<boolean>(false)
+    const [details, setDetails] = useState<DisposeType>(null)
+
+    const { minimize } = useMinimizeStore()
 
     const selectAllCheckboxes = () => {
         if (props.checkboxes.length === 0) {
@@ -77,15 +76,13 @@ const DisposalTable = (props: {
                                 </th>
                             ))}
 
-                        <th scope="col" className="p-4 text-center">
+                        {/* <th scope="col" className="p-4 text-center">
                             Action
-                        </th>
+                        </th> */}
                     </tr>
                 </thead>
                 <tbody>
                     {props.rows.map((row, idx) => (
-
-                        row.status === "pending" &&
                         <tr
                             key={row?.id ?? idx}
                             className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
@@ -115,153 +112,35 @@ const DisposalTable = (props: {
                                     <td
                                         key={col.value}
                                         className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
-                                    // onClick={() => {
-                                    //     setIsVisible(true)
-                                    //     setDetails(row)
-                                    // }}
+                                        onClick={() => {
+                                            setIsVisible(true)
+                                            setDetails(row)
+                                        }}
                                     >
                                         {
-                                            getProperty(col.value, row)
+                                            getPropertyDisposal(col.value, row)
                                         }
                                     </td>
                                 ))}
-                            <td className="max-w-[10rem] justify-center">
+                            {/* <td className="max-w-[10rem] justify-center">
                                 <div className="flex flex-row justify-center"><SquareCheck color="green" /><SquareX color="red" /></div>
 
-                                {/* <i className="fa-light fa-trash-can text-red-500" />{" "} */}
-                            </td>
+                                <i className="fa-light fa-trash-can text-red-500" />{" "}
+                            </td> */}
                         </tr>
                     ))}
                 </tbody>
             </table>
-            {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre>
-            <ShowDetails
+
+            <Modal title="Asset"
                 isVisible={isVisible}
                 setIsVisible={setIsVisible}
-                info={details!}
-            />
-
-            {details !== null ?
-                <Modal title="Update Employee Record"
-                    isVisible={updateRecord}
-                    setIsVisible={setUpdateRecord}
-                    className="max-w-4xl">
-                    <UpdateEmployeeModal employee={details as Employee} setIsVisible={setUpdateRecord}
-                    />
-                </Modal>
-                : <div></div>
-            } */}
+                className="max-w-4xl">
+                <DisposeDetailsModal asset={details as DisposeEdit} setCloseModal={setIsVisible} />
+            </Modal>
         </div>
     )
 }
 
 export default DisposalTable
 
-// function ShowDetails({
-//     isVisible,
-//     setIsVisible,
-//     info,
-// }: {
-//     isVisible: boolean
-//     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
-//     info: EmployeeType
-// }) {
-//     return (
-//         <Modal
-//             title={"Employee Details"}
-//             isVisible={isVisible}
-//             setIsVisible={setIsVisible}
-//             className="max-w-lg"
-//         >
-//             <>
-//                 {info == null ? (
-//                     <div></div>
-//                 ) : (
-//                     <div>
-//                         <div className="flex flex-row items-center gap-4 py-5">
-//                             <Avatar src={info.profile?.image ?? ""} alt="it's me" radius={200} size={100} />
-//                             <div className="flex flex-col">
-//                                 <div className="flex flex-row">
-//                                     <p className="text-xl font-bold">
-//                                         {info.profile?.first_name}
-//                                     </p>
-//                                     <div className="ml-2 mt-1 h-5 w-5 rounded-full border bg-green-500"></div>
-//                                 </div>
-//                                 <p className="text-sm">{`${info.employee_id}`}</p>
-//                             </div>
-//                         </div>
-//                         <div className="flex flex-col px-3 py-3">
-//                             <p className="text-lg font-bold">Personal Information</p>
-//                             <div className="grid grid-cols-2">
-//                                 <div className="py-3">
-//                                     <p className="text-sm font-semibold">FIRST NAME</p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="col-span-2 text-sm">
-//                                         {info.profile?.first_name ?? "NO DATA"}
-//                                     </p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="text-sm font-semibold">LAST NAME</p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="col-span-2 text-sm">
-//                                         {info.profile?.last_name ?? "NO DATA"}
-//                                     </p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="text-sm font-semibold">EMPLOYEE ID</p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="col-span-2 text-sm">
-//                                         {info.employee_id ?? "NO DATA"}
-//                                     </p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="text-sm font-semibold">STREET ADDRESS</p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="col-span-2 text-sm">
-//                                         {info.address?.street ?? "NO DATA"}
-//                                     </p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="text-sm font-semibold">HIRE DATE</p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="col-span-2 text-sm">
-//                                         {info.hired_date?.toDateString() ?? "NO DATA"}
-//                                     </p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="text-sm font-semibold">TEAM</p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="col-span-2 text-sm">
-//                                         {info.team?.name ?? "NO DATA"}
-//                                     </p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="text-sm font-semibold">PHONE NUMBER</p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="col-span-2 text-sm">
-//                                         {info.profile?.phone_no ?? "NO DATA"}
-//                                     </p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="text-sm font-semibold">EMAIL</p>
-//                                 </div>
-//                                 <div className="py-3">
-//                                     <p className="col-span-2 text-sm">
-//                                         {info.email ?? "NO DATA"}
-//                                     </p>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 )}
-//             </>
-//         </Modal>
-//     )
-// }

@@ -1,11 +1,7 @@
 import { inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { AssetCreateInput, AssetEditInput } from "../server/schemas/asset"
+import { AssetCreateInput } from "../server/schemas/asset"
 import { EmployeeCreateInput } from "../server/schemas/employee"
-import {
-  ManagementCreateInput,
-  ModelCreateInput,
-} from "../server/schemas/model"
 import { AppRouter } from "../server/trpc/router"
 
 //dynamic inference of type
@@ -20,6 +16,10 @@ export type DepartmentType = inferProcedureOutput<
 export type VendorType = inferProcedureOutput<AppRouter["vendor"]["findOne"]>
 export type EmployeeType = inferProcedureOutput<
   AppRouter["employee"]["findOne"]
+>
+
+export type DisposeType = inferProcedureOutput<
+  AppRouter["assetDisposal"]["findOne"]
 >
 
 //employee field types

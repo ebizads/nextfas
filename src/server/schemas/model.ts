@@ -80,6 +80,7 @@ export const ManagementCreateInput = z.object({
   depreciation_rule: z.string().nullish(),
   accounting_method: z.string().nullish(),
   remarks: z.string().nullish(),
+  id: z.number(),
 })
 
 export const ManagementEditInput = z.object({

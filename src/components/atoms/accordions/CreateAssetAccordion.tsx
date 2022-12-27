@@ -862,6 +862,8 @@ const CreateAssetAccordion = () => {
             type="submit"
             disabled={(!isValid && !isDirty) || isLoading}
             className="focus:outline-none outline-none  rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400 disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            onClick={() => console.log(errors)}
+
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

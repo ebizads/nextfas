@@ -13,7 +13,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
-import moment from "moment"
 import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
@@ -339,7 +338,6 @@ const UpdateAssetAccordion = () => {
         : console.log("")
 
       console.log("Submitting: ", form_data)
-
       mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
 
       setTimeout(function () {
@@ -933,7 +931,7 @@ const UpdateAssetAccordion = () => {
           <button
             type="submit"
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-            onClick={() => console.log("clicked")}
+            onClick={() => console.log(errors)}
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

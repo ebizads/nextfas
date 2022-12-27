@@ -285,7 +285,10 @@ export const assetRouter = t.router({
           },
           data: {
             management: {
-              update: [management],
+              upsert: {
+                update: [management],
+                create: [management],
+              },
             },
             ...rest,
           },

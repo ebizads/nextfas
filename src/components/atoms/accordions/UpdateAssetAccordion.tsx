@@ -10,7 +10,7 @@ import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AssetCreateInput } from "../../../server/schemas/asset"
+import { AssetCreateInput, AssetEditInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
 import JsBarcode from "jsbarcode"
@@ -43,7 +43,7 @@ const UpdateAssetAccordion = () => {
     // watch,
     formState: { errors, isDirty, isValid },
   } = useForm<AssetFieldValues>({
-    resolver: zodResolver(AssetCreateInput),
+    resolver: zodResolver(AssetEditInput),
     // defaultValues: {
     //   name: selectedAsset?.name,
     //   alt_number: selectedAsset?.alt_number,

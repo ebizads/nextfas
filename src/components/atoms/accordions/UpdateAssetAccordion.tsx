@@ -13,11 +13,21 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
-import moment from "moment"
 import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
 import { useRouter } from "next/router"
+
+
+export const FormErrorMessage = (props: { setFormError: React.Dispatch<React.SetStateAction<boolean>> }) => {
+  return (<div className="bg-red-50 p-6 border-red-400 rounded-md flex justify-between">
+    <p className="text-red-400">There seems to be a problem with the form.</p>
+    <i className="fa-solid fa-xmark hover:cursor-pointer" onClick={() => {
+      props.setFormError(false)
+    }} />
+  </div>);
+}
+
 
 const UpdateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.edit.useMutation()
@@ -339,7 +349,6 @@ const UpdateAssetAccordion = () => {
         : console.log("")
 
       console.log("Submitting: ", form_data)
-
       mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
 
       setTimeout(function () {
@@ -365,8 +374,13 @@ const UpdateAssetAccordion = () => {
     content: () => componentRef.current,
   })
 
+
+  const [formError, setFormError] = useState<boolean>(false)
+  useEffect(() => { setFormError(Object.keys(errors).length > 0 ? true : false) }, [errors])
+
   return (
     <div id="contents">
+      {formError && <FormErrorMessage setFormError={setFormError} />}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-4 p-4"
@@ -933,7 +947,7 @@ const UpdateAssetAccordion = () => {
           <button
             type="submit"
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-            onClick={() => console.log("clicked")}
+            onClick={() => console.log(errors)}
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

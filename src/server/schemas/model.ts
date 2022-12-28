@@ -84,7 +84,7 @@ export const ManagementCreateInput = z.object({
 })
 
 export const ManagementEditInput = z.object({
-  id: z.number(),
+  //id: z.number(),
   currency: z.string().optional().nullish(),
   original_cost: z.number().optional().nullish(),
   current_cost: z.number().optional().nullish(),

@@ -20,6 +20,8 @@ const TypeSelect = (props: { isString?: boolean, disabled?: boolean, name: any, 
         searchable
         value={props.value}
         onChange={(q) => {
+
+          console.log(q);
           if (q) {
             setQuery(q)
             //q(string) to number, q stands for query or value 

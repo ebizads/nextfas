@@ -10,8 +10,8 @@ import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AssetCreateInput, AssetEditInput } from "../../../server/schemas/asset"
-import { AssetClassType, AssetFieldValues } from "../../../types/generic"
+import { AssetCreateInput, AssetUpdateInput } from "../../../server/schemas/asset"
+import { AssetClassType, AssetEditFieldValues, AssetFieldValues } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
 import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
@@ -30,7 +30,7 @@ export const FormErrorMessage = (props: { setFormError: React.Dispatch<React.Set
 
 
 const UpdateAssetAccordion = () => {
-  const { mutate, isLoading, error } = trpc.asset.edit.useMutation()
+  const { mutate, isLoading, error } = trpc.asset.update.useMutation()
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
@@ -42,8 +42,8 @@ const UpdateAssetAccordion = () => {
     getValues,
     // watch,
     formState: { errors, isDirty, isValid },
-  } = useForm<AssetFieldValues>({
-    resolver: zodResolver(AssetEditInput),
+  } = useForm<AssetEditFieldValues>({
+    resolver: zodResolver(AssetUpdateInput),
     // defaultValues: {
     //   name: selectedAsset?.name,
     //   alt_number: selectedAsset?.alt_number,
@@ -71,7 +71,7 @@ const UpdateAssetAccordion = () => {
     //   // },
     //   number: selectedAsset?.number,
     //   parentId: selectedAsset?.parentId ?? undefined,
-    //   projectId: selectedAsset?.parent?.assetProjectId ?? undefined,
+    //   assetProjectId: selectedAsset?.parent?.assetassetProjectId ?? undefined,
     //   remarks: selectedAsset?.remarks,
     //   serial_no: selectedAsset?.serial_no,
     //   subsidiaryId: selectedAsset?.subsidiaryId ?? undefined,
@@ -87,11 +87,11 @@ const UpdateAssetAccordion = () => {
 
   useEffect(() => {
     if (selectedAsset) {
-      reset(selectedAsset as AssetFieldValues)
-      setValue("projectId", selectedAsset.assetProjectId ?? 0)
+      reset(selectedAsset as AssetEditFieldValues)
+      setValue("projectId", selectedAsset.assetProjectId ?? 1)
       setValue("description", selectedAsset.description ?? "")
 
-      console.log(selectedAsset.management)
+      console.log(selectedAsset.assetProjectId)
 
       setValue(
         "management.original_cost",
@@ -312,11 +312,11 @@ const UpdateAssetAccordion = () => {
 
   const router = useRouter()
 
-  const onSubmit: SubmitHandler<AssetFieldValues> = (
-    form_data: AssetFieldValues
+  const onSubmit: SubmitHandler<AssetEditFieldValues> = (
+    form_data: AssetEditFieldValues
   ) => {
 
-    console.log('Here')
+    // console.log(form_data)
 
     if (error) {
       console.log("ERROR ENCOUNTERED")
@@ -329,27 +329,24 @@ const UpdateAssetAccordion = () => {
       // } else {
       //   console.log("ERROR ENCOUNTERED")
       // }
-      form_data.parentId === undefined
-        ? (form_data.parentId = 0)
-        : console.log("")
-      form_data.custodianId === undefined
-        ? (form_data.custodianId = 0)
-        : console.log("")
-      form_data.vendorId === undefined
-        ? (form_data.vendorId = 0)
-        : console.log("")
-      form_data.departmentId === undefined
-        ? (form_data.departmentId = 0)
-        : console.log("")
-      form_data.subsidiaryId === undefined
-        ? (form_data.subsidiaryId = 0)
-        : console.log("")
-      form_data.projectId === undefined
-        ? (form_data.projectId = 0)
-        : console.log("")
+      // form_data.parentId === undefined
+      //   ? (form_data.parentId = 0)
+      //   : console.log("")
+      // form_data.custodianId === undefined
+      //   ? (form_data.custodianId = 0)
+      //   : console.log("")
+      // form_data.vendorId === undefined
+      //   ? (form_data.vendorId = 0)
+      //   : console.log("")
+      // form_data.departmentId === undefined
+      //   ? (form_data.departmentId = 0)
+      //   : console.log("")
+      // form_data.subsidiaryId === undefined
+      //   ? (form_data.subsidiaryId = 0)
+      //   : console.log("")
 
-      console.log("Submitting: ", form_data)
-      mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
+      console.log("Submitting: ", form_data.parentId);
+      mutate({ ...form_data, id: selectedAsset?.id ?? 0, projectId: form_data.projectId ?? 3, parentId: form_data.parentId ?? 2, vendorId: 2, serial_no: "putangina mo" })
 
       setTimeout(function () {
         setIsLoading(false)

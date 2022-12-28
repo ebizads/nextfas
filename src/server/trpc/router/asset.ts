@@ -1,5 +1,9 @@
 import { z } from "zod"
-import { AssetCreateInput, AssetEditInput } from "../../schemas/asset"
+import {
+  AssetCreateInput,
+  AssetEditInput,
+  AssetUpdateInput,
+} from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
 import { ManagementEditInput } from "../../schemas/model"
@@ -284,6 +288,35 @@ export const assetRouter = t.router({
             id,
           },
           data: {
+            management: {
+              update: management,
+            },
+            ...rest,
+          },
+        })
+
+        return "Asset updated successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  update: authedProcedure
+    .input(AssetUpdateInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id, management, model, vendorId, projectId, parentId, ...rest } =
+        input
+      try {
+        await ctx.prisma.asset.update({
+          where: {
+            id,
+          },
+          data: {
+            model: {
+              update: model,
+            },
             management: {
               update: management,
             },

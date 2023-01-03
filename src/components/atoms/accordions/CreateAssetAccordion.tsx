@@ -21,6 +21,7 @@ import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
+import { FormErrorMessage } from "./UpdateAssetAccordion"
 
 
 const CreateAssetAccordion = () => {
@@ -316,8 +317,12 @@ const CreateAssetAccordion = () => {
     content: () => componentRef.current,
   });
 
+  const [formError, setFormError] = useState<boolean>(false)
+  useEffect(() => { setFormError(Object.keys(errors).length > 0 ? true : false) }, [errors])
+
   return (
     <div id="contents">
+      {formError && <FormErrorMessage setFormError={setFormError} />}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-4 p-4"
@@ -862,6 +867,8 @@ const CreateAssetAccordion = () => {
             type="submit"
             disabled={(!isValid && !isDirty) || isLoading}
             className="focus:outline-none outline-none  rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400 disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            onClick={() => console.log(errors)}
+
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

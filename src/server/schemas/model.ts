@@ -38,6 +38,31 @@ export const SubsidiaryEditInput = z.object({
   name: z.string().optional().nullish(),
 })
 
+export const CustodianEditInput = z.object({
+  id: z.number().optional(),
+  name: z.string().optional().nullish(),
+})
+
+export const DepartmentEditInput = z.object({
+  id: z.number().optional(),
+  name: z.string().optional().nullish(),
+})
+
+export const VendorEditInput = z.object({
+  id: z.number(),
+  name: z.string().optional().nullish(),
+})
+
+export const ProjectEditInput = z.object({
+  id: z.number().optional(),
+  name: z.string().optional().nullish(),
+})
+
+export const ParentEditInput = z.object({
+  id: z.number().optional(),
+  name: z.string().optional().nullish(),
+})
+
 export const ModelCreateInput = z.object({
   name: z.string().min(1, "Please provide model name"),
   brand: z.string().optional(),
@@ -52,17 +77,18 @@ export const ModelCreateInput = z.object({
 })
 
 export const ModelEditInput = z.object({
+  id: z.number(),
   name: z.string().min(1, "Please provide model name"),
   brand: z.string().optional(),
   number: z.string().optional(),
 
-  asset_class: AssetClassCreateInput.optional(),
+  //asset_class: AssetClassEditInput.optional(),
   classId: z.number().optional(),
-  asset_category: AssetCategoryCreateInput.optional(),
+  //asset_category: AssetCategoryEditInput.optional(),
   categoryId: z.number().optional(),
-  asset_type: AssetTypeCreateInput.optional(),
+  //asset_type: AssetTypeEditInput.optional(),
   typeId: z.number().optional(),
-  type: TypeEditInput.optional(),
+  //type: TypeEditInput.optional(),
 })
 
 export const ManagementCreateInput = z.object({
@@ -80,6 +106,7 @@ export const ManagementCreateInput = z.object({
   depreciation_rule: z.string().nullish(),
   accounting_method: z.string().nullish(),
   remarks: z.string().nullish(),
+  // id: z.number(),
 })
 
 export const ManagementEditInput = z.object({
@@ -97,4 +124,5 @@ export const ManagementEditInput = z.object({
   depreciation_lifetime: z.number().nullish(),
   depreciation_rule: z.string().nullish(),
   accounting_method: z.string().nullish(),
+  remarks: z.string().nullish(),
 })

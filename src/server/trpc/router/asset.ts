@@ -308,6 +308,7 @@ export const assetRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       const { id, management, model, vendorId, projectId, parentId, ...rest } =
         input
+      console.log("GAGU", vendorId, projectId, parentId)
       try {
         await ctx.prisma.asset.update({
           where: {
@@ -320,6 +321,9 @@ export const assetRouter = t.router({
             management: {
               update: management,
             },
+            parentId: parentId,
+            projectId: projectId ?? 0,
+            vendorId: vendorId,
             ...rest,
           },
         })

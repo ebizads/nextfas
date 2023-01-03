@@ -346,7 +346,7 @@ const UpdateAssetAccordion = () => {
       //   : console.log("")
 
       console.log("Submitting: ", form_data.parentId);
-      mutate({ ...form_data, id: selectedAsset?.id ?? 0, projectId: form_data.projectId ?? 3, parentId: form_data.parentId ?? 2, vendorId: 2, serial_no: "putangina mo" })
+      mutate({ ...form_data, id: selectedAsset?.id ?? 0, })
 
       setTimeout(function () {
         setIsLoading(false)

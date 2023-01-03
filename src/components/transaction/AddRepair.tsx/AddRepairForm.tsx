@@ -407,7 +407,7 @@ const AddRepairForm = () => {
             {isLoading || loading ? "Saving..." : "Add"}
           </button>
         </div>
-        {/* 
+        {/*
         <Modal isVisible={submitting} setIsVisible={setSubmitting} title="Confirm details" className="w-fit h-fit p-4">
           <div>
             <pre>{JSON.stringify(data, null, 2)}</pre>

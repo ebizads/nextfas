@@ -2,7 +2,8 @@ import { Pagination, Select, Tabs } from "@mantine/core"
 import Link from "next/link"
 import React, { useState } from "react"
 import { repairColumn } from "../../lib/table"
-import { repairTMP } from "../../pages/transactions/repair/repair"
+import { repairTMP } from "../../pages/transactions/repair"
+import { AssetRepairType, AssetType } from "../../types/generic"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import RepairTable from "../atoms/table/RepairTable"
@@ -28,9 +29,9 @@ const Search = (props: { data: SearchType[] }) => {
   )
 }
 
-const Repair = (props: {
+const RepairAsset = (props: {
   total: number
-  asset: repairTMP[]
+  asset: AssetRepairType[]
   assetPage: number
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
@@ -60,7 +61,7 @@ const Repair = (props: {
                     ...props.asset?.map((obj) => {
                       return {
                         value: obj?.id.toString() ?? "",
-                        label: obj?.assetDesc ?? "",
+                        label: obj?.assetPart ?? "",
                       }
                     }),
                   ]}
@@ -235,4 +236,4 @@ const Repair = (props: {
   )
 }
 
-export default Repair
+export default RepairAsset

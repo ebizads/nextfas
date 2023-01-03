@@ -20,7 +20,6 @@ const Assets = () => {
   useEffect(() => {
     //get and parse all data
     if (data) {
-
       setAssets(data.assets)
       setAccessiblePage(Math.ceil(data?.count / limit))
     }

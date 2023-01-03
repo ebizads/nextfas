@@ -3,6 +3,7 @@ import {
   ManagementCreateInput,
   ManagementEditInput,
   ModelCreateInput,
+  ModelEditInput,
 } from "./model"
 
 export const AssetCreateInput = z.object({
@@ -21,7 +22,7 @@ export const AssetCreateInput = z.object({
   subsidiaryId: z.number({
     required_error: "Please provide a company/subsidiary",
   }),
-  projectId: z.number().optional(),
+  assetProjectId: z.number().optional(),
   parentId: z.number().optional(),
   addedById: z.number().optional(),
   management: ManagementCreateInput,
@@ -31,21 +32,44 @@ export const AssetEditInput = z.object({
   id: z.number(),
   name: z.string().min(1, "Please provide name"),
   number: z.string(),
-  alt_number: z.string().nullish(),
-  serial_no: z.string().nullish(),
-  barcode: z.string().nullish(),
-  description: z.string().nullish(),
-  remarks: z.string().nullish(),
-  status: z.string().nullish(),
+  alt_number: z.string().optional(),
+  serial_no: z.string().optional(),
+  barcode: z.string().nullish().optional(),
+  description: z.string().optional(),
+  remarks: z.string().nullish().optional(),
+  status: z.string().nullish().optional(),
 
-  modelId: z.number().optional().nullish(),
-  custodianId: z.number().optional().nullish(),
-  departmentId: z.number().optional().nullish(),
-  vendorId: z.number().optional().nullish(),
-  subsidiaryId: z.number().optional().nullish(),
-  assetProjectId: z.number().optional().nullish(),
-  parentId: z.number().optional().nullish(),
+  modelId: z.number().optional(),
+  custodianId: z.number().optional(),
+  departmentId: z.number().optional(),
+  vendorId: z.number().optional(),
+  subsidiaryId: z.number().optional(),
+  assetProjectId: z.number().optional(),
+  parentId: z.number().optional(),
   management: ManagementEditInput.optional(),
+  //model: ModelEditInput.optional(),
+})
+
+export const AssetUpdateInput = z.object({
+  id: z.number(),
+  name: z.string().min(1, "Please provide name"),
+  number: z.string(),
+  alt_number: z.string().optional(),
+  serial_no: z.string().optional(),
+  barcode: z.string().nullish().optional(),
+  description: z.string().optional(),
+  remarks: z.string().nullish().optional(),
+  status: z.string().nullish().optional(),
+
+  // modelId: z.number().optional(),
+  // custodianId: z.number().optional(),
+  // departmentId: z.number().optional(),
+  vendorId: z.number().nullish().optional(),
+  // subsidiaryId: z.number().optional(),
+  assetProjectId: z.number().nullish().optional(),
+  parentId: z.number(),
+  management: ManagementEditInput.optional(),
+  model: ModelEditInput.optional(),
 })
 
 export const AssetDisposalCreateInput = z.object({

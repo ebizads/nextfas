@@ -10,27 +10,39 @@ import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AssetCreateInput } from "../../../server/schemas/asset"
-import { AssetClassType, AssetFieldValues } from "../../../types/generic"
+import {
+  AssetCreateInput,
+  AssetUpdateInput,
+} from "../../../server/schemas/asset"
+import {
+  AssetClassType,
+  AssetEditFieldValues,
+  AssetFieldValues,
+} from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
 import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
 import { useRouter } from "next/router"
 
-
-export const FormErrorMessage = (props: { setFormError: React.Dispatch<React.SetStateAction<boolean>> }) => {
-  return (<div className="bg-red-50 p-6 border-red-400 rounded-md flex justify-between">
-    <p className="text-red-400">There seems to be a problem with the form.</p>
-    <i className="fa-solid fa-xmark hover:cursor-pointer" onClick={() => {
-      props.setFormError(false)
-    }} />
-  </div>);
+export const FormErrorMessage = (props: {
+  setFormError: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  return (
+    <div className="flex justify-between rounded-md border-red-400 bg-red-50 p-6">
+      <p className="text-red-400">There seems to be a problem with the form.</p>
+      <i
+        className="fa-solid fa-xmark hover:cursor-pointer"
+        onClick={() => {
+          props.setFormError(false)
+        }}
+      />
+    </div>
+  )
 }
 
-
 const UpdateAssetAccordion = () => {
-  const { mutate, isLoading, error } = trpc.asset.edit.useMutation()
+  const { mutate, isLoading, error } = trpc.asset.update.useMutation()
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
@@ -42,8 +54,8 @@ const UpdateAssetAccordion = () => {
     getValues,
     // watch,
     formState: { errors, isDirty, isValid },
-  } = useForm<AssetFieldValues>({
-    resolver: zodResolver(AssetCreateInput),
+  } = useForm<AssetEditFieldValues>({
+    resolver: zodResolver(AssetUpdateInput),
     // defaultValues: {
     //   name: selectedAsset?.name,
     //   alt_number: selectedAsset?.alt_number,
@@ -71,7 +83,7 @@ const UpdateAssetAccordion = () => {
     //   // },
     //   number: selectedAsset?.number,
     //   parentId: selectedAsset?.parentId ?? undefined,
-    //   projectId: selectedAsset?.parent?.assetProjectId ?? undefined,
+    //   assetProjectId: selectedAsset?.parent?.assetassetProjectId ?? undefined,
     //   remarks: selectedAsset?.remarks,
     //   serial_no: selectedAsset?.serial_no,
     //   subsidiaryId: selectedAsset?.subsidiaryId ?? undefined,
@@ -87,11 +99,11 @@ const UpdateAssetAccordion = () => {
 
   useEffect(() => {
     if (selectedAsset) {
-      reset(selectedAsset as AssetFieldValues)
-      setValue("projectId", selectedAsset.assetProjectId ?? 0)
+      reset(selectedAsset as AssetEditFieldValues)
+      setValue("assetProjectId", selectedAsset.assetProjectId ?? 1)
       setValue("description", selectedAsset.description ?? "")
 
-      console.log(selectedAsset.management)
+      console.log(selectedAsset.assetProjectId)
 
       setValue(
         "management.original_cost",
@@ -312,11 +324,10 @@ const UpdateAssetAccordion = () => {
 
   const router = useRouter()
 
-  const onSubmit: SubmitHandler<AssetFieldValues> = (
-    form_data: AssetFieldValues
+  const onSubmit: SubmitHandler<AssetEditFieldValues> = (
+    form_data: AssetEditFieldValues
   ) => {
-
-    console.log('Here')
+    // console.log(form_data)
 
     if (error) {
       console.log("ERROR ENCOUNTERED")
@@ -329,26 +340,23 @@ const UpdateAssetAccordion = () => {
       // } else {
       //   console.log("ERROR ENCOUNTERED")
       // }
-      form_data.parentId === undefined
-        ? (form_data.parentId = 0)
-        : console.log("")
-      form_data.custodianId === undefined
-        ? (form_data.custodianId = 0)
-        : console.log("")
-      form_data.vendorId === undefined
-        ? (form_data.vendorId = 0)
-        : console.log("")
-      form_data.departmentId === undefined
-        ? (form_data.departmentId = 0)
-        : console.log("")
-      form_data.subsidiaryId === undefined
-        ? (form_data.subsidiaryId = 0)
-        : console.log("")
-      form_data.projectId === undefined
-        ? (form_data.projectId = 0)
-        : console.log("")
+      // form_data.parentId === undefined
+      //   ? (form_data.parentId = 0)
+      //   : console.log("")
+      // form_data.custodianId === undefined
+      //   ? (form_data.custodianId = 0)
+      //   : console.log("")
+      // form_data.vendorId === undefined
+      //   ? (form_data.vendorId = 0)
+      //   : console.log("")
+      // form_data.departmentId === undefined
+      //   ? (form_data.departmentId = 0)
+      //   : console.log("")
+      // form_data.subsidiaryId === undefined
+      //   ? (form_data.subsidiaryId = 0)
+      //   : console.log("")
 
-      console.log("Submitting: ", form_data)
+      console.log("Submitting: ", form_data.parentId)
       mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
 
       setTimeout(function () {
@@ -362,11 +370,8 @@ const UpdateAssetAccordion = () => {
       setCompanyId(null)
       setDepartmentId(null)
       setSelectedAsset(null)
-      router.push('/assets')
-
+      router.push("/assets")
     }
-
-
   }
 
   const componentRef = useRef(null)
@@ -374,9 +379,10 @@ const UpdateAssetAccordion = () => {
     content: () => componentRef.current,
   })
 
-
   const [formError, setFormError] = useState<boolean>(false)
-  useEffect(() => { setFormError(Object.keys(errors).length > 0 ? true : false) }, [errors])
+  useEffect(() => {
+    setFormError(Object.keys(errors).length > 0 ? true : false)
+  }, [errors])
 
   return (
     <div id="contents">
@@ -445,14 +451,14 @@ const UpdateAssetAccordion = () => {
                   </div>
                   <div className="col-span-3">
                     <TypeSelect
-                      name={"projectId"}
+                      name={"assetProjectId"}
                       setValue={setValue}
-                      value={getValues("projectId")?.toString()}
+                      value={getValues("assetProjectId")?.toString()}
                       title={"Project"}
                       placeholder={"Select project"}
                       data={projectsList ?? []}
                     />
-                    <AlertInput>{errors?.projectId?.message}</AlertInput>
+                    <AlertInput>{errors?.assetProjectId?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
                     <TypeSelect
@@ -940,8 +946,11 @@ const UpdateAssetAccordion = () => {
           </Accordion.Item>
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
-          <button type="button" className="px-4 py-2 underline"
-            onClick={() => console.log(errors)}>
+          <button
+            type="button"
+            className="px-4 py-2 underline"
+            onClick={() => console.log(errors)}
+          >
             Discard
           </button>
           <button
@@ -970,8 +979,8 @@ const UpdateAssetAccordion = () => {
             </div>
           </div>
         </Modal> */}
-      </form >
-    </div >
+      </form>
+    </div>
   )
 }
 

@@ -1,6 +1,10 @@
 import { inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { AssetCreateInput } from "../server/schemas/asset"
+import {
+  AssetCreateInput,
+  AssetEditInput,
+  AssetUpdateInput,
+} from "../server/schemas/asset"
 import { EmployeeCreateInput } from "../server/schemas/employee"
 import { AppRouter } from "../server/trpc/router"
 
@@ -27,6 +31,7 @@ export type EmployeeFieldValues = z.infer<typeof EmployeeCreateInput>
 
 //asset field types
 export type AssetFieldValues = z.infer<typeof AssetCreateInput>
+export type AssetEditFieldValues = z.infer<typeof AssetUpdateInput>
 // export type ModelFieldValues = z.infer<typeof ModelCreateInput>
 // // export type ManagementFieldValues = z.infer<typeof ManagementCreateInput>
 

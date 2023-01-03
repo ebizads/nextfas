@@ -133,7 +133,7 @@ export const assetRouter = t.router({
         model,
         vendorId,
         subsidiaryId,
-        projectId,
+        assetProjectId,
         parentId,
         addedById,
         ...rest
@@ -179,7 +179,7 @@ export const assetRouter = t.router({
           },
           project: {
             connect: {
-              id: projectId ?? 0,
+              id: assetProjectId ?? 0,
             },
           },
           parent: {
@@ -220,7 +220,7 @@ export const assetRouter = t.router({
             model,
             vendorId,
             subsidiaryId,
-            projectId,
+            assetProjectId,
             parentId,
             ...rest
           } = asset
@@ -264,7 +264,7 @@ export const assetRouter = t.router({
             },
             project: {
               connect: {
-                id: projectId ?? 0,
+                id: assetProjectId ?? 0,
               },
             },
             parent: {
@@ -306,11 +306,18 @@ export const assetRouter = t.router({
   update: authedProcedure
     .input(AssetUpdateInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, management, model, vendorId, projectId, parentId, ...rest } =
-        input
-      console.log("GAGU", vendorId, projectId, parentId)
+      const {
+        id,
+        management,
+        model,
+        vendorId,
+        assetProjectId,
+        parentId,
+        ...rest
+      } = input
+      console.log("GAGU", vendorId, assetProjectId, parentId)
       try {
-        await ctx.prisma.asset.update({
+        const data = await ctx.prisma.asset.update({
           where: {
             id,
           },
@@ -321,12 +328,26 @@ export const assetRouter = t.router({
             management: {
               update: management,
             },
-            parentId: parentId,
-            projectId: projectId ?? 0,
-            vendorId: vendorId,
+            vendor: {
+              connect: {
+                id: vendorId ?? 0,
+              },
+            },
+            project: {
+              connect: {
+                id: assetProjectId ?? 0,
+              },
+            },
+            parent: {
+              connect: {
+                id: parentId ?? 0,
+              },
+            },
             ...rest,
           },
         })
+
+        console.log("namo", data)
 
         return "Asset updated successfully"
       } catch (error) {

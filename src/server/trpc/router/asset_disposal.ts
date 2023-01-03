@@ -5,6 +5,7 @@ import {
   AssetDisposalEditInput,
 } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
+import { AssetDisposal } from "@prisma/client"
 
 export const assetDisposalRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -23,20 +24,26 @@ export const assetDisposalRouter = t.router({
     .input(
       z
         .object({
-          disposalDate: z.date().optional(),
-          completionDate: z.date().optional(),
-          disposalStatus: z.string().optional(),
-          departmentCode: z.string().optional(),
-          customerName: z.string().optional(),
-          telephoneNo: z.string().optional(),
-          salesAmount: z.number().optional(),
-          salesInvoice: z.string().optional(),
-          apInvoice: z.string().optional(),
-          agreedPrice: z.number().optional(),
-          disposalPrice: z.number().optional(),
-          cufsCodeString: z.string().optional(),
-          assetId: z.number().optional(),
-          disposalTypeId: z.number().optional(),
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              disposalDate: z.date().optional(),
+              completionDate: z.date().optional(),
+              disposalStatus: z.string().optional(),
+              departmentCode: z.string().optional(),
+              customerName: z.string().optional(),
+              telephoneNo: z.string().optional(),
+              salesAmount: z.number().optional(),
+              salesInvoice: z.string().optional(),
+              apInvoice: z.string().optional(),
+              agreedPrice: z.number().optional(),
+              disposalPrice: z.number().optional(),
+              cufsCodeString: z.string().optional(),
+              assetId: z.number().optional(),
+              disposalTypeId: z.number().optional(),
+            })
+            .optional(),
           filter: z
             .object({
               updatedAt: z.date().optional(),
@@ -56,10 +63,15 @@ export const assetDisposalRouter = t.router({
             disposalType: true,
           },
           where: {
+            disposalStatus: input?.search?.disposalStatus,
             NOT: {
               deleted: true,
             },
           },
+          skip: input?.page
+            ? (input.page - 1) * (input.limit ?? 10)
+            : undefined,
+          take: input?.limit ?? 10,
         }),
         ctx.prisma.assetDisposal.count({
           where: {
@@ -72,7 +84,8 @@ export const assetDisposalRouter = t.router({
 
       return {
         assetDisposals,
-        count,
+        pages: Math.ceil(count / (input?.limit ?? 0)),
+        total: count,
       }
     }),
   create: authedProcedure

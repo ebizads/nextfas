@@ -14,6 +14,7 @@ type InputFieldType = {
   placeholder?: string
   disabled?: boolean
   displayOnly?: boolean
+  value?: string
 }
 
 export const InputNumberField = ({
@@ -24,11 +25,12 @@ export const InputNumberField = ({
   required,
   placeholder,
   disabled,
+  value
 
 }: InputFieldType) => {
   const [input, setInput] = useState<number | null>(null)
 
-  const [value, setValue] = useState<string>('0');
+  const [defvalue, setdefValue] = useState<string>(value ? value?.toString() : '0');
 
 
   return (
@@ -76,20 +78,20 @@ export const InputNumberField = ({
             //   }
             // }
             // value={input ?? 0}
-            value={value}
+            value={defvalue}
             onChange={(e) => {
               let result = e.target.value.replace(/\D/g, '');
               // console.log(result)
               if (result) {
                 if (result.length === 1) {
                   //value is reset to 0
-                  setValue('0')
+                  setdefValue('0')
                 } else {
                   //trim all leading zeroes if result length is more than 1
                   while (result.charAt(0) === '0' && result.length > 1) {
                     result = result.substring(1);
                   }
-                  setValue(result);
+                  setdefValue(result);
                 }
               }
 

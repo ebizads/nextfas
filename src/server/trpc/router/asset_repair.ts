@@ -18,6 +18,14 @@ export const assetRepairRouter = t.router({
     })
     return assetRepair
   }),
+  findAsset: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
+    const assetRepair = await ctx.prisma.assetRepair.findUnique({
+      where: {
+        assetId: input,
+      },
+    })
+    return assetRepair
+  }),
   findAll: authedProcedure
     .input(
       z

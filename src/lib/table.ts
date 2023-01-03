@@ -38,13 +38,11 @@ export const employeeColumns = [
 ] as ColumnType[]
 
 export const disposalColumn = [
-  { value: "departmentCode", name: "Department Code" },
-  { value: "id", name: "Asset No." },
-  { value: "assetDesc", name: "Asset Description" },
+  { value: "asset.number", name: "Asset No." },
+  { value: "asset.name", name: "Asset Name" },
   { value: "disposalDate", name: "Disposal Date" },
-  { value: "authorizeBy", name: "Disposal Authorized By" },
-  { value: "jobTitle", name: "Job Title" },
-  { value: "disposalType", name: "Disposal Type" },
+  { value: "completionDate", name: "Disposal Completion" },
+  { value: "disposalType.name", name: "Disposal Method" },
 ] as ColumnType[]
 
 export const repairColumn = [

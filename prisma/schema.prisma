@@ -251,7 +251,7 @@ model AssetRepair {
   typeId      Int?
   categoryId  Int?
   assetId     Int?      @unique
-  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  Asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
 model DisposalType {
@@ -360,6 +360,7 @@ model Asset {
   departmentId   Int?
   subsidiaryId   Int?
   addedById      Int?
+  status         String?
   addedBy        User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
@@ -369,9 +370,9 @@ model Asset {
   children       Asset[]          @relation("children")
   subsidiary     Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  disposal       AssetDisposal?
+  AssetDisposal  AssetDisposal?
   management     AssetManagement?
-  repair         AssetRepair?
+  AssetRepair    AssetRepair?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }

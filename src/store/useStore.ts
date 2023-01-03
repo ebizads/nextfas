@@ -1,4 +1,6 @@
+import React from "react"
 import create from "zustand"
+import { AssetType } from "../types/generic"
 
 type MinimizeState = {
   minimize: boolean
@@ -10,6 +12,16 @@ type DeleteState = {
   setModalDel: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type SelectedAssetState = {
+  selectedAsset: AssetType
+  setSelectedAsset: (newAsset: AssetType) => void
+}
+
+type DisposalStatusState = {
+  status: string
+  setStatus: (newStatus: string) => void
+}
+
 export const useMinimizeStore = create<MinimizeState>((set) => ({
   minimize: false,
   setMinimize: () => set((state) => ({ minimize: !state.minimize })),
@@ -18,4 +30,14 @@ export const useMinimizeStore = create<MinimizeState>((set) => ({
 export const useDeleteStore = create<DeleteState>((set) => ({
   openModalDel: false,
   setModalDel: () => set((state) => ({ openModalDel: !state.openModalDel })),
+}))
+
+export const useUpdateAssetStore = create<SelectedAssetState>((set) => ({
+  selectedAsset: null,
+  setSelectedAsset: (newAsset: AssetType) => set({ selectedAsset: newAsset }),
+}))
+
+export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
+  status: "pending",
+  setStatus: (newStatus: string) => set({ status: newStatus }),
 }))

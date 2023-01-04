@@ -21,6 +21,9 @@ import { useReactToPrint } from "react-to-print"
 
 const AddRepairForm = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
+  const [assetNumber, setAssetNumber] = useState<string>("")
+
+  const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
 
   const {
     register,
@@ -73,6 +76,8 @@ const AddRepairForm = () => {
       },
     },
   })
+
+  useEffect(() => reset(asset as AssetFieldValues), [asset, reset])
 
   const [classId, setClassId] = useState<string | null>(null)
   const [categoryId, setCategoryId] = useState<string | null>(null)
@@ -336,14 +341,14 @@ const AddRepairForm = () => {
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-12 grid grid-cols-6 gap-2">
             <div className="col-span-12">
-              <InputField
-                register={register}
-                label="Asset Number "
-                name="name"
-                placeholder="Name"
-                required
+              <input
+                type="text"
+                onChange={(event) => {
+                  setAssetNumber(event.currentTarget.value)
+                }}
+                placeholder="Search/Input Asset Number"
+                className="w-[100%] bg-transparent text-sm outline-none focus:outline-none"
               />
-              <AlertInput>{errors?.name?.message}</AlertInput>
             </div>
           </div>
           <div className="col-span-12">

@@ -251,7 +251,7 @@ model AssetRepair {
   typeId      Int?
   categoryId  Int?
   assetId     Int?      @unique
-  Asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
 model DisposalType {

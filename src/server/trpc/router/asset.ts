@@ -281,16 +281,13 @@ export const assetRouter = t.router({
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, management, ...rest } = input
+      const { id, ...rest } = input
       try {
         await ctx.prisma.asset.update({
           where: {
             id,
           },
           data: {
-            management: {
-              update: management,
-            },
             ...rest,
           },
         })

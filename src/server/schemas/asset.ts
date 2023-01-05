@@ -105,18 +105,18 @@ export const AssetDisposalEditInput = z.object({
   disposalPrice: z.number().optional(),
   cufsCodeString: z.string().optional(),
 
-  assetId: z.number().optional(),
-  asset: z
-    .object({
-      name: z.string().optional(),
-      number: z.string().optional(),
-    })
-    .optional(),
-  disposalType: z
-    .object({
-      name: z.string().optional(),
-    })
-    .optional(),
+  assetId: z.number().nullish().optional(),
+  // asset: z
+  //   .object({
+  //     name: z.string().optional(),
+  //     number: z.string().optional(),
+  //   })
+  //   .optional(),
+  // disposalType: z
+  //   .object({
+  //     name: z.string().optional(),
+  //   })
+  //   .optional(),
   disposalTypeId: z.number().optional(),
 })
 
@@ -124,6 +124,7 @@ export const AssetRepairCreateInput = z.object({
   description: z.string().optional(),
   assetPart: z.string().optional(),
   notes: z.string().optional(),
+  repairStatus: z.string().optional(),
 
   assetId: z.number().optional(),
 })
@@ -133,17 +134,7 @@ export const AssetRepairEditInput = z.object({
   description: z.string().optional(),
   assetPart: z.string().optional(),
   notes: z.string().optional(),
+  repairStatus: z.string().optional(),
 
   assetId: z.number().optional(),
 })
-// export const AssetEditKevinInput = z.object({
-//   id: z.number(),
-//   name: z.string().min(1, "Please provide name"),
-//   number: z.string(),
-//   alt_number: z.string().nullish(),
-//   serial_no: z.string().nullish(),
-//   barcode: z.string().nullish(),
-//   description: z.string().nullish(),
-//   remarks: z.string().nullish(),
-//   departmentId: z.number().optional().nullish(),
-// })

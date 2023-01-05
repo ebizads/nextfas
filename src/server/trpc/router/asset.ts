@@ -315,9 +315,8 @@ export const assetRouter = t.router({
         parentId,
         ...rest
       } = input
-      console.log("GAGU", vendorId, assetProjectId, parentId)
       try {
-        const data = await ctx.prisma.asset.update({
+        await ctx.prisma.asset.update({
           where: {
             id,
           },
@@ -346,9 +345,6 @@ export const assetRouter = t.router({
             ...rest,
           },
         })
-
-        console.log("namo", data)
-
         return "Asset updated successfully"
       } catch (error) {
         throw new TRPCError({

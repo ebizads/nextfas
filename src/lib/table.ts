@@ -46,10 +46,10 @@ export const disposalColumn = [
 ] as ColumnType[]
 
 export const repairColumn = [
-  { value: "id", name: "Asset No" },
-  { value: "assetDesc", name: "Asset Description" },
-  { value: "asset_info", name: "Asset to be repair" },
-  { value: "note", name: "Note" },
+  { value: "asset.number", name: "Asset Number" },
+  { value: "asset.name", name: "Asset Name" },
+  { value: "assetPart", name: "Asset Part" },
+  { value: "notes", name: "Notes" },
 ] as ColumnType[]
 
 export const showAssetsBy = [5, 10, 20, 50] as number[]

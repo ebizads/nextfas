@@ -6,7 +6,6 @@ import {
 } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
-import { ManagementEditInput } from "../../schemas/model"
 
 export const assetRouter = t.router({
   findOne: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
@@ -281,16 +280,13 @@ export const assetRouter = t.router({
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, management, ...rest } = input
+      const { id, ...rest } = input
       try {
         await ctx.prisma.asset.update({
           where: {
             id,
           },
           data: {
-            management: {
-              update: management,
-            },
             ...rest,
           },
         })
@@ -315,9 +311,8 @@ export const assetRouter = t.router({
         parentId,
         ...rest
       } = input
-      console.log("GAGU", vendorId, assetProjectId, parentId)
       try {
-        const data = await ctx.prisma.asset.update({
+        await ctx.prisma.asset.update({
           where: {
             id,
           },
@@ -346,9 +341,6 @@ export const assetRouter = t.router({
             ...rest,
           },
         })
-
-        console.log("namo", data)
-
         return "Asset updated successfully"
       } catch (error) {
         throw new TRPCError({

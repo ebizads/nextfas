@@ -3,11 +3,12 @@ import DashboardLayout from "../../layouts/DashboardLayout"
 import { trpc } from "../../utils/trpc"
 import DisplayAssets from "../../components/asset/DisplayAssets"
 import { AssetType } from "../../types/generic"
+import { useRouter } from "next/router"
 
 const Assets = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-
+  const router = useRouter()
   // Get asset by asset id
   const { data } = trpc.asset.findAll.useQuery({
     limit,
@@ -20,11 +21,10 @@ const Assets = () => {
   useEffect(() => {
     //get and parse all data
     if (data) {
-
       setAssets(data.assets)
       setAccessiblePage(Math.ceil(data?.count / limit))
     }
-  }, [data, limit])
+  }, [data, limit, router])
 
   return (
     <DashboardLayout>

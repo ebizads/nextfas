@@ -12,6 +12,8 @@ const Employee = () => {
         page,
     })
 
+    console.log(data?.employees);
+
     return (
         <DashboardLayout>
             <div className="space-y-6">

@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DatePicker } from "@mantine/dates"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { EmployeeCreateInput } from "../../server/schemas/employee"
@@ -240,7 +240,6 @@ export const CreateEmployeeModal = (props: {
           <div className="flex w-[48%] flex-col">
             <label className="sm:text-sm">Mobile Number</label>
             <InputField
-
               type={"number"}
               label={""}
               name={"profile.phone_no"}

@@ -30,24 +30,24 @@ export const AssetCreateInput = z.object({
 
 export const AssetEditInput = z.object({
   id: z.number(),
-  name: z.string().min(1, "Please provide name"),
-  number: z.string(),
-  alt_number: z.string().optional(),
-  serial_no: z.string().optional(),
+  name: z.string().min(1, "Please provide name").optional(),
+  number: z.string().optional(),
+  alt_number: z.string().optional().nullish(),
+  serial_no: z.string().optional().nullish(),
   barcode: z.string().nullish().optional(),
-  description: z.string().optional(),
+  description: z.string().optional().nullish(),
   remarks: z.string().nullish().optional(),
   status: z.string().nullish().optional(),
 
-  modelId: z.number().optional(),
-  custodianId: z.number().optional(),
-  departmentId: z.number().optional(),
-  vendorId: z.number().optional(),
-  subsidiaryId: z.number().optional(),
-  assetProjectId: z.number().optional(),
-  parentId: z.number().optional(),
-  management: ManagementEditInput.optional(),
-  //model: ModelEditInput.optional(),
+  modelId: z.number().optional().nullish(),
+  custodianId: z.number().optional().nullish(),
+  departmentId: z.number().optional().nullish(),
+  vendorId: z.number().optional().nullish(),
+  subsidiaryId: z.number().optional().nullish(),
+  assetProjectId: z.number().optional().nullish(),
+  parentId: z.number().optional().nullish(),
+  // management: ManagementEditInput.optional(),
+  // model: ModelEditInput.optional(),
 })
 
 export const AssetUpdateInput = z.object({
@@ -121,11 +121,9 @@ export const AssetDisposalEditInput = z.object({
 })
 
 export const AssetRepairCreateInput = z.object({
-  description: z.string().optional(),
-  assetPart: z.string().optional(),
-  notes: z.string().optional(),
-  repairStatus: z.string().optional(),
-
+  description: z.string().optional().nullish(),
+  assetPart: z.string().min(1, "Please provide the part"),
+  notes: z.string().min(1, "Please provide a not for repair"),
   assetId: z.number().optional(),
 })
 

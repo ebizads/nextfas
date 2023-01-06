@@ -1,4 +1,5 @@
 import {
+  AssetRepairType,
   AssetType,
   DisposeType,
   EmployeeType,
@@ -11,7 +12,8 @@ import { Address, Company } from "@prisma/client"
 
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType | DisposeType
+  type: AssetType | EmployeeType | VendorType | DisposeType | AssetRepairType
+
   //subfilter?: string
 ) => {
   //get object property
@@ -31,7 +33,7 @@ export const getProperty = (
 
 export const getPropertyDisposal = (
   filter: string,
-  type: DisposeType
+  type: DisposeType | AssetRepairType
   //subfilter?: string
 ) => {
   //get object property

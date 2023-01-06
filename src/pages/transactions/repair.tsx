@@ -1,20 +1,26 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { trpc } from "../../utils/trpc"
 import RepairAsset from "../../components/transaction/RepairAsset"
 import DashboardLayout from "../../layouts/DashboardLayout"
-
-export type repairTMP = {
-  id: number
-  assetDesc: string
-  asset_info: string
-  note: string
-  status: string
-}
+import { useRepairStatusStore } from "../../store/useStore"
 
 const AssetRepair = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-  const { data } = trpc.assetRepair.findAll.useQuery()
+
+  const { status } = useRepairStatusStore();
+
+  useEffect(() => {
+    console.log(status);
+  }, [status]);
+
+  const { data } = trpc.assetRepair.findAll.useQuery({
+    search: {
+      repairStatus: status
+    },
+    limit,
+    page,
+  })
 
   // const repairTable: repairTMP[] = []
 

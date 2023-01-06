@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React from "react"
+import React, { useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
-import { repairTMP } from "../../../pages/transactions/repair"
 import { repairColumn } from "../../../lib/table"
-import { getProperty, getPropertyDisposal } from "../../../lib/functions"
-import { SquareCheck, SquareX } from "tabler-icons-react"
-import { AssetRepairType, AssetType } from "../../../types/generic"
+import { getPropertyDisposal } from "../../../lib/functions"
+import { AssetRepairType } from "../../../types/generic"
+import Modal from "../../headless/modal/modal"
+import { RepairDetailsModal } from "../../transaction/AddRepair.tsx/RepairModal"
 
 const RepairTable = (props: {
   checkboxes: number[]
@@ -19,9 +19,10 @@ const RepairTable = (props: {
 }) => {
   const { minimize } = useMinimizeStore()
 
-  // const [isVisible, setIsVisible] = useState<boolean>(false)
-  // const [updateRecord, setUpdateRecord] = useState<boolean>(false)
-  // const [details, setDetails] = useState<repairTMP>()
+
+  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [details, setDetails] = useState<AssetRepairType>(null)
+
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -77,9 +78,6 @@ const RepairTable = (props: {
                 </th>
               ))}
 
-            <th scope="col" className="p-4 text-center">
-              Action
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -113,43 +111,25 @@ const RepairTable = (props: {
                   <td
                     key={col.value}
                     className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
-                  // onClick={() => {
-                  //     setIsVisible(true)
-                  //     setDetails(row)
-                  // }}
+                    onClick={() => {
+                      setIsVisible(true)
+                      setDetails(row)
+                    }}
                   >
                     {getPropertyDisposal(col.value, row)}
                   </td>
                 ))}
-              <td className="max-w-[10rem] justify-center">
-                <div className="flex flex-row justify-center">
-                  <SquareCheck color="green" />
-                  <SquareX color="red" />
-                </div>
 
-                {/* <i className="fa-light fa-trash-can text-red-500" />{" "} */}
-              </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre>
-            <ShowDetails
-                isVisible={isVisible}
-                setIsVisible={setIsVisible}
-                info={details!}
-            />
-
-            {details !== null ?
-                <Modal title="Update Employee Record"
-                    isVisible={updateRecord}
-                    setIsVisible={setUpdateRecord}
-                    className="max-w-4xl">
-                    <UpdateEmployeeModal employee={details as Employee} setIsVisible={setUpdateRecord}
-                    />
-                </Modal>
-                : <div></div>
-            } */}
+      <Modal title="Asset"
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        className="max-w-4xl">
+        <RepairDetailsModal asset={details as AssetRepairType} setCloseModal={setIsVisible} />
+      </Modal>
     </div>
   )
 }

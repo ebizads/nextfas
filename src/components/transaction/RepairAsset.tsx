@@ -1,11 +1,12 @@
 import { Pagination, Select, Tabs } from "@mantine/core"
 import Link from "next/link"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { repairColumn } from "../../lib/table"
 import { AssetRepairType } from "../../types/generic"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import RepairTable from "../atoms/table/RepairTable"
+import { useDisposalStatusStore, useRepairStatusStore } from "../../store/useStore"
 
 type SearchType = {
   value: string
@@ -45,8 +46,13 @@ const RepairAsset = (props: {
   )
 
   const [activeTab, setActiveTab] = useState<string | null>("pending")
+  const { status, setStatus } = useRepairStatusStore()
 
-  console.log(props.asset)
+  useEffect(() => {
+    setStatus(activeTab ?? "pending")
+  }, [activeTab, setStatus])
+
+
 
   return (
     <div className="space-y-4">
@@ -109,11 +115,7 @@ const RepairAsset = (props: {
                     >
                       Pending
                     </p>{" "}
-                    <div>
-                      <p className="rounded-full bg-tangerine-500 px-2 py-0.5 text-white">
-                        1
-                      </p>
-                    </div>
+
                   </div>
                 </Tabs.Tab>
                 <Tabs.Tab value="approved">
@@ -129,11 +131,7 @@ const RepairAsset = (props: {
                     >
                       Approved
                     </p>{" "}
-                    <div>
-                      <p className="rounded-full bg-tangerine-500 px-2 py-0.5 text-white">
-                        1
-                      </p>
-                    </div>
+
                   </div>
                 </Tabs.Tab>
                 <Tabs.Tab value="rejected">
@@ -149,11 +147,7 @@ const RepairAsset = (props: {
                     >
                       Rejected
                     </p>{" "}
-                    <div>
-                      <p className="rounded-full bg-tangerine-500 px-2 py-0.5 text-white">
-                        1
-                      </p>
-                    </div>
+
                   </div>
                 </Tabs.Tab>
                 <Tabs.Tab value="cancelled">
@@ -169,11 +163,23 @@ const RepairAsset = (props: {
                     >
                       Cancelled
                     </p>{" "}
-                    <div>
-                      <p className="rounded-full bg-tangerine-500 px-2 py-0.5 text-white">
-                        1
-                      </p>
-                    </div>
+
+                  </div>
+                </Tabs.Tab>
+                <Tabs.Tab value="done">
+                  <div className="flex w-full flex-row">
+                    <p
+                      className={
+                        "py-2 px-4 text-lg uppercase " +
+                        `${activeTab === "done"
+                          ? "font-semibold text-tangerine-500"
+                          : "font-semibold text-[#8F8F8F] "
+                        }`
+                      }
+                    >
+                      Done
+                    </p>{" "}
+
                   </div>
                 </Tabs.Tab>
               </Tabs.List>

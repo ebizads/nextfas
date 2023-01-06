@@ -136,7 +136,7 @@ const DisposalTable = (props: {
                 isVisible={isVisible}
                 setIsVisible={setIsVisible}
                 className="max-w-4xl">
-                <DisposeDetailsModal asset={details as DisposeEdit} setCloseModal={setIsVisible} />
+                <DisposeDetailsModal asset={details as DisposeType} setCloseModal={setIsVisible} />
             </Modal>
         </div>
     )

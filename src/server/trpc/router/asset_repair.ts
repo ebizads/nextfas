@@ -30,11 +30,17 @@ export const assetRepairRouter = t.router({
     .input(
       z
         .object({
-          description: z.string().optional(),
-          assetPart: z.string().optional(),
-          notes: z.string().optional(),
-          repairStatus: z.string().optional(),
-          assetId: z.number().optional(),
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              description: z.string().optional(),
+              assetPart: z.string().optional(),
+              notes: z.string().optional(),
+              repairStatus: z.string().optional(),
+              assetId: z.number().optional(),
+            })
+            .optional(),
           filter: z
             .object({
               updatedAt: z.date().optional(),
@@ -53,6 +59,7 @@ export const assetRepairRouter = t.router({
             asset: true,
           },
           where: {
+            repairStatus: input?.search?.repairStatus,
             NOT: {
               deleted: true,
             },

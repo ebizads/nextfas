@@ -53,6 +53,7 @@ const AddRepairForm = () => {
     if (asset?.status === null || asset?.status === undefined || asset?.status === "") {
       mutate({
         ...repair,
+        repairStatus: "pending",
         assetId: asset?.id ?? 0
       })
 

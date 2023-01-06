@@ -253,7 +253,6 @@ model AssetRepair {
   assetId      Int?      @unique
   repairStatus String?
   asset        Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
-
 }
 
 model DisposalType {

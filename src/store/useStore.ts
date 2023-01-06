@@ -21,6 +21,10 @@ type DisposalStatusState = {
   status: string
   setStatus: (newStatus: string) => void
 }
+type RepairStatusState = {
+  status: string
+  setStatus: (newStatus: string) => void
+}
 
 export const useMinimizeStore = create<MinimizeState>((set) => ({
   minimize: false,
@@ -38,6 +42,11 @@ export const useUpdateAssetStore = create<SelectedAssetState>((set) => ({
 }))
 
 export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
+  status: "pending",
+  setStatus: (newStatus: string) => set({ status: newStatus }),
+}))
+
+export const useRepairStatusStore = create<RepairStatusState>((set) => ({
   status: "pending",
   setStatus: (newStatus: string) => set({ status: newStatus }),
 }))

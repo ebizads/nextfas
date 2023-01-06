@@ -30,24 +30,24 @@ export const AssetCreateInput = z.object({
 
 export const AssetEditInput = z.object({
   id: z.number(),
-  name: z.string().min(1, "Please provide name"),
-  number: z.string(),
-  alt_number: z.string().optional(),
-  serial_no: z.string().optional(),
+  name: z.string().min(1, "Please provide name").optional(),
+  number: z.string().optional(),
+  alt_number: z.string().optional().nullish(),
+  serial_no: z.string().optional().nullish(),
   barcode: z.string().nullish().optional(),
-  description: z.string().optional(),
+  description: z.string().optional().nullish(),
   remarks: z.string().nullish().optional(),
   status: z.string().nullish().optional(),
 
-  modelId: z.number().optional(),
-  custodianId: z.number().optional(),
-  departmentId: z.number().optional(),
-  vendorId: z.number().optional(),
-  subsidiaryId: z.number().optional(),
-  assetProjectId: z.number().optional(),
-  parentId: z.number().optional(),
-  management: ManagementEditInput.optional(),
-  //model: ModelEditInput.optional(),
+  modelId: z.number().optional().nullish(),
+  custodianId: z.number().optional().nullish(),
+  departmentId: z.number().optional().nullish(),
+  vendorId: z.number().optional().nullish(),
+  subsidiaryId: z.number().optional().nullish(),
+  assetProjectId: z.number().optional().nullish(),
+  parentId: z.number().optional().nullish(),
+  // management: ManagementEditInput.optional(),
+  // model: ModelEditInput.optional(),
 })
 
 export const AssetUpdateInput = z.object({
@@ -105,45 +105,35 @@ export const AssetDisposalEditInput = z.object({
   disposalPrice: z.number().optional(),
   cufsCodeString: z.string().optional(),
 
-  assetId: z.number().optional(),
-  asset: z
-    .object({
-      name: z.string().optional(),
-      number: z.string().optional(),
-    })
-    .optional(),
-  disposalType: z
-    .object({
-      name: z.string().optional(),
-    })
-    .optional(),
+  assetId: z.number().nullish().optional(),
+  // asset: z
+  //   .object({
+  //     name: z.string().optional(),
+  //     number: z.string().optional(),
+  //   })
+  //   .optional(),
+  // disposalType: z
+  //   .object({
+  //     name: z.string().optional(),
+  //   })
+  //   .optional(),
   disposalTypeId: z.number().optional(),
 })
 
 export const AssetRepairCreateInput = z.object({
-  description: z.string().optional(),
-  assetPart: z.string().optional(),
-  notes: z.string().optional(),
-
+  description: z.string().optional().nullish(),
+  assetPart: z.string().min(1, "Please provide the part"),
+  notes: z.string().min(1, "Please provide a not for repair"),
   assetId: z.number().optional(),
+  repairStatus: z.string().optional(),
 })
 
 export const AssetRepairEditInput = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   description: z.string().optional(),
   assetPart: z.string().optional(),
   notes: z.string().optional(),
+  repairStatus: z.string().optional(),
 
   assetId: z.number().optional(),
 })
-// export const AssetEditKevinInput = z.object({
-//   id: z.number(),
-//   name: z.string().min(1, "Please provide name"),
-//   number: z.string(),
-//   alt_number: z.string().nullish(),
-//   serial_no: z.string().nullish(),
-//   barcode: z.string().nullish(),
-//   description: z.string().nullish(),
-//   remarks: z.string().nullish(),
-//   departmentId: z.number().optional().nullish(),
-// })

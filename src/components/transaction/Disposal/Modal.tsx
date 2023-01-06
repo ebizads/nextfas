@@ -6,15 +6,16 @@ import InputField from "../../atoms/forms/InputField";
 import { trpc } from "../../../utils/trpc";
 import { useState } from "react";
 import Modal from "../../headless/modal/modal";
+import { DisposeType } from "../../../types/generic";
 
 export type DisposeEdit = z.infer<typeof AssetDisposalEditInput>
 
 export const DisposeDetailsModal = (props: {
-    asset: DisposeEdit,
+    asset: DisposeType,
     setCloseModal: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
 
-    const [stats, setStats] = useState<string>(props.asset.disposalStatus ?? "pending");
+    const [stats, setStats] = useState<string>(props.asset?.disposalStatus ?? "pending");
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const utils = trpc.useContext()
 
@@ -54,15 +55,15 @@ export const DisposeDetailsModal = (props: {
 
         mutate({
             ...dispose,
-            id: props.asset.id,
+            id: props.asset?.id,
             disposalStatus: stats,
         })
 
         if (stats === 'done') {
-            deleteAsset.mutate(props.asset.assetId ?? 0)
+            deleteAsset.mutate(props.asset?.assetId ?? 0)
         } else if (stats === 'cancelled') {
             changeStats.mutate({
-                id: props.asset.assetId ?? 0,
+                id: props.asset?.assetId ?? 0,
                 status: null
             })
         }
@@ -123,7 +124,7 @@ export const DisposeDetailsModal = (props: {
                             </div>
 
                         </div>
-                        {props.asset.disposalTypeId !== 1 && <div >
+                        {props.asset?.disposalTypeId !== 1 && <div >
                             <div className="py-2 flex flex-row justify-between w-full gap-7">
                                 <div className="flex flex-col w-full">
                                     <label className="font-semibold">Customer Name</label >
@@ -188,19 +189,19 @@ export const DisposeDetailsModal = (props: {
 
 
                         <hr className="w-full"></hr>
-                        {(props.asset.disposalStatus === "pending" || props.asset.disposalStatus === "approved") && <div className="flex w-full justify-end py-3 gap-2">
+                        {(props.asset?.disposalStatus === "pending" || props.asset?.disposalStatus === "approved") && <div className="flex w-full justify-end py-3 gap-2">
 
                             <button
                                 type="submit"
                                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                                 onClick={() => {
-                                    props.asset.disposalStatus === "pending" ?
+                                    props.asset?.disposalStatus === "pending" ?
                                         setStats("approved")
                                         : setStats("done")
                                 }}
                             >
                                 {
-                                    props.asset.disposalStatus === "pending" ?
+                                    props.asset?.disposalStatus === "pending" ?
                                         "Approve"
                                         : "Done"
                                 }
@@ -210,15 +211,15 @@ export const DisposeDetailsModal = (props: {
                                 type="submit"
                                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                                 onClick={() => {
-                                    props.asset.disposalStatus === "pending" ?
+                                    props.asset?.disposalStatus === "pending" ?
                                         setStats("rejected")
-                                        : props.asset.disposalStatus === "approved" ? setStats("cancelled") : setStats("done")
+                                        : props.asset?.disposalStatus === "approved" ? setStats("cancelled") : setStats("done")
                                 }}
                             >
                                 {
-                                    props.asset.disposalStatus === "pending" ?
+                                    props.asset?.disposalStatus === "pending" ?
                                         "Reject"
-                                        : props.asset.disposalStatus === "approved" ? "Cancel Disposal" : "Done"
+                                        : props.asset?.disposalStatus === "approved" ? "Cancel Disposal" : "Done"
                                 }
                             </button>
                         </div>

@@ -33,6 +33,7 @@ export const assetRepairRouter = t.router({
           description: z.string().optional(),
           assetPart: z.string().optional(),
           notes: z.string().optional(),
+          repairStatus: z.string().optional(),
           assetId: z.number().optional(),
           filter: z
             .object({

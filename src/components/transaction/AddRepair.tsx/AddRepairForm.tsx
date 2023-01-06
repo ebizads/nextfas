@@ -1,329 +1,81 @@
-import { Accordion } from "@mantine/core"
-import AlertInput from "../../atoms/forms/AlertInput"
-import { InputField, InputNumberField } from "../../atoms/forms/InputField"
-import TypeSelect, {
-  ClassTypeSelect,
-  SelectValueType,
-} from "../../atoms/select/TypeSelect"
-import { Textarea } from "@mantine/core"
-import { DatePicker } from "@mantine/dates"
+import { InputField } from "../../atoms/forms/InputField"
 import { trpc } from "../../../utils/trpc"
-import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AssetCreateInput } from "../../../server/schemas/asset"
-import { AssetClassType, AssetFieldValues } from "../../../types/generic"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { getAddress } from "../../../lib/functions"
-import { Location } from "@prisma/client"
-import moment from "moment"
-import JsBarcode from "jsbarcode"
-import { useReactToPrint } from "react-to-print"
+import { z } from "zod/lib"
+import { AssetRepairCreateInput } from "../../../server/schemas/asset"
+import { useForm } from "react-hook-form"
+import AlertInput from "../../atoms/forms/AlertInput"
+import { useState } from "react"
+import Modal from "../../headless/modal/modal"
+import Link from "next/link"
+
+export type Repair = z.infer<typeof AssetRepairCreateInput>
 
 const AddRepairForm = () => {
-  const { mutate, isLoading, error } = trpc.asset.create.useMutation()
   const [assetNumber, setAssetNumber] = useState<string>("")
+  const [validateString, setValidateString] = useState<string>("")
+
+
+  const [completeModal, setCompleteModal] = useState<boolean>(false)
+  const [validateModal, setValidateModal] = useState<boolean>(false)
+
 
   const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
+
+
+  const updateAsset = trpc.asset.edit.useMutation({
+    onSuccess() {
+      console.log("omsim")
+    },
+  })
+
+  const { mutate } = trpc.assetRepair.create.useMutation({
+    onSuccess() {
+
+      setCompleteModal(true)
+      // invalidate query of asset id when mutations is successful
+      // utils.asset.findAll.invalidate()
+    },
+  })
 
   const {
     register,
     handleSubmit,
     reset,
     setValue,
-    getValues,
-    // watch,
-    formState: { errors, isDirty, isValid },
-  } = useForm<AssetFieldValues>({
-    resolver: zodResolver(AssetCreateInput),
-    defaultValues: {
-      // name: "",
-      // alt_number: "",
-      // barcode: "",
-      // custodianId: 0,
-      // departmentId: 0,
-      // description: "",
-      // model: {
-      //   name: "",
-      //   brand: "",
-      //   number: "",
-      // asset_category: {
-      //   name: ""
-      // },
-      // asset_class: {
-      //   name: ""
-      // },
-      // typeId: 0,
-      // asset_type: {
-      //   name: ""
-      // },
-      //   typeId: 0,
-      //   categoryId: 0,
-      //   classId: 0,
-      // },
-      // number: "",
-      // parentId: 0,
-      // projectId: 0,
-      // remarks: "",
-      // serial_no: "",
-      // subsidiaryId: 0,
-      // vendorId: 0,
-      // subsidiaryId: undefined,
-      management: {
-        // original_cost: 0,
-        // current_cost: 0,
-        // residual_value: 0,
-        depreciation_period: 1,
-      },
-    },
+    formState: { errors },
+  } = useForm<Repair>({
+    resolver: zodResolver(AssetRepairCreateInput),
+
   })
 
-  useEffect(() => reset(asset as AssetFieldValues), [asset, reset])
-
-  const [classId, setClassId] = useState<string | null>(null)
-  const [categoryId, setCategoryId] = useState<string | null>(null)
-  const [typeId, setTypeId] = useState<string | null>(null)
-  const [companyId, setCompanyId] = useState<string | null>(null)
-  const [departmentId, setDepartmentId] = useState<string | null>(null)
-
-  //gets and sets all assets
-  const { data: assetsData } = trpc.asset.findAll.useQuery()
-  const assetsList = useMemo(
-    () =>
-      assetsData?.assets
-        .filter((item) => item.id != 0)
-        .map((asset) => {
-          return { value: asset.id.toString(), label: asset.name }
-        }),
-    [assetsData]
-  ) as SelectValueType[] | undefined
-
-  //gets and sets all projects
-  const { data: projectsData } = trpc.assetProject.findAll.useQuery()
-  const projectsList = useMemo(
-    () =>
-      projectsData
-        ?.filter((item) => item.id != 0)
-        .map((project) => {
-          return { value: project.id.toString(), label: project.name }
-        }),
-    [projectsData]
-  ) as SelectValueType[] | undefined
-
-  //gets and sets all projects
-  const { data: vendorsData } = trpc.vendor.findAll.useQuery()
-  const vendorsList = useMemo(
-    () =>
-      vendorsData?.vendors
-        .filter((item) => item.id != 0)
-        .map((vendor) => {
-          return { value: vendor.id.toString(), label: vendor.name }
-        }),
-    [vendorsData]
-  ) as SelectValueType[] | undefined
-
-  //gets and sets all companies
-  const { data: companyData } = trpc.company.findAll.useQuery()
-  const companyList = useMemo(
-    () =>
-      companyData?.companies
-        .filter((item) => item.id != 0)
-        .map((company) => {
-          return { value: company.id.toString(), label: company.name }
-        }),
-    [companyData]
-  ) as SelectValueType[] | undefined
-
-  //gets and sets all class, categories, and types
-  const { data: classData } = trpc.assetClass.findAll.useQuery()
-  const classList = useMemo(
-    () =>
-      classData?.map((classItem) => {
-        return { value: classItem.id.toString(), label: classItem.name }
-      }),
-    [classData]
-  ) as SelectValueType[] | undefined
-
-  //gets and sets all employee
-  const { data: employeeData } = trpc.employee.findAll.useQuery()
-  const employeeList = useMemo(
-    () =>
-      employeeData?.employees
-        .filter((item) => item.id != 0)
-        .map((employeeItem) => {
-          return { value: employeeItem.id.toString(), label: employeeItem.name }
-        }),
-    [employeeData]
-  ) as SelectValueType[] | undefined
-
-  //gets and sets all class, categories, and types
-  const { data: departmentData } = trpc.department.findAll.useQuery()
-
-  const selectedDepartment = useMemo(() => {
-    const department = departmentData?.departments.filter(
-      (department) => department.id === Number(departmentId)
-    )[0]
-
-    //set location === floor and room number
-    // setValue('locationId', department?.locationId ?? undefined)
-    return department?.location
-  }, [departmentId, departmentData]) as Location
-
-  const departmentList = useMemo(() => {
-    if (companyId) {
-      const dept = departmentData?.departments.filter(
-        (department) => department.companyId === Number(companyId)
-      )
-      if (dept) {
-        const departments = dept?.map((department) => {
-          return { value: department.id.toString(), label: department.name }
-        }) as SelectValueType[]
-        return departments ?? null
-      }
-    }
-    // console.log(departmentData)
-    setDepartmentId(null)
-    // console.error("Error loading departments")
-    return null
-  }, [companyId, departmentData])
-
-  //asset description
-  const [description, setDescription] = useState<string | null>(null)
-  const [notes, setNotes] = useState<string | null>(null)
-
-  //depreciation start and end period
-  const [dep_start, setDepStart] = useState<Date | null>(null)
-  const [dep_end, setDepEnd] = useState<Date | null>(null)
-
-  const [selectedClass, setSelectedClass] = useState<
-    AssetClassType | undefined
-  >(undefined)
-  // const [types, setTypes] = useState<SelectValueType[] | null>(null)
-
-  const categories = useMemo(() => {
-    if (classId) {
-      const selectedClass = classData?.filter(
-        (classItem) => classItem.id === Number(classId)
-      )[0]
-      if (selectedClass) {
-        //sets selected class
-        setSelectedClass(selectedClass)
-
-        //filters all the categories based on the selected class
-        const categories = selectedClass.categories.map((category) => {
-          return { value: category.id.toString(), label: category.name }
-        }) as SelectValueType[]
-        return categories ?? null
-      }
-    } else {
-      //clears category selection
-      setCategoryId(null)
-      return null
-    }
-
-    console.error("Error loading categories")
-    return null
-  }, [classId, classData])
-
-  const types = useMemo(() => {
-    if (categoryId) {
-      const selectedCategory = selectedClass?.categories.filter(
-        (category) => category.id === Number(categoryId)
-      )[0]
-      if (selectedCategory) {
-        //filters all types in the selected category based on the selected class
-        const types = selectedCategory?.types.map((type) => {
-          return { value: type.id.toString(), label: type.name }
-        }) as SelectValueType[]
-        return types ?? null
-      }
-    } else {
-      //clears type selection
-      setTypeId(null)
-      return null
-    }
-
-    console.error("Error loading types")
-    return null
-  }, [categoryId, selectedClass])
-
-  const company_address = useMemo(() => {
-    if (companyId) {
-      const address = companyData?.companies.filter(
-        (company) => company.id === Number(companyId)
-      )[0]
-      return address ?? null
-    }
-  }, [companyId, companyData])
-
-  const [loading, setIsLoading] = useState<boolean>(false)
-  const [assetId, setAssetId] = useState<string>(
-    `-${moment().format("YYMDhms")}`
-  )
-
-  const asset_number = useMemo(() => {
-    const parseId = (id: string | null) => {
-      if (!id) {
-        return "00"
-      }
-      if (id?.length === 1) {
-        return 0 + id
-      } else {
-        return id
-      }
-    }
-
-    if (typeId && departmentId) {
-      return parseId(departmentId) + parseId(typeId)
-    }
-
-    return null
-  }, [typeId, departmentId]) as string | null
-
-  useEffect(() => {
-    if (asset_number) {
-      const id = `${asset_number}${assetId}`
-      setValue("number", id)
-      JsBarcode("#barcode2", id, {
-        textAlign: "left",
-        textPosition: "bottom",
-        fontOptions: "",
-        fontSize: 12,
-        textMargin: 6,
-        height: 50,
-        width: 1,
+  const onSubmit = (repair: Repair) => {
+    if (asset?.status === null || asset?.status === undefined || asset?.status === "") {
+      mutate({
+        ...repair,
+        assetId: asset?.id ?? 0
       })
-    }
-  }, [assetId, asset_number])
 
-  const onSubmit: SubmitHandler<AssetFieldValues> = (
-    form_data: AssetFieldValues
-  ) => {
-    if (error) {
-      console.log("ERROR ENCOUNTERED")
-      console.error("Prisma Error: ", error)
-      console.error("Form Error:", errors)
-    } else {
-      console.log("Submitting: ", form_data)
-
-      mutate(form_data)
-
-      setTimeout(function () {
-        setIsLoading(false)
-      }, 3000)
+      updateAsset.mutate({
+        ...asset,
+        id: asset?.id ?? 0,
+        status: "repair",
+      })
 
       reset()
-      setClassId(null)
-      setCategoryId(null)
-      setTypeId(null)
-      setCompanyId(null)
-      setDepartmentId(null)
+    }
+    else {
+      if (asset?.status === "disposal") {
+        setValidateString("The asset is already in for disposal")
+        setValidateModal(true)
+        setAssetNumber("")
+      } else if (asset?.status === "repair") {
+        setValidateString("The asset is in for repair.")
+        setValidateModal(true)
+        setAssetNumber("")
+      }
     }
   }
-
-  const componentRef = useRef(null)
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  })
 
   return (
     <div id="contents">
@@ -332,15 +84,24 @@ const AddRepairForm = () => {
         className="flex flex-col space-y-4 p-4"
         noValidate
       >
-        {/* <InputField register={register} label="Name" name="name" />
-      <AlertInput>{errors?.name?.message}</AlertInput> */}
+        <Modal
+          className="max-w-lg"
+          isVisible={validateModal}
+          setIsVisible={setValidateModal}
+          title="NOTICE!!"
+        >
+          <div className="py-2">
+            <p className="text-center text-lg font-semibold">{validateString}</p>
+          </div>
+        </Modal>
         <div className="flex items-center gap-2 text-gray-700">
           <i className="fa-fw fa-sharp fa-solid fa-circle-info fa-2x"></i>
           <p className="text-bold">Add Repair Asset</p>
         </div>
-        <div className="grid grid-cols-12 gap-2">
-          <div className="col-span-12 grid grid-cols-6 gap-2">
-            <div className="col-span-12">
+
+        <div className="flex flex-wrap py-2">
+          <div className="w-full py-4">
+            <div className="flex w-80 flex-row rounded-sm border border-[#F2F2F2] bg-[#F2F2F2] px-4 py-2">
               <input
                 type="text"
                 onChange={(event) => {
@@ -349,69 +110,68 @@ const AddRepairForm = () => {
                 placeholder="Search/Input Asset Number"
                 className="w-[100%] bg-transparent text-sm outline-none focus:outline-none"
               />
+
             </div>
           </div>
-          <div className="col-span-12">
-            <Textarea
-              required
-              value={description ?? ""}
-              onChange={(event) => {
-                const text = event.currentTarget.value
-                setDescription(text)
-                setValue("description", text)
-              }}
-              label="Asset Description "
-              minRows={6}
-              maxRows={6}
-              classNames={{
-                input:
-                  "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
-                label: "font-sans text-sm font-normal text-gray-600 text-light",
-              }}
-            />
+          <div className="flex w-full flex-row justify-between gap-7 px-2">
+            <div className="flex w-full flex-col py-2">
+              <label className="font-semibold">
+                Asset Name
+              </label>
+              <p className="text-base ">
+                {asset?.name ?? "---"}
+              </p>
+            </div>
+            <div className="flex w-full flex-col py-2">
+              <label className="font-semibold">
+                Alternate Number
+              </label>
+              <p className="text-base">
+                {asset?.alt_number ?? "---"}
+              </p>
+            </div>
           </div>
-          <div className="col-span-12">
-            <InputField
-              register={register}
-              label="Asset to be repair "
-              placeholder="Serial Number"
-              name="serial_no"
-              required
-            />
-            <AlertInput>{errors?.serial_no?.message}</AlertInput>
+          <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
+            <div className="flex w-[50%] flex-col py-2">
+              <label className="font-semibold">
+                Parts to be repaired <span className="text-red-500">*</span>
+              </label>
+              <InputField
+                register={register}
+                name="assetPart"
+                type={"text"}
+                label={""}
+              />
+            </div>
           </div>
-          <div className="col-span-12">
-            <Textarea
-              value={notes ?? ""}
-              onChange={(event) => {
-                const text = event.currentTarget.value
-                setNotes(text)
-                setValue("description", text)
-              }}
-              label="Notes "
-              required
-              minRows={6}
-              maxRows={6}
-              classNames={{
-                input:
-                  "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
-                label: "font-sans text-sm font-normal text-gray-600 text-light",
-              }}
-            />
+
+          <AlertInput>{errors?.assetPart?.message}</AlertInput>
+          <div className="flex w-full flex-row justify-between gap-7 px-2">
+            <div className="flex w-[50%] flex-col py-2">
+              <label className="font-semibold">
+                Notes / Remarks <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                onChange={(event) => {
+                  setValue("notes", event.currentTarget.value);
+                }}
+                rows={7}
+                className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              ></textarea>
+            </div>
           </div>
+
+          <AlertInput>{errors?.notes?.message}</AlertInput>
         </div>
-        <div className="mt-2 flex w-full justify-end gap-2 text-lg">
-          <button type="button" className="px-4 py-2 underline">
-            Clear
-          </button>
+        {asset !== null && <div className="mt-2 flex w-full justify-end gap-2 text-lg">
+
           <button
             type="submit"
-            disabled={(!isValid && !isDirty) || isLoading}
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
           >
-            {isLoading || loading ? "Saving..." : "Add"}
+            Submit
           </button>
-        </div>
+        </div>}
         {/*
         <Modal isVisible={submitting} setIsVisible={setSubmitting} title="Confirm details" className="w-fit h-fit p-4">
           <div>
@@ -430,8 +190,30 @@ const AddRepairForm = () => {
             </div>
           </div>
         </Modal> */}
-      </form>
-    </div>
+      </form >
+
+      <Modal
+        isVisible={completeModal}
+        setIsVisible={setCompleteModal}
+        className="max-w-2xl"
+        title="Transfer Complete"
+      >
+        <div className="flex w-full flex-col px-4 py-2">
+          <div>
+            <p className="text-center text-lg font-semibold">
+              Asset successfully added to repair.
+            </p>
+          </div>
+          <div className="flex justify-end py-2">
+            <Link href={"/assets"}>
+              <button className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500">
+                Continue
+              </button>
+            </Link>
+          </div>
+        </div>
+      </Modal>
+    </div >
   )
 }
 

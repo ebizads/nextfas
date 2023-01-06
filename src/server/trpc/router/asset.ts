@@ -6,7 +6,6 @@ import {
 } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
-import { ManagementEditInput } from "../../schemas/model"
 
 export const assetRouter = t.router({
   findOne: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {

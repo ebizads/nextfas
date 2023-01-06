@@ -121,10 +121,9 @@ export const AssetDisposalEditInput = z.object({
 })
 
 export const AssetRepairCreateInput = z.object({
-  description: z.string().optional(),
-  assetPart: z.string().optional(),
-  notes: z.string().optional(),
-
+  description: z.string().optional().nullish(),
+  assetPart: z.string().min(1, "Please provide the part"),
+  notes: z.string().min(1, "Please provide a not for repair"),
   assetId: z.number().optional(),
 })
 

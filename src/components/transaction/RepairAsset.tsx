@@ -2,8 +2,7 @@ import { Pagination, Select, Tabs } from "@mantine/core"
 import Link from "next/link"
 import React, { useState } from "react"
 import { repairColumn } from "../../lib/table"
-import { repairTMP } from "../../pages/transactions/repair"
-import { AssetRepairType, AssetType } from "../../types/generic"
+import { AssetRepairType } from "../../types/generic"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import RepairTable from "../atoms/table/RepairTable"
@@ -84,10 +83,6 @@ const RepairAsset = (props: {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
-              <i className="fa-solid fa-print text-xs" />
-              Generate CVs
-            </button>
             <Link href={"/transactions/repair/create"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
                 <i className="fa-regular fa-plus text-xs" />
@@ -106,10 +101,9 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${
-                          activeTab === "pending"
-                            ? "font-semibold text-tangerine-500"
-                            : "font-semibold text-[#8F8F8F] "
+                        `${activeTab === "pending"
+                          ? "font-semibold text-tangerine-500"
+                          : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >
@@ -127,10 +121,9 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${
-                          activeTab === "approved"
-                            ? "font-semibold text-tangerine-500"
-                            : "font-semibold text-[#8F8F8F] "
+                        `${activeTab === "approved"
+                          ? "font-semibold text-tangerine-500"
+                          : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >
@@ -148,10 +141,9 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${
-                          activeTab === "rejected"
-                            ? "font-semibold text-tangerine-500"
-                            : "font-semibold text-[#8F8F8F] "
+                        `${activeTab === "rejected"
+                          ? "font-semibold text-tangerine-500"
+                          : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >
@@ -169,10 +161,9 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${
-                          activeTab === "cancelled"
-                            ? "font-semibold text-tangerine-500"
-                            : "font-semibold text-[#8F8F8F] "
+                        `${activeTab === "cancelled"
+                          ? "font-semibold text-tangerine-500"
+                          : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >
@@ -196,19 +187,10 @@ const RepairAsset = (props: {
                 columns={repairColumn.filter((col) =>
                   filterBy.includes(col.value)
                 )}
-                // status={activeTab ?? "pending"}
               />
             </div>
           </div>
         </div>
-
-        {/* <EmployeeTable
-                    checkboxes={checkboxes}
-                    setCheckboxes={setCheckboxes}
-                    rows={props.employees}
-                    filterBy={filterBy}
-                    columns={RepairColumn.filter((col) => filterBy.includes(col.value))}
-                /> */}
       </section>
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">

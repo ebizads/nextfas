@@ -33,7 +33,7 @@ export const getProperty = (
 
 export const getPropertyDisposal = (
   filter: string,
-  type: DisposeType
+  type: DisposeType | AssetRepairType
   //subfilter?: string
 ) => {
   //get object property

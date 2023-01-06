@@ -22,7 +22,7 @@ import { DatePicker } from "@mantine/dates"
 import { SelectValueType } from "../select/TypeSelect"
 import Link from "next/link"
 import AlertInput from "../forms/AlertInput"
-import { AssetFieldValues } from "../../../types/generic"
+// import { AssetFieldValues } from "../../../types/generic"
 
 export type Dispose = z.infer<typeof AssetDisposalCreateInput>
 
@@ -196,21 +196,19 @@ const CreateDisposeAccordion = () => {
                   <div className="flex w-full items-center gap-4">
                     {state.currentStep > index ? (
                       <span
-                        className={`border-full flex h-9 w-9 items-center justify-center rounded-full border border-transparent transition-colors ease-in-out group-focus:ring-2 group-focus:ring-offset-2 ${
-                          state?.currentStep >= index
-                            ? "bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 text-white"
-                            : ""
-                        }`}
+                        className={`border-full flex h-9 w-9 items-center justify-center rounded-full border border-transparent transition-colors ease-in-out group-focus:ring-2 group-focus:ring-offset-2 ${state?.currentStep >= index
+                          ? "bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 text-white"
+                          : ""
+                          }`}
                       >
                         <Check size={25} strokeWidth={2} />
                       </span>
                     ) : (
                       <span
-                        className={`border-full flex h-8 w-8 items-center justify-center rounded-full border bg-white text-black ring-tangerine-500 transition-colors ease-in-out group-focus:ring-2 group-focus:ring-offset-2 ${
-                          state?.currentStep >= index
-                            ? "bg-[#B45309] text-white ring-2 ring-offset-2"
-                            : ""
-                        }`}
+                        className={`border-full flex h-8 w-8 items-center justify-center rounded-full border bg-white text-black ring-tangerine-500 transition-colors ease-in-out group-focus:ring-2 group-focus:ring-offset-2 ${state?.currentStep >= index
+                          ? "bg-[#B45309] text-white ring-2 ring-offset-2"
+                          : ""
+                          }`}
                       >
                         {steps[index]?.icon}
                       </span>
@@ -218,13 +216,11 @@ const CreateDisposeAccordion = () => {
 
                     {
                       <div
-                        className={`mr-4 h-2 flex-1 rounded border ${
-                          index !== 2 ? "" : "invisible"
-                        } ${
-                          state?.currentStep > index
+                        className={`mr-4 h-2 flex-1 rounded border ${index !== 2 ? "" : "invisible"
+                          } ${state?.currentStep > index
                             ? "bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 text-white"
                             : "bg-[#ECECEC]"
-                        }`}
+                          }`}
                       />
                     }
                   </div>
@@ -376,9 +372,9 @@ const CreateDisposeAccordion = () => {
                             <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {getLifetime(
                                 asset?.management?.depreciation_start ??
-                                  new Date(),
+                                new Date(),
                                 asset?.management?.depreciation_end ??
-                                  new Date()
+                                new Date()
                               )}
                             </p>
                           </div>

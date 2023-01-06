@@ -3,11 +3,9 @@ import React from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
-// import Modal from "../../headless/modal/modal"
-// import { EmployeeType } from "../../../types/generic"
 import { repairTMP } from "../../../pages/transactions/repair"
 import { repairColumn } from "../../../lib/table"
-import { getProperty } from "../../../lib/functions"
+import { getProperty, getPropertyDisposal } from "../../../lib/functions"
 import { SquareCheck, SquareX } from "tabler-icons-react"
 import { AssetRepairType, AssetType } from "../../../types/generic"
 
@@ -45,9 +43,8 @@ const RepairTable = (props: {
 
   return (
     <div
-      className={`max-w-[88vw] overflow-x-auto ${
-        minimize ? "xl:w-[86vw]" : "xl:w-[76vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[88vw] overflow-x-auto ${minimize ? "xl:w-[86vw]" : "xl:w-[76vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(assetRepair, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -116,12 +113,12 @@ const RepairTable = (props: {
                   <td
                     key={col.value}
                     className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
-                    // onClick={() => {
-                    //     setIsVisible(true)
-                    //     setDetails(row)
-                    // }}
+                  // onClick={() => {
+                  //     setIsVisible(true)
+                  //     setDetails(row)
+                  // }}
                   >
-                    {getProperty(col.value, row)}
+                    {getPropertyDisposal(col.value, row)}
                   </td>
                 ))}
               <td className="max-w-[10rem] justify-center">

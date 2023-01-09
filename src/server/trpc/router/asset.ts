@@ -57,7 +57,7 @@ export const assetRouter = t.router({
               departmentId: z.number().optional(),
               vendorId: z.number().optional(),
               subsidiaryId: z.number().optional(),
-              projectId: z.number().optional(),
+              assetProjectId: z.number().optional(),
               parentId: z.number().optional(),
             })
             .optional(),

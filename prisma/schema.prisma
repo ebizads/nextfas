@@ -98,9 +98,9 @@ model Profile {
   gender        String?
   image         String?
   date_of_birth DateTime?
-  phone_no      String?
   userId        Int?      @unique
   employeeId    Int?      @unique
+  phone_no      Int?
   employee      Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

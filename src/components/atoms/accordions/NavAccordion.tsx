@@ -36,80 +36,80 @@ export const navigations = [
       // },
     ],
   },
-  {
-    name: "Reports",
-    icon: "fa-light fa-file-chart-pie",
-    link: "#",
-    subType: [
-      {
-        icon: "fa-light fa-typewriter",
-        name: "Register",
-        link: "/reports/register",
-      },
-      {
-        icon: "fa-light fa-notebook",
-        name: "Summary",
-        link: "/reports/summary",
-      },
-      {
-        icon: "fa-light fa-calendar-circle-exclamation",
-        name: "Depreciation Schedule",
-        link: "/reports/depreciation_schedule",
-      },
-      {
-        icon: "fa-light fa-calendar-lines",
-        name: "Monthly Report",
-        link: "/reports/monthly_report",
-      },
-      {
-        icon: "fa-light fa-clock-rotate-left",
-        name: "History",
-        link: "/reports/history",
-      },
-      {
-        icon: "fa-light fa-money-bill-1",
-        name: "Audit Report",
-        link: "/reports/audit_report",
-      },
-    ],
-  },
-  {
-    name: "Accounting",
-    icon: "fa-light fa-calculator-simple",
-    link: "#",
-    subType: [
-      {
-        icon: "fa-regular fa-cash-register",
-        name: "Purchase",
-        link: "/accounting/purchase",
-      },
-      {
-        icon: "fa-regular fa-chart-line-down",
-        name: "Depreciation",
-        link: "/accounting/depreciation",
-      },
-      {
-        icon: "fa-regular fa-file-signature",
-        name: "Lease",
-        link: "/accounting/lease",
-      },
-      {
-        icon: "fa-regular fa-shield-check",
-        name: "Insurance",
-        link: "/accounting/insurance",
-      },
-      {
-        icon: "fa-light fa-scanner-keyboard",
-        name: "Income / Expense",
-        link: "/accounting/incomeExpense",
-      },
-      {
-        icon: "fa-regular fa-money-bills-simple",
-        name: "Financial",
-        link: "/accounting/financial",
-      },
-    ],
-  },
+  // {
+  //   name: "Reports",
+  //   icon: "fa-light fa-file-chart-pie",
+  //   link: "#",
+  //   subType: [
+  //     {
+  //       icon: "fa-light fa-typewriter",
+  //       name: "Register",
+  //       link: "/reports/register",
+  //     },
+  //     {
+  //       icon: "fa-light fa-notebook",
+  //       name: "Summary",
+  //       link: "/reports/summary",
+  //     },
+  //     {
+  //       icon: "fa-light fa-calendar-circle-exclamation",
+  //       name: "Depreciation Schedule",
+  //       link: "/reports/depreciation_schedule",
+  //     },
+  //     {
+  //       icon: "fa-light fa-calendar-lines",
+  //       name: "Monthly Report",
+  //       link: "/reports/monthly_report",
+  //     },
+  //     {
+  //       icon: "fa-light fa-clock-rotate-left",
+  //       name: "History",
+  //       link: "/reports/history",
+  //     },
+  //     {
+  //       icon: "fa-light fa-money-bill-1",
+  //       name: "Audit Report",
+  //       link: "/reports/audit_report",
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: "Accounting",
+  //   icon: "fa-light fa-calculator-simple",
+  //   link: "#",
+  //   subType: [
+  //     {
+  //       icon: "fa-regular fa-cash-register",
+  //       name: "Purchase",
+  //       link: "/accounting/purchase",
+  //     },
+  //     {
+  //       icon: "fa-regular fa-chart-line-down",
+  //       name: "Depreciation",
+  //       link: "/accounting/depreciation",
+  //     },
+  //     {
+  //       icon: "fa-regular fa-file-signature",
+  //       name: "Lease",
+  //       link: "/accounting/lease",
+  //     },
+  //     {
+  //       icon: "fa-regular fa-shield-check",
+  //       name: "Insurance",
+  //       link: "/accounting/insurance",
+  //     },
+  //     {
+  //       icon: "fa-light fa-scanner-keyboard",
+  //       name: "Income / Expense",
+  //       link: "/accounting/incomeExpense",
+  //     },
+  //     {
+  //       icon: "fa-regular fa-money-bills-simple",
+  //       name: "Financial",
+  //       link: "/accounting/financial",
+  //     },
+  //   ],
+  // },
 ] as NavType[]
 
 const NavAccordion = (props: {

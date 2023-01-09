@@ -8,12 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
-import { RegisterUserInput } from "../../server/schemas/user"
+import { CreateUserInput } from "../../server/schemas/user"
 
-type User = z.infer<typeof RegisterUserInput>
+type User = z.infer<typeof CreateUserInput>
 
 const Register = () => {
-  const { mutate, isLoading, error } = trpc.auth.register.useMutation()
+  const { mutate, isLoading, error } = trpc.user.create.useMutation()
   const {
     register,
     handleSubmit,
@@ -21,7 +21,7 @@ const Register = () => {
     reset,
     formState: { errors },
   } = useForm<User>({
-    resolver: zodResolver(RegisterUserInput), // Configuration the validation with the zod schema.
+    resolver: zodResolver(CreateUserInput), // Configuration the validation with the zod schema.
     defaultValues: {
       name: "amogus",
       email: "omsim@omsim.com",
@@ -38,7 +38,7 @@ const Register = () => {
     // Register function
     mutate({
       password: user.password,
-      email: "omsim@omsim.com",
+      email: "test123@test.com",
       name: `${user.profile.first_name} ${user.profile.last_name}`,
       profile: {
         first_name: user.profile.first_name,

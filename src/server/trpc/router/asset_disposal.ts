@@ -5,7 +5,6 @@ import {
   AssetDisposalEditInput,
 } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
-import { AssetDisposal } from "@prisma/client"
 
 export const assetDisposalRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {

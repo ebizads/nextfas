@@ -239,12 +239,17 @@ export const CreateEmployeeModal = (props: {
           </div>
           <div className="flex w-[48%] flex-col">
             <label className="sm:text-sm">Mobile Number</label>
-            <InputField
+            {/* <InputField
               type={"number"}
               label={""}
               name={"profile.phone_no"}
               register={register}
-            />
+            /> */}
+            <input type="number"
+              className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm"
+              onChange={(event) => {
+                setValue("profile.phone_no", event.currentTarget.value.toString())
+              }} />
 
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>

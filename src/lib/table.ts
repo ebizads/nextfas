@@ -109,11 +109,11 @@ export const navigations = [
     icon: "fa-users",
     link: "/employees",
   },
-  {
-    name: "Vendors",
-    icon: "fa-store",
-    link: "/vendors",
-  },
+  // {
+  //   name: "Vendors",
+  //   icon: "fa-store",
+  //   link: "/vendors",
+  // },
   // {
   //   name: "Inventory",
   //   icon: "fa-light fa-folders",

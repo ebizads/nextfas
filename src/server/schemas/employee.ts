@@ -13,7 +13,7 @@ export const EmployeeCreateInput = z.object({
     middle_name: z.string().nullish(),
     suffix: z.string().nullish(),
     date_of_birth: z.date().nullish(),
-    phone_no: z.number().nullish(),
+    phone_no: z.string().nullish(),
     gender: z.string().nullish(),
     image: z.string().nullish(),
   }),
@@ -46,7 +46,7 @@ export const EmployeeEditInput = z.object({
       middle_name: z.string().nullish().optional(),
       suffix: z.string().nullish().optional(),
       date_of_birth: z.date().nullish().optional(),
-      phone_no: z.number().nullish().optional(),
+      phone_no: z.string().nullish().optional(),
       gender: z.string().nullish().optional(),
       image: z.string().nullish().optional(),
     })

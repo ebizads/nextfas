@@ -182,7 +182,7 @@ export const employeeRouter = t.router({
             supervisee: {
               connectOrCreate: {
                 where: {
-                  id: 0,
+                  id: superviseeId ?? 0,
                 },
                 create: {
                   name: supervisee?.name ?? "",
@@ -192,7 +192,7 @@ export const employeeRouter = t.router({
             team: {
               connectOrCreate: {
                 where: {
-                  id: 0,
+                  id: teamId ?? 0,
                 },
                 create: {
                   name: team?.name ?? "",
@@ -204,6 +204,7 @@ export const employeeRouter = t.router({
 
         return "User created successfully"
       } catch (error) {
+        console.log(error)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),

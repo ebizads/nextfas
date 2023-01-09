@@ -17,7 +17,7 @@ export const userSeed: z.infer<typeof CreateUserInput>[] = [
       middle_name: "Redobla",
       date_of_birth: new Date(2000, 4, 20),
       gender: "Male",
-      phone_no: "09954135867",
+      phone_no: 09954135867,
     },
     address: {
       street: "Blk 21 Lot 13",
@@ -38,7 +38,7 @@ export const userSeed: z.infer<typeof CreateUserInput>[] = [
       middle_name: "Domingo",
       date_of_birth: new Date(2000, 3, 19),
       gender: "Female",
-      phone_no: "09457905387",
+      phone_no: 09457905387,
     },
     address: {
       street: "2206 Alacalde St.",
@@ -59,7 +59,7 @@ export const userSeed: z.infer<typeof CreateUserInput>[] = [
       middle_name: "Montemayor",
       date_of_birth: new Date(2000, 4, 6),
       gender: "Male",
-      phone_no: "09292045190",
+      phone_no: 09292045190,
     },
     address: {
       street: "Kapitan Tiago St.",
@@ -80,7 +80,7 @@ export const userSeed: z.infer<typeof CreateUserInput>[] = [
       middle_name: "Butal",
       date_of_birth: new Date(1999, 8, 5),
       gender: "Male",
-      phone_no: "09480494983",
+      phone_no: 09480494983,
     },
     address: {
       street: "Pelaez",
@@ -101,7 +101,7 @@ export const userSeed: z.infer<typeof CreateUserInput>[] = [
       middle_name: "Peña",
       date_of_birth: new Date(1999, 8, 20),
       gender: "Male",
-      phone_no: "09274974004",
+      phone_no: 09274974004,
     },
     address: {
       street: "Pilapil",
@@ -126,7 +126,7 @@ export const employeeSeed: z.infer<typeof EmployeeCreateInput>[] = [
       middle_name: "Redobla",
       date_of_birth: new Date(2000, 4, 20),
       gender: "Male",
-      phone_no: "09954135867",
+      phone_no: 09954135867,
     },
     address: {
       street: "Blk 21 Lot 13",
@@ -148,7 +148,7 @@ export const employeeSeed: z.infer<typeof EmployeeCreateInput>[] = [
       middle_name: "Domingo",
       date_of_birth: new Date(2000, 3, 19),
       gender: "Female",
-      phone_no: "09457905387",
+      phone_no: 09457905387,
     },
     address: {
       street: "2206 Alacalde St.",
@@ -170,7 +170,7 @@ export const employeeSeed: z.infer<typeof EmployeeCreateInput>[] = [
       middle_name: "Montemayor",
       date_of_birth: new Date(2000, 4, 6),
       gender: "Male",
-      phone_no: "09292045190",
+      phone_no: 09292045190,
     },
     address: {
       street: "Kapitan Tiago St.",
@@ -192,7 +192,7 @@ export const employeeSeed: z.infer<typeof EmployeeCreateInput>[] = [
       middle_name: "Butal",
       date_of_birth: new Date(1999, 8, 5),
       gender: "Male",
-      phone_no: "09480494983",
+      phone_no: 09480494983,
     },
     address: {
       street: "Pelaez",
@@ -214,7 +214,7 @@ export const employeeSeed: z.infer<typeof EmployeeCreateInput>[] = [
       middle_name: "Peña",
       date_of_birth: new Date(1999, 8, 20),
       gender: "Male",
-      phone_no: "09274974004",
+      phone_no: 09274974004,
     },
     address: {
       street: "Pilapil",

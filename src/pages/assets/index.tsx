@@ -21,7 +21,7 @@ const Assets = () => {
   useEffect(() => {
     //get and parse all data
     if (data) {
-      setAssets(data.assets)
+      setAssets(data.assets as AssetType[])
       setAccessiblePage(Math.ceil(data?.count / limit))
     }
   }, [data, limit, router])

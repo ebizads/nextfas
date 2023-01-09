@@ -16,13 +16,12 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import moment from "moment"
-import JsBarcode from 'jsbarcode';
+import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import { FormErrorMessage } from "./UpdateAssetAccordion"
-
 
 const CreateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
@@ -89,9 +88,11 @@ const CreateAssetAccordion = () => {
   const { data: assetsData } = trpc.asset.findAll.useQuery()
   const assetsList = useMemo(
     () =>
-      assetsData?.assets.filter((item) => item.id != 0).map((asset) => {
-        return { value: asset.id.toString(), label: asset.name }
-      }),
+      assetsData?.assets
+        .filter((item) => item.id != 0)
+        .map((asset) => {
+          return { value: asset.id.toString(), label: asset.name }
+        }),
     [assetsData]
   ) as SelectValueType[] | undefined
 
@@ -99,9 +100,11 @@ const CreateAssetAccordion = () => {
   const { data: projectsData } = trpc.assetProject.findAll.useQuery()
   const projectsList = useMemo(
     () =>
-      projectsData?.filter((item) => item.id != 0).map((project) => {
-        return { value: project.id.toString(), label: project.name }
-      }),
+      projectsData
+        ?.filter((item) => item.id != 0)
+        .map((project) => {
+          return { value: project.id.toString(), label: project.name }
+        }),
     [projectsData]
   ) as SelectValueType[] | undefined
 
@@ -109,9 +112,11 @@ const CreateAssetAccordion = () => {
   const { data: vendorsData } = trpc.vendor.findAll.useQuery()
   const vendorsList = useMemo(
     () =>
-      vendorsData?.vendors.filter((item) => item.id != 0).map((vendor) => {
-        return { value: vendor.id.toString(), label: vendor.name }
-      }),
+      vendorsData?.vendors
+        .filter((item) => item.id != 0)
+        .map((vendor) => {
+          return { value: vendor.id.toString(), label: vendor.name }
+        }),
     [vendorsData]
   ) as SelectValueType[] | undefined
 
@@ -119,9 +124,11 @@ const CreateAssetAccordion = () => {
   const { data: companyData } = trpc.company.findAll.useQuery()
   const companyList = useMemo(
     () =>
-      companyData?.companies.filter((item) => item.id != 0).map((company) => {
-        return { value: company.id.toString(), label: company.name }
-      }),
+      companyData?.companies
+        .filter((item) => item.id != 0)
+        .map((company) => {
+          return { value: company.id.toString(), label: company.name }
+        }),
     [companyData]
   ) as SelectValueType[] | undefined
 
@@ -129,9 +136,11 @@ const CreateAssetAccordion = () => {
   const { data: classData } = trpc.assetClass.findAll.useQuery()
   const classList = useMemo(
     () =>
-      classData?.filter((item) => item.id != 0).map((classItem) => {
-        return { value: classItem.id.toString(), label: classItem.name }
-      }),
+      classData
+        ?.filter((item) => item.id != 0)
+        .map((classItem) => {
+          return { value: classItem.id.toString(), label: classItem.name }
+        }),
     [classData]
   ) as SelectValueType[] | undefined
 
@@ -139,9 +148,11 @@ const CreateAssetAccordion = () => {
   const { data: employeeData } = trpc.employee.findAll.useQuery()
   const employeeList = useMemo(
     () =>
-      employeeData?.employees.filter((item) => item.id != 0).map((employeeItem) => {
-        return { value: employeeItem.id.toString(), label: employeeItem.name }
-      }),
+      employeeData?.employees
+        .filter((item) => item.id != 0)
+        .map((employeeItem) => {
+          return { value: employeeItem.id.toString(), label: employeeItem.name }
+        }),
     [employeeData]
   ) as SelectValueType[] | undefined
 
@@ -246,7 +257,9 @@ const CreateAssetAccordion = () => {
   }, [companyId, companyData])
 
   const [loading, setIsLoading] = useState<boolean>(false)
-  const [assetId, setAssetId] = useState<string>(`-${moment().format("YYMDhms")}`)
+  const [assetId, setAssetId] = useState<string>(
+    `-${moment().format("YYMDhms")}`
+  )
 
   const asset_number = useMemo(() => {
     const parseId = (id: string | null) => {
@@ -278,8 +291,8 @@ const CreateAssetAccordion = () => {
         fontSize: 12,
         textMargin: 6,
         height: 50,
-        width: 1
-      });
+        width: 1,
+      })
     }
   }, [assetId, asset_number])
 
@@ -308,17 +321,19 @@ const CreateAssetAccordion = () => {
       setTypeId(null)
       setCompanyId(null)
       setDepartmentId(null)
-      router.push('/assets')
+      router.push("/assets")
     }
   }
 
-  const componentRef = useRef(null);
+  const componentRef = useRef(null)
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-  });
+  })
 
   const [formError, setFormError] = useState<boolean>(false)
-  useEffect(() => { setFormError(Object.keys(errors).length > 0 ? true : false) }, [errors])
+  useEffect(() => {
+    setFormError(Object.keys(errors).length > 0 ? true : false)
+  }, [errors])
 
   return (
     <div id="contents">
@@ -378,7 +393,7 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"parentId"}
                       setValue={setValue}
-                      value={getValues('parentId')?.toString()}
+                      value={getValues("parentId")?.toString()}
                       title={"Parent Asset"}
                       placeholder={"Select parent asset"}
                       data={assetsList ?? []}
@@ -387,27 +402,23 @@ const CreateAssetAccordion = () => {
                   </div>
                   <div className="col-span-3">
                     <TypeSelect
-                      name={"projectId"}
+                      name={"assetProjectId"}
                       setValue={setValue}
-                      value={getValues('projectId')?.toString()}
+                      value={getValues("assetProjectId")?.toString()}
                       title={"Project"}
                       placeholder={"Select project"}
-                      data={
-                        projectsList ?? []
-                      }
+                      data={projectsList ?? []}
                     />
-                    <AlertInput>{errors?.projectId?.message}</AlertInput>
+                    <AlertInput>{errors?.assetProjectId?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
                     <TypeSelect
                       name={"vendorId"}
                       setValue={setValue}
-                      value={getValues('vendorId')?.toString()}
+                      value={getValues("vendorId")?.toString()}
                       title={"Vendor"}
                       placeholder={"Select vendor"}
-                      data={
-                        vendorsList ?? []
-                      }
+                      data={vendorsList ?? []}
                     />
                     <AlertInput>{errors?.vendorId?.message}</AlertInput>
                   </div>
@@ -419,7 +430,7 @@ const CreateAssetAccordion = () => {
                     required
                     name={"model.classId"}
                     setValue={setValue}
-                    value={getValues('model.classId')?.toString()}
+                    value={getValues("model.classId")?.toString()}
                     title={"Class"}
                     placeholder={"Select asset class"}
                     data={classList ?? []}
@@ -434,12 +445,14 @@ const CreateAssetAccordion = () => {
                     required
                     name={"model.categoryId"}
                     setValue={setValue}
-                    value={getValues('model.categoryId')?.toString()}
+                    value={getValues("model.categoryId")?.toString()}
                     title={"Category"}
-                    placeholder={!Boolean(classId) ? "Select asset class first" : "Select asset category"}
-                    data={
-                      categories ?? []
+                    placeholder={
+                      !Boolean(classId)
+                        ? "Select asset class first"
+                        : "Select asset category"
                     }
+                    data={categories ?? []}
                   />
                   <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
                 </div>
@@ -451,9 +464,13 @@ const CreateAssetAccordion = () => {
                     required
                     name={"model.typeId"}
                     setValue={setValue}
-                    value={getValues('model.typeId')?.toString()}
+                    value={getValues("model.typeId")?.toString()}
                     title={"Type"}
-                    placeholder={!Boolean(categoryId) ? "Select asset category first" : "Select asset type"}
+                    placeholder={
+                      !Boolean(categoryId)
+                        ? "Select asset category first"
+                        : "Select asset type"
+                    }
                     data={types ?? []}
                   />
                   <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
@@ -526,7 +543,7 @@ const CreateAssetAccordion = () => {
                     isString
                     name={"management.currency"}
                     setValue={setValue}
-                    value={getValues('management.currency')}
+                    value={getValues("management.currency")}
                     title={"Currency"}
                     placeholder={"Select currency type"}
                     data={[
@@ -628,9 +645,7 @@ const CreateAssetAccordion = () => {
                     value={getValues("subsidiaryId")?.toString()}
                     title={"Company"}
                     placeholder={"Select company or subsidiary"}
-                    data={
-                      companyList ?? []
-                    }
+                    data={companyList ?? []}
                   />
                   <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
                 </div>
@@ -668,11 +683,12 @@ const CreateAssetAccordion = () => {
                       setValue={setValue}
                       value={getValues("departmentId")?.toString()}
                       title={"Department"}
-                      placeholder={!Boolean(companyId) ? "Select company first" : "Select department type"}
-                      data={
-                        departmentList
-                        ?? []
+                      placeholder={
+                        !Boolean(companyId)
+                          ? "Select company first"
+                          : "Select department type"
                       }
+                      data={departmentList ?? []}
                     />
                     <AlertInput>{errors?.departmentId?.message}</AlertInput>
                   </div>
@@ -718,15 +734,15 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"custodianId"}
                       setValue={setValue}
-
-                      value={getValues('custodianId')?.toString()}
+                      value={getValues("custodianId")?.toString()}
                       title={"Custodian"}
                       disabled={!Boolean(departmentId)}
-                      placeholder={!Boolean(departmentId) ? "Select department first" : "Assign custodian"}
-                      data={
-                        employeeList
-                        ?? []
+                      placeholder={
+                        !Boolean(departmentId)
+                          ? "Select department first"
+                          : "Assign custodian"
                       }
+                      data={employeeList ?? []}
                     />
                     <AlertInput>{errors?.custodianId?.message}</AlertInput>
                   </div>
@@ -826,7 +842,10 @@ const CreateAssetAccordion = () => {
             </Accordion.Panel>
           </Accordion.Item>
           <Accordion.Item value={"4"} className="">
-            <Accordion.Control disabled={!Boolean(typeId) || !Boolean(departmentId)} className="uppercase outline-none focus:outline-none active:outline-none">
+            <Accordion.Control
+              disabled={!Boolean(typeId) || !Boolean(departmentId)}
+              className="uppercase outline-none focus:outline-none active:outline-none"
+            >
               <div className="flex items-center gap-2 text-gray-700">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
                   4
@@ -835,12 +854,18 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="flex justify-center items-center">
-                {!Boolean(typeId) || !Boolean(departmentId) ?
-                  <div id="printableArea" className="border-2 border-dashed border-neutral-400 rounded-md w-[25rem] h-[10rem] flex justify-center items-center">
-                    <p className="text-center italic text-neutral-400">Barcode will appear here, please select company and department</p>
-                  </div> :
-
+              <div className="flex items-center justify-center">
+                {!Boolean(typeId) || !Boolean(departmentId) ? (
+                  <div
+                    id="printableArea"
+                    className="flex h-[10rem] w-[25rem] items-center justify-center rounded-md border-2 border-dashed border-neutral-400"
+                  >
+                    <p className="text-center italic text-neutral-400">
+                      Barcode will appear here, please select company and
+                      department
+                    </p>
+                  </div>
+                ) : (
                   <div>
                     <div className="space-y-2">
                       <div id="printSVG" ref={componentRef}>
@@ -849,26 +874,31 @@ const CreateAssetAccordion = () => {
 
                       <button
                         type="button"
-                        onClick={() => { handlePrint(); console.log("printing barcode") }}
+                        onClick={() => {
+                          handlePrint()
+                          console.log("printing barcode")
+                        }}
                         disabled={!Boolean(typeId) || !Boolean(departmentId)}
-                        className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none py-1 px-4 rounded-md m-2 bg-tangerine-300 hover:bg-tangerine-400">
+                        className="m-2 flex items-center justify-center gap-2 rounded-md bg-tangerine-300 py-1 px-4 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+                      >
                         <p>Print Barcode</p> <i className="fa-solid fa-print" />
                       </button>
                     </div>
                   </div>
-                }
+                )}
               </div>
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
-          <button type="button" className="px-4 py-2 underline">Discard</button>
+          <button type="button" className="px-4 py-2 underline">
+            Discard
+          </button>
           <button
             type="submit"
             disabled={(!isValid && !isDirty) || isLoading}
-            className="focus:outline-none outline-none  rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary hover:bg-tangerine-400 disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             onClick={() => console.log(errors)}
-
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

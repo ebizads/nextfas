@@ -114,9 +114,9 @@ export const navigations = [
     icon: "fa-store",
     link: "/vendors",
   },
-  {
-    name: "Inventory",
-    icon: "fa-light fa-folders",
-    link: "/inventory",
-  },
+  // {
+  //   name: "Inventory",
+  //   icon: "fa-light fa-folders",
+  //   link: "/inventory",
+  // },
 ] as NavType[]

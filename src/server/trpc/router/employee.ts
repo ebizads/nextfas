@@ -91,17 +91,17 @@ export const employeeRouter = t.router({
                 NOT: {
                   deleted: true,
                 },
-                hired_date: input?.filter?.hired_date,
-                name: { contains: input?.search?.name },
-                employee_id: { contains: input?.search?.employee_id },
-                email: { contains: input?.search?.email },
-                team: {
-                  department: {
-                    id: {
-                      equals: input?.search?.team?.department?.id,
-                    },
-                  },
-                },
+                // hired_date: input?.filter?.hired_date,
+                // name: { contains: input?.search?.name },
+                // employee_id: { contains: input?.search?.employee_id },
+                // email: { contains: input?.search?.email },
+                // team: {
+                //   department: {
+                //     id: {
+                //       equals: input?.search?.team?.department?.id,
+                //     },
+                //   },
+                // },
               },
               skip: input?.page
                 ? (input.page - 1) * (input.limit ?? 10)
@@ -182,7 +182,7 @@ export const employeeRouter = t.router({
             supervisee: {
               connectOrCreate: {
                 where: {
-                  id: superviseeId,
+                  id: 0,
                 },
                 create: {
                   name: supervisee?.name ?? "",
@@ -192,7 +192,7 @@ export const employeeRouter = t.router({
             team: {
               connectOrCreate: {
                 where: {
-                  id: teamId,
+                  id: 0,
                 },
                 create: {
                   name: team?.name ?? "",

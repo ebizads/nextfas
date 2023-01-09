@@ -252,7 +252,7 @@ const AssetDetailsModal = (props: {
                   {""}
                   <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
                 </button>
-                <p className="font-medium xl:text-lg">Asset Transactions</p>
+                <p className="font-medium xl:text-lg">Asset Options</p>
                 <Link href="/assets/update"
                 >
                   <div className="flex items-center gap-2 cursor-pointer rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
@@ -270,7 +270,7 @@ const AssetDetailsModal = (props: {
                   <i className={"fa-solid fa-trash-can text-red-500"} />
                   Delete
                 </button>
-                {navigations[0]?.subType?.map((action, idx) => (
+                {/* {navigations[0]?.subType?.map((action, idx) => (
                   <button
                     key={idx}
                     className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
@@ -278,7 +278,7 @@ const AssetDetailsModal = (props: {
                     <i className={action.icon} />
                     {action.name}
                   </button>
-                ))}
+                ))} */}
               </nav>
             </div>
           </div>

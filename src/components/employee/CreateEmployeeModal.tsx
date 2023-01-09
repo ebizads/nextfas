@@ -237,7 +237,7 @@ export const CreateEmployeeModal = (props: {
           </div>
           <div className="flex w-[48%] flex-col">
             <label className="sm:text-sm">Mobile Number</label>
-            {/* <InputField
+            <InputField
               type={"number"}
               label={""}
               name={"profile.phone_no"}

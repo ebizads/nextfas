@@ -115,7 +115,7 @@ export const UpdateEmployeeModal = (props: {
                 onSearchChange(value ?? "")
               }}
               value={searchValue}
-              data={teams?.teams.map((value) => (value.name)) ?? []}
+              data={teams?.teams.map((value) => value.name) ?? []}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -137,7 +137,7 @@ export const UpdateEmployeeModal = (props: {
                 },
               })}
               variant="unstyled"
-              className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 p-0.5 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
             <AlertInput>{errors?.team?.name?.message}</AlertInput>
           </div>
@@ -150,7 +150,7 @@ export const UpdateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className="w-full rounded-md border-2 my-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${props.employee.employee_id}`}</p>
+            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${props.employee.employee_id}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -181,17 +181,21 @@ export const UpdateEmployeeModal = (props: {
                 setValue("hired_date", value)
                 value === null ? setDate(new Date()) : setDate(value)
               }}
-              className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 p-0.5 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
 
           <div className="flex w-[48%] flex-col">
             <label className="sm:text-sm">Mobile Number</label>
-            <InputField
-              type={"number"}
-              label={""}
-              name={"profile.phone_no"}
-              register={register}
+            <input
+              type="number"
+              className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              onChange={(event) => {
+                setValue(
+                  "profile.phone_no",
+                  event.currentTarget.value.toString()
+                )
+              }}
             />
 
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>

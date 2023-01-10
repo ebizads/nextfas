@@ -43,6 +43,9 @@ export const teamRouter = t.router({
               skip: input?.page ? input.page * (input.limit ?? 10) : 0,
               take: input?.limit ? input.limit : 10,
               where: {
+                NOT: {
+                  deleted: true,
+                },
                 name: {
                   contains: input?.search?.name ? input.search.name : undefined,
                 },

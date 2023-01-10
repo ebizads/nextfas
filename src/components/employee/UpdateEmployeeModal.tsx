@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DatePicker } from "@mantine/dates"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 //import { ImageJSON } from "../../types/table"
@@ -12,11 +12,13 @@ import { Select } from "@mantine/core"
 import { EmployeeEditInput } from "../../server/schemas/employee"
 import { ImageJSON } from "../../types/table"
 import DropZoneComponent from "../dropzone/DropZoneComponent"
+import { SelectValueType } from "../atoms/select/TypeSelect"
+import { EmployeeType } from "../../types/generic"
 
 export type Employee = z.infer<typeof EmployeeEditInput>
 
 export const UpdateEmployeeModal = (props: {
-  employee: Employee
+  employee: EmployeeType
   // setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
   // images: ImageJSON[]
   // setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
@@ -24,13 +26,20 @@ export const UpdateEmployeeModal = (props: {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [searchValue, onSearchChange] = useState<string>(
-    props.employee.team?.name ?? ""
+    props.employee?.teamId?.toString() ?? "0"
   )
-  const [date, setDate] = useState(props.employee.hired_date ?? new Date())
+  const [date, setDate] = useState(props.employee?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { data: teams } = trpc.team.findAll.useQuery()
+
+  const teamList = useMemo(() => {
+    const list = teams?.teams.map((team) => {
+      return { value: team.id.toString(), label: team.name }
+    }) as SelectValueType[]
+    return list ?? []
+  }, [teams]) as SelectValueType[]
 
   const {
     mutate,
@@ -38,6 +47,7 @@ export const UpdateEmployeeModal = (props: {
     error,
   } = trpc.employee.edit.useMutation({
     onSuccess() {
+      console.log("omsim")
       // invalidate query of asset id when mutations is successful
       utils.employee.findAll.invalidate()
       props.setIsVisible(false)
@@ -54,7 +64,7 @@ export const UpdateEmployeeModal = (props: {
     resolver: zodResolver(EmployeeEditInput),
   })
 
-  useEffect(() => reset(props.employee), [props.employee, reset])
+  useEffect(() => reset(props.employee as Employee), [props.employee, reset])
 
   const onSubmit = async (employee: Employee) => {
     // Register function
@@ -111,11 +121,11 @@ export const UpdateEmployeeModal = (props: {
             <Select
               placeholder="Pick one"
               onChange={(value) => {
-                setValue("team.name", value ?? "")
-                onSearchChange(value ?? "")
+                setValue("teamId", Number(value) ?? 0)
+                onSearchChange(value ?? "0")
               }}
               value={searchValue}
-              data={teams?.teams.map((value) => value.name) ?? []}
+              data={teamList}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -139,7 +149,7 @@ export const UpdateEmployeeModal = (props: {
               variant="unstyled"
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
-            <AlertInput>{errors?.team?.name?.message}</AlertInput>
+            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Employee Number</label>
@@ -150,7 +160,7 @@ export const UpdateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${props.employee.employee_id}`}</p>
+            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${props.employee?.employee_id}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -189,6 +199,7 @@ export const UpdateEmployeeModal = (props: {
             <label className="sm:text-sm">Mobile Number</label>
             <input
               type="number"
+              value={props.employee?.profile?.phone_no ?? "--"}
               className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
               onChange={(event) => {
                 setValue(
@@ -265,6 +276,16 @@ export const UpdateEmployeeModal = (props: {
         />
         <hr className="w-full"></hr>
         <div className="flex w-full justify-end">
+          <button
+            type="button"
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+            disabled={employeeLoading}
+            onClick={() => {
+              console.log(errors)
+            }}
+          >
+            {employeeLoading ? "Loading..." : "Register"}
+          </button>
           <button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"

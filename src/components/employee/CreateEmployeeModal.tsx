@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DatePicker } from "@mantine/dates"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { EmployeeCreateInput } from "../../server/schemas/employee"
@@ -12,6 +12,7 @@ import { Select } from "@mantine/core"
 import DropZoneComponent from "../dropzone/DropZoneComponent"
 import { env } from "../../env/client.mjs"
 import moment from "moment"
+import { SelectValueType } from "../atoms/select/TypeSelect"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -39,6 +40,14 @@ export const CreateEmployeeModal = (props: {
       props.setImage([])
     },
   })
+
+  const teamList = useMemo(() => {
+    const list = teams?.teams.map((team) => {
+      return { value: team.id.toString(), label: team.name }
+    }) as SelectValueType[]
+    return list ?? []
+  }, [teams]) as SelectValueType[]
+
   const {
     register,
     handleSubmit,
@@ -50,9 +59,6 @@ export const CreateEmployeeModal = (props: {
     defaultValues: {
       name: "",
       employee_id: "",
-      team: {
-        name: "",
-      },
       // supervisee: {
       //   name: ""
       // },
@@ -88,9 +94,6 @@ export const CreateEmployeeModal = (props: {
           .toLowerCase()
           .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
       hired_date: employee.hired_date,
-      team: {
-        name: employee.team?.name ?? "",
-      },
       teamId: employee.teamId,
       // supervisee: {
       //   name: employee.supervisee?.name ?? ""
@@ -160,11 +163,11 @@ export const CreateEmployeeModal = (props: {
             <Select
               placeholder="Pick one"
               onChange={(value) => {
-                setValue("team.name", value ?? "")
+                setValue("teamId", Number(value) ?? 0)
                 onSearchChange(value ?? "")
               }}
               value={searchValue}
-              data={teams?.teams.map((value) => value.name) ?? []}
+              data={teamList}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -188,7 +191,6 @@ export const CreateEmployeeModal = (props: {
               variant="unstyled"
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
-            <AlertInput>{errors?.team?.name?.message}</AlertInput>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Employee Number</label>

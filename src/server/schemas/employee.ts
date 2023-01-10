@@ -18,18 +18,7 @@ export const EmployeeCreateInput = z.object({
     image: z.string().nullish(),
   }),
   address: AddressCreateInput,
-  team: z
-    .object({
-      name: z.string().min(1),
-    })
-    .optional(),
   teamId: z.number().optional(),
-  supervisee: z
-    .object({
-      name: z.string().min(1),
-    })
-    .optional(),
-  superviseeId: z.number().optional(),
 })
 
 export const EmployeeEditInput = z.object({
@@ -52,16 +41,5 @@ export const EmployeeEditInput = z.object({
     })
     .optional(),
   address: AddressEditInput,
-  team: z
-    .object({
-      name: z.string().min(1).optional(),
-    })
-    .optional(),
   teamId: z.number().optional(),
-  supervisee: z
-    .object({
-      name: z.string().min(1).optional(),
-    })
-    .optional(),
-  superviseeId: z.number().optional(),
 })

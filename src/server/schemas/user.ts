@@ -12,7 +12,7 @@ export const CreateUserInput = z.object({
         message: "Password does not match the given restrictions",
       }
     )
-    .min(12, { message: "Password should be at least 12 characters" })
+    .min(8, { message: "Password should be at least 8 characters" })
     .max(20, { message: "Password should not be more than 20 characters" }),
   user_type: z.string().nullish(),
   image: z.string().nullish(),

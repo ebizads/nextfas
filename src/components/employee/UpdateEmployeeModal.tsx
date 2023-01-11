@@ -277,16 +277,6 @@ export const UpdateEmployeeModal = (props: {
         <hr className="w-full"></hr>
         <div className="flex w-full justify-end">
           <button
-            type="button"
-            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={employeeLoading}
-            onClick={() => {
-              console.log(errors)
-            }}
-          >
-            {employeeLoading ? "Loading..." : "Register"}
-          </button>
-          <button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={employeeLoading}

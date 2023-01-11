@@ -40,7 +40,7 @@ const SideBar = () => {
           ver.0.0.1-test
         </div>
       </div>
-      <div className="flex w-full flex-col border-b">
+      {/* <div className="flex w-full flex-col border-b">
         {!minimize && (
           <p className="pl-2 text-xs capitalize text-light-secondary">home</p>
         )}
@@ -66,7 +66,7 @@ const SideBar = () => {
             </div>
           </Link>
         </div>
-      </div>
+      </div> */}
       <div className="flex w-full flex-col">
         {!minimize && (
           <p className="px-2 text-xs capitalize text-light-secondary">

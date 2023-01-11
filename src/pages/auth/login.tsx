@@ -78,7 +78,7 @@ function LoginForm() {
       redirect: false,
       username: user.username,
       password: user.password,
-      callbackUrl: "/dashboard",
+      callbackUrl: "/assets",
     })
 
     setError(res?.error as string)

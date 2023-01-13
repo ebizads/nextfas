@@ -7,7 +7,10 @@ import Modal from "../../headless/modal/modal"
 import { EmployeeType } from "../../../types/generic"
 import { employeeColumns } from "../../../lib/table"
 import { getAddress, getName, getProperty } from "../../../lib/functions"
-import { Employee, UpdateEmployeeModal } from "../../employee/UpdateEmployeeModal"
+import {
+  Employee,
+  UpdateEmployeeModal,
+} from "../../employee/UpdateEmployeeModal"
 
 const EmployeeTable = (props: {
   checkboxes: number[]
@@ -20,7 +23,6 @@ const EmployeeTable = (props: {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
   const [details, setDetails] = useState<EmployeeType>()
-
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -42,8 +44,9 @@ const EmployeeTable = (props: {
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -64,7 +67,8 @@ const EmployeeTable = (props: {
                 />
               </div>
             </th>
-            {props.columns.filter((col) => props.filterBy.includes(col.value))
+            {props.columns
+              .filter((col) => props.filterBy.includes(col.value))
               .map((col) => (
                 <th
                   key={col.name}
@@ -118,16 +122,24 @@ const EmployeeTable = (props: {
                   >
                     {
                       // ternary operator that returns special values for date, name, and address
-                      col.value === "hired_date" ? row?.hired_date?.toDateString() : col.value.match(/_name/g) ? getName(col.value, row) : col.value === "city" ? getAddress(row) :
-                        getProperty(col.value, row)
+                      col.value === "hired_date"
+                        ? row?.hired_date?.toDateString()
+                        : col.value.match(/_name/g)
+                        ? getName(col.value, row)
+                        : col.value === "city"
+                        ? getAddress(row)
+                        : getProperty(col.value, row)
                     }
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
-                <i className="fa-light fa-pen-to-square" onClick={() => {
-                  setDetails(row)
-                  setUpdateRecord(true)
-                }} />
+                <i
+                  className="fa-light fa-pen-to-square"
+                  onClick={() => {
+                    setDetails(row)
+                    setUpdateRecord(true)
+                  }}
+                />
                 {/* <i className="fa-light fa-trash-can text-red-500" />{" "} */}
               </td>
             </tr>
@@ -141,16 +153,21 @@ const EmployeeTable = (props: {
         info={details!}
       />
 
-      {details !== null ?
-        <Modal title="Update Employee Record"
+      {details !== null ? (
+        <Modal
+          title="Update Employee Record"
           isVisible={updateRecord}
           setIsVisible={setUpdateRecord}
-          className="max-w-4xl">
-          <UpdateEmployeeModal employee={details as Employee} setIsVisible={setUpdateRecord}
+          className="max-w-4xl"
+        >
+          <UpdateEmployeeModal
+            employee={details as EmployeeType}
+            setIsVisible={setUpdateRecord}
           />
         </Modal>
-        : <div></div>
-      }
+      ) : (
+        <div></div>
+      )}
     </div>
   )
 }
@@ -179,7 +196,12 @@ function ShowDetails({
         ) : (
           <div>
             <div className="flex flex-row items-center gap-4 py-5">
-              <Avatar src={info.profile?.image ?? ""} alt="it's me" radius={200} size={100} />
+              <Avatar
+                src={info.profile?.image ?? ""}
+                alt="it's me"
+                radius={200}
+                size={100}
+              />
               <div className="flex flex-col">
                 <div className="flex flex-row">
                   <p className="text-xl font-bold">

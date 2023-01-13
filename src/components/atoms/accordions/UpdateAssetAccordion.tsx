@@ -1,6 +1,6 @@
 import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
-import { InputField, InputNumberField } from "../forms/InputField"
+import { InputField } from "../forms/InputField"
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
@@ -24,6 +24,7 @@ import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
 import { useRouter } from "next/router"
+import InputNumberField from "../forms/InputNumberField"
 
 export const FormErrorMessage = (props: {
   setFormError: React.Dispatch<React.SetStateAction<boolean>>

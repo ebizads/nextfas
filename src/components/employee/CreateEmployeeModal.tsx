@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DatePicker } from "@mantine/dates"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { EmployeeCreateInput } from "../../server/schemas/employee"
@@ -12,6 +12,7 @@ import { Select } from "@mantine/core"
 import DropZoneComponent from "../dropzone/DropZoneComponent"
 import { env } from "../../env/client.mjs"
 import moment from "moment"
+import { SelectValueType } from "../atoms/select/TypeSelect"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -39,6 +40,14 @@ export const CreateEmployeeModal = (props: {
       props.setImage([])
     },
   })
+
+  const teamList = useMemo(() => {
+    const list = teams?.teams.map((team) => {
+      return { value: team.id.toString(), label: team.name }
+    }) as SelectValueType[]
+    return list ?? []
+  }, [teams]) as SelectValueType[]
+
   const {
     register,
     handleSubmit,
@@ -50,9 +59,6 @@ export const CreateEmployeeModal = (props: {
     defaultValues: {
       name: "",
       employee_id: "",
-      team: {
-        name: ""
-      },
       // supervisee: {
       //   name: ""
       // },
@@ -88,9 +94,6 @@ export const CreateEmployeeModal = (props: {
           .toLowerCase()
           .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
       hired_date: employee.hired_date,
-      team: {
-        name: employee.team?.name ?? ""
-      },
       teamId: employee.teamId,
       // supervisee: {
       //   name: employee.supervisee?.name ?? ""
@@ -145,7 +148,6 @@ export const CreateEmployeeModal = (props: {
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Last Name</label>
             <InputField
-
               type={"text"}
               label={""}
               name={"profile.last_name"}
@@ -161,11 +163,11 @@ export const CreateEmployeeModal = (props: {
             <Select
               placeholder="Pick one"
               onChange={(value) => {
-                setValue("team.name", value ?? "")
+                setValue("teamId", Number(value) ?? 0)
                 onSearchChange(value ?? "")
               }}
               value={searchValue}
-              data={teams?.teams.map((value) => (value.name)) ?? []}
+              data={teamList}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -187,9 +189,8 @@ export const CreateEmployeeModal = (props: {
                 },
               })}
               variant="unstyled"
-              className="w-full rounded-md border-2 my-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
-            <AlertInput>{errors?.team?.name?.message}</AlertInput>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Employee Number</label>
@@ -200,12 +201,11 @@ export const CreateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className="w-full rounded-md border-2 my-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
+            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
             <InputField
-
               type={"text"}
               label={""}
               name={"position"}
@@ -234,22 +234,21 @@ export const CreateEmployeeModal = (props: {
                   ? props.setDate(new Date())
                   : props.setDate(value)
               }}
-              className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 p-0.5 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
           <div className="flex w-[48%] flex-col">
             <label className="sm:text-sm">Mobile Number</label>
-            {/* <InputField
-              type={"number"}
-              label={""}
-              name={"profile.phone_no"}
-              register={register}
-            /> */}
-            <input type="number"
-              className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm"
+            <input
+              type="number"
+              className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
               onChange={(event) => {
-                setValue("profile.phone_no", event.currentTarget.value.toString())
-              }} />
+                setValue(
+                  "profile.phone_no",
+                  event.currentTarget.value.toString()
+                )
+              }}
+            />
 
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
@@ -257,7 +256,6 @@ export const CreateEmployeeModal = (props: {
             <div className="flex w-[18%] flex-col">
               <label className="sm:text-sm">Street</label>
               <InputField
-
                 type={"text"}
                 label={""}
                 name="address.street"
@@ -267,7 +265,6 @@ export const CreateEmployeeModal = (props: {
             <div className="flex w-[18%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
-
                 type={"text"}
                 label={""}
                 name={"address.state"}
@@ -279,7 +276,6 @@ export const CreateEmployeeModal = (props: {
             <div className="flex w-[18%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
-
                 type={"text"}
                 label={""}
                 name={"address.city"}
@@ -291,7 +287,6 @@ export const CreateEmployeeModal = (props: {
             <div className="flex w-[18%] flex-col">
               <label className="sm:text-sm">Zip Code</label>
               <InputField
-
                 type={"text"}
                 label={""}
                 name={"address.zip"}
@@ -302,7 +297,6 @@ export const CreateEmployeeModal = (props: {
             <div className="flex w-[18%] flex-col">
               <label className="sm:text-sm">Country</label>
               <InputField
-
                 type={"text"}
                 label={""}
                 name={"address.country"}

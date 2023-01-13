@@ -12,7 +12,7 @@ export const CreateUserInput = z.object({
         message: "Password does not match the given restrictions",
       }
     )
-    .min(12, { message: "Password should be at least 12 characters" })
+    .min(8, { message: "Password should be at least 8 characters" })
     .max(20, { message: "Password should not be more than 20 characters" }),
   user_type: z.string().nullish(),
   image: z.string().nullish(),
@@ -26,7 +26,7 @@ export const CreateUserInput = z.object({
     middle_name: z.string().nullish(),
     suffix: z.string().nullish(),
     date_of_birth: z.date().nullish(),
-    phone_no: z.number().nullish(),
+    phone_no: z.string().nullish(),
     gender: z.string().nullish(),
   }),
   address: AddressCreateInput,
@@ -45,7 +45,7 @@ export const EditUserInput = z.object({
     middle_name: z.string().optional(),
     suffix: z.string().optional(),
     date_of_birth: z.date().optional(),
-    phone_no: z.number().optional(),
+    phone_no: z.string().optional(),
     gender: z.string().optional(),
   }),
   address: AddressEditInput,

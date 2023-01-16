@@ -25,6 +25,6 @@
     "**/*.mjs",
     "src/store/useStore.ts",
     "src/components/headless/modal/modal.tsx"
-  ],
+, "src/components/transaction/AddRepair"  ],
   "exclude": ["node_modules"]
 }

@@ -10,20 +10,22 @@ import {
   Search,
 } from "tabler-icons-react"
 import { Accordion, Checkbox, Select } from "@mantine/core"
-import { trpc } from "../../utils/trpc"
-import { InputField } from "../atoms/forms/InputField"
+import { trpc } from "../../../utils/trpc"
+import { InputField } from "../../atoms/forms/InputField"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AssetEditInput } from "../../server/schemas/asset"
+import { AssetEditInput } from "../../../server/schemas/asset"
 import { z } from "zod"
-import { SelectValueType } from "../atoms/select/TypeSelect"
-import { getLifetime } from "../../lib/functions"
-import Modal from "../headless/modal/modal"
+import { SelectValueType } from "../../atoms/select/TypeSelect"
+import { getLifetime } from "../../../lib/functions"
+import Modal from "../../headless/modal/modal"
 import Link from "next/link"
+import { useTransferAssetStore } from "../../../store/useStore"
+import { Asset, AssetType } from "@prisma/client"
 
 export type Assets = z.infer<typeof AssetEditInput>
 
-const Transfer = () => {
+const Transfer = ({}) => {
   const [assetNumber, setAssetNumber] = useState<string>("")
   const [searchAsset, setSearchAsset] = useState<string>("")
 
@@ -136,6 +138,15 @@ const Transfer = () => {
     steps,
   })
 
+  const { transferAsset, setTransferAsset } = useTransferAssetStore()
+
+  useEffect(() => setAssetNumber(transferAsset?.number ?? ""))
+
+  const resetTransferAsset = () => {
+    setTransferAsset(null)
+    console.log("dapat wala na")
+  }
+
   return (
     <div className="px-4">
       <div>
@@ -196,29 +207,7 @@ const Transfer = () => {
           </ol>
         </nav>
       </div>
-      {state.currentStep === 0 && (
-        <div className="w-full py-4">
-          <div className="flex w-80 flex-row rounded-sm border border-[#F2F2F2] bg-[#F2F2F2] px-4 py-2">
-            <input
-              type="text"
-              onChange={(event) => {
-                setSearchAsset(event.currentTarget.value)
-                console.log(event.currentTarget.value)
-              }}
-              placeholder="Search/Input Asset Number"
-              className="w-[100%] bg-transparent text-sm outline-none focus:outline-none"
-            />
-            <button
-              onClick={() => {
-                setAssetNumber(searchAsset)
-                console.log(asset)
-              }}
-            >
-              <Search className="bg-transparent outline-none focus:outline-none" />
-            </button>
-          </div>
-        </div>
-      )}
+
       <Modal
         className="max-w-lg"
         isVisible={searchModal}
@@ -566,14 +555,25 @@ const Transfer = () => {
                 </Accordion>
 
                 <hr className="w-full"></hr>
-                <div className="flex w-full justify-end py-3">
-                  <button
-                    type="button"
-                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={nextStep}
-                  >
-                    Next
-                  </button>
+                <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+                  <div className="flex w-full justify-center gap-3">
+                    <button
+                      type="button"
+                      className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={nextStep}
+                    >
+                      Next
+                    </button>
+                  </div>
+                  <div className="flex w-full justify-center">
+                    <button
+                      type="button"
+                      className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={resetTransferAsset}
+                    >
+                      Cancel Process
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -680,23 +680,34 @@ const Transfer = () => {
                             </div> */}
               </div>
               <hr className="w-full"></hr>
-              <div className="flex w-full justify-between py-3">
-                <button
-                  type="button"
-                  className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                  onClick={prevStep}
-                >
-                  Back
-                </button>
-                {(selectedEMP !== "" || checked) && (
+              <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+                <div className="flex w-full justify-center gap-3">
                   <button
                     type="button"
-                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={nextStep}
+                    className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                    onClick={prevStep}
                   >
-                    Next
+                    Back
                   </button>
-                )}
+                  {(selectedEMP !== "" || checked) && (
+                    <button
+                      type="button"
+                      className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={nextStep}
+                    >
+                      Next
+                    </button>
+                  )}
+                </div>
+                <div className="flex w-full justify-center">
+                  <button
+                    type="button"
+                    className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                    onClick={resetTransferAsset}
+                  >
+                    Cancel Process
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -865,20 +876,32 @@ const Transfer = () => {
                 </div>
 
                 <hr className="w-full"></hr>
-                <div className="flex w-full justify-between py-3">
-                  <button
-                    type="button"
-                    className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={prevStep}
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                  >
-                    Submit
-                  </button>
+
+                <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+                  <div className="flex w-full justify-center gap-3">
+                    <button
+                      type="button"
+                      className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={prevStep}
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                  <div className="flex w-full justify-center">
+                    <button
+                      type="button"
+                      className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={resetTransferAsset}
+                    >
+                      Cancel Process
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -900,8 +923,11 @@ const Transfer = () => {
           </div>
           <div className="flex justify-end py-2">
             <Link href={"/assets"}>
-              <button className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500">
-                Continue
+              <button
+                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={resetTransferAsset}
+              >
+                Return to Assets tab
               </button>
             </Link>
           </div>

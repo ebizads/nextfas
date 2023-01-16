@@ -1,5 +1,5 @@
 import React from "react"
-import AddRepairForm from "../../../components/transaction/AddRepair.tsx/AddRepairForm"
+import AddRepairForm from "../../../components/transaction/AddRepair/AddRepairForm"
 import DashboardLayout from "../../../layouts/DashboardLayout"
 
 const RepairNew = () => {

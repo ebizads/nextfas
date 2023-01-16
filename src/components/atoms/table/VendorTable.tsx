@@ -189,7 +189,7 @@ const VendorTable = (props: {
                   </div>
                   <div className="py-3">
                     <p className="col-span-2 text-sm">
-                      {selectedAsset.phone_no ?? "NO DATA"}
+                      {selectedAsset.phone_no.toString() ?? "NO DATA"}
                     </p>
                   </div>
                 </div>

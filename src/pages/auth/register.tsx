@@ -23,8 +23,8 @@ const Register = () => {
   } = useForm<User>({
     resolver: zodResolver(CreateUserInput), // Configuration the validation with the zod schema.
     defaultValues: {
-      name: "amogus",
-      email: "omsim@omsim.com",
+      name: "test",
+      email: "testing@fas.com",
       profile: {
         first_name: "",
         last_name: "",
@@ -36,9 +36,10 @@ const Register = () => {
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
     // Register function
+    console.log(mutate)
     mutate({
       password: user.password,
-      email: "test123@test.com",
+      email: `test.${user.profile.last_name}@fas.com`,
       name: `${user.profile.first_name} ${user.profile.last_name}`,
       profile: {
         first_name: user.profile.first_name,

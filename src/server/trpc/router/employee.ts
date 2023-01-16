@@ -13,7 +13,6 @@ export const employeeRouter = t.router({
         profile: true,
         team: {
           include: {
-            supervisors: true,
             department: {
               include: {
                 location: true,
@@ -27,7 +26,6 @@ export const employeeRouter = t.router({
           //   name: true,
           // },
         },
-        supervisee: true,
       },
     })
     return employee
@@ -77,7 +75,6 @@ export const employeeRouter = t.router({
                 profile: true,
                 team: {
                   include: {
-                    supervisors: true,
                     department: {
                       include: {
                         location: true,
@@ -85,7 +82,6 @@ export const employeeRouter = t.router({
                     },
                   },
                 },
-                supervisee: true,
               },
               where: {
                 NOT: {
@@ -149,15 +145,7 @@ export const employeeRouter = t.router({
   create: authedProcedure
     .input(EmployeeCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const {
-        address,
-        profile,
-        supervisee,
-        team,
-        teamId,
-        superviseeId,
-        ...rest
-      } = input
+      const { address, profile, ...rest } = input
 
       try {
         await ctx.prisma.employee.create({
@@ -179,31 +167,12 @@ export const employeeRouter = t.router({
                 create: address,
               },
             },
-            supervisee: {
-              connectOrCreate: {
-                where: {
-                  id: 0,
-                },
-                create: {
-                  name: supervisee?.name ?? "",
-                },
-              },
-            },
-            team: {
-              connectOrCreate: {
-                where: {
-                  id: 0,
-                },
-                create: {
-                  name: team?.name ?? "",
-                },
-              },
-            },
           },
         })
 
         return "User created successfully"
       } catch (error) {
+        console.log(error)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
@@ -215,15 +184,7 @@ export const employeeRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.employee.createMany({
         data: input.map((employee) => {
-          const {
-            address,
-            profile,
-            supervisee,
-            team,
-            teamId,
-            superviseeId,
-            ...rest
-          } = employee
+          const { address, profile, ...rest } = employee
 
           return {
             ...rest,
@@ -243,26 +204,6 @@ export const employeeRouter = t.router({
                 create: address,
               },
             },
-            supervisee: {
-              connectOrCreate: {
-                where: {
-                  id: superviseeId,
-                },
-                create: {
-                  name: supervisee?.name ?? "",
-                },
-              },
-            },
-            team: {
-              connectOrCreate: {
-                where: {
-                  id: teamId,
-                },
-                create: {
-                  name: team?.name ?? "",
-                },
-              },
-            },
           }
         }),
         skipDuplicates: true,
@@ -272,16 +213,7 @@ export const employeeRouter = t.router({
   edit: authedProcedure
     .input(EmployeeEditInput)
     .mutation(async ({ ctx, input }) => {
-      const {
-        address,
-        profile,
-        supervisee,
-        team,
-        teamId,
-        superviseeId,
-        id,
-        ...rest
-      } = input
+      const { address, profile, id, ...rest } = input
 
       try {
         await ctx.prisma.employee.update({
@@ -295,26 +227,6 @@ export const employeeRouter = t.router({
             },
             address: {
               update: address,
-            },
-            supervisee: {
-              connectOrCreate: {
-                where: {
-                  id: superviseeId,
-                },
-                create: {
-                  name: supervisee?.name ?? "",
-                },
-              },
-            },
-            team: {
-              connectOrCreate: {
-                where: {
-                  id: teamId,
-                },
-                create: {
-                  name: team?.name ?? "",
-                },
-              },
             },
           },
         })

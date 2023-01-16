@@ -1,6 +1,6 @@
 import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
-import { InputField, InputNumberField } from "../forms/InputField"
+import { InputField } from "../forms/InputField"
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
@@ -22,6 +22,7 @@ import { useUpdateAssetStore } from "../../../store/useStore"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import { FormErrorMessage } from "./UpdateAssetAccordion"
+import InputNumberField from "../forms/InputNumberField"
 
 const CreateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()

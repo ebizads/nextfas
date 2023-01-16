@@ -3,10 +3,16 @@
     "development"
   ],
   "hints": {
-    "axe/parsing": [
+    "axe/forms": [
       "default",
       {
-        "duplicate-id-aria": "off"
+        "label": "off"
+      }
+    ],
+    "axe/name-role-value": [
+      "default",
+      {
+        "button-name": "off"
       }
     ]
   }

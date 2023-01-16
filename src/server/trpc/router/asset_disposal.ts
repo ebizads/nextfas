@@ -28,7 +28,6 @@ export const assetDisposalRouter = t.router({
           search: z
             .object({
               disposalDate: z.date().optional(),
-              completionDate: z.date().optional(),
               disposalStatus: z.string().optional(),
               departmentCode: z.string().optional(),
               customerName: z.string().optional(),

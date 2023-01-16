@@ -78,7 +78,7 @@ function LoginForm() {
       redirect: false,
       username: user.username,
       password: user.password,
-      callbackUrl: "/dashboard",
+      callbackUrl: "/assets",
     })
 
     setError(res?.error as string)
@@ -149,8 +149,11 @@ function LoginForm() {
             Forgot Password?
           </a>
         </div>
+        <div className="text-xs italic text-light-secondary">
+          ver.0.0.1-test
+        </div>
         {error && (
-          <div className="mt-2 font-sans text-sm italic text-red-500 text-wrap">
+          <div className="text-wrap mt-2 font-sans text-sm italic text-red-500">
             {error}
           </div>
         )}

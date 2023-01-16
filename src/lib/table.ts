@@ -14,17 +14,13 @@ export const columns = [
 
 export const vendorColumns = [
   { value: "id", name: "Vendor ID." },
-  { value: "type/name", name: "Type" },
+  { value: "type", name: "Type" },
   { value: "name", name: "Company Name" },
-  { value: "category/name", name: "Category" },
-  { value: "url", name: "Web Address" },
+  { value: "category.name", name: "Category" },
+  { value: "website", name: "Web Address" },
   { value: "email", name: "Email" },
   { value: "phone_no", name: "Phone Number" },
-  { value: "alt_phone_no", name: "Alternate Number" },
-  // { value: "fax_no", name: "Fax Number" },
-  { value: "address", name: "Address" },
-  { value: "image", name: "Image" },
-  { value: "comments", name: "Comments" },
+  { value: "address.city", name: "City" },
 ] as ColumnType[]
 
 export const employeeColumns = [

@@ -86,7 +86,7 @@ export const vendorRouter = t.router({
           address: {
             connectOrCreate: {
               where: {
-                id: undefined,
+                id: 0,
               },
               create: address,
             },
@@ -94,5 +94,49 @@ export const vendorRouter = t.router({
         },
       })
       return vendor
+    }),
+  delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
+    try {
+      await ctx.prisma.vendor.update({
+        where: {
+          id: input,
+        },
+        data: {
+          deleted: true,
+          deletedAt: new Date(),
+        },
+      })
+
+      return "Vendor deleted successfully"
+    } catch (error) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: JSON.stringify(error),
+      })
+    }
+  }),
+  deleteMany: authedProcedure
+    .input(z.array(z.number()))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.vendor.updateMany({
+          where: {
+            id: {
+              in: input,
+            },
+          },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+          },
+        })
+
+        return "Vendor deleted successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
     }),
 })

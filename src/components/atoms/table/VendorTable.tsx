@@ -1,11 +1,12 @@
-import { Checkbox } from "@mantine/core"
+import { Avatar, Checkbox } from "@mantine/core"
 import React, { useState } from "react"
-import { getProperty } from "../../../lib/functions"
+import { getProperty, getPropertyDisposal } from "../../../lib/functions"
 import { vendorColumns } from "../../../lib/table"
 import { useMinimizeStore } from "../../../store/useStore"
 import { VendorType } from "../../../types/generic"
 import { ColumnType } from "../../../types/table"
 import Modal from "../../asset/Modal"
+import { trpc } from "../../../utils/trpc"
 
 const VendorTable = (props: {
   checkboxes: number[]
@@ -20,6 +21,16 @@ const VendorTable = (props: {
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [selectedAsset, setSelectedAsset] = useState<VendorType | null>(null)
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+
+
+  const utils = trpc.useContext()
+
+  const deleteVendor = trpc.vendor.delete.useMutation({
+    onSuccess: () => {
+      utils.vendor.findAll.invalidate()
+
+    }
+  })
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -113,17 +124,16 @@ const VendorTable = (props: {
                       setSelectedAsset(row)
                     }}
                   >
-                    {getProperty(col.value, row) ?? "Invalid data"}
+                    {getPropertyDisposal(col.value, row) ?? "Invalid data"}
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
-                <button>
+                {/* <button>
                   <i className="fa-light fa-pen-to-square" />
-                </button>
+                </button> */}
                 <button
                   onClick={() => {
-                    // setOpenModalDel(true)
-                    // props.setCheckboxes([row?.id ?? idx])
+                    deleteVendor.mutate(row?.id ?? 0)
                   }}
                 >
                   <i className="fa-light fa-trash-can text-red-500" />{" "}
@@ -135,7 +145,68 @@ const VendorTable = (props: {
       </table>
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <Modal isOpen={openModalDesc} setIsOpen={setOpenModalDesc} size={8} >
-        <pre>{JSON.stringify(selectedAsset, null, 2)}</pre>
+        <pre><>
+          {selectedAsset === null ? (
+            <div></div>
+          ) : (
+            <div className="p-4">
+              <div className="flex flex-row items-center gap-4 py-5">
+                <Avatar
+                  src={selectedAsset.name ?? ""}
+                  alt="it's me"
+                  radius={200}
+                  size={100}
+                />
+                <div className="flex flex-col">
+                  <div className="flex flex-row">
+                    <p className="text-xl font-bold">
+                      {selectedAsset.name}
+                    </p>
+                  </div>
+                  <p className="text-sm">{selectedAsset.email}</p>
+                </div>
+              </div>
+              <div className="flex flex-col px-3 py-3">
+                <p className="text-lg font-bold">Vendor Information</p>
+                <div className="grid grid-cols-2">
+                  <div className="py-3">
+                    <p className="text-sm font-semibold">Vendor Type</p>
+                  </div>
+
+                  <div className="py-3">
+                    <p className="col-span-2 text-sm">
+                      {selectedAsset.type ?? "NO DATA"}
+                    </p>
+                  </div>
+                  <div className="py-3">
+                    <p className="text-sm font-semibold">Address</p>
+                  </div>
+                  <div className="py-3">
+                    <p className="col-span-2 text-sm">
+                      {selectedAsset.address?.city ?? "NO DATA"}
+                    </p>
+                  </div>
+                  <div className="py-3">
+                    <p className="text-sm font-semibold">Email</p>
+                  </div>
+                  <div className="py-3">
+                    <p className="col-span-2 text-sm">
+                      {selectedAsset.email ?? "NO DATA"}
+                    </p>
+                  </div>
+                  <div className="py-3">
+                    <p className="text-sm font-semibold">Telephone Number</p>
+                  </div>
+                  <div className="py-3">
+                    <p className="col-span-2 text-sm">
+                      {selectedAsset.phone_no.toString() ?? "NO DATA"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </></pre>
       </Modal>
     </div>
   )

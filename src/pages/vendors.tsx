@@ -67,6 +67,13 @@ const Vendors = () => {
     },
   })
 
+  const deleteVendor = trpc.vendor.deleteMany.useMutation({
+    onSuccess: () => {
+      utils.vendor.findAll.invalidate()
+
+    }
+  })
+
   const {
     register,
     handleSubmit,
@@ -98,7 +105,7 @@ const Vendors = () => {
             <div className="flex items-center gap-2">
               <div className="flex w-fit items-center gap-2">
                 <div className="flex-1">
-                  <Search
+                  {/* <Search
                     data={[
                       ...vendors?.map((obj) => {
                         return {
@@ -107,7 +114,7 @@ const Vendors = () => {
                         }
                       }),
                     ]}
-                  />
+                  /> */}
                 </div>
                 <FilterPopOver
                   openPopover={openPopover}
@@ -121,6 +128,7 @@ const Vendors = () => {
                 <button
                   // onClick={() => setOpenModalDel(true)}
                   className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
+                  onClick={() => { deleteVendor.mutate(checkboxes); setCheckboxes([]) }}
                 >
                   {checkboxes.includes(-1)
                     ? `Delete all record/s ( ${vendors.length} ) ?`
@@ -129,10 +137,10 @@ const Vendors = () => {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
+              {/* <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
                 <i className="fa-solid fa-print text-xs" />
                 Print CVs
-              </button>
+              </button> */}
               <button
                 onClick={() => {
                   setOpenModalAdd(true)

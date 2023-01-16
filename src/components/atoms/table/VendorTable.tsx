@@ -6,6 +6,7 @@ import { useMinimizeStore } from "../../../store/useStore"
 import { VendorType } from "../../../types/generic"
 import { ColumnType } from "../../../types/table"
 import Modal from "../../asset/Modal"
+import { trpc } from "../../../utils/trpc"
 
 const VendorTable = (props: {
   checkboxes: number[]
@@ -20,6 +21,16 @@ const VendorTable = (props: {
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [selectedAsset, setSelectedAsset] = useState<VendorType | null>(null)
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+
+
+  const utils = trpc.useContext()
+
+  const deleteVendor = trpc.vendor.delete.useMutation({
+    onSuccess: () => {
+      utils.vendor.findAll.invalidate()
+
+    }
+  })
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -117,13 +128,12 @@ const VendorTable = (props: {
                   </td>
                 ))}
               <td className="max-w-[10rem] space-x-2 text-center">
-                <button>
+                {/* <button>
                   <i className="fa-light fa-pen-to-square" />
-                </button>
+                </button> */}
                 <button
                   onClick={() => {
-                    // setOpenModalDel(true)
-                    // props.setCheckboxes([row?.id ?? idx])
+                    deleteVendor.mutate(row?.id ?? 0)
                   }}
                 >
                   <i className="fa-light fa-trash-can text-red-500" />{" "}

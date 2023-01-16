@@ -119,6 +119,9 @@ const CreateDisposeAccordion = () => {
     getValues("disposalTypeId") === 1
       ? setValue("disposalPrice", 0)
       : resetField("disposalPrice")
+    getValues("disposalTypeId") === 1
+      ? setValue("tradedItem", "")
+      : resetField("tradedItem")
   }, [getValues, resetField, setValue, selectedType])
 
   useEffect(() => {
@@ -585,18 +588,6 @@ const CreateDisposeAccordion = () => {
                     />
                   </div>
                   <div className="flex w-full flex-col">
-                    <label className="font-semibold">CUFS Code String</label>
-
-                    <InputField
-                      register={register}
-                      name="cufsCodeString"
-                      type={"text"}
-                      label={""}
-                    />
-                  </div>
-                </div>
-                <div className="flex w-full flex-row justify-between gap-7 py-2">
-                  <div className="flex w-full flex-col">
                     <label className="font-semibold">Disposal Date</label>
                     <DatePicker
                       onChange={(value) => {
@@ -612,45 +603,41 @@ const CreateDisposeAccordion = () => {
                       className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                     />
                   </div>
-                  <div className="flex w-full flex-col">
-                    <label className="font-semibold">Date of Completion</label>
-                    <DatePicker
-                      onChange={(value) => {
-                        setCompletionDate(value as Date)
-                        setValue("completionDate", value as Date)
-                      }}
-                      value={completionDate}
-                      minDate={new Date()}
-                      dropdownType="modal"
-                      placeholder="Pick Date"
-                      size="sm"
-                      variant="unstyled"
-                      className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                    />
-                  </div>
                 </div>
-                {selectedType !== "1" && (
-                  <div>
-                    <div className="flex w-full flex-row justify-between gap-7 py-2">
-                      <div className="flex w-full flex-col">
-                        <label className="font-semibold">Customer Name</label>
-                        <InputField
-                          register={register}
-                          name="customerName"
-                          type={"text"}
-                          label={""}
-                        />
-                      </div>
-                      <div className="flex w-full flex-col">
-                        <label className="font-semibold">Telephone No.</label>
-                        <InputField
-                          register={register}
-                          name="telephoneNo"
-                          type={"text"}
-                          label={""}
-                        />
-                      </div>
+                {/* <div className="flex w-full flex-row justify-between gap-7 py-2">
+                  <div className="flex w-full flex-col">
+                    
+                  </div>
+                  <div className="flex w-full flex-col">
+
+                  </div>
+                </div> */}
+                {
+                  selectedType !== "1" &&
+                  (<div className="flex w-full flex-row justify-between gap-7 py-2">
+                    <div className="flex w-full flex-col">
+                      <label className="font-semibold">Customer Name</label>
+                      <InputField
+                        register={register}
+                        name="customerName"
+                        type={"text"}
+                        label={""}
+                      />
                     </div>
+                    <div className="flex w-full flex-col">
+                      <label className="font-semibold">Telephone No.</label>
+                      <InputField
+                        register={register}
+                        name="telephoneNo"
+                        type={"text"}
+                        label={""}
+                      />
+                    </div>
+                  </div>)
+                }
+                {(selectedType !== "1" && selectedType !== "3") && (
+                  <div>
+
                     <div className="flex w-full flex-row justify-between gap-7 py-2">
                       <div className="flex w-full flex-col">
                         <label className="font-semibold">
@@ -698,6 +685,22 @@ const CreateDisposeAccordion = () => {
                     </div>
                   </div>
                 )}
+                {
+                  (selectedType !== "1" && selectedType !== "2") &&
+                  <div className="flex w-full flex-row justify-between gap-7 py-2">
+                    <div className="flex w-full flex-col">
+                      <label className="font-semibold">Traded Items</label>
+                      <InputField
+                        register={register}
+                        name="tradedItems"
+                        type={"text"}
+                        label={""}
+                      />
+                      <AlertInput>{errors?.tradedItem?.message}</AlertInput>
+                    </div>
+
+                  </div>
+                }
                 <hr className="w-full"></hr>
                 <div className="flex w-full justify-between py-3">
                   <button
@@ -818,6 +821,12 @@ const CreateDisposeAccordion = () => {
                         <AlertInput>{errors?.telephoneNo?.message}</AlertInput>
                       </div>
                     </div>
+
+                  </div>
+                )}
+                {
+                  (selectedType !== "1" && selectedType !== "3") &&
+                  <div>
                     <div className="flex w-full flex-row justify-between gap-7 py-2">
                       <div className="flex w-full flex-col">
                         <label className="font-semibold">
@@ -872,43 +881,25 @@ const CreateDisposeAccordion = () => {
                         <AlertInput>{errors?.agreedPrice?.message}</AlertInput>
                       </div>
                     </div>
-                    <div className="flex w-full flex-row justify-between gap-7 py-2">
-                      <div className="flex w-full flex-col">
-                        <label className="font-semibold">
-                          Date of Completion
-                        </label>
-                        <DatePicker
-                          disabled
-                          value={completionDate}
-                          minDate={new Date()}
-                          dropdownType="modal"
-                          placeholder="Pick Date"
-                          size="sm"
-                          variant="unstyled"
-                          className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                        />
-                        <AlertInput>
-                          {errors?.completionDate?.message}
-                        </AlertInput>
-                      </div>
-                      <div className="flex w-full flex-col">
-                        <label className="font-semibold">
-                          CUFS Code String
-                        </label>
-                        <InputField
-                          disabled
-                          register={register}
-                          name="cufsCodeString"
-                          type={"text"}
-                          label={""}
-                        />
-                        <AlertInput>
-                          {errors?.cufsCodeString?.message}
-                        </AlertInput>
-                      </div>
-                    </div>
                   </div>
-                )}
+                }
+                {
+                  (selectedType !== "1" && selectedType !== "2") &&
+                  <div className="flex w-full flex-row justify-between gap-7 py-2">
+                    <div className="flex w-full flex-col">
+                      <label className="font-semibold">Traded Items</label>
+                      <InputField
+                        disabled
+                        register={register}
+                        name="tradedItems"
+                        type={"text"}
+                        label={""}
+                      />
+                      <AlertInput>{errors?.tradedItem?.message}</AlertInput>
+                    </div>
+
+                  </div>
+                }
 
                 <hr className="w-full"></hr>
                 <div className="flex w-full justify-between py-3">

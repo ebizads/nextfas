@@ -7,7 +7,7 @@ import { repairColumn } from "../../../lib/table"
 import { getPropertyDisposal } from "../../../lib/functions"
 import { AssetRepairType } from "../../../types/generic"
 import Modal from "../../headless/modal/modal"
-import { RepairDetailsModal } from "../../transaction/AddRepair.tsx/RepairModal"
+import { RepairDetailsModal } from "../../transaction/AddRepair/RepairModal"
 
 const RepairTable = (props: {
   checkboxes: number[]

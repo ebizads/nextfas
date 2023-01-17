@@ -74,7 +74,6 @@ export const AssetUpdateInput = z.object({
 
 export const AssetDisposalCreateInput = z.object({
   disposalDate: z.date().default(new Date()),
-  completionDate: z.date().default(new Date()),
   disposalStatus: z.string().default("pending"),
   departmentCode: z.string().nullish(),
   telephoneNo: z.string(),
@@ -86,6 +85,7 @@ export const AssetDisposalCreateInput = z.object({
   disposalPrice: z.number(),
   cufsCodeString: z.string().optional(),
 
+  tradedItem: z.string(),
   assetId: z.number(),
   disposalTypeId: z.number(),
 })
@@ -93,7 +93,6 @@ export const AssetDisposalCreateInput = z.object({
 export const AssetDisposalEditInput = z.object({
   id: z.number().optional(),
   disposalDate: z.date().optional(),
-  completionDate: z.date().optional(),
   disposalStatus: z.string().optional(),
   departmentCode: z.string().optional(),
   telephoneNo: z.string().optional(),

@@ -22,6 +22,7 @@ import { DatePicker } from "@mantine/dates"
 import { SelectValueType } from "../select/TypeSelect"
 import Link from "next/link"
 import AlertInput from "../forms/AlertInput"
+import { useDisposeAssetStore } from "../../../store/useStore"
 // import { AssetFieldValues } from "../../../types/generic"
 
 export type Dispose = z.infer<typeof AssetDisposalCreateInput>
@@ -44,6 +45,9 @@ const CreateDisposeAccordion = () => {
 
   const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
   const { data: disposalTypes } = trpc.disposalType.findAll.useQuery()
+
+  const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
+
 
   //const utils = trpc.useContext()
 
@@ -133,21 +137,9 @@ const CreateDisposeAccordion = () => {
   }, [assetNumber, asset])
 
   useEffect(() => {
-    if (assetNumber !== "") {
-      if (asset === null || asset?.deleted === true) {
-        setSearchModal(true)
-        setAssetNumber("")
-      } else if (asset?.status === "disposal") {
-        setValidateString("The asset is already in for disposal")
-        setValidateModal(true)
-        setAssetNumber("")
-      } else if (asset?.status === "repair") {
-        setValidateString("The asset is in for repair.")
-        setValidateModal(true)
-        setAssetNumber("")
-      }
-    }
-  }, [asset, assetNumber, assetId])
+    setAssetNumber(disposeAsset?.number ?? "")
+  }, [setAssetNumber, disposeAsset])
+
 
   const steps = useMemo(
     () => [
@@ -241,7 +233,7 @@ const CreateDisposeAccordion = () => {
           </ol>
         </nav>
       </div>
-      {state.currentStep === 0 && (
+      {/* {state.currentStep === 0 && (
         <div className="w-full py-4">
           <div className="flex w-80 flex-row rounded-sm border border-[#F2F2F2] bg-[#F2F2F2] px-4 py-2">
             <input
@@ -262,6 +254,7 @@ const CreateDisposeAccordion = () => {
           </div>
         </div>
       )}
+  
 
       <Modal
         className="max-w-lg"
@@ -282,14 +275,14 @@ const CreateDisposeAccordion = () => {
         <div className="py-2">
           <p className="text-center text-lg font-semibold">{validateString}</p>
         </div>
-      </Modal>
+      </Modal> */}
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         {asset !== null && state.currentStep === 0 && (
           <div>
             <div className="rounded-md bg-white drop-shadow-lg">
               <div className="p-5">
-                <Accordion defaultValue="transfer">
-                  <Accordion.Item value="Asset Details">
+                <Accordion multiple={true} defaultValue={['asset_details', 'general_information', 'asset_usage_info']}>
+                  <Accordion.Item value="asset_details">
                     <Accordion.Control>
                       <div className="flex flex-row">
                         <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
@@ -449,7 +442,7 @@ const CreateDisposeAccordion = () => {
                     </Accordion.Panel>
                   </Accordion.Item>
 
-                  <Accordion.Item value="focus-ring">
+                  <Accordion.Item value="asset_usage_info">
                     <Accordion.Control>
                       <div className="flex flex-row">
                         <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}

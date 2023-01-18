@@ -1,8 +1,8 @@
-import React, { useState } from "react"
-import Dispose from "../../components/transaction/DisposeAsset"
+import React, { useState, useEffect } from "react"
+import Dispose from "../../components/transaction/Disposal/DisposeAsset"
 import DashboardLayout from "../../layouts/DashboardLayout"
 import { trpc } from "../../utils/trpc"
-import { useDisposalStatusStore } from "../../store/useStore"
+import { useDisposalStatusStore, useDisposeAssetStore } from "../../store/useStore"
 
 
 const AssetDisposal = () => {
@@ -10,6 +10,7 @@ const AssetDisposal = () => {
   const [limit, setLimit] = useState(10)
 
   const { status } = useDisposalStatusStore()
+  const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
 
   const { data } = trpc.assetDisposal.findAll.useQuery({
     search: {
@@ -18,6 +19,9 @@ const AssetDisposal = () => {
     limit,
     page,
   })
+  useEffect(() => {
+    setDisposeAsset(null);
+  }, [setDisposeAsset])
 
   return (
     <DashboardLayout>

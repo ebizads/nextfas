@@ -235,6 +235,49 @@ const CreateDisposeAccordion = () => {
           </ol>
         </nav>
       </div>
+      {/* {state.currentStep === 0 && (
+        <div className="w-full py-4">
+          <div className="flex w-80 flex-row rounded-sm border border-[#F2F2F2] bg-[#F2F2F2] px-4 py-2">
+            <input
+              type="text"
+              onChange={(event) => {
+                setSearchAsset(event.currentTarget.value)
+              }}
+              placeholder="Search/Input Asset Number"
+              className="w-[100%] bg-transparent text-sm outline-none focus:outline-none"
+            />
+            <button
+              onClick={() => {
+                setAssetNumber(searchAsset)
+              }}
+            >
+              <Search className="bg-transparent outline-none focus:outline-none" />
+            </button>
+          </div>
+        </div>
+      )}
+  
+
+      <Modal
+        className="max-w-lg"
+        isVisible={searchModal}
+        setIsVisible={setSearchModal}
+        title="NOTICE!!"
+      >
+        <div className="py-2">
+          <p className="text-center text-lg font-semibold">No Data Found!</p>
+        </div>
+      </Modal>
+      <Modal
+        className="max-w-lg"
+        isVisible={validateModal}
+        setIsVisible={setValidateModal}
+        title="NOTICE!!"
+      >
+        <div className="py-2">
+          <p className="text-center text-lg font-semibold">{validateString}</p>
+        </div>
+      </Modal> */}
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         {asset !== null && state.currentStep === 0 && (

@@ -22,9 +22,9 @@ const AssetTransfer = () => {
 
 	const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
-	// useEffect(() => {
-	// 	setTransferAsset(null);
-	// })
+	useEffect(() => {
+		setTransferAsset(null);
+	}, [])
 
 
 

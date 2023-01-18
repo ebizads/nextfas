@@ -22,6 +22,11 @@ type TransferAssetState = {
   setTransferAsset: (newAsset: AssetType) => void
 }
 
+type DisposeAssetState = {
+  disposeAsset: AssetType
+  setDisposeAsset: (newAsset: AssetType) => void
+}
+
 type DisposalStatusState = {
   status: string
   setStatus: (newStatus: string) => void
@@ -44,6 +49,11 @@ export const useDeleteStore = create<DeleteState>((set) => ({
 export const useUpdateAssetStore = create<SelectedAssetState>((set) => ({
   selectedAsset: null,
   setSelectedAsset: (newAsset: AssetType) => set({ selectedAsset: newAsset }),
+}))
+
+export const useDisposeAssetStore = create<DisposeAssetState>((set) => ({
+  disposeAsset: null,
+  setDisposeAsset: (newAsset: AssetType) => set({ disposeAsset: newAsset }),
 }))
 
 export const useTransferAssetStore = create<TransferAssetState>((set) => ({

@@ -61,7 +61,7 @@ export const DisposeDetailsModal = (props: {
 
         if (stats === 'done') {
             deleteAsset.mutate(props.asset?.assetId ?? 0)
-        } else if (stats === 'cancelled') {
+        } else if (stats === 'cancelled' || stats === 'rejected') {
             changeStats.mutate({
                 id: props.asset?.assetId ?? 0,
                 status: null

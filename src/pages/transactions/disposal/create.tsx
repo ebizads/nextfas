@@ -94,7 +94,7 @@ const DisposeNew = () => {
                     title="NOTICE!!"
                 >
                     <div className="py-2">
-                        <p className="text-center text-lg font-semibold">{validateString}</p>
+                        <p className=" text-center text-lg font-semibold">{validateString}</p>
                     </div>
                 </Modal>
             </div>

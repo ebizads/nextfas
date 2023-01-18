@@ -23,6 +23,7 @@ const DisposeAssetDetailsModal = (props: {
     setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
     setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
+
     // useEffect(() => {
     //   console.log(props.asset.addedBy)
     // }, [])
@@ -31,6 +32,7 @@ const DisposeAssetDetailsModal = (props: {
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
     })
+
 
     const [genBarcode, setGenBarcode] = useState(false)
     const genBar = () => {
@@ -43,6 +45,7 @@ const DisposeAssetDetailsModal = (props: {
             textMargin: 6,
             height: 50,
             width: 1,
+
         })
     }
 
@@ -85,6 +88,7 @@ const DisposeAssetDetailsModal = (props: {
                                                     ? props.asset?.alt_number
                                                     : "No Alternate Number"}
                                             </p>
+
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Name</p>
@@ -194,6 +198,7 @@ const DisposeAssetDetailsModal = (props: {
                                                     ? props.asset?.department?.company?.name
                                                     : "--"}
                                             </p>
+
                                         </div>
                                     </section>
                                 </div>
@@ -298,6 +303,7 @@ const DisposeAssetDetailsModal = (props: {
                                                     ? props.asset?.management?.depreciation_rule
                                                     : "--"}
                                             </p>
+
                                         </div>
                                     </section>
                                     <section>
@@ -327,6 +333,7 @@ const DisposeAssetDetailsModal = (props: {
                                             Generate Barcode
                                         </button>
                                     )}
+
 
                                     <div id="printSVG" ref={componentRef}>
                                         <svg id="barcode" />
@@ -388,6 +395,7 @@ const DisposeAssetDetailsModal = (props: {
                                     </button>
 
                                     {/* {navigations[0]?.subType?.map((action, idx) => (
+
                   <button
                     key={idx}
                     className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
@@ -406,7 +414,6 @@ const DisposeAssetDetailsModal = (props: {
         </>
     )
 }
-
 
 const DisposeAssetTable = (props: {
     checkboxes: number[]
@@ -545,7 +552,6 @@ const DisposeAssetTable = (props: {
                 setOpenModalDel={setOpenModalDel}
                 setCheckboxes={props.setCheckboxes}
             />
-
         </div>
     )
 }

@@ -22,27 +22,28 @@ const DisplayTransferAssets = (props: {
 	limit: number;
 	setLimit: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-	const [ checkboxes, setCheckboxes ] = useState<number[]>([]);
+	const [checkboxes, setCheckboxes] = useState<number[]>([]);
 	// const [ openPopover, setOpenPopover ] = useState<boolean>(false);
-	const [ paginationPopover, setPaginationPopover ] = useState<boolean>(false);
-	const [ openModalDel, setOpenModalDel ] = useState<boolean>(false);
+	const [paginationPopover, setPaginationPopover] = useState<boolean>(false);
+	const [openModalDel, setOpenModalDel] = useState<boolean>(false);
 
-	const [ filterBy, setFilterBy ] = useState<string[]>(columns.map((i) => i.value));
+	const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value));
 
-	const [ assetNumber, setAssetNumber ] = useState<string>('');
-	const [ searchAsset, setSearchAsset ] = useState<string>('');
+	const [assetNumber, setAssetNumber] = useState<string>('');
+	const [searchAsset, setSearchAsset] = useState<string>('');
 
 	const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase());
 
-	const [ searchModal, setSearchModal ] = useState<boolean>(false);
+	const [searchModal, setSearchModal] = useState<boolean>(false);
 	const { transferAsset, setTransferAsset } = useTransferAssetStore();
 
 	useEffect(
 		() => {
 			setTransferAsset(asset as AssetType);
 		},
-		[ setTransferAsset, asset ]
+		[setTransferAsset, asset]
 	);
+
 
 	return (
 		<div className="space-y-4">

@@ -1,6 +1,16 @@
 import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
 import { InputField } from "../forms/InputField"
+import {
+  ArrowsExchange,
+  Check,
+  Checks,
+  Circle1,
+  Circle2,
+  Circle3,
+  Circle4,
+  Search,
+} from "tabler-icons-react"
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
@@ -347,19 +357,20 @@ const CreateAssetAccordion = () => {
         {/* <InputField register={register} label="Name" name="name" />
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
-        <Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
+        <Accordion transitionDuration={300} multiple={true} defaultValue={['1', '2', '3']} classNames={{}}>
           <Accordion.Item value={"1"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
-              <div className="flex items-center gap-2 text-gray-700">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
+              <div className=" flex items-center gap-2 text-gray-700">
+                {/* <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-yellow-400 p-1 text-sm text-yellow-400">
                   1
-                </div>
-                <p>General Information</p>
+                </div> */}
+                <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">General Information</p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="grid grid-cols-9 gap-2">
-                <div className="col-span-9 grid grid-cols-6 gap-2">
+              <div className="grid grid-cols-9 gap-7">
+                <div className="col-span-9 grid grid-cols-6 gap-7">
                   <div className="col-span-3">
                     <InputField
                       register={register}
@@ -389,7 +400,7 @@ const CreateAssetAccordion = () => {
                   />
                   <AlertInput>{errors?.serial_no?.message}</AlertInput>
                 </div>
-                <div className="col-span-6 grid grid-cols-9 gap-2">
+                <div className="col-span-6 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
                     <TypeSelect
                       name={"parentId"}
@@ -531,14 +542,12 @@ const CreateAssetAccordion = () => {
           <Accordion.Item value={"2"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
-                  2
-                </div>
-                <p>Accounting Management</p>
+                <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Accounting Management</p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="grid grid-cols-9 gap-2">
+              <div className="grid grid-cols-9 gap-7">
                 <div className="col-span-3">
                   <TypeSelect
                     isString
@@ -628,14 +637,12 @@ const CreateAssetAccordion = () => {
           <Accordion.Item value={"3"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
-                  3
-                </div>
-                <p>Logistics & Usage Information</p>
+                <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Logistics & Usage Information</p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="grid grid-cols-9 gap-2">
+              <div className="grid grid-cols-9 gap-7">
                 <div className="col-span-3">
                   <ClassTypeSelect
                     query={companyId}
@@ -673,7 +680,7 @@ const CreateAssetAccordion = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-span-9 grid grid-cols-8 gap-2">
+                <div className="col-span-9 grid grid-cols-8 gap-7">
                   <div className="col-span-2">
                     <ClassTypeSelect
                       query={departmentId}
@@ -748,7 +755,7 @@ const CreateAssetAccordion = () => {
                     <AlertInput>{errors?.custodianId?.message}</AlertInput>
                   </div>
                 </div>
-                <div className="col-span-9 grid grid-cols-8 gap-2">
+                <div className="col-span-9 grid grid-cols-8 gap-7">
                   <div className="col-span-2">
                     <TypeSelect
                       isString
@@ -848,10 +855,8 @@ const CreateAssetAccordion = () => {
               className="uppercase outline-none focus:outline-none active:outline-none"
             >
               <div className="flex items-center gap-2 text-gray-700">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
-                  4
-                </div>
-                <p>Print Bar Code</p>
+                <Circle4 className="h-7 w-7" color="gold"></Circle4>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Print Bar Code</p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>

@@ -140,7 +140,7 @@ const Transfer = ({ }) => {
 
     const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
-    useEffect(() => setAssetNumber(transferAsset?.number ?? ""))
+    useEffect(() => setAssetNumber(transferAsset?.number ?? ""), [])
 
     const resetTransferAsset = () => {
         setTransferAsset(null)

@@ -5,9 +5,10 @@ import { z } from "zod/lib"
 import { AssetRepairCreateInput } from "../../../server/schemas/asset"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../atoms/forms/AlertInput"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Modal from "../../headless/modal/modal"
 import Link from "next/link"
+import { useRepairAssetStore } from "../../../store/useStore"
 
 export type Repair = z.infer<typeof AssetRepairCreateInput>
 
@@ -22,6 +23,7 @@ const AddRepairForm = () => {
 
   const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
 
+  const { repairAsset, setRepairAsset } = useRepairAssetStore()
 
   const updateAsset = trpc.asset.edit.useMutation({
     onSuccess() {
@@ -78,6 +80,16 @@ const AddRepairForm = () => {
     }
   }
 
+  useEffect(() => {
+    setAssetNumber(repairAsset?.number ?? "")
+  }, [setAssetNumber, repairAsset])
+
+  const resetRepairAsset = () => {
+    setRepairAsset(null)
+    console.log("dapat wala na")
+  }
+
+
   return (
     <div id="contents">
       <form
@@ -102,7 +114,7 @@ const AddRepairForm = () => {
 
         <div className="flex flex-wrap py-2">
           <div className="w-full py-4">
-            <div className="flex w-80 flex-row rounded-sm border border-[#F2F2F2] bg-[#F2F2F2] px-4 py-2">
+            {/* <div className="flex w-80 flex-row rounded-sm border border-[#F2F2F2] bg-[#F2F2F2] px-4 py-2">
               <input
                 type="text"
                 onChange={(event) => {
@@ -112,7 +124,7 @@ const AddRepairForm = () => {
                 className="w-[100%] bg-transparent text-sm outline-none focus:outline-none"
               />
 
-            </div>
+            </div> */}
           </div>
           <div className="flex w-full flex-row justify-between gap-7 px-2">
             <div className="flex w-full flex-col py-2">
@@ -164,14 +176,23 @@ const AddRepairForm = () => {
 
           <AlertInput>{errors?.notes?.message}</AlertInput>
         </div>
-        {asset !== null && <div className="mt-2 flex w-full justify-end gap-2 text-lg">
+        {asset !== null && <div className="pt-2 pl-2 flex w-full justify-end gap-2 text-lg">
 
           <button
             type="submit"
-            className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            className="rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
           >
             Submit
           </button>
+          <div className="flex w-full ">
+            <button
+              type="button"
+              className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+              onClick={resetRepairAsset}
+            >
+              Cancel Process
+            </button>
+          </div>
         </div>}
         {/*
         <Modal isVisible={submitting} setIsVisible={setSubmitting} title="Confirm details" className="w-fit h-fit p-4">

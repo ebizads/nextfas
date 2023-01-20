@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import CreateDisposeAccordion from "../../../components/atoms/accordions/CreateDisposeAccordion";
 import Modal from "../../../components/headless/modal/modal";
 import DisplayDisposeAssets from "../../../components/transaction/Disposal/DisplayDisposeAssets";
-import DisplayTransferAssets from "../../../components/transaction/Transfer/DisplayTransferAssets";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useDisposeAssetStore } from "../../../store/useStore";
 import { AssetType } from '../../../types/generic';
@@ -94,8 +93,7 @@ const DisposeNew = () => {
                     title="NOTICE!!"
                 >
                     <div className="py-2">
-                        <p className=" text-center text-lg font-semibold">{validateString}</p>
-
+                        <p className="text-center text-lg font-semibold">{validateString}</p>
                     </div>
                 </Modal>
             </div>

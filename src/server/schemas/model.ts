@@ -96,6 +96,7 @@ export const ManagementCreateInput = z.object({
   original_cost: z.number().optional().nullish(),
   current_cost: z.number().optional().nullish(),
   residual_value: z.number().nullish().nullish(),
+  residual_percentage: z.number().nullish().nullish(),
   purchase_date: z.date().nullish(),
 
   depreciation_start: z.date().nullish(),
@@ -104,6 +105,9 @@ export const ManagementCreateInput = z.object({
   depreciation_period: z.number().nullish(),
   depreciation_lifetime: z.number().nullish(),
   depreciation_rule: z.string().nullish(),
+  asset_lifetime: z.number().nullish(),
+  asset_quantity: z.number().nullish(),
+  asset_location: z.string().nullish(),
   accounting_method: z.string().nullish(),
   remarks: z.string().nullish(),
   // id: z.number(),
@@ -115,6 +119,7 @@ export const ManagementEditInput = z.object({
   original_cost: z.number().optional().nullish(),
   current_cost: z.number().optional().nullish(),
   residual_value: z.number().nullish().nullish(),
+  residual_percentage: z.number().nullish().nullish(),
   purchase_date: z.date().nullish(),
 
   depreciation_start: z.date().nullish(),

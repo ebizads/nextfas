@@ -6,14 +6,14 @@ import { AssetType } from '../../../types/generic';
 import { columns } from '../../../lib/table';
 import PaginationPopOver from '../../atoms/popover/PaginationPopOver';
 // import FilterPopOver from '../../atoms/popover/FilterPopOver';
-import TransferAssetTable from '../../atoms/table/TransferAssetTable';
+import RepairAssetTable from '../../atoms/table/RepairAssetTable';
 import Modal from '../../headless/modal/modal';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
-import { useTransferAssetStore } from '../../../store/useStore';
+import { useRepairAssetStore } from '../../../store/useStore';
 // import { number } from 'zod';
 
-const DisplayTransferAssets = (props: {
+const DisplayRepairAssets = (props: {
 	total: number;
 	assets: AssetType[];
 	accessiblePage: number;
@@ -29,21 +29,45 @@ const DisplayTransferAssets = (props: {
 
 	const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value));
 
-	const [assetNumber, setAssetNumber] = useState<string>('');
-	const [searchAsset, setSearchAsset] = useState<string>('');
+	const [assetNumber, setAssetNumber] = useState<string>("")
+	const [searchAsset, setSearchAsset] = useState<string>("")
+	const [validateString, setValidateString] = useState<string>("")
+
+	const [assetId, setAssetId] = useState<number>(0)
 
 	const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase());
 
 	const [searchModal, setSearchModal] = useState<boolean>(false);
-	const { transferAsset, setTransferAsset } = useTransferAssetStore();
+	const [validateModal, setValidateModal] = useState<boolean>(false)
 
-	useEffect(
-		() => {
-			setTransferAsset(asset as AssetType);
-		},
-		[setTransferAsset, asset]
-	);
+	const { repairAsset, setRepairAsset } = useRepairAssetStore();
 
+	// useEffect(
+	// 	() => {
+	// 		setRepairAsset(asset as AssetType);
+	// 	},
+	// 	[setRepairAsset, asset]
+	// );
+
+	useEffect(() => {
+		if (assetNumber !== "") {
+			if (asset === null || asset?.deleted === true) {
+				setSearchModal(true)
+				setAssetNumber("")
+			} else if (asset?.status === "disposal") {
+				setValidateString("The asset is in for disposal")
+				setValidateModal(true)
+				setAssetNumber("")
+			} else if (asset?.status === "repair") {
+				setValidateString("The asset is already in for repair.")
+				setValidateModal(true)
+				setAssetNumber("")
+			}
+			else {
+				setRepairAsset(asset as AssetType);
+			}
+		}
+	}, [setRepairAsset, asset, assetNumber, assetId])
 
 	return (
 		<div className="space-y-4">
@@ -84,6 +108,16 @@ const DisplayTransferAssets = (props: {
 										<p className="text-center text-lg font-semibold">No Data Found!</p>
 									</div>
 								</Modal>
+								<Modal
+									className="max-w-lg"
+									isVisible={validateModal}
+									setIsVisible={setValidateModal}
+									title="NOTICE!!"
+								>
+									<div className="py-2">
+										<p className="text-center text-lg font-semibold">{validateString}</p>
+									</div>
+								</Modal>
 							</div>
 							{/* <FilterPopOver
 								openPopover={openPopover}
@@ -120,7 +154,7 @@ const DisplayTransferAssets = (props: {
 					</div>
 				</div>
 			</section>
-			<TransferAssetTable
+			<RepairAssetTable
 				checkboxes={checkboxes}
 				setCheckboxes={setCheckboxes}
 				rows={props.assets}
@@ -160,4 +194,4 @@ const DisplayTransferAssets = (props: {
 	);
 };
 
-export default DisplayTransferAssets;
+export default DisplayRepairAssets;

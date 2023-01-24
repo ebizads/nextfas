@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import {
     useMinimizeStore,
-    useDisposeAssetStore,
+    useRepairAssetStore,
     useUpdateAssetStore,
 } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
@@ -16,7 +16,7 @@ import { useReactToPrint } from "react-to-print"
 import JsBarcode from "jsbarcode"
 import Link from "next/link"
 
-const DisposeAssetDetailsModal = (props: {
+const RepairAssetDetailsModal = (props: {
     asset: AssetType | null
     openModalDesc: boolean
     setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
@@ -56,7 +56,7 @@ const DisposeAssetDetailsModal = (props: {
     }, [props.openModalDesc])
 
     const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
-    const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
+    const { repairAsset, setRepairAsset } = useRepairAssetStore()
     // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
     // console.log("asset number: "+props.asset!.number!);
@@ -363,15 +363,15 @@ const DisposeAssetDetailsModal = (props: {
                                 <nav className="relative my-2 flex flex-1 flex-col gap-2 ">
                                     <button
                                         onClick={() => {
-                                            setDisposeAsset(selectedAsset)
+                                            setRepairAsset(selectedAsset)
                                             props.setOpenModalDesc(false)
 
-                                            console.log("dispose btn clicked: " + selectedAsset?.number)
+                                            console.log("repair btn clicked: " + selectedAsset?.number)
                                         }}
                                     >
                                         <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#e2e4e9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-300 focus:outline-none xl:text-base">
                                             <i className={"fa-solid fa-pen-to-square"} />
-                                            Dispose
+                                            Repair
                                         </div>
                                     </button>
 
@@ -396,7 +396,7 @@ const DisposeAssetDetailsModal = (props: {
     )
 }
 
-const DisposeAssetTable = (props: {
+const RepairAssetTable = (props: {
     checkboxes: number[]
     setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
     filterBy: string[]
@@ -526,7 +526,7 @@ const DisposeAssetTable = (props: {
                 </tbody>
             </table>
 
-            <DisposeAssetDetailsModal
+            <RepairAssetDetailsModal
                 asset={selectedAsset}
                 openModalDesc={openModalDesc}
                 setOpenModalDesc={setOpenModalDesc}
@@ -537,4 +537,4 @@ const DisposeAssetTable = (props: {
     )
 }
 
-export default DisposeAssetTable
+export default RepairAssetTable

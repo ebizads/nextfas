@@ -62,14 +62,22 @@ const AssetDetailsModal = (props: {
         <div className="px-8 py-6">
           <div className="flex w-full text-light-primary text-sm">
             <div className="w-[80%] flex flex-col gap-2">
+              {/* asset information */}
               <section className="border-b pb-4">
                 <p className="font-medium text-neutral-600 text-base">Asset Information</p>
                 <div className="text-sm mt-4 flex flex-col gap-4">
-                  <section className="grid grid-cols-4 gap-2">
+                  <section className="grid grid-cols-4">
                     <div className="col-span-1">
                       <p className="font-light">Asset Number</p>
                       <p className="font-medium">{props.asset?.number}</p>
-                      <p className="text-[0.6rem] text-neutral-500 italic">{props.asset?.alt_number !== "" ? props.asset?.alt_number : "no alternate number"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Alternate Asset No.</p>
+                      <p className="font-medium">
+                        {props.asset?.alt_number !== ""
+                          ? props.asset?.alt_number
+                          : "No Alternate Number"}
+                      </p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Name</p>
@@ -100,16 +108,42 @@ const AssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.model?.number ? props.asset?.model?.number : "--"}</p>
                     </div>
                   </section>
+                  <section className="grid grid-cols-4">
+                    <div className="col-span-1">
+                      <p className="font-light">Original Cost</p>
+                      <p className="font-medium">{props.asset?.management?.currency} {props.asset?.management?.original_cost ?? "no information"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Current Cost</p>
+                      <p className="font-medium">{props.asset?.management?.currency} {props.asset?.management?.current_cost ?? "no information"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Residual Value Cost</p>
+                      <p className="font-medium">{props.asset?.management?.currency} {props.asset?.management?.residual_value ?? "no information"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Residual Value Percentage</p>
+                      <p className="font-medium">{props.asset?.management?.residual_percentage ?? "no information"}%</p>
+                    </div>
+                  </section>
+                  <section className="grid grid-cols-4">
+
+                    <div className="col-span-1">
+                      <p className="font-light">Asset Lifetime</p>
+                      <p className="font-medium">{props.asset?.management?.asset_lifetime ? props.asset?.management?.asset_lifetime : "--"} Months</p>
+                    </div>
+                  </section>
                   <section>
                     <p className="font-light">Description</p>
                     <p className="font-medium">{props.asset?.description ?? "--"}</p>
                   </section>
                 </div>
               </section>
+
               <section className="border-b pb-4">
-                <p className="font-medium text-neutral-600 text-base">Custodian Information</p>
-                <div className="text-sm mt-4">
-                  <section className="grid grid-cols-4 gap-2">
+                <p className="font-medium text-neutral-600 text-base">General Information</p>
+                <div className="text-sm mt-4 flex flex-col gap-4">
+                  <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Employee ID</p>
                       <p className="font-medium">{props.asset?.custodian?.employee_id ?? "--"}</p>
@@ -126,57 +160,99 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Team</p>
                       <p className="font-medium">{props.asset?.department?.teams?.name}</p>
                     </div>
+                  </section>
+                  <section className="grid grid-cols-4 gap-4">
+                    <div className="col-span-1">
+                      <p className="font-light">Company</p>
+                      <p className="font-medium">{props.asset?.department?.company?.name !== "" ? props.asset?.department?.company?.name : "--"}</p>
+                    </div>
                     <div className="col-span-1">
                       <p className="font-light">Location</p>
-                      <p className="font-medium">{props.asset?.department?.location?.floor}</p>
+                      <p className="font-medium">{props.asset?.department?.location?.floor} floor</p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Department</p>
                       <p className="font-medium">{props.asset?.department?.name}</p>
                     </div>
                     <div className="col-span-1">
-                      <p className="font-light">Company</p>
-                      <p className="font-medium">{props.asset?.department?.company?.name !== "" ? props.asset?.department?.company?.name : "--"}</p>
+                      {/* <p className="font-light">Currency</p>
+                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p> */}
+                    </div>
+                  </section><section className="grid grid-cols-4 gap-4">
+                    <div className="col-span-1">
+                      <p className="font-light">Asset Location</p>
+                      <p className="font-medium">{props.asset?.management?.asset_location}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Class</p>
+                      <p className="font-medium">{props.asset?.model?.classId ?? "--"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Category</p>
+                      <p className="font-medium">{props.asset?.model?.categoryId ?? "--"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Type</p>
+                      <p className="font-medium">{props.asset?.model?.typeId ?? "--"}</p>
+                    </div>
+                  </section>
+                  <section className="grid grid-cols-4 gap-4">
+                    <div className="col-span-1">
+                      <p className="font-light">Currency</p>
+                      <p className="font-medium">{props.asset?.management?.currency}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Accounting Method</p>
+                      <p className="font-medium">{props.asset?.management?.accounting_method ?? "--"}</p>
+                    </div>
+
+                    <div className="col-span-1">
+                      <p className="font-light">Purchase Date</p>
+                      <p className="font-medium">{props.asset?.management?.purchase_date ? (props.asset?.management?.purchase_date?.toLocaleDateString()) : "--"}</p>
+                    </div>
+                  </section>
+                  <section className="grid grid-cols-4 gap-4">
+                    <div className="col-span-1">
+                      <p className="font-light">Depreciation Method</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_rule}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Depreciation Start Date</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_start ? (props.asset?.management?.depreciation_start?.toLocaleDateString()) : "--"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Depreciation End Date</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_end ? (props.asset?.management?.depreciation_end?.toLocaleDateString()) : "--"}</p>
                     </div>
                   </section>
                 </div>
               </section>
               <section className="border-b pb-4">
-                <p className="font-medium text-neutral-600 text-base">Accounting Information</p>
-                <div className="text-sm mt-4">
-                  <section className="grid grid-cols-4 gap-2">
+                <p className="font-medium text-neutral-600 text-base">Asset Usage</p>
+                <div className="text-sm mt-4 flex flex-col gap-4">
+                  <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
-                      <p className="font-light">Currency</p>
-                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p>
+                      <p className="font-light">Date of Usage</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_start ? (props.asset?.management?.depreciation_start?.toLocaleDateString()) : "--"}</p>
                     </div>
                     <div className="col-span-1">
-                      <p className="font-light">Method</p>
-                      <p className="font-medium">{props.asset?.management?.accounting_method ?? "--"}</p>
+                      <p className="font-light">Period</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
                     </div>
                     <div className="col-span-1">
-                      <p className="font-light">Original Cost</p>
-                      <p className="font-medium">{props.asset?.management?.original_cost ?? "--"}</p>
+                      <p className="font-light">Period</p>
+                      <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
                     </div>
+                  </section>
+                  <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
-                      <p className="font-light">Current Cost</p>
-                      <p className="font-medium">{props.asset?.management?.current_cost ?? "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Purchased Date</p>
-                      <p className="font-medium">{props.asset?.management?.purchase_date ? (props.asset?.management?.purchase_date?.toLocaleDateString()) : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Purchased From</p>
-                      <p className="font-medium">{props.asset?.vendor?.id !== 0 ? props.asset?.vendor?.name : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Added By</p>
-                      <p className="font-medium">{props.asset?.addedBy?.name ?? "no information"}</p>
+                      <p className="font-light">Comments</p>
+                      <p className="font-medium">{props.asset?.management?.remarks ?? "--"}</p>
                     </div>
                   </section>
                 </div>
               </section>
-              <section className="pb-4">
+              {/* <section className="pb-4">
                 <p className="font-medium text-neutral-600 text-base">Depreciation Information</p>
                 <div className="text-sm mt-4 flex flex-col gap-2">
                   <section className="grid grid-cols-4 gap-2">
@@ -200,13 +276,17 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Method</p>
                       <p className="font-medium">{props.asset?.management?.depreciation_rule ? props.asset?.management?.depreciation_rule : "--"}</p>
                     </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Asset Quantity</p>
+                      <p className="font-medium">{props.asset?.management?.asset_quantity ? props.asset?.management?.asset_quantity : "--"}</p>
+                    </div>
                   </section>
                   <section>
                     <p className="font-light">Remarks</p>
                     <p className="font-medium">{props.asset?.management?.remarks ?? "--"}</p>
                   </section>
                 </div>
-              </section>
+              </section> */}
             </div>
             <div className="mt-4 px-6 border-l">
               <section className="relative">
@@ -283,7 +363,7 @@ const AssetDetailsModal = (props: {
             </div>
           </div>
         </div>
-      </Modal>
+      </Modal >
 
     </>
   )

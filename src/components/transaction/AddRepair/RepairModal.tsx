@@ -59,7 +59,7 @@ export const RepairDetailsModal = (props: {
 
         if (stats === 'done') {
             deleteAsset.mutate(props.asset?.assetId ?? 0)
-        } else if (stats === 'cancelled') {
+        } else if (stats === 'cancelled' || stats === 'rejected' || stats === 'approved') {
             changeStats.mutate({
                 id: props.asset?.assetId ?? 0,
                 status: null

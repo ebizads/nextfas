@@ -211,6 +211,10 @@ model AssetManagement {
   accounting_method     String?
   depreciation_lifetime Int?
   remarks               String?
+  residual_percentage   Float?
+  asset_location        String?
+  asset_quantity        Int?
+  asset_lifetime        Int?
   asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 

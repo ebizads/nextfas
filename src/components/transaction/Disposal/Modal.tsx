@@ -61,7 +61,7 @@ export const DisposeDetailsModal = (props: {
 
         if (stats === 'done') {
             deleteAsset.mutate(props.asset?.assetId ?? 0)
-        } else if (stats === 'cancelled') {
+        } else if (stats === 'cancelled' || stats === 'rejected' || stats === 'approved') {
             changeStats.mutate({
                 id: props.asset?.assetId ?? 0,
                 status: null
@@ -111,11 +111,11 @@ export const DisposeDetailsModal = (props: {
                         </div>
 
                         <div className="py-2 flex flex-row justify-between w-full gap-7">
-                            <div className="flex flex-col w-full">
+                            {/* <div className="flex flex-col w-full">
                                 <label className="font-semibold">Completion Date</label >
                                 <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{props.asset?.completionDate?.toDateString() ?? ""}</p>
 
-                            </div>
+                            </div> */}
 
                             <div className="flex flex-col w-full">
                                 <label className="font-semibold">Disposal Date</label >

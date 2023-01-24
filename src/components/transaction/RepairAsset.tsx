@@ -59,27 +59,6 @@ const RepairAsset = (props: {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex w-fit items-center gap-2">
-              <div className="flex-1">
-                <Search
-                  data={[
-                    ...props.asset?.map((obj) => {
-                      return {
-                        value: obj?.id.toString() ?? "",
-                        label: obj?.assetPart ?? "",
-                      }
-                    }),
-                  ]}
-                />
-              </div>
-              <FilterPopOver
-                openPopover={openPopover}
-                setOpenPopover={setOpenPopover}
-                filterBy={filterBy}
-                setFilterBy={setFilterBy}
-                columns={repairColumn}
-              />
-            </div>
             {checkboxes.length > 0 && (
               <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
                 {checkboxes.includes(-1)

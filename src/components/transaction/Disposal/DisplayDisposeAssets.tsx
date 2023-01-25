@@ -22,7 +22,7 @@ const DisplayDisposeAssets = (props: {
 	limit: number;
 	setLimit: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-	const [checkboxes, setCheckboxes] = useState<number[]>([]);
+	// const [checkboxes, setCheckboxes] = useState<number[]>([]);
 	// const [ openPopover, setOpenPopover ] = useState<boolean>(false);
 	const [paginationPopover, setPaginationPopover] = useState<boolean>(false);
 	const [openModalDel, setOpenModalDel] = useState<boolean>(false);
@@ -127,7 +127,7 @@ const DisplayDisposeAssets = (props: {
 								columns={columns}
 							/> */}
 						</div>
-						{checkboxes.length > 0 && (
+						{/* {checkboxes.length > 0 && (
 							<button
 								onClick={() => setOpenModalDel(true)}
 								className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
@@ -138,7 +138,7 @@ const DisplayDisposeAssets = (props: {
 									`Delete selected record/s ( ${checkboxes.length} )`
 								)}
 							</button>
-						)}
+						)} */}
 					</div>
 					<div className="flex items-center gap-2">
 						{/* <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
@@ -155,15 +155,15 @@ const DisplayDisposeAssets = (props: {
 				</div>
 			</section>
 			<DisposeAssetTable
-				checkboxes={checkboxes}
-				setCheckboxes={setCheckboxes}
+				// checkboxes={checkboxes}
+				// setCheckboxes={setCheckboxes}
 				rows={props.assets}
 				filterBy={filterBy}
 				columns={columns.filter((col) => filterBy.includes(col.value))}
 			/>
 			<section className="mt-8 flex justify-between px-4">
 				<div className="flex items-center gap-2">
-					<p>Showing </p>
+					<p>Showing up to </p>
 					<PaginationPopOver
 						paginationPopover={paginationPopover}
 						setPaginationPopover={setPaginationPopover}
@@ -172,7 +172,7 @@ const DisplayDisposeAssets = (props: {
 						limit={props.limit}
 						setLimit={props.setLimit}
 					/>
-					<p> of {props.total} entries</p>
+					<p> entries</p>
 				</div>
 				<Pagination
 					page={props.page}
@@ -183,13 +183,13 @@ const DisplayDisposeAssets = (props: {
 					}}
 				/>
 			</section>
-			<AssetDeleteModal
+			{/* <AssetDeleteModal
 				checkboxes={checkboxes}
 				setCheckboxes={setCheckboxes}
 				assets={props.assets}
 				openModalDel={openModalDel}
 				setOpenModalDel={setOpenModalDel}
-			/>
+			/> */}
 		</div>
 	);
 };

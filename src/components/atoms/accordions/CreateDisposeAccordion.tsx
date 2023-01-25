@@ -52,7 +52,7 @@ const CreateDisposeAccordion = () => {
   //const utils = trpc.useContext()
 
   const disposalTypeList = useMemo(() => {
-    const list = disposalTypes?.disposalTypes.map((employee) => {
+    const list = disposalTypes?.disposalTypes.map((employee: { id: { toString: () => any }; name: any }) => {
       return { value: employee.id.toString(), label: employee.name }
     }) as SelectValueType[]
     return list ?? []

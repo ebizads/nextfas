@@ -134,11 +134,33 @@ const DisposeAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Model Number</p>
-                                            <p className="font-medium">
-                                                {props.asset?.model?.number
-                                                    ? props.asset?.model?.number
-                                                    : "--"}
-                                            </p>
+                                            <p className="font-medium">{props.asset?.model?.number ? props.asset?.model?.number : "--"}</p>
+                                        </div>
+                                    </section>
+                                    <section className="grid grid-cols-4">
+                                        <div className="col-span-1">
+                                            <p className="font-light">Original Cost</p>
+                                            <p className="font-medium">{props.asset?.management?.currency} {props.asset?.management?.original_cost ?? "no information"}</p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Current Cost</p>
+                                            <p className="font-medium">{props.asset?.management?.currency} {props.asset?.management?.current_cost ?? "no information"}</p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Residual Value Cost</p>
+                                            <p className="font-medium">{props.asset?.management?.currency} {props.asset?.management?.residual_value ?? "no information"}</p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Residual Value Percentage</p>
+                                            <p className="font-medium">{props.asset?.management?.residual_percentage ?? "--"}%</p>
+                                        </div>
+                                    </section>
+                                    <section className="grid grid-cols-4">
+
+                                        <div className="col-span-1">
+                                            <p className="font-light">Asset Lifetime</p>
+                                            <p className="font-medium">{props.asset?.management?.asset_lifetime ? props.asset?.management?.asset_lifetime : "--"} Months</p>
+
                                         </div>
                                     </section>
                                     <section>
@@ -187,9 +209,29 @@ const DisposeAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Department</p>
-                                            <p className="font-medium">
-                                                {props.asset?.department?.name}
-                                            </p>
+                                            <p className="font-medium">{props.asset?.department?.name}</p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            {/* <p className="font-light">Currency</p>
+                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p> */}
+                                        </div>
+                                    </section><section className="grid grid-cols-4 gap-4">
+                                        <div className="col-span-1">
+                                            <p className="font-light">Asset Location</p>
+                                            <p className="font-medium">{props.asset?.management?.asset_location}</p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Class</p>
+                                            <p className="font-medium">{props.asset?.model?.class?.name ?? "--"}</p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Category</p>
+                                            <p className="font-medium">{props.asset?.model?.category?.name ?? "--"}</p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Type</p>
+                                            <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
+
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Company</p>
@@ -198,7 +240,6 @@ const DisposeAssetDetailsModal = (props: {
                                                     ? props.asset?.department?.company?.name
                                                     : "--"}
                                             </p>
-
                                         </div>
                                     </section>
                                 </div>

@@ -305,8 +305,11 @@ export const assetRouter = t.router({
       const {
         id,
         management,
+        custodianId,
+        departmentId,
         model,
         vendorId,
+        subsidiaryId,
         assetProjectId,
         parentId,
         ...rest
@@ -317,6 +320,7 @@ export const assetRouter = t.router({
             id,
           },
           data: {
+            ...rest,
             model: {
               update: model,
             },
@@ -326,6 +330,21 @@ export const assetRouter = t.router({
             vendor: {
               connect: {
                 id: vendorId ?? 0,
+              },
+            },
+            custodian: {
+              connect: {
+                id: custodianId ?? 0,
+              },
+            },
+            department: {
+              connect: {
+                id: departmentId ?? 0,
+              },
+            },
+            subsidiary: {
+              connect: {
+                id: subsidiaryId ?? 0,
               },
             },
             project: {
@@ -338,7 +357,6 @@ export const assetRouter = t.router({
                 id: parentId ?? 0,
               },
             },
-            ...rest,
           },
         })
         return "Asset updated successfully"

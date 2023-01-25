@@ -917,10 +917,10 @@ const Transfer = ({ }) => {
                             Asset Transfer successful.
                         </p>
                     </div>
-                    <div className="flex justify-end py-2">
+                    <div className=" flex justify-end pt-2">
                         <Link href={"/assets"}>
                             <button
-                                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                className=" pt-1 rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                                 onClick={resetTransferAsset}
                             >
                                 Return to Assets tab

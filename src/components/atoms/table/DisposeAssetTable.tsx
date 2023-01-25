@@ -21,7 +21,7 @@ const DisposeAssetDetailsModal = (props: {
     openModalDesc: boolean
     setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
     setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
-    setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+    // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
 
     // useEffect(() => {
@@ -69,15 +69,17 @@ const DisposeAssetDetailsModal = (props: {
             >
                 <div className="px-8 py-6">
                     <div className="flex w-full text-sm text-light-primary">
-                        <div className="w-[80%] flex flex-col gap-2">
-                            {/* asset information */}
+                        <div className="flex w-[80%] flex-col gap-2">
                             <section className="border-b pb-4">
-                                <p className="font-medium text-neutral-600 text-base">Asset Information</p>
-                                <div className="text-sm mt-4 flex flex-col gap-4">
-                                    <section className="grid grid-cols-4">
+                                <p className="text-base font-medium text-neutral-600">
+                                    Asset Information
+                                </p>
+                                <div className="mt-4 flex flex-col gap-4 text-sm">
+                                    <section className="grid grid-cols-4 gap-2">
                                         <div className="col-span-1">
                                             <p className="font-light">Asset Number</p>
                                             <p className="font-medium">{props.asset?.number}</p>
+
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Alternate Asset No.</p>
@@ -86,6 +88,7 @@ const DisposeAssetDetailsModal = (props: {
                                                     ? props.asset?.alt_number
                                                     : "No Alternate Number"}
                                             </p>
+
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Name</p>
@@ -93,23 +96,41 @@ const DisposeAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Serial No.</p>
-                                            <p className="font-medium">{props.asset?.serial_no !== "" ? props.asset?.serial_no : "--"}</p>
+                                            <p className="font-medium">
+                                                {props.asset?.serial_no !== ""
+                                                    ? props.asset?.serial_no
+                                                    : "--"}
+                                            </p>
                                         </div>
                                     </section>
                                     <section className="grid grid-cols-4">
                                         <div className="col-span-1">
                                             <p className="font-light">Parent Asset</p>
-                                            <p className="font-medium">{props.asset?.parentId !== 0 ? props.asset?.parent?.name : "--"}</p>
-                                            <p className="text-[0.6rem] text-neutral-500 italic">{props.asset?.parentId !== 0 && props.asset?.parent?.number}</p>
-
+                                            <p className="font-medium">
+                                                {props.asset?.parentId !== 0
+                                                    ? props.asset?.parent?.name
+                                                    : "--"}
+                                            </p>
+                                            <p className="text-[0.6rem] italic text-neutral-500">
+                                                {props.asset?.parentId !== 0 &&
+                                                    props.asset?.parent?.number}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Model Name</p>
-                                            <p className="font-medium">{props.asset?.model?.name ? props.asset?.model?.name : "--"}</p>
+                                            <p className="font-medium">
+                                                {props.asset?.model?.name
+                                                    ? props.asset?.model?.name
+                                                    : "--"}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Model Brand</p>
-                                            <p className="font-medium">{props.asset?.model?.brand ? props.asset?.model?.brand : "--"}</p>
+                                            <p className="font-medium">
+                                                {props.asset?.model?.brand
+                                                    ? props.asset?.model?.brand
+                                                    : "--"}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Model Number</p>
@@ -139,44 +160,52 @@ const DisposeAssetDetailsModal = (props: {
                                         <div className="col-span-1">
                                             <p className="font-light">Asset Lifetime</p>
                                             <p className="font-medium">{props.asset?.management?.asset_lifetime ? props.asset?.management?.asset_lifetime : "--"} Months</p>
+
                                         </div>
                                     </section>
                                     <section>
                                         <p className="font-light">Description</p>
-                                        <p className="font-medium">{props.asset?.description ?? "--"}</p>
+                                        <p className="font-medium">
+                                            {props.asset?.description ?? "--"}
+                                        </p>
                                     </section>
                                 </div>
                             </section>
-
                             <section className="border-b pb-4">
-                                <p className="font-medium text-neutral-600 text-base">General Information</p>
-                                <div className="text-sm mt-4 flex flex-col gap-4">
-                                    <section className="grid grid-cols-4 gap-4">
+                                <p className="text-base font-medium text-neutral-600">
+                                    Custodian Information
+                                </p>
+                                <div className="mt-4 text-sm">
+                                    <section className="grid grid-cols-4 gap-2">
                                         <div className="col-span-1">
                                             <p className="font-light">Employee ID</p>
-                                            <p className="font-medium">{props.asset?.custodian?.employee_id ?? "--"}</p>
+                                            <p className="font-medium">
+                                                {props.asset?.custodian?.employee_id ?? "--"}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Name</p>
-                                            <p className="font-medium">{props.asset?.custodian?.name ?? "--"}</p>
+                                            <p className="font-medium">
+                                                {props.asset?.custodian?.name ?? "--"}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Position</p>
-                                            <p className="font-medium">{props.asset?.custodian?.position ?? "--"}</p>
+                                            <p className="font-medium">
+                                                {props.asset?.custodian?.position ?? "--"}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Team</p>
-                                            <p className="font-medium">{props.asset?.department?.teams?.name}</p>
-                                        </div>
-                                    </section>
-                                    <section className="grid grid-cols-4 gap-4">
-                                        <div className="col-span-1">
-                                            <p className="font-light">Company</p>
-                                            <p className="font-medium">{props.asset?.department?.company?.name !== "" ? props.asset?.department?.company?.name : "--"}</p>
+                                            <p className="font-medium">
+                                                {props.asset?.department?.teams?.name}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Location</p>
-                                            <p className="font-medium">{props.asset?.department?.location?.floor} floor</p>
+                                            <p className="font-medium">
+                                                {props.asset?.department?.location?.floor}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Department</p>
@@ -202,99 +231,130 @@ const DisposeAssetDetailsModal = (props: {
                                         <div className="col-span-1">
                                             <p className="font-light">Type</p>
                                             <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
-                                        </div>
-                                    </section>
-                                    <section className="grid grid-cols-4 gap-4">
-                                        <div className="col-span-1">
-                                            <p className="font-light">Currency</p>
-                                            <p className="font-medium">{props.asset?.management?.currency}</p>
-                                        </div>
-                                        <div className="col-span-1">
-                                            <p className="font-light">Accounting Method</p>
-                                            <p className="font-medium">{props.asset?.management?.accounting_method ?? "--"}</p>
-                                        </div>
 
-                                        <div className="col-span-1">
-                                            <p className="font-light">Purchase Date</p>
-                                            <p className="font-medium">{props.asset?.management?.purchase_date ? (props.asset?.management?.purchase_date?.toLocaleDateString()) : "--"}</p>
-                                        </div>
-                                    </section>
-                                    <section className="grid grid-cols-4 gap-4">
-                                        <div className="col-span-1">
-                                            <p className="font-light">Depreciation Method</p>
-                                            <p className="font-medium">{props.asset?.management?.depreciation_rule}</p>
                                         </div>
                                         <div className="col-span-1">
-                                            <p className="font-light">Depreciation Start Date</p>
-                                            <p className="font-medium">{props.asset?.management?.depreciation_start ? (props.asset?.management?.depreciation_start?.toLocaleDateString()) : "--"}</p>
-                                        </div>
-                                        <div className="col-span-1">
-                                            <p className="font-light">Depreciation End Date</p>
-                                            <p className="font-medium">{props.asset?.management?.depreciation_end ? (props.asset?.management?.depreciation_end?.toLocaleDateString()) : "--"}</p>
+                                            <p className="font-light">Company</p>
+                                            <p className="font-medium">
+                                                {props.asset?.department?.company?.name !== ""
+                                                    ? props.asset?.department?.company?.name
+                                                    : "--"}
+                                            </p>
                                         </div>
                                     </section>
                                 </div>
                             </section>
                             <section className="border-b pb-4">
-                                <p className="font-medium text-neutral-600 text-base">Asset Usage</p>
-                                <div className="text-sm mt-4 flex flex-col gap-4">
-                                    <section className="grid grid-cols-4 gap-4">
+                                <p className="text-base font-medium text-neutral-600">
+                                    Accounting Information
+                                </p>
+                                <div className="mt-4 text-sm">
+                                    <section className="grid grid-cols-4 gap-2">
                                         <div className="col-span-1">
-                                            <p className="font-light">Date of Usage</p>
-                                            <p className="font-medium">{props.asset?.management?.depreciation_start ? (props.asset?.management?.depreciation_start?.toLocaleDateString()) : "--"}</p>
+                                            <p className="font-light">Currency</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.currency ?? "--"}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
-                                            <p className="font-light">Period</p>
-                                            <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
+                                            <p className="font-light">Method</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.accounting_method ?? "--"}
+                                            </p>
                                         </div>
                                         <div className="col-span-1">
-                                            <p className="font-light">Period</p>
-                                            <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
+                                            <p className="font-light">Original Cost</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.original_cost ?? "--"}
+                                            </p>
                                         </div>
-                                    </section>
-                                    <section className="grid grid-cols-4 gap-4">
                                         <div className="col-span-1">
-                                            <p className="font-light">Comments</p>
-                                            <p className="font-medium">{props.asset?.management?.remarks ?? "--"}</p>
+                                            <p className="font-light">Current Cost</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.current_cost ?? "--"}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Purchased Date</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.purchase_date
+                                                    ? props.asset?.management?.purchase_date?.toLocaleDateString()
+                                                    : "--"}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Purchased From</p>
+                                            <p className="font-medium">
+                                                {props.asset?.vendor?.id !== 0
+                                                    ? props.asset?.vendor?.name
+                                                    : "--"}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Added By</p>
+                                            <p className="font-medium">
+                                                {props.asset?.addedBy?.name ?? "no information"}
+                                            </p>
                                         </div>
                                     </section>
                                 </div>
                             </section>
-                            {/* <section className="pb-4">
-                <p className="font-medium text-neutral-600 text-base">Depreciation Information</p>
-                <div className="text-sm mt-4 flex flex-col gap-2">
-                  <section className="grid grid-cols-4 gap-2">
-                    <div className="col-span-1">
-                      <p className="font-light">Start Date</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_start ? props.asset?.management?.depreciation_start?.toLocaleDateString() : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">End Date</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_end ? props.asset?.management?.depreciation_end?.toLocaleDateString() : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Residual Value</p>
-                      <p className="font-medium">{props.asset?.management?.residual_value ? props.asset?.management?.residual_value : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Period</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_period ? props.asset?.management?.depreciation_period : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Method</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_rule ? props.asset?.management?.depreciation_rule : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Asset Quantity</p>
-                      <p className="font-medium">{props.asset?.management?.asset_quantity ? props.asset?.management?.asset_quantity : "--"}</p>
-                    </div>
-                  </section>
-                  <section>
-                    <p className="font-light">Remarks</p>
-                    <p className="font-medium">{props.asset?.management?.remarks ?? "--"}</p>
-                  </section>
-                </div>
-              </section> */}
+                            <section className="pb-4">
+                                <p className="text-base font-medium text-neutral-600">
+                                    Depreciation Information
+                                </p>
+                                <div className="mt-4 flex flex-col gap-2 text-sm">
+                                    <section className="grid grid-cols-4 gap-2">
+                                        <div className="col-span-1">
+                                            <p className="font-light">Start Date</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.depreciation_start
+                                                    ? props.asset?.management?.depreciation_start?.toLocaleDateString()
+                                                    : "--"}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">End Date</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.depreciation_end
+                                                    ? props.asset?.management?.depreciation_end?.toLocaleDateString()
+                                                    : "--"}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Residual Value</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.residual_value
+                                                    ? props.asset?.management?.residual_value
+                                                    : "--"}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Period</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.depreciation_period
+                                                    ? props.asset?.management?.depreciation_period
+                                                    : "--"}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1">
+                                            <p className="font-light">Method</p>
+                                            <p className="font-medium">
+                                                {props.asset?.management?.depreciation_rule
+                                                    ? props.asset?.management?.depreciation_rule
+                                                    : "--"}
+                                            </p>
+
+                                        </div>
+                                    </section>
+                                    <section>
+                                        <p className="font-light">Remarks</p>
+                                        <p className="font-medium">
+                                            {props.asset?.management?.remarks ?? "--"}
+                                        </p>
+                                    </section>
+                                </div>
+                            </section>
                         </div>
                         <button
                             className="outline-none focus:outline-none"
@@ -397,8 +457,8 @@ const DisposeAssetDetailsModal = (props: {
 }
 
 const DisposeAssetTable = (props: {
-    checkboxes: number[]
-    setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+    // checkboxes: number[]
+    // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
     filterBy: string[]
     rows: AssetType[]
     columns: ColumnType[]
@@ -412,23 +472,23 @@ const DisposeAssetTable = (props: {
 
     const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
-    const selectAllCheckboxes = () => {
-        if (props.checkboxes.length === 0) {
-            props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
-        } else {
-            props.setCheckboxes([])
-        }
-    }
+    // const selectAllCheckboxes = () => {
+    //     if (props.checkboxes.length === 0) {
+    //         props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
+    //     } else {
+    //         props.setCheckboxes([])
+    //     }
+    // }
 
-    const toggleCheckbox = async (id: number) => {
-        if (props.checkboxes.includes(id)) {
-            // removes id if not selected
-            props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-            return
-        }
-        // adds id
-        props.setCheckboxes((prev) => [...prev, id])
-    }
+    // const toggleCheckbox = async (id: number) => {
+    //     if (props.checkboxes.includes(id)) {
+    //         // removes id if not selected
+    //         props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+    //         return
+    //     }
+    //     // adds id
+    //     props.setCheckboxes((prev) => [...prev, id])
+    // }
 
     return (
         <div
@@ -441,7 +501,7 @@ const DisposeAssetTable = (props: {
                     <tr>
                         <th scope="col" className="py-1">
                             <div className="flex items-center justify-center">
-                                <Checkbox
+                                {/* <Checkbox
                                     color={"orange"}
                                     onChange={() => {
                                         selectAllCheckboxes()
@@ -451,7 +511,7 @@ const DisposeAssetTable = (props: {
                                         input:
                                             "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                                     }}
-                                />
+                                /> */}
                             </div>
                         </th>
                         {props.columns.map((col) => (
@@ -476,7 +536,7 @@ const DisposeAssetTable = (props: {
                             className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                         >
                             <td className="w-4 p-2">
-                                <div className="flex items-center justify-center">
+                                {/* <div className="flex items-center justify-center">
                                     <Checkbox
                                         value={row?.id ?? idx}
                                         color={"orange"}
@@ -489,7 +549,7 @@ const DisposeAssetTable = (props: {
                                                 "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                                         }}
                                     />
-                                </div>
+                                </div> */}
                             </td>
                             {columns
                                 .filter((col) => props.filterBy.includes(col.value))
@@ -531,7 +591,7 @@ const DisposeAssetTable = (props: {
                 openModalDesc={openModalDesc}
                 setOpenModalDesc={setOpenModalDesc}
                 setOpenModalDel={setOpenModalDel}
-                setCheckboxes={props.setCheckboxes}
+            // setCheckboxes={props.setCheckboxes}
             />
         </div>
     )

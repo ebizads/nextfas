@@ -10,8 +10,8 @@ import Modal from "../../headless/modal/modal"
 import { RepairDetailsModal } from "../../transaction/AddRepair/RepairModal"
 
 const RepairTable = (props: {
-  checkboxes: number[]
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  // checkboxes: number[]
+  // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
   filterBy: string[]
   rows: AssetRepairType[]
   columns: ColumnType[]
@@ -24,23 +24,23 @@ const RepairTable = (props: {
   const [details, setDetails] = useState<AssetRepairType>(null)
 
 
-  const selectAllCheckboxes = () => {
-    if (props.checkboxes.length === 0) {
-      props.setCheckboxes([-1])
-    } else {
-      props.setCheckboxes([])
-    }
-  }
+  // const selectAllCheckboxes = () => {
+  //   if (props.checkboxes.length === 0) {
+  //     props.setCheckboxes([-1])
+  //   } else {
+  //     props.setCheckboxes([])
+  //   }
+  // }
 
-  const toggleCheckbox = async (id: number) => {
-    if (props.checkboxes.includes(id)) {
-      // removes id if not selected
-      props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-      return
-    }
-    // adds id
-    props.setCheckboxes((prev) => [...prev, id])
-  }
+  // const toggleCheckbox = async (id: number) => {
+  //   if (props.checkboxes.includes(id)) {
+  //     // removes id if not selected
+  //     props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+  //     return
+  //   }
+  //   // adds id
+  //   props.setCheckboxes((prev) => [...prev, id])
+  // }
 
   return (
     <div
@@ -53,7 +53,7 @@ const RepairTable = (props: {
           <tr>
             <th scope="col" className="py-1">
               <div className="flex items-center justify-center">
-                <Checkbox
+                {/* <Checkbox
                   color={"orange"}
                   onChange={() => {
                     selectAllCheckboxes()
@@ -63,7 +63,7 @@ const RepairTable = (props: {
                     input:
                       "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                   }}
-                />
+                /> */}
               </div>
             </th>
             {props.columns
@@ -88,7 +88,7 @@ const RepairTable = (props: {
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
-                  <Checkbox
+                  {/* <Checkbox
                     value={row?.id ?? idx}
                     color={"orange"}
                     onChange={(e) => {
@@ -102,7 +102,7 @@ const RepairTable = (props: {
                       input:
                         "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                     }}
-                  />
+                  /> */}
                 </div>
               </td>
               {repairColumn

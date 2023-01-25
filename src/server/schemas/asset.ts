@@ -83,7 +83,6 @@ export const AssetDisposalCreateInput = z.object({
   apInvoice: z.string(),
   agreedPrice: z.number(),
   disposalPrice: z.number(),
-  cufsCodeString: z.string().optional(),
 
   tradedItem: z.string(),
   assetId: z.number(),
@@ -102,7 +101,8 @@ export const AssetDisposalEditInput = z.object({
   apInvoice: z.string().optional(),
   agreedPrice: z.number().optional(),
   disposalPrice: z.number().optional(),
-  cufsCodeString: z.string().optional(),
+  // cufsCodeString: z.string().optional(),
+  remarks: z.string().optional(),
 
   assetId: z.number().nullish().optional(),
   // asset: z

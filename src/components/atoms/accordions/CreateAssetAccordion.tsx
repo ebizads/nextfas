@@ -19,7 +19,7 @@ import TypeSelect, {
 import { Textarea } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
-import { useForm, SubmitHandler, UseFormReset, UseFormResetField } from "react-hook-form"
+import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetCreateInput } from "../../../server/schemas/asset"
 import { AssetClassType, AssetFieldValues } from "../../../types/generic"
@@ -337,25 +337,6 @@ const CreateAssetAccordion = () => {
     }
   }
 
-  // const discard: ResetAction<AssetFieldValues> = (
-  //   form_data: AssetFieldValues
-  // ) => {
-  //   // if (error) {
-  //   //   console.log("ERROR ENCOUNTERED")
-  //   //   console.error("Prisma Error: ", error)
-  //   //   console.error("Form Error:", errors)
-  //   // }
-
-  //   reset()
-  //   setClassId(null)
-  //   setCategoryId(null)
-  //   setTypeId(null)
-  //   setCompanyId(null)
-  //   setDepartmentId(null)
-  //   router.push("/assets")
-  // }
-
-
   const componentRef = useRef(null)
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -366,16 +347,11 @@ const CreateAssetAccordion = () => {
     setFormError(Object.keys(errors).length > 0 ? true : false)
   }, [errors])
 
-  const handleDiscard = () => {
-    router.push('/assets');
-  };
-
   return (
     <div id="contents">
       {formError && <FormErrorMessage setFormError={setFormError} />}
       <form
         onSubmit={handleSubmit(onSubmit)}
-
         className="flex flex-col space-y-4 p-4"
         noValidate
       >
@@ -450,11 +426,15 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"assetProjectId"}
                       setValue={setValue}
-                      value={getValues("assetProjectId")?.toString()}
+                      value={getValues("assetProjectId")?.toString()
+                      }
+
                       title={"Project"}
                       placeholder={"Select project"}
                       data={projectsList ?? []}
+
                     />
+
                     <AlertInput>{errors?.assetProjectId?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
@@ -1008,7 +988,7 @@ const CreateAssetAccordion = () => {
           </Accordion.Item>
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
-          <button type="reset" className="px-4 py-2 underline" onClick={handleDiscard}>
+          <button type="button" className="px-4 py-2 underline">
             Discard
           </button>
           <button

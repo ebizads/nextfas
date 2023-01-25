@@ -462,7 +462,7 @@ const CreateDisposeAccordion = () => {
                               Depreciation Start Date
                             </label>
                             <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_start?.toString() ??
+                              {asset?.management?.depreciation_start?.toLocaleDateString() ??
                                 ""}
                             </p>
                           </div>
@@ -471,7 +471,7 @@ const CreateDisposeAccordion = () => {
                               Depreciation End Date
                             </label>
                             <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_end?.toString() ??
+                              {asset?.management?.depreciation_end?.toLocaleDateString() ??
                                 ""}
                             </p>
                           </div>
@@ -971,13 +971,13 @@ const CreateDisposeAccordion = () => {
         className="max-w-2xl"
         title="Asset Disposed"
       >
-        <div className="flex w-full flex-col px-4 py-2">
+        <div className="flex w-full flex-col px-4 pt-2">
           <div>
             <p className="text-center text-lg font-semibold">
               Asset successfully added to disposal.
             </p>
           </div>
-          <div className="flex justify-end py-2">
+          <div className="pt-5 flex justify-end py-2">
             <Link href={"/assets"}>
               <button className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500">
                 Return to assets tab

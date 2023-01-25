@@ -131,7 +131,7 @@ const RepairAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Residual Value Percentage</p>
-                                            <p className="font-medium">{props.asset?.management?.residual_percentage ?? "no information"}%</p>
+                                            <p className="font-medium">{props.asset?.management?.residual_percentage ?? "--"}%</p>
                                         </div>
                                     </section>
                                     <section className="grid grid-cols-4">
@@ -193,15 +193,15 @@ const RepairAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Class</p>
-                                            <p className="font-medium">{props.asset?.model?.classId ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.model?.class?.name ?? "--"}</p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Category</p>
-                                            <p className="font-medium">{props.asset?.model?.categoryId ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.model?.category?.name ?? "--"}</p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Type</p>
-                                            <p className="font-medium">{props.asset?.model?.typeId ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
                                         </div>
                                     </section>
                                     <section className="grid grid-cols-4 gap-4">

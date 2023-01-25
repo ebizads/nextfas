@@ -42,26 +42,27 @@ model VerificationToken {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   name           String
-  email          String    @unique
+  email          String        @unique
   recovery_email String?
-  username       String?   @unique
+  username       String?       @unique
   password       String
   user_type      String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   emailVerified  DateTime?
   image          String?
-  deleted        Boolean   @default(false)
+  deleted        Boolean       @default(false)
   deletedAt      DateTime?
   lockedUntil    DateTime?
-  attempts       Int       @default(0)
+  attempts       Int           @default(0)
   accounts       Account[]
   address        Address?
   created_assets Asset[]
   profile        Profile?
   sessions       Session[]
+  ticketTable    ticketTable[]
 }
 
 model Employee {
@@ -380,4 +381,15 @@ model Asset {
   AssetRepair    AssetRepair?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
+}
+
+model ticketTable {
+  id          Int      @id @default(autoincrement())
+  from_table  String
+  table_id    Int
+  action_type String
+  action_desc String?
+  added_date  DateTime @default(now())
+  addedById   Int
+  addedBy     User?    @relation(fields: [addedById], references: [id], onDelete: Cascade)
 }

@@ -34,9 +34,11 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import InputNumberField from "../forms/InputNumberField"
 import { getAddress } from "../../../lib/functions"
+import { Location } from "@prisma/client"
 
 export const FormErrorMessage = (props: {
   setFormError: React.Dispatch<React.SetStateAction<boolean>>
@@ -206,6 +208,48 @@ const UpdateAssetAccordion = () => {
         }),
     [classData]
   ) as SelectValueType[] | undefined
+
+  const { data: employeeData } = trpc.employee.findAll.useQuery()
+  const employeeList = useMemo(
+    () =>
+      employeeData?.employees
+        .filter((item) => item.id != 0)
+        .map((employeeItem) => {
+          return { value: employeeItem.id.toString(), label: employeeItem.name }
+        }),
+    [employeeData]
+  ) as SelectValueType[] | undefined
+
+  //gets and sets all class, categories, and types
+  const { data: departmentData } = trpc.department.findAll.useQuery()
+
+  const selectedDepartment = useMemo(() => {
+    const department = departmentData?.departments.filter(
+      (department) => department.id === Number(departmentId)
+    )[0]
+
+    //set location === floor and room number
+    // setValue('locationId', department?.locationId ?? undefined)
+    return department?.location
+  }, [departmentId, departmentData]) as Location
+
+  const departmentList = useMemo(() => {
+    if (companyId) {
+      const dept = departmentData?.departments.filter(
+        (department) => department.companyId === Number(companyId)
+      )
+      if (dept) {
+        const departments = dept?.map((department) => {
+          return { value: department.id.toString(), label: department.name }
+        }) as SelectValueType[]
+        return departments ?? null
+      }
+    }
+    // console.log(departmentData)
+    setDepartmentId(null)
+    // console.error("Error loading departments")
+    return null
+  }, [companyId, departmentData])
 
   const [description, setDescription] = useState<string | null>(
     selectedAsset?.description ?? null

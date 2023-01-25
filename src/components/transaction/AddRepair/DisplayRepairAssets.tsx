@@ -155,8 +155,8 @@ const DisplayRepairAssets = (props: {
 				</div>
 			</section>
 			<RepairAssetTable
-				checkboxes={checkboxes}
-				setCheckboxes={setCheckboxes}
+				// checkboxes={checkboxes}
+				// setCheckboxes={setCheckboxes}
 				rows={props.assets}
 				filterBy={filterBy}
 				columns={columns.filter((col) => filterBy.includes(col.value))}

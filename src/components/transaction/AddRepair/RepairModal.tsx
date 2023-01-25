@@ -29,11 +29,11 @@ export const RepairDetailsModal = (props: {
 
     })
 
-    const deleteAsset = trpc.asset.delete.useMutation({
-        onSuccess() {
-            console.log("omsim");
-        },
-    })
+    // const deleteAsset = trpc.asset.delete.useMutation({
+    //     onSuccess() {
+    //         console.log("omsim");
+    //     },
+    // })
 
     const changeStats = trpc.asset.changeStatus.useMutation({
         onSuccess() {
@@ -57,9 +57,7 @@ export const RepairDetailsModal = (props: {
             repairStatus: stats,
         })
 
-        if (stats === 'done') {
-            deleteAsset.mutate(props.asset?.assetId ?? 0)
-        } else if (stats === 'cancelled' || stats === 'rejected' || stats === 'approved') {
+        if (stats === 'cancelled' || stats === 'rejected' || stats === 'approved' || stats === 'done') {
             changeStats.mutate({
                 id: props.asset?.assetId ?? 0,
                 status: null

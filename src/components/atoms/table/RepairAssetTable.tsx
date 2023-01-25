@@ -21,7 +21,7 @@ const RepairAssetDetailsModal = (props: {
     openModalDesc: boolean
     setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
     setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
-    setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+    // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
 
     // useEffect(() => {
@@ -397,8 +397,8 @@ const RepairAssetDetailsModal = (props: {
 }
 
 const RepairAssetTable = (props: {
-    checkboxes: number[]
-    setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+    // checkboxes: number[]
+    // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
     filterBy: string[]
     rows: AssetType[]
     columns: ColumnType[]
@@ -412,23 +412,23 @@ const RepairAssetTable = (props: {
 
     const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
-    const selectAllCheckboxes = () => {
-        if (props.checkboxes.length === 0) {
-            props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
-        } else {
-            props.setCheckboxes([])
-        }
-    }
+    // const selectAllCheckboxes = () => {
+    //     if (props.checkboxes.length === 0) {
+    //         props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
+    //     } else {
+    //         props.setCheckboxes([])
+    //     }
+    // }
 
-    const toggleCheckbox = async (id: number) => {
-        if (props.checkboxes.includes(id)) {
-            // removes id if not selected
-            props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-            return
-        }
-        // adds id
-        props.setCheckboxes((prev) => [...prev, id])
-    }
+    // const toggleCheckbox = async (id: number) => {
+    //     if (props.checkboxes.includes(id)) {
+    //         // removes id if not selected
+    //         props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+    //         return
+    //     }
+    //     // adds id
+    //     props.setCheckboxes((prev) => [...prev, id])
+    // }
 
     return (
         <div
@@ -441,7 +441,7 @@ const RepairAssetTable = (props: {
                     <tr>
                         <th scope="col" className="py-1">
                             <div className="flex items-center justify-center">
-                                <Checkbox
+                                {/* <Checkbox
                                     color={"orange"}
                                     onChange={() => {
                                         selectAllCheckboxes()
@@ -451,7 +451,7 @@ const RepairAssetTable = (props: {
                                         input:
                                             "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                                     }}
-                                />
+                                /> */}
                             </div>
                         </th>
                         {props.columns.map((col) => (
@@ -477,7 +477,7 @@ const RepairAssetTable = (props: {
                         >
                             <td className="w-4 p-2">
                                 <div className="flex items-center justify-center">
-                                    <Checkbox
+                                    {/* <Checkbox
                                         value={row?.id ?? idx}
                                         color={"orange"}
                                         onChange={(e) => {
@@ -488,7 +488,7 @@ const RepairAssetTable = (props: {
                                             input:
                                                 "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                                         }}
-                                    />
+                                    /> */}
                                 </div>
                             </td>
                             {columns
@@ -531,7 +531,7 @@ const RepairAssetTable = (props: {
                 openModalDesc={openModalDesc}
                 setOpenModalDesc={setOpenModalDesc}
                 setOpenModalDel={setOpenModalDel}
-                setCheckboxes={props.setCheckboxes}
+            // setCheckboxes={props.setCheckboxes}
             />
         </div>
     )

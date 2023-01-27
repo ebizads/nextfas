@@ -385,11 +385,11 @@ model Asset {
 
 model ticketTable {
   id          Int      @id @default(autoincrement())
-  from_table  String
-  table_id    Int
-  action_type String
+  from_table_string  String?
+  table_id    Int?
+  action_type String?
   action_desc String?
   added_date  DateTime @default(now())
-  addedById   Int
+  addedById   Int?
   addedBy     User?    @relation(fields: [addedById], references: [id], onDelete: Cascade)
 }

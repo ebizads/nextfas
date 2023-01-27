@@ -1,3 +1,4 @@
+import { ticketTableCreate } from "./../server/schemas/ticket"
 import { inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import {
@@ -35,6 +36,8 @@ export type EmployeeFieldValues = z.infer<typeof EmployeeCreateInput>
 //asset field types
 export type AssetFieldValues = z.infer<typeof AssetCreateInput>
 export type AssetEditFieldValues = z.infer<typeof AssetUpdateInput>
+export type TicketHandlerValues = z.infer<typeof ticketTableCreate>
+
 // export type ModelFieldValues = z.infer<typeof ModelCreateInput>
 // // export type ManagementFieldValues = z.infer<typeof ManagementCreateInput>
 

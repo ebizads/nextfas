@@ -29,6 +29,7 @@ import {
   AssetClassType,
   AssetEditFieldValues,
   AssetFieldValues,
+  TicketHandlerValues,
 } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
 import JsBarcode from "jsbarcode"
@@ -39,6 +40,7 @@ import { useRouter } from "next/router"
 import InputNumberField from "../forms/InputNumberField"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
+import { ticketTableCreate } from "../../../server/schemas/ticket"
 
 export const FormErrorMessage = (props: {
   setFormError: React.Dispatch<React.SetStateAction<boolean>>
@@ -60,6 +62,9 @@ const UpdateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.update.useMutation()
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+
+
+  const ticketTable = trpc.ticketTable.create.useMutation()
 
   const {
     register,
@@ -385,6 +390,10 @@ const UpdateAssetAccordion = () => {
 
   const router = useRouter()
 
+  // const ticketHandler = useMemo(() => {
+  //   //
+  // }, [])
+
   const onSubmit: SubmitHandler<AssetEditFieldValues> = (
     form_data: AssetEditFieldValues
   ) => {
@@ -420,6 +429,7 @@ const UpdateAssetAccordion = () => {
       console.log("Submitting: ", form_data.parentId)
       mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
 
+      // ticketTable.mutate({ addedById});
       setTimeout(function () {
         setIsLoading(false)
       }, 3000)
@@ -439,6 +449,7 @@ const UpdateAssetAccordion = () => {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   })
+
 
   const [formError, setFormError] = useState<boolean>(false)
   useEffect(() => {

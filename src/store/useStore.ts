@@ -41,6 +41,11 @@ type RepairStatusState = {
   setStatus: (newStatus: string) => void
 }
 
+type SearchState = {
+  search: string
+  setSearch: (newSearch: string) => void
+}
+
 export const useMinimizeStore = create<MinimizeState>((set) => ({
   minimize: false,
   setMinimize: () => set((state) => ({ minimize: !state.minimize })),
@@ -79,4 +84,9 @@ export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
 export const useRepairStatusStore = create<RepairStatusState>((set) => ({
   status: "pending",
   setStatus: (newStatus: string) => set({ status: newStatus }),
+}))
+
+export const useSearchStore = create<SearchState>((set) => ({
+  search: "pending",
+  setSearch: (newSearch: string) => set({ search: newSearch }),
 }))

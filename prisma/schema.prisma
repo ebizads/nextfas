@@ -384,12 +384,16 @@ model Asset {
 }
 
 model ticketTable {
-  id          Int      @id @default(autoincrement())
-  from_table_string  String?
-  table_id    Int?
-  action_type String?
-  action_desc String?
-  added_date  DateTime @default(now())
-  addedById   Int?
-  addedBy     User?    @relation(fields: [addedById], references: [id], onDelete: Cascade)
+  id           Int       @id @default(autoincrement())
+  action       String?
+  createdAt    DateTime  @default(now())
+  deleted      Boolean   @default(false)
+  deletedAt    DateTime?
+  modifiedById Int?
+  newData      String?
+  oldData      String?
+  tableId      Int?
+  tableName    String?
+  updatedAt    DateTime  @updatedAt
+  modifiedBy   User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
 }

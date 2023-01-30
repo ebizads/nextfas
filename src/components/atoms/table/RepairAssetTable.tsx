@@ -248,7 +248,7 @@ const RepairAssetDetailsModal = (props: {
                                             <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
                                         </div>
                                         <div className="col-span-1">
-                                            <p className="font-light">Period</p>
+                                            <p className="font-light">Quantity</p>
                                             <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
                                         </div>
                                     </section>

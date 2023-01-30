@@ -7,6 +7,11 @@ import { columns } from "../../lib/table"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import Search from "../atoms/search/Search"
+import { useSearchStore } from "../../store/useStore"
+import InputField from "../atoms/forms/InputField"
+import { currentValue } from "../../lib/functions"
+
+
 
 const DisplayAssets = (props: {
   total: number
@@ -17,12 +22,14 @@ const DisplayAssets = (props: {
   limit: number
   setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
+  const { search, setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
   const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
+  console.log(search)
 
   return (
     <div className="space-y-4">
@@ -31,7 +38,9 @@ const DisplayAssets = (props: {
           <div className="flex items-center gap-2">
             <div className="flex w-fit items-center gap-2">
               <div className="flex-1">
-                <Search
+                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset" onChange={(e) => setSearch(e.currentTarget.value)}>
+                </input>
+                {/* <Search
                   data={[
                     ...props.assets?.map((obj) => {
                       return {
@@ -40,7 +49,8 @@ const DisplayAssets = (props: {
                       }
                     }),
                   ]}
-                />
+
+                /> */}
               </div>
               <FilterPopOver
                 openPopover={openPopover}
@@ -74,7 +84,7 @@ const DisplayAssets = (props: {
             </Link>
           </div>
         </div>
-      </section>
+      </section >
       <AssetTable
         checkboxes={checkboxes}
         setCheckboxes={setCheckboxes}
@@ -111,7 +121,7 @@ const DisplayAssets = (props: {
         openModalDel={openModalDel}
         setOpenModalDel={setOpenModalDel}
       />
-    </div>
+    </div >
   )
 }
 

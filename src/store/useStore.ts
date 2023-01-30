@@ -87,6 +87,6 @@ export const useRepairStatusStore = create<RepairStatusState>((set) => ({
 }))
 
 export const useSearchStore = create<SearchState>((set) => ({
-  search: "pending",
+  search: "",
   setSearch: (newSearch: string) => set({ search: newSearch }),
 }))

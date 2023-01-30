@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Pagination } from "@mantine/core"
 import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
 import Link from "next/link"
@@ -22,6 +22,7 @@ const DisplayAssets = (props: {
   limit: number
   setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
+
   const { search, setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
@@ -31,6 +32,13 @@ const DisplayAssets = (props: {
   const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
   console.log(search)
 
+  useEffect(
+    () => {
+      setSearch("");
+    },
+    [setSearch]
+
+  );
   return (
     <div className="space-y-4">
       <section className="space-y-4">

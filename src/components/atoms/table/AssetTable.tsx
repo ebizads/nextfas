@@ -472,9 +472,7 @@ const AssetTable = (props: {
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
-  const { search } = useSearchStore()
-  const store = search
-  const data = store.fil
+
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 

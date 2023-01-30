@@ -7,14 +7,17 @@ import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useDisposeAssetStore } from "../../../store/useStore";
 import { AssetType } from '../../../types/generic';
 import { trpc } from '../../../utils/trpc';
+import { useSearchStore } from "../../../store/useStore";
 
 
 const DisposeNew = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const router = useRouter();
+    const { search } = useSearchStore()
 
     const { data } = trpc.asset.findAll.useQuery({
+        search: { number: search },
         limit,
         page
     });

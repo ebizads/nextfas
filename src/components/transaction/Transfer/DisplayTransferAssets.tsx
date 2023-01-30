@@ -8,6 +8,7 @@ import PaginationPopOver from '../../atoms/popover/PaginationPopOver';
 // import FilterPopOver from '../../atoms/popover/FilterPopOver';
 import TransferAssetTable from '../../atoms/table/TransferAssetTable';
 import Modal from '../../headless/modal/modal';
+import { useSearchStore } from '../../../store/useStore';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
 import { useTransferAssetStore } from '../../../store/useStore';
@@ -34,15 +35,20 @@ const DisplayTransferAssets = (props: {
 
 	const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase());
 
+	const { search, setSearch } = useSearchStore()
 	const [searchModal, setSearchModal] = useState<boolean>(false);
 	const { transferAsset, setTransferAsset } = useTransferAssetStore();
 
+	//const [resetSearch, setResetSearch] = useState<string>('');
 	useEffect(
 		() => {
 			setTransferAsset(asset as AssetType);
+			setSearch("");
 		},
-		[setTransferAsset, asset]
+		[setTransferAsset, asset, setSearch]
+
 	);
+
 
 
 	return (
@@ -53,8 +59,11 @@ const DisplayTransferAssets = (props: {
 						<div className="flex w-fit items-center gap-2">
 							<div className="flex-1">
 								<div className="w-full py-4">
-									<div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm px-4 py-2">
-										<input
+									<div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm py-2">
+										<input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset" onChange={(e) => setSearch(e.currentTarget.value)}>
+										</input>
+
+										{/* <input
 											type="text"
 											onChange={(event) => {
 												setSearchAsset(event.currentTarget.value);
@@ -62,15 +71,15 @@ const DisplayTransferAssets = (props: {
 											}}
 											placeholder="Search/Input Asset Number"
 											className="bg-transparent w-[100%] outlinex-none focus:outline-none text-sm"
-										/>
-										<button
+										/> */}
+										{/* <button
 											onClick={() => {
 												setAssetNumber(searchAsset);
 												console.log('search: ', searchAsset);
 											}}
 										>
 											<Search className="bg-transparent outline-none focus:outline-none" />
-										</button>
+										</button> */}
 									</div>
 								</div>
 

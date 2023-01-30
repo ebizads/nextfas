@@ -394,6 +394,6 @@ model ticketTable {
   oldData      String?
   tableId      Int?
   tableName    String?
-  updatedAt    DateTime
-  User         User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
+  updatedAt    DateTime  @updatedAt
+  modifiedBy   User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
 }

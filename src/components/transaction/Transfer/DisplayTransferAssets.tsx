@@ -9,6 +9,7 @@ import PaginationPopOver from '../../atoms/popover/PaginationPopOver';
 // import FilterPopOver from '../../atoms/popover/FilterPopOver';
 import TransferAssetTable from '../../atoms/table/TransferAssetTable';
 import Modal from '../../headless/modal/modal';
+import { useSearchStore } from '../../../store/useStore';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
 import { useTransferAssetStore } from '../../../store/useStore';

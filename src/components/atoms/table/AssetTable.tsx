@@ -11,7 +11,7 @@ import { trpc } from "../../../utils/trpc"
 import { useReactToPrint } from "react-to-print"
 import JsBarcode from "jsbarcode"
 import Link from "next/link"
-
+import { useSearchStore } from "../../../store/useStore"
 const AssetDetailsModal = (props: {
   asset: AssetType | null
   openModalDesc: boolean
@@ -473,7 +473,9 @@ const AssetTable = (props: {
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
+
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -554,6 +556,7 @@ const AssetTable = (props: {
                   />
                 </div>
               </td>
+
               {columns
                 .filter((col) => props.filterBy.includes(col.value))
                 .map((col) => (

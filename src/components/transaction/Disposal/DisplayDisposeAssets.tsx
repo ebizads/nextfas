@@ -10,7 +10,7 @@ import DisposeAssetTable from '../../atoms/table/DisposeAssetTable';
 import Modal from '../../headless/modal/modal';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
-import { useDisposeAssetStore } from '../../../store/useStore';
+import { useDisposeAssetStore, useSearchStore } from '../../../store/useStore';
 // import { number } from 'zod';
 
 const DisplayDisposeAssets = (props: {
@@ -41,7 +41,7 @@ const DisplayDisposeAssets = (props: {
 	const [validateModal, setValidateModal] = useState<boolean>(false)
 
 	const { disposeAsset, setDisposeAsset } = useDisposeAssetStore();
-
+	const { search, setSearch } = useSearchStore();
 	// useEffect(
 	// 	() => {
 	// 		setDisposeAsset(asset as AssetType);
@@ -67,7 +67,8 @@ const DisplayDisposeAssets = (props: {
 				setDisposeAsset(asset as AssetType);
 			}
 		}
-	}, [setDisposeAsset, asset, assetNumber, assetId])
+		setSearch("");
+	}, [setDisposeAsset, asset, assetNumber, assetId, setSearch])
 
 	return (
 		<div className="space-y-4">
@@ -77,8 +78,11 @@ const DisplayDisposeAssets = (props: {
 						<div className="flex w-fit items-center gap-2">
 							<div className="flex-1">
 								<div className="w-full py-4">
-									<div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm px-4 py-2">
-										<input
+									<div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm  py-2">
+										<input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset" onChange={(e) => setSearch(e.currentTarget.value)}>
+										</input>
+
+										{/* <input
 											type="text"
 											onChange={(event) => {
 												setSearchAsset(event.currentTarget.value);
@@ -94,7 +98,7 @@ const DisplayDisposeAssets = (props: {
 											}}
 										>
 											<Search className="bg-transparent outline-none focus:outline-none" />
-										</button>
+										</button> */}
 									</div>
 								</div>
 

@@ -48,7 +48,7 @@ export const assetRouter = t.router({
           search: z
             .object({
               name: z.string().optional(),
-              number: z.string(),
+              number: z.string().optional(),
               serial_no: z.string().optional(),
               barcode: z.string().optional(),
               description: z.string().optional(),

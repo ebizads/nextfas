@@ -1,3 +1,4 @@
+
 import Head from "next/head"
 import Link from "next/link"
 import React from "react"
@@ -8,8 +9,11 @@ import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../../components/atoms/forms/InputField"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
 import { VendorCreateInput } from "../../../server/schemas/vendor"
+import { AddressCreateInput } from "../../../server/schemas/address"
+
 
 type Vendor = z.infer<typeof VendorCreateInput>
+
 
 const RegisterVendor = () => {
   const { mutate, isLoading, error } = trpc.vendor.create.useMutation()
@@ -26,15 +30,20 @@ const RegisterVendor = () => {
     },
   })
 
+
   const onSubmit = async (vendor: Vendor) => {
     // Register function;
+
 
     mutate({
       name: vendor.name,
       email: vendor.email,
+      address: vendor.address,
+      phone_no: []
     })
     reset()
   }
+
 
   return (
     <>
@@ -60,6 +69,7 @@ const RegisterVendor = () => {
           />
           <AlertInput>{errors?.name?.message}</AlertInput>
 
+
           <InputField
             register={register}
             label="Email"
@@ -67,6 +77,7 @@ const RegisterVendor = () => {
             className="border-b"
           />
           <AlertInput>{errors?.email?.message}</AlertInput>
+
 
           <button
             type="submit"
@@ -92,4 +103,8 @@ const RegisterVendor = () => {
   )
 }
 
+
 export default RegisterVendor
+
+
+

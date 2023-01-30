@@ -458,7 +458,7 @@ const RepairAssetTable = (props: {
                             <th
                                 key={col.name}
                                 scope="col"
-                                className="max-w-[10rem] truncate px-6 duration-150"
+                                className="max-w-[10rem] truncate px-6 py-4 duration-150"
                             >
                                 {col.name}
                             </th>

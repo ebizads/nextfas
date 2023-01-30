@@ -8,6 +8,7 @@ import { ColumnType } from "../../../types/table"
 import Modal from "../../asset/Modal"
 import { trpc } from "../../../utils/trpc"
 
+
 const VendorTable = (props: {
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
@@ -18,19 +19,25 @@ const VendorTable = (props: {
   //minimize screen toggle
   const { minimize } = useMinimizeStore()
 
+
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [selectedAsset, setSelectedAsset] = useState<VendorType | null>(null)
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
 
+
+
   const utils = trpc.useContext()
+
 
   const deleteVendor = trpc.vendor.delete.useMutation({
     onSuccess: () => {
       utils.vendor.findAll.invalidate()
 
+
     }
   })
+
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -39,6 +46,7 @@ const VendorTable = (props: {
       props.setCheckboxes([])
     }
   }
+
 
   const toggleCheckbox = async (id: number) => {
     if (props.checkboxes.includes(id)) {
@@ -49,6 +57,7 @@ const VendorTable = (props: {
     // adds id
     props.setCheckboxes((prev) => [...prev, id])
   }
+
 
   return (
     <div
@@ -80,19 +89,20 @@ const VendorTable = (props: {
                 <th
                   key={col.name}
                   scope="col"
-                  className="max-w-[10rem] truncate px-6 duration-150"
+                  className="max-w-[10rem] truncate px-6 py-4 duration-150"
                 >
                   {col.name}
                 </th>
               ))}
 
-            <th scope="col" className="p-4 text-center">
-              Action
-            </th>
+
+            {/* <th scope="col" className="p-4 text-center">
+                  Action
+                </th> */}
           </tr>
         </thead>
         <tbody>
-          {props.rows.map((row, idx) => (
+          {props.rows.sort((a, b) => (a?.id ?? 0) - (b?.id ?? 0)).map((row, idx) => (
             <tr
               key={row?.id ?? idx}
               className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
@@ -127,10 +137,8 @@ const VendorTable = (props: {
                     {getPropertyDisposal(col.value, row) ?? "Invalid data"}
                   </td>
                 ))}
-              <td className="max-w-[10rem] space-x-2 text-center">
-                {/* <button>
-                  <i className="fa-light fa-pen-to-square" />
-                </button> */}
+              {/* <td className="max-w-[10rem] space-x-2 text-center">
+               
                 <button
                   onClick={() => {
                     deleteVendor.mutate(row?.id ?? 0)
@@ -138,7 +146,7 @@ const VendorTable = (props: {
                 >
                   <i className="fa-light fa-trash-can text-red-500" />{" "}
                 </button>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
@@ -172,6 +180,7 @@ const VendorTable = (props: {
                   <div className="py-3">
                     <p className="text-sm font-semibold">Vendor Type</p>
                   </div>
+
 
                   <div className="py-3">
                     <p className="col-span-2 text-sm">
@@ -212,4 +221,7 @@ const VendorTable = (props: {
   )
 }
 
+
 export default VendorTable
+
+

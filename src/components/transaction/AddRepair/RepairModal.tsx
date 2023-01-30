@@ -7,6 +7,7 @@ import { trpc } from "../../../utils/trpc";
 import { useState } from "react";
 import Modal from "../../headless/modal/modal";
 import { AssetRepairType } from "../../../types/generic";
+import { Textarea } from "@mantine/core";
 
 export type RepairEdit = z.infer<typeof AssetRepairEditInput>
 
@@ -67,6 +68,12 @@ export const RepairDetailsModal = (props: {
 
         reset()
     }
+    const [remarks, setRemarks] = useState<string | null>(null)
+
+
+    function setValue(arg0: string, text: string) {
+        throw new Error("Function not implemented.");
+    }
 
     return (
         <div className="w-full">
@@ -109,21 +116,66 @@ export const RepairDetailsModal = (props: {
                             </div>
                         </div>
 
-                        <div className="py-2 flex flex-row justify-between w-full gap-7">
+                        {(props.asset?.repairStatus === "pending" || props.asset?.repairStatus === "approved") && <div className="flex flex-row justify-between w-full gap-7">
                             <div className="flex flex-col w-full">
-                                <label className="font-semibold">Notes / Remarks</label >
-                                <textarea
+                                <label className="font-semibold">Remarks</label >
+                                <Textarea
                                     value={props.asset?.notes ?? ""}
-                                    readOnly
-                                    className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                                ></textarea>
+                                    onChange={(event) => {
+                                        const text = event.currentTarget.value
+                                        setRemarks(text)
+                                        setValue("remarks", text)
+                                    }}
+                                    placeholder={props.asset?.notes ?? "Remarks"}
+                                    minRows={6}
+                                    maxRows={6}
+                                    classNames={{
+                                        input:
+                                            "w-full border-2 border-gray-400 outline-none text-lg ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+                                    }}
+                                />
                             </div>
-                        </div>
+                        </div>}
+                        {(props.asset?.repairStatus === "rejected" || props.asset?.repairStatus === "done" || props.asset?.repairStatus === "cancelled") && <div className="flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full">
+                                <label className="font-semibold">Remarks</label >
+                                <Textarea
+                                    disabled
+                                    // value={remarks ?? ""}
+                                    // onChange={(event) => {
+                                    //     const text = props.asset?.remarks ?? ""
+                                    //     // setDisposalDesc(text)
+                                    //     setValue("remarks", text)
+                                    // }}
+                                    placeholder={props.asset?.remarks ?? ""}
+                                    minRows={6}
+                                    maxRows={6}
+                                    classNames={{
+                                        input:
+                                            "w-full border-2 border-gray-400 outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2 text-lg",
+                                    }}
+                                />
+                            </div>
+                        </div>}
 
 
                         <hr className="w-full"></hr>
                         {(props.asset?.repairStatus === "pending" || props.asset?.repairStatus === "approved") && <div className="flex w-full justify-end py-3 gap-2">
-
+                            <button
+                                type="submit"
+                                className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                onClick={() => {
+                                    props.asset?.repairStatus === "pending" ?
+                                        setStats("rejected")
+                                        : props.asset?.repairStatus === "approved" ? setStats("cancelled") : setStats("done")
+                                }}
+                            >
+                                {
+                                    props.asset?.repairStatus === "pending" ?
+                                        "Reject"
+                                        : props.asset?.repairStatus === "approved" ? "Cancel Repair" : "Done"
+                                }
+                            </button>
                             <button
                                 type="submit"
                                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -140,21 +192,7 @@ export const RepairDetailsModal = (props: {
                                 }
                             </button>
 
-                            <button
-                                type="submit"
-                                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                                onClick={() => {
-                                    props.asset?.repairStatus === "pending" ?
-                                        setStats("rejected")
-                                        : props.asset?.repairStatus === "approved" ? setStats("cancelled") : setStats("done")
-                                }}
-                            >
-                                {
-                                    props.asset?.repairStatus === "pending" ?
-                                        "Reject"
-                                        : props.asset?.repairStatus === "approved" ? "Cancel Repair" : "Done"
-                                }
-                            </button>
+
                         </div>
                         }
 

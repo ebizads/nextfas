@@ -16,21 +16,24 @@ import { useReactToPrint } from "react-to-print"
 import JsBarcode from "jsbarcode"
 import Link from "next/link"
 
+
 const TransferAssetDetailsModal = (props: {
   asset: AssetType | null
   openModalDesc: boolean
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
   setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   // useEffect(() => {
   //   console.log(props.asset.addedBy)
   // }, [])
 
+
   const componentRef = useRef(null)
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   })
+
 
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
@@ -46,15 +49,18 @@ const TransferAssetDetailsModal = (props: {
     })
   }
 
+
   useEffect(() => {
     if (!props.openModalDesc) {
       setGenBarcode(false)
     }
   }, [props.openModalDesc])
 
+
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
   const { transferAsset, setTransferAsset } = useTransferAssetStore()
   // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
+
 
   // console.log("asset number: "+props.asset!.number!);
   return (
@@ -99,6 +105,7 @@ const TransferAssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.parentId !== 0 ? props.asset?.parent?.name : "--"}</p>
                       <p className="text-[0.6rem] text-neutral-500 italic">{props.asset?.parentId !== 0 && props.asset?.parent?.number}</p>
 
+
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Model Name</p>
@@ -133,6 +140,7 @@ const TransferAssetDetailsModal = (props: {
                   </section>
                   <section className="grid grid-cols-4">
 
+
                     <div className="col-span-1">
                       <p className="font-light">Asset Lifetime</p>
                       <p className="font-medium">{props.asset?.management?.asset_lifetime ? props.asset?.management?.asset_lifetime : "--"} Months</p>
@@ -144,6 +152,7 @@ const TransferAssetDetailsModal = (props: {
                   </section>
                 </div>
               </section>
+
 
               <section className="border-b pb-4">
                 <p className="font-medium text-neutral-600 text-base">General Information</p>
@@ -211,6 +220,7 @@ const TransferAssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.management?.accounting_method ?? "--"}</p>
                     </div>
 
+
                     <div className="col-span-1">
                       <p className="font-light">Purchase Date</p>
                       <p className="font-medium">{props.asset?.management?.purchase_date ? (props.asset?.management?.purchase_date?.toLocaleDateString()) : "--"}</p>
@@ -242,11 +252,11 @@ const TransferAssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Period</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"} Months</p>
                     </div>
                     <div className="col-span-1">
-                      <p className="font-light">Period</p>
-                      <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
+                      <p className="font-light">Quantity</p>
+                      <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"} Units</p>
                     </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">
@@ -312,6 +322,7 @@ const TransferAssetDetailsModal = (props: {
                     </button>
                   )}
 
+
                   <div id="printSVG" ref={componentRef}>
                     <svg id="barcode" />
                   </div>
@@ -362,6 +373,7 @@ const TransferAssetDetailsModal = (props: {
                       setTransferAsset(selectedAsset)
                       props.setOpenModalDesc(false)
 
+
                       console.log(
                         "transfer btn clicked: " + selectedAsset?.number
                       )
@@ -391,9 +403,10 @@ const TransferAssetDetailsModal = (props: {
   )
 }
 
+
 const TransferAssetTable = (props: {
-  checkboxes: number[]
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  // checkboxes: number[]
+  // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
   filterBy: string[]
   rows: AssetType[]
   columns: ColumnType[]
@@ -401,29 +414,34 @@ const TransferAssetTable = (props: {
   //minimize screen toggle
   const { minimize } = useMinimizeStore()
 
+
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
+
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
-  const selectAllCheckboxes = () => {
-    if (props.checkboxes.length === 0) {
-      props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
-    } else {
-      props.setCheckboxes([])
-    }
-  }
 
-  const toggleCheckbox = async (id: number) => {
-    if (props.checkboxes.includes(id)) {
-      // removes id if not selected
-      props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-      return
-    }
-    // adds id
-    props.setCheckboxes((prev) => [...prev, id])
-  }
+  // const selectAllCheckboxes = () => {
+  //   if (props.checkboxes.length === 0) {
+  //     props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
+  //   } else {
+  //     props.setCheckboxes([])
+  //   }
+  // }
+
+
+  // const toggleCheckbox = async (id: number) => {
+  //   if (props.checkboxes.includes(id)) {
+  //     // removes id if not selected
+  //     props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+  //     return
+  //   }
+  //   // adds id
+  //   props.setCheckboxes((prev) => [...prev, id])
+  // }
+
 
   return (
     <div
@@ -436,7 +454,7 @@ const TransferAssetTable = (props: {
           <tr>
             <th scope="col" className="py-1">
               <div className="flex items-center justify-center">
-                <Checkbox
+                {/* <Checkbox
                   color={"orange"}
                   onChange={() => {
                     selectAllCheckboxes()
@@ -446,18 +464,19 @@ const TransferAssetTable = (props: {
                     input:
                       "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                   }}
-                />
+                /> */}
               </div>
             </th>
             {props.columns.map((col) => (
               <th
                 key={col.name}
                 scope="col"
-                className="max-w-[10rem] truncate px-6 duration-150"
+                className="max-w-[10rem] truncate px-6 py-4 duration-150"
               >
                 {col.name}
               </th>
             ))}
+
 
             {/* <th scope="col" className="p-4 text-center">
               Action
@@ -472,7 +491,7 @@ const TransferAssetTable = (props: {
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
-                  <Checkbox
+                  {/* <Checkbox
                     value={row?.id ?? idx}
                     color={"orange"}
                     onChange={(e) => {
@@ -483,7 +502,7 @@ const TransferAssetTable = (props: {
                       input:
                         "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                     }}
-                  />
+                  /> */}
                 </div>
               </td>
               {columns
@@ -521,15 +540,17 @@ const TransferAssetTable = (props: {
         </tbody>
       </table>
 
+
       <TransferAssetDetailsModal
         asset={selectedAsset}
         openModalDesc={openModalDesc}
         setOpenModalDesc={setOpenModalDesc}
         setOpenModalDel={setOpenModalDel}
-        setCheckboxes={props.setCheckboxes}
+      // setCheckboxes={props.setCheckboxes}
       />
     </div>
   )
 }
+
 
 export default TransferAssetTable

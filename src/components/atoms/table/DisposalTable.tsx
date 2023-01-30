@@ -70,7 +70,7 @@ const DisposalTable = (props: {
                                 <th
                                     key={col.name}
                                     scope="col"
-                                    className="max-w-[10rem] truncate px-6 duration-150"
+                                    className="max-w-[10rem] truncate px-6 py-4 duration-150"
                                 >
                                     {col.name}
                                 </th>
@@ -132,7 +132,7 @@ const DisposalTable = (props: {
                 </tbody>
             </table>
 
-            <Modal title="Asset"
+            <Modal title="Dispose"
                 isVisible={isVisible}
                 setIsVisible={setIsVisible}
                 className="max-w-4xl">

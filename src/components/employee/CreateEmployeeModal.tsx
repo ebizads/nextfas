@@ -14,7 +14,9 @@ import { env } from "../../env/client.mjs"
 import moment from "moment"
 import { SelectValueType } from "../atoms/select/TypeSelect"
 
+
 export type Employee = z.infer<typeof EmployeeCreateInput>
+
 
 export const CreateEmployeeModal = (props: {
   date: Date
@@ -41,12 +43,14 @@ export const CreateEmployeeModal = (props: {
     },
   })
 
+
   const teamList = useMemo(() => {
     const list = teams?.teams.map((team) => {
       return { value: team.id.toString(), label: team.name }
     }) as SelectValueType[]
     return list ?? []
   }, [teams]) as SelectValueType[]
+
 
   const {
     register,
@@ -64,7 +68,7 @@ export const CreateEmployeeModal = (props: {
       // },
       // superviseeId: 0,
       teamId: 0,
-      email: "omsim@omsim.com",
+      email: "",
       hired_date: new Date(),
       position: "",
       address: {
@@ -82,17 +86,19 @@ export const CreateEmployeeModal = (props: {
     },
   })
 
+
   const onSubmit = async (employee: Employee) => {
     // Register function
+
 
     mutate({
       name: `${employee.profile.first_name} ${employee.profile.last_name}`,
       employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
-      email:
-        (employee.profile.first_name[0] + employee.profile.last_name)
-          .replace(" ", "")
-          .toLowerCase()
-          .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
+      email: employee.email,
+      //   (employee.profile.first_name[0] + employee.profile.last_name)
+      //     .replace(" ", "")
+      //     .toLowerCase()
+      //     .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
       hired_date: employee.hired_date,
       teamId: employee.teamId,
       // supervisee: {
@@ -117,6 +123,7 @@ export const CreateEmployeeModal = (props: {
     })
     reset()
   }
+
 
   return (
     <div>
@@ -157,6 +164,7 @@ export const CreateEmployeeModal = (props: {
           </div>
         </div>
 
+
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Team</label>
@@ -184,12 +192,13 @@ export const CreateEmployeeModal = (props: {
                     },
                   },
 
+
                   // applies styles to hovered item (with mouse or keyboard)
                   "&[data-hovered]": {},
                 },
               })}
               variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
           <div className="flex w-[32%] flex-col">
@@ -201,7 +210,7 @@ export const CreateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
+            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -212,11 +221,42 @@ export const CreateEmployeeModal = (props: {
               register={register}
             />
 
+
             <AlertInput>{errors?.position?.message}</AlertInput>
           </div>
         </div>
+
         <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex flex-col sm:w-1/3 md:w-[48%]">
+          <div className="flex w-[49%] flex-col">
+            <label className="sm:text-sm">Email</label>
+            <InputField
+              // disabled={!editable}
+              type={"text"}
+              label={""}
+              name={"email"}
+              register={register}
+              placeholder={"--@email.com"}
+
+            />
+          </div>
+          <div className="flex w-[49%] flex-col">
+            <label className="sm:text-sm">Departmemt</label>
+            {/* <InputField
+              // placeholder={props.employee?.department}
+              type={"text"}
+              // disabled={!editable}
+              label={""}
+              value={props.employee?.team?.department?.name}
+              name={"department"}
+              register={register}
+            /> */}
+            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{"--"}</p>
+
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-4 py-2.5">
+          <div className="flex flex-col sm:w-1/3 md:w-[49%]">
             <label className="sm:text-sm ">Hired Date</label>
             {/* <InputField
             className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
@@ -237,23 +277,29 @@ export const CreateEmployeeModal = (props: {
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
-          <div className="flex w-[48%] flex-col">
-            <label className="sm:text-sm">Mobile Number</label>
+          <div className="flex w-[49%] flex-col">
+            <label className="sm:text-sm mb-2">Mobile Number</label>
             <input
               type="number"
-              className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
               onChange={(event) => {
+                if (event.target.value.length > 11) {
+                  console.log("more than 11")
+                  event.target.value = event.target.value.slice(0, 11);
+                }
                 setValue(
                   "profile.phone_no",
                   event.currentTarget.value.toString()
                 )
-              }}
+              }
+              }
             />
+
 
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[18%] flex-col">
+            <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Street</label>
               <InputField
                 type={"text"}
@@ -262,7 +308,7 @@ export const CreateEmployeeModal = (props: {
                 register={register}
               />
             </div>
-            <div className="flex w-[18%] flex-col">
+            <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
@@ -271,9 +317,10 @@ export const CreateEmployeeModal = (props: {
                 register={register}
               />
 
+
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
             </div>
-            <div className="flex w-[18%] flex-col">
+            <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
                 type={"text"}
@@ -282,9 +329,10 @@ export const CreateEmployeeModal = (props: {
                 register={register}
               />
 
+
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
-            <div className="flex w-[18%] flex-col">
+            <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Zip Code</label>
               <InputField
                 type={"text"}
@@ -294,7 +342,7 @@ export const CreateEmployeeModal = (props: {
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
             </div>
-            <div className="flex w-[18%] flex-col">
+            <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Country</label>
               <InputField
                 type={"text"}
@@ -303,10 +351,12 @@ export const CreateEmployeeModal = (props: {
                 register={register}
               />
 
+
               <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
           </div>
         </div>
+
 
         <DropZoneComponent
           setImage={props.setImage}
@@ -335,3 +385,5 @@ export const CreateEmployeeModal = (props: {
     </div>
   )
 }
+
+

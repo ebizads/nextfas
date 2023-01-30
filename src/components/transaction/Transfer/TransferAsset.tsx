@@ -22,6 +22,7 @@ import Modal from "../../headless/modal/modal"
 import Link from "next/link"
 import { useTransferAssetStore } from "../../../store/useStore"
 import { Asset, AssetType } from "@prisma/client"
+import { DatePicker } from "@mantine/dates"
 
 export type Assets = z.infer<typeof AssetEditInput>
 
@@ -336,7 +337,7 @@ const Transfer = ({ }) => {
                                                         <label className="font-semibold">
                                                             Asset Lifetime
                                                         </label>
-                                                        <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                                                        <p className="my-2 w-full rounded-md border-2 border-gray-400  px-4 py-2  outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 bg-gray-200 text-gray-400">
                                                             {getLifetime(
                                                                 asset?.management?.depreciation_start ??
                                                                 new Date(),
@@ -651,6 +652,36 @@ const Transfer = ({ }) => {
                                             })}
                                             variant="unstyled"
                                             className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
+                                    <div className="flex w-full flex-col py-2">
+                                        <label className="font-semibold">Transfer Date</label>
+                                        <DatePicker
+                                            dropdownType="popover"
+                                            placeholder="Pick Date"
+                                            size="sm"
+                                            variant="unstyled"
+                                            // value={props.date}
+                                            // onChange={(value) => {
+                                            //     setValue("hired_date", value)
+                                            //     value === null
+                                            //         ? props.setDate(new Date())
+                                            //         : props.setDate(value)
+                                            // }}
+                                            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                        />
+                                    </div>
+                                    <div className="flex w-full flex-col py-2">
+                                        <label className="font-semibold">Location</label>
+                                        <InputField
+                                            // disabled={!editable}
+                                            type={"text"}
+                                            label={""}
+                                            name={"email"}
+                                            register={register}
+                                            placeholder={"Enter asset transfer location"}
                                         />
                                     </div>
                                 </div>

@@ -44,9 +44,8 @@ const EmployeeTable = (props: {
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -73,14 +72,14 @@ const EmployeeTable = (props: {
                 <th
                   key={col.name}
                   scope="col"
-                  className="max-w-[10rem] truncate px-6 duration-150"
+                  className="max-w-[10rem] truncate px-6 py-4 duration-150"
                 >
                   {col.name}
                 </th>
               ))}
 
             <th scope="col" className="p-4 text-center">
-              Action
+              {/* Action */}
             </th>
           </tr>
         </thead>
@@ -116,8 +115,9 @@ const EmployeeTable = (props: {
                     key={col.value}
                     className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
                     onClick={() => {
-                      setIsVisible(true)
+                      // setIsVisible(setUpdateRecord)
                       setDetails(row)
+                      setUpdateRecord(true)
                     }}
                   >
                     {
@@ -125,14 +125,14 @@ const EmployeeTable = (props: {
                       col.value === "hired_date"
                         ? row?.hired_date?.toDateString()
                         : col.value.match(/_name/g)
-                        ? getName(col.value, row)
-                        : col.value === "city"
-                        ? getAddress(row)
-                        : getProperty(col.value, row)
+                          ? getName(col.value, row)
+                          : col.value === "city"
+                            ? getAddress(row)
+                            : getProperty(col.value, row)
                     }
                   </td>
                 ))}
-              <td className="max-w-[10rem] space-x-2 text-center">
+              {/* <td className="max-w-[10rem] space-x-2 text-center">
                 <i
                   className="fa-light fa-pen-to-square"
                   onClick={() => {
@@ -140,8 +140,7 @@ const EmployeeTable = (props: {
                     setUpdateRecord(true)
                   }}
                 />
-                {/* <i className="fa-light fa-trash-can text-red-500" />{" "} */}
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>

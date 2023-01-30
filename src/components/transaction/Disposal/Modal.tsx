@@ -247,6 +247,23 @@ export const DisposeDetailsModal = (props: {
                         <hr className="w-full"></hr>
                         {(props.asset?.disposalStatus === "pending" || props.asset?.disposalStatus === "approved") && <div className="flex w-full justify-end py-3 gap-2">
 
+
+
+                            <button
+                                type="submit"
+                                className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                onClick={() => {
+                                    props.asset?.disposalStatus === "pending" ?
+                                        setStats("rejected")
+                                        : props.asset?.disposalStatus === "approved" ? setStats("cancelled") : setStats("done")
+                                }}
+                            >
+                                {
+                                    props.asset?.disposalStatus === "pending" ?
+                                        "Reject"
+                                        : props.asset?.disposalStatus === "approved" ? "Cancel" : "Confirm"
+                                }
+                            </button>
                             <button
                                 type="submit"
                                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -260,23 +277,7 @@ export const DisposeDetailsModal = (props: {
                                 {
                                     props.asset?.disposalStatus === "pending" ?
                                         "Approve"
-                                        : "Done"
-                                }
-                            </button>
-
-                            <button
-                                type="submit"
-                                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                                onClick={() => {
-                                    props.asset?.disposalStatus === "pending" ?
-                                        setStats("rejected")
-                                        : props.asset?.disposalStatus === "approved" ? setStats("cancelled") : setStats("done")
-                                }}
-                            >
-                                {
-                                    props.asset?.disposalStatus === "pending" ?
-                                        "Reject"
-                                        : props.asset?.disposalStatus === "approved" ? "Cancel Disposal" : "Done"
+                                        : "Confirm"
                                 }
                             </button>
                         </div>
@@ -286,7 +287,7 @@ export const DisposeDetailsModal = (props: {
                 </div>
             </form >
 
-            <Modal isVisible={isVisible} setIsVisible={setIsVisible} className="max-w-2xl" title="Transfer Complete" >
+            <Modal isVisible={isVisible} setIsVisible={setIsVisible} className="max-w-2xl" title="Action Complete" >
                 <div className="px-4 py-2 flex flex-col w-full">
                     <div>
                         <p className="text-center text-lg font-semibold">Action is successful.</p>

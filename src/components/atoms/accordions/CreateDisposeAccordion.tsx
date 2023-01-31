@@ -52,7 +52,7 @@ const CreateDisposeAccordion = () => {
   //const utils = trpc.useContext()
 
   const disposalTypeList = useMemo(() => {
-    const list = disposalTypes?.disposalTypes.map((employee) => {
+    const list = disposalTypes?.disposalTypes.map((employee: { id: { toString: () => any }; name: any }) => {
       return { value: employee.id.toString(), label: employee.name }
     }) as SelectValueType[]
     return list ?? []
@@ -301,13 +301,13 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Asset Number
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
                               {asset?.number ?? ""}
                             </p>
                           </div>
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Asset Name</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.name ?? ""}
                             </p>
                           </div>
@@ -315,7 +315,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Alternate Asset Number
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.alt_number ?? ""}
                             </p>
                           </div>
@@ -325,19 +325,19 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Parent Asset
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.parent?.name ?? ""}
                             </p>
                           </div>
                           <div className="flex w-[60%] flex-col py-2">
                             <label className="font-semibold">Project</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.project?.name ?? ""}
                             </p>
                           </div>
                           <div className="flex w-[60%] flex-col py-2">
                             <label className="font-semibold">Asset Type</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.model?.type?.name ?? ""}
                             </p>
                           </div>
@@ -351,7 +351,7 @@ const CreateDisposeAccordion = () => {
                             <textarea
                               value={asset?.description ?? ""}
                               readOnly
-                              className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                              className="resize-none rounded-md border-2 border-gray-400 bg-gray-200 px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                             ></textarea>
                           </div>
                         </div>
@@ -360,7 +360,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Accounting Method
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.depreciation_rule ?? ""}
                             </p>
                           </div>
@@ -368,7 +368,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Asset Lifetime
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {getLifetime(
                                 asset?.management?.depreciation_start ??
                                 new Date(),
@@ -381,7 +381,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Asset Serial Number
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.number ?? ""}
                             </p>
                           </div>
@@ -404,14 +404,14 @@ const CreateDisposeAccordion = () => {
                         <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Subsidiary</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.subsidiary?.name ?? ""}
                             </p>
                           </div>
 
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Custodian</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.custodian?.name ?? ""}
                             </p>
                           </div>
@@ -421,7 +421,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Purchase Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.purchase_date?.toString() ??
                                 ""}
                             </p>
@@ -430,13 +430,13 @@ const CreateDisposeAccordion = () => {
                         <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Department</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.department?.name ?? ""}
                             </p>
                           </div>
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Class</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.model?.class?.name ?? ""}
                             </p>
                           </div>
@@ -451,6 +451,8 @@ const CreateDisposeAccordion = () => {
                         <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
                         <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                           Asset Usage Information
+
+
                         </p>
                       </div>
                     </Accordion.Control>
@@ -461,8 +463,8 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Depreciation Start Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_start?.toString() ??
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                              {asset?.management?.depreciation_start?.toLocaleDateString() ??
                                 ""}
                             </p>
                           </div>
@@ -470,14 +472,14 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Depreciation End Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_end?.toString() ??
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                              {asset?.management?.depreciation_end?.toLocaleDateString() ??
                                 ""}
                             </p>
                           </div>
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Period</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.depreciation_period ?? ""}
                             </p>
                           </div>
@@ -487,7 +489,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Original Cost
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.original_cost ?? ""}
                             </p>
                           </div>
@@ -495,7 +497,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Current Cost
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.current_cost ?? ""}
                             </p>
                           </div>
@@ -503,7 +505,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Depreciation Method
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.depreciation_rule ?? ""}
                             </p>
                           </div>
@@ -512,7 +514,7 @@ const CreateDisposeAccordion = () => {
                       <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                         <div className="flex w-full flex-col py-2">
                           <label className="font-semibold">Currency</label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                             {asset?.management?.currency ?? ""}
                           </p>
                         </div>
@@ -520,7 +522,7 @@ const CreateDisposeAccordion = () => {
                           <label className="font-semibold">
                             Residual Value
                           </label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                             {asset?.management?.residual_value ?? ""}
                           </p>
                         </div>
@@ -971,16 +973,16 @@ const CreateDisposeAccordion = () => {
         className="max-w-2xl"
         title="Asset Disposed"
       >
-        <div className="flex w-full flex-col px-4 py-2">
+        <div className="flex w-full flex-col px-4 pt-2">
           <div>
             <p className="text-center text-lg font-semibold">
               Asset successfully added to disposal.
             </p>
           </div>
-          <div className="flex justify-end py-2">
-            <Link href={"/assets"}>
-              <button className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500">
-                Return to assets tab
+          <div className="pt-5 flex justify-end py-2">
+            <Link href={"/transactions/disposal"}>
+              <button onClick={resetDisposeAsset} className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500">
+                Return
               </button>
             </Link>
           </div>

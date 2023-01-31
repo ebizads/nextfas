@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react"
 import VendorTable from "../components/atoms/table/VendorTable"
 import DashboardLayout from "../layouts/DashboardLayout"
@@ -24,11 +25,13 @@ const Vendors = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
 
+
   // Get asset by asset id
   const { data } = trpc.vendor.findAll.useQuery({
     limit,
     page,
   })
+
 
   const [vendors, setVendors] = useState<VendorType[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
@@ -38,14 +41,18 @@ const Vendors = () => {
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
 
+
   const utils = trpc.useContext()
+
 
   const [filterBy, setFilterBy] = useState<string[]>(
     vendorColumns.map((i) => i.value)
   )
 
+
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
 
   useEffect(() => {
     //get and parse all data
@@ -55,8 +62,10 @@ const Vendors = () => {
     }
   }, [data, limit])
 
+
   // Infer the TS type according to the zod schema.
   type Vendor = z.infer<typeof VendorCreateInput>
+
 
   const {
     mutate,
@@ -67,12 +76,15 @@ const Vendors = () => {
     },
   })
 
+
   const deleteVendor = trpc.vendor.deleteMany.useMutation({
     onSuccess: () => {
       utils.vendor.findAll.invalidate()
 
+
     }
   })
+
 
   const {
     register,
@@ -86,7 +98,9 @@ const Vendors = () => {
     defaultValues: {},
   })
 
+
   const watcher = watch()
+
 
   const onSubmit = async (vendor: Vendor) => {
     // Register function
@@ -96,16 +110,19 @@ const Vendors = () => {
     })
   }
 
+
   return (
     <DashboardLayout>
       {/* <pre>{JSON.stringify(vendors, null, 2)}</pre> */}
       <div className="space-y-4">
-        <section className="space-y-4">
+
+        <section className="space-y-6">
+          <h3 className="text-xl font-medium">Vendors</h3>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex w-fit items-center gap-2">
                 <div className="flex-1">
-                  {/* <Search
+                  <Search
                     data={[
                       ...vendors?.map((obj) => {
                         return {
@@ -114,7 +131,7 @@ const Vendors = () => {
                         }
                       }),
                     ]}
-                  /> */}
+                  />
                 </div>
                 <FilterPopOver
                   openPopover={openPopover}
@@ -162,7 +179,7 @@ const Vendors = () => {
         />
         <section className="mt-8 flex justify-between px-4">
           <div className="flex items-center gap-2">
-            <p>Showing </p>
+            <p>Showing up to</p>
             <PaginationPopOver
               paginationPopover={paginationPopover}
               setPaginationPopover={setPaginationPopover}
@@ -171,7 +188,7 @@ const Vendors = () => {
               limit={limit}
               setLimit={setLimit}
             />
-            <p> of {data?.count} entries</p>
+            <p> entries</p>
           </div>
           <Pagination
             page={page}
@@ -200,17 +217,19 @@ const Vendors = () => {
               noValidate
             >
               <div className="grid grid-cols-10 gap-4">
-                <div className="col-span-5">
+                <div className="col-span-5 mt-1">
                   <InputField
                     register={register}
-                    label="Company Address"
+                    label="Company Name"
                     name="name"
                     type="text"
                   />
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
 
+
                 <div className="col-span-5">
+
 
                   <label className="sm:text-sm">Vendor Type</label>
                   <Select
@@ -235,6 +254,7 @@ const Vendors = () => {
                           },
                         },
 
+
                         // applies styles to hovered item (with mouse or keyboard)
                         "&[data-hovered]": {},
                       },
@@ -244,7 +264,8 @@ const Vendors = () => {
                   />
                 </div>
 
-                <div className="col-span-5">
+
+                <div className="col-span-5 -mt-1">
                   <InputField
                     register={register}
                     label="Email"
@@ -255,12 +276,14 @@ const Vendors = () => {
                 </div>
                 <div className="col-span-5">
 
+
                   <label className="sm:text-sm">Phone Number: {`(use " , " for multiple phone numbers)`}</label>
                   <input
                     type="text"
                     className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
                     onChange={(event) => {
                       const convertToArray = event.currentTarget.value;
+
 
                       const phonenumString = convertToArray.replace(/[^0-9,]/gi, "").split(",")
                       setValue("phone_no", phonenumString);
@@ -269,6 +292,7 @@ const Vendors = () => {
                   />
                   <AlertInput>{errors?.phone_no?.message}</AlertInput>
                 </div>
+
 
                 <div className="col-span-5">
                   <InputField
@@ -306,6 +330,7 @@ const Vendors = () => {
                     register={register}
                   />
 
+
                   <AlertInput>{errors?.address?.state?.message}</AlertInput>
                 </div>
                 <div className="col-span-2">
@@ -316,6 +341,7 @@ const Vendors = () => {
                     name={"address.city"}
                     register={register}
                   />
+
 
                   <AlertInput>{errors?.address?.city?.message}</AlertInput>
                 </div>
@@ -337,6 +363,7 @@ const Vendors = () => {
                     name={"address.country"}
                     register={register}
                   />
+
 
                   <AlertInput>{errors?.address?.country?.message}</AlertInput>
                 </div>
@@ -365,8 +392,10 @@ const Vendors = () => {
                 {/* TODO: Reset form */}
                 <button
 
-                  type="button"
+
+                  type="reset"
                   // onClick={() => setOpenModalAdd(false)}
+
 
                   onClick={() => { console.log(errors) }}
                   className="py-2 px-4 font-medium underline"
@@ -374,6 +403,7 @@ const Vendors = () => {
                   Discard
                 </button>
                 <button
+
 
                   type="submit"
                   onClick={handleSubmit(onSubmit)}
@@ -391,4 +421,8 @@ const Vendors = () => {
   )
 }
 
+
 export default Vendors
+
+
+

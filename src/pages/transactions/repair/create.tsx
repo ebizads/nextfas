@@ -4,7 +4,7 @@ import Modal from "../../../components/headless/modal/modal";
 import AddRepairForm from "../../../components/transaction/AddRepair/AddRepairForm"
 import DisplayRepairAssets from "../../../components/transaction/AddRepair/DisplayRepairAssets";
 import DashboardLayout from "../../../layouts/DashboardLayout"
-import { useRepairAssetStore } from "../../../store/useStore";
+import { useRepairAssetStore, useSearchStore } from "../../../store/useStore";
 import { AssetType } from '../../../types/generic';
 import { trpc } from '../../../utils/trpc';
 
@@ -27,8 +27,10 @@ const RepairNew = () =>
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const router = useRouter();
+  const { search } = useSearchStore()
 
   const { data } = trpc.asset.findAll.useQuery({
+    search: { number: search },
     limit,
     page
   });

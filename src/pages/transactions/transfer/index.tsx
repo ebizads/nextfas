@@ -3,16 +3,19 @@ import React, { useEffect, useState } from 'react';
 import DisplayTransferAssets from '../../../components/transaction/Transfer/DisplayTransferAssets';
 import Transfer from '../../../components/transaction/Transfer/TransferAsset';
 import DashboardLayout from '../../../layouts/DashboardLayout';
-import { useTransferAssetStore, useUpdateAssetStore } from '../../../store/useStore';
+import { useSearchStore, useTransferAssetStore, useUpdateAssetStore } from '../../../store/useStore';
 import { AssetType } from '../../../types/generic';
 import { trpc } from '../../../utils/trpc';
+
 
 const AssetTransfer = () => {
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(10);
 	const router = useRouter();
+	const { search } = useSearchStore()
 
 	const { data } = trpc.asset.findAll.useQuery({
+		search: { number: search },
 		limit,
 		page
 	});

@@ -10,8 +10,8 @@ import Modal from "../../headless/modal/modal";
 import { DisposeDetailsModal, DisposeEdit } from "../../transaction/Disposal/Modal";
 
 const DisposalTable = (props: {
-    checkboxes: number[]
-    setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+    // checkboxes: number[]
+    // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
     filterBy: string[]
     rows: DisposeType[]
     columns: ColumnType[]
@@ -23,23 +23,23 @@ const DisposalTable = (props: {
 
     const { minimize } = useMinimizeStore()
 
-    const selectAllCheckboxes = () => {
-        if (props.checkboxes.length === 0) {
-            props.setCheckboxes([-1])
-        } else {
-            props.setCheckboxes([])
-        }
-    }
+    // const selectAllCheckboxes = () => {
+    //     if (props.checkboxes.length === 0) {
+    //         props.setCheckboxes([-1])
+    //     } else {
+    //         props.setCheckboxes([])
+    //     }
+    // }
 
-    const toggleCheckbox = async (id: number) => {
-        if (props.checkboxes.includes(id)) {
-            // removes id if not selected
-            props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-            return
-        }
-        // adds id
-        props.setCheckboxes((prev) => [...prev, id])
-    }
+    // const toggleCheckbox = async (id: number) => {
+    //     if (props.checkboxes.includes(id)) {
+    //         // removes id if not selected
+    //         props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+    //         return
+    //     }
+    //     // adds id
+    //     props.setCheckboxes((prev) => [...prev, id])
+    // }
 
     return (
         <div
@@ -52,7 +52,7 @@ const DisposalTable = (props: {
                     <tr>
                         <th scope="col" className="py-1">
                             <div className="flex items-center justify-center">
-                                <Checkbox
+                                {/* <Checkbox
                                     color={"orange"}
                                     onChange={() => {
                                         selectAllCheckboxes()
@@ -62,7 +62,7 @@ const DisposalTable = (props: {
                                         input:
                                             "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                                     }}
-                                />
+                                /> */}
                             </div>
                         </th>
                         {props.columns.filter((col) => props.filterBy.includes(col.value))
@@ -70,7 +70,7 @@ const DisposalTable = (props: {
                                 <th
                                     key={col.name}
                                     scope="col"
-                                    className="max-w-[10rem] truncate px-6 duration-150"
+                                    className="max-w-[10rem] truncate px-6 py-4 duration-150"
                                 >
                                     {col.name}
                                 </th>
@@ -89,7 +89,7 @@ const DisposalTable = (props: {
                         >
                             <td className="w-4 p-2">
                                 <div className="flex items-center justify-center">
-                                    <Checkbox
+                                    {/* <Checkbox
                                         value={row?.id ?? idx}
                                         color={"orange"}
                                         onChange={(e) => {
@@ -103,7 +103,7 @@ const DisposalTable = (props: {
                                             input:
                                                 "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                                         }}
-                                    />
+                                    /> */}
                                 </div>
                             </td>
                             {disposalColumn
@@ -132,7 +132,7 @@ const DisposalTable = (props: {
                 </tbody>
             </table>
 
-            <Modal title="Asset"
+            <Modal title="Dispose"
                 isVisible={isVisible}
                 setIsVisible={setIsVisible}
                 className="max-w-4xl">

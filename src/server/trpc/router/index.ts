@@ -1,4 +1,3 @@
-// src/server/trpc/router/index.ts
 import { t } from "../trpc"
 import { assetRouter } from "./asset"
 import { assetCategoryRouter } from "./asset_category"
@@ -12,6 +11,7 @@ import { departmentRouter } from "./deparment"
 import { disposalTypeRouter } from "./disposal_type"
 import { employeeRouter } from "./employee"
 import { teamRouter } from "./team"
+import { ticketRouter } from "./ticket"
 import { userRouter } from "./user"
 import { vendorRouter } from "./vendor"
 
@@ -30,6 +30,7 @@ export const appRouter = t.router({
   assetDisposal: assetDisposalRouter,
   disposalType: disposalTypeRouter,
   assetRepair: assetRepairRouter,
+  ticketTable: ticketRouter,
 })
 
 // export type definition of API

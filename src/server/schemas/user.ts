@@ -50,3 +50,7 @@ export const EditUserInput = z.object({
   }),
   address: AddressEditInput,
 })
+
+export const IdUser = z.object({
+  id: z.number(),
+})

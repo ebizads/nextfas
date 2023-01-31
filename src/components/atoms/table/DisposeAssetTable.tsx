@@ -21,7 +21,7 @@ const DisposeAssetDetailsModal = (props: {
     openModalDesc: boolean
     setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
     setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
-    setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+    // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
 
     // useEffect(() => {
@@ -131,7 +131,7 @@ const DisposeAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Residual Value Percentage</p>
-                                            <p className="font-medium">{props.asset?.management?.residual_percentage ?? "no information"}%</p>
+                                            <p className="font-medium">{props.asset?.management?.residual_percentage ?? "--"}%</p>
                                         </div>
                                     </section>
                                     <section className="grid grid-cols-4">
@@ -193,15 +193,15 @@ const DisposeAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Class</p>
-                                            <p className="font-medium">{props.asset?.model?.classId ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.model?.class?.name ?? "--"}</p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Category</p>
-                                            <p className="font-medium">{props.asset?.model?.categoryId ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.model?.category?.name ?? "--"}</p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Type</p>
-                                            <p className="font-medium">{props.asset?.model?.typeId ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
                                         </div>
                                     </section>
                                     <section className="grid grid-cols-4 gap-4">
@@ -248,7 +248,7 @@ const DisposeAssetDetailsModal = (props: {
                                             <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
                                         </div>
                                         <div className="col-span-1">
-                                            <p className="font-light">Period</p>
+                                            <p className="font-light">Quantity</p>
                                             <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
                                         </div>
                                     </section>
@@ -397,8 +397,8 @@ const DisposeAssetDetailsModal = (props: {
 }
 
 const DisposeAssetTable = (props: {
-    checkboxes: number[]
-    setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+    // checkboxes: number[]
+    // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
     filterBy: string[]
     rows: AssetType[]
     columns: ColumnType[]
@@ -412,23 +412,23 @@ const DisposeAssetTable = (props: {
 
     const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
-    const selectAllCheckboxes = () => {
-        if (props.checkboxes.length === 0) {
-            props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
-        } else {
-            props.setCheckboxes([])
-        }
-    }
+    // const selectAllCheckboxes = () => {
+    //     if (props.checkboxes.length === 0) {
+    //         props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
+    //     } else {
+    //         props.setCheckboxes([])
+    //     }
+    // }
 
-    const toggleCheckbox = async (id: number) => {
-        if (props.checkboxes.includes(id)) {
-            // removes id if not selected
-            props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-            return
-        }
-        // adds id
-        props.setCheckboxes((prev) => [...prev, id])
-    }
+    // const toggleCheckbox = async (id: number) => {
+    //     if (props.checkboxes.includes(id)) {
+    //         // removes id if not selected
+    //         props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+    //         return
+    //     }
+    //     // adds id
+    //     props.setCheckboxes((prev) => [...prev, id])
+    // }
 
     return (
         <div
@@ -441,7 +441,7 @@ const DisposeAssetTable = (props: {
                     <tr>
                         <th scope="col" className="py-1">
                             <div className="flex items-center justify-center">
-                                <Checkbox
+                                {/* <Checkbox
                                     color={"orange"}
                                     onChange={() => {
                                         selectAllCheckboxes()
@@ -451,14 +451,14 @@ const DisposeAssetTable = (props: {
                                         input:
                                             "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                                     }}
-                                />
+                                /> */}
                             </div>
                         </th>
                         {props.columns.map((col) => (
                             <th
                                 key={col.name}
                                 scope="col"
-                                className="max-w-[10rem] truncate px-6 duration-150"
+                                className="max-w-[10rem] truncate px-6 py-4 duration-150"
                             >
                                 {col.name}
                             </th>
@@ -476,7 +476,7 @@ const DisposeAssetTable = (props: {
                             className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                         >
                             <td className="w-4 p-2">
-                                <div className="flex items-center justify-center">
+                                {/* <div className="flex items-center justify-center">
                                     <Checkbox
                                         value={row?.id ?? idx}
                                         color={"orange"}
@@ -489,7 +489,7 @@ const DisposeAssetTable = (props: {
                                                 "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                                         }}
                                     />
-                                </div>
+                                </div> */}
                             </td>
                             {columns
                                 .filter((col) => props.filterBy.includes(col.value))
@@ -531,7 +531,7 @@ const DisposeAssetTable = (props: {
                 openModalDesc={openModalDesc}
                 setOpenModalDesc={setOpenModalDesc}
                 setOpenModalDel={setOpenModalDel}
-                setCheckboxes={props.setCheckboxes}
+            // setCheckboxes={props.setCheckboxes}
             />
         </div>
     )

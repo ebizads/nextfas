@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {Select} from '@mantine/core'
+import { Select } from '@mantine/core'
 
 type SearchType = {
   value: string

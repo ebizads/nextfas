@@ -10,7 +10,7 @@ import RepairAssetTable from '../../atoms/table/RepairAssetTable';
 import Modal from '../../headless/modal/modal';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
-import { useRepairAssetStore } from '../../../store/useStore';
+import { useRepairAssetStore, useSearchStore } from '../../../store/useStore';
 // import { number } from 'zod';
 
 const DisplayRepairAssets = (props: {
@@ -41,6 +41,7 @@ const DisplayRepairAssets = (props: {
 	const [validateModal, setValidateModal] = useState<boolean>(false)
 
 	const { repairAsset, setRepairAsset } = useRepairAssetStore();
+	const { search, setSearch } = useSearchStore();
 
 	// useEffect(
 	// 	() => {
@@ -66,8 +67,9 @@ const DisplayRepairAssets = (props: {
 			else {
 				setRepairAsset(asset as AssetType);
 			}
+			setSearch("");
 		}
-	}, [setRepairAsset, asset, assetNumber, assetId])
+	}, [setRepairAsset, asset, assetNumber, assetId, setSearch])
 
 	return (
 		<div className="space-y-4">
@@ -77,8 +79,10 @@ const DisplayRepairAssets = (props: {
 						<div className="flex w-fit items-center gap-2">
 							<div className="flex-1">
 								<div className="w-full py-4">
-									<div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm px-4 py-2">
-										<input
+									<div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm py-2">
+										<input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset" onChange={(e) => setSearch(e.currentTarget.value)}>
+										</input>
+										{/* <input
 											type="text"
 											onChange={(event) => {
 												setSearchAsset(event.currentTarget.value);
@@ -94,7 +98,7 @@ const DisplayRepairAssets = (props: {
 											}}
 										>
 											<Search className="bg-transparent outline-none focus:outline-none" />
-										</button>
+										</button> */}
 									</div>
 								</div>
 
@@ -155,15 +159,15 @@ const DisplayRepairAssets = (props: {
 				</div>
 			</section>
 			<RepairAssetTable
-				checkboxes={checkboxes}
-				setCheckboxes={setCheckboxes}
+				// checkboxes={checkboxes}
+				// setCheckboxes={setCheckboxes}
 				rows={props.assets}
 				filterBy={filterBy}
 				columns={columns.filter((col) => filterBy.includes(col.value))}
 			/>
 			<section className="mt-8 flex justify-between px-4">
 				<div className="flex items-center gap-2">
-					<p>Showing </p>
+					<p>Showing up to </p>
 					<PaginationPopOver
 						paginationPopover={paginationPopover}
 						setPaginationPopover={setPaginationPopover}
@@ -172,7 +176,7 @@ const DisplayRepairAssets = (props: {
 						limit={props.limit}
 						setLimit={props.setLimit}
 					/>
-					<p> of {props.total} entries</p>
+					<p> entries</p>
 				</div>
 				<Pagination
 					page={props.page}

@@ -11,7 +11,7 @@ import { trpc } from "../../../utils/trpc"
 import { useReactToPrint } from "react-to-print"
 import JsBarcode from "jsbarcode"
 import Link from "next/link"
-
+import { useSearchStore } from "../../../store/useStore"
 const AssetDetailsModal = (props: {
   asset: AssetType | null
   openModalDesc: boolean
@@ -123,7 +123,7 @@ const AssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Residual Value Percentage</p>
-                      <p className="font-medium">{props.asset?.management?.residual_percentage ?? "no information"}%</p>
+                      <p className="font-medium">{props.asset?.management?.residual_percentage ?? "--"}%</p>
                     </div>
                   </section>
                   <section className="grid grid-cols-4">
@@ -185,15 +185,15 @@ const AssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Class</p>
-                      <p className="font-medium">{props.asset?.model?.classId ?? "--"}</p>
+                      <p className="font-medium">{props.asset?.model?.class?.name ?? "--"}</p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Category</p>
-                      <p className="font-medium">{props.asset?.model?.categoryId ?? "--"}</p>
+                      <p className="font-medium">{props.asset?.model?.category?.name ?? "--"}</p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Type</p>
-                      <p className="font-medium">{props.asset?.model?.typeId ?? "--"}</p>
+                      <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
                     </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">
@@ -473,7 +473,9 @@ const AssetTable = (props: {
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
+
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -521,7 +523,7 @@ const AssetTable = (props: {
               <th
                 key={col.name}
                 scope="col"
-                className="max-w-[10rem] truncate px-6 duration-150"
+                className="max-w-[10rem] truncate px-6 py-4 duration-150"
               >
                 {col.name}
               </th>
@@ -554,6 +556,7 @@ const AssetTable = (props: {
                   />
                 </div>
               </td>
+
               {columns
                 .filter((col) => props.filterBy.includes(col.value))
                 .map((col) => (

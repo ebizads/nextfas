@@ -2,7 +2,7 @@ import { useMemo } from "react"
 
 const PasswordChecker = ({ password }: { password: string }) => {
   const hasEnoughCharacter = useMemo(() => {
-    return password.length >= 8 && password.length < 20 ? true : false
+    return password.length >= 12 && password.length < 20 ? true : false
   }, [password])
   const hasNumber = useMemo(() => {
     const checkNumber = /(?=.*\d)/gm
@@ -20,6 +20,19 @@ const PasswordChecker = ({ password }: { password: string }) => {
     const checkSpecialCharacter = /(?=.*[-+_!@#$%^&*.,?])/gm
     return password.match(checkSpecialCharacter) ? true : false
   }, [password])
+  const noConsecutiveNumber = useMemo(() => {
+    const checkConsecutiveNumber = /\d{1}(?=\d{1})/gm
+    return password.match(checkConsecutiveNumber) ? false : true
+  }, [password])
+  // const notComplexEnough = useMemo(() => {
+  //   const fComplex = !/[A-Z]/.test(password)
+  //   const sComplex =  !/[a-z]/.test(password)
+  //   const tComplex = !/\d/.test(password)
+  //   const checkComplexity = {
+  //     if(fComplex)
+  //   }
+  //   return password.match(checkComplexity) ? true : false
+  // }, [password])
 
   const checkAll = useMemo(() => {
     return (
@@ -27,7 +40,8 @@ const PasswordChecker = ({ password }: { password: string }) => {
       hasNumber &&
       hasSmallLetter &&
       hasCapitalLetter &&
-      hasSpecialCharacter
+      hasSpecialCharacter &&
+      noConsecutiveNumber
     )
   }, [
     hasEnoughCharacter,
@@ -35,6 +49,7 @@ const PasswordChecker = ({ password }: { password: string }) => {
     hasSmallLetter,
     hasCapitalLetter,
     hasSpecialCharacter,
+    noConsecutiveNumber,
   ])
 
   return (
@@ -47,7 +62,7 @@ const PasswordChecker = ({ password }: { password: string }) => {
     >
       <PasswordMatcher
         matcher={hasEnoughCharacter}
-        label={"Must have 8 to 20 characters"}
+        label={"Must have 12 to 20 characters"}
       />
       <PasswordMatcher
         matcher={hasNumber}
@@ -64,6 +79,10 @@ const PasswordChecker = ({ password }: { password: string }) => {
       <PasswordMatcher
         matcher={hasSpecialCharacter}
         label={"Must contain 1 special character"}
+      />
+      <PasswordMatcher
+        matcher={noConsecutiveNumber}
+        label={"Must not contain consecutive numbers"}
       />
     </div>
   )

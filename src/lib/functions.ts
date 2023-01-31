@@ -9,7 +9,9 @@ import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
 
 import { Address, Company } from "@prisma/client"
+import Router from "next/router"
 
+const router = Router
 export const getProperty = (
   filter: string,
   type: AssetType | EmployeeType | VendorType | DisposeType | AssetRepairType
@@ -155,4 +157,9 @@ export const convertMonthsToYears = (months: number) => {
 
 export const convertDaysToMonths = (days: number) => {
   return Math.floor(days / 30)
+}
+
+export const clearAndGoBack = () => {
+  document.forms[0]?.reset()
+  router.back()
 }

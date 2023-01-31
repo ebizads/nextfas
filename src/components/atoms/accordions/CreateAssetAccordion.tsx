@@ -21,8 +21,15 @@ import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AssetCreateInput, AssetUpdateInput } from "../../../server/schemas/asset"
-import { AssetClassType, AssetEditFieldValues, AssetFieldValues } from "../../../types/generic"
+import {
+  AssetCreateInput,
+  AssetUpdateInput,
+} from "../../../server/schemas/asset"
+import {
+  AssetClassType,
+  AssetEditFieldValues,
+  AssetFieldValues,
+} from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
@@ -34,6 +41,8 @@ import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import { FormErrorMessage } from "./UpdateAssetAccordion"
 import InputNumberField from "../forms/InputNumberField"
+import { clearAndGoBack } from "../../../lib/functions"
+
 
 const CreateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
@@ -358,7 +367,12 @@ const CreateAssetAccordion = () => {
         {/* <InputField register={register} label="Name" name="name" />
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
-        <Accordion transitionDuration={300} multiple={true} defaultValue={['1', '2', '3']} classNames={{}}>
+        <Accordion
+          transitionDuration={300}
+          multiple={true}
+          defaultValue={["1", "2", "3"]}
+          classNames={{}}
+        >
           <Accordion.Item value={"1"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className=" flex items-center gap-2 text-gray-700">
@@ -366,7 +380,9 @@ const CreateAssetAccordion = () => {
                   1
                 </div> */}
                 <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Information</p>
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  Asset Information
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
@@ -426,13 +442,10 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"assetProjectId"}
                       setValue={setValue}
-                      value={getValues("assetProjectId")?.toString()
-                      }
-
+                      value={getValues("assetProjectId")?.toString()}
                       title={"Project"}
                       placeholder={"Select project"}
                       data={projectsList ?? []}
-
                     />
 
                     <AlertInput>{errors?.assetProjectId?.message}</AlertInput>
@@ -531,12 +544,7 @@ const CreateAssetAccordion = () => {
                       name={"management.residual_percentage"}
                     />
                   </div>
-
                 </div>
-
-
-
-
 
                 <div className="col-span-9">
                   <Textarea
@@ -565,12 +573,14 @@ const CreateAssetAccordion = () => {
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">General</p>
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  General
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
               <div className="grid gap-7">
-                <div className="grid grid-cols-9 col-span-9 gap-7">
+                <div className="col-span-9 grid grid-cols-9 gap-7">
                   <div className="col-span-4">
                     <ClassTypeSelect
                       query={companyId}
@@ -622,7 +632,7 @@ const CreateAssetAccordion = () => {
                         placeholder={
                           !Boolean(companyId)
                             ? "Select company first"
-                            : "Select department type"
+                            : "Select room type"
                         }
                         data={departmentList ?? []}
                       />
@@ -640,9 +650,13 @@ const CreateAssetAccordion = () => {
                             className={
                               "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                             }
-                            placeholder="Floor no."
-                            value={selectedDepartment?.floor ?? ""}
-                            disabled
+                            disabled={!Boolean(departmentId)}
+                            placeholder={
+                              !Boolean(companyId)
+                                ? "Select company first"
+                                : "Select Floor type"
+                            }
+                            //value={selectedDepartment?.floor ?? ""}
                           />
                         </div>
                       </div>
@@ -656,12 +670,16 @@ const CreateAssetAccordion = () => {
                           <input
                             type="text"
                             id={"address"}
+                            disabled={!Boolean(departmentId)}
                             className={
                               "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                             }
-                            placeholder="Room no."
-                            value={selectedDepartment?.room ?? ""}
-                            disabled
+                            placeholder={
+                              !Boolean(companyId)
+                                ? "Select company first"
+                                : "Select department type"
+                            }
+                            //value={selectedDepartment?.room ?? ""}
                           />
                         </div>
                       </div>
@@ -682,7 +700,6 @@ const CreateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.custodianId?.message}</AlertInput>
                     </div>
-
                   </div>
                   <div className="col-span-12 grid grid-cols-12 gap-7 ">
                     <div className="col-span-2">
@@ -716,7 +733,9 @@ const CreateAssetAccordion = () => {
                         }
                         data={categories ?? []}
                       />
-                      <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
+                      <AlertInput>
+                        {errors?.model?.categoryId?.message}
+                      </AlertInput>
                     </div>
                     <div className="col-span-2">
                       <ClassTypeSelect
@@ -746,10 +765,9 @@ const CreateAssetAccordion = () => {
                         required
                       />
                     </div>
-
                   </div>
                 </div>
-                <div className="grid grid-cols-9 col-span-9 gap-7">
+                <div className="col-span-9 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
                     <TypeSelect
                       isString
@@ -802,7 +820,6 @@ const CreateAssetAccordion = () => {
                       }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                     />
                   </div>
-
                 </div>
                 <div className="col-span-9 grid grid-cols-6 gap-7">
                   <div className="col-span-2">
@@ -844,9 +861,7 @@ const CreateAssetAccordion = () => {
                     </p>
                     <DatePicker
                       placeholder={
-                        dep_start
-                          ? "Month, Day, Year"
-                          : "Select start ffirst"
+                        dep_start ? "Month, Day, Year" : "Select start ffirst"
                       }
                       allowFreeInput
                       size="sm"
@@ -863,9 +878,7 @@ const CreateAssetAccordion = () => {
                       }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                     />
                   </div>
-
                 </div>
-
               </div>
             </Accordion.Panel>
           </Accordion.Item>
@@ -873,29 +886,27 @@ const CreateAssetAccordion = () => {
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Usage</p>
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  Asset Usage
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="grid grid-cols-9 col-span-9 gap-7">
+              <div className="col-span-9 grid grid-cols-9 gap-7">
                 <div className="col-span-3 space-y-2">
-                  <p className="text-sm text-gray-700">
-                    Date of Usage
-                  </p>
+                  <p className="text-sm text-gray-700">Date of Usage</p>
                   <DatePicker
                     placeholder="Month, Day, Year"
                     // allowFreeInput
                     size="sm"
-                    value={
-                      dep_start
-                    }
+                    value={dep_start}
                     disabled
                     classNames={{
                       input:
-                        "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400"
+                        "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400",
                     }}
 
-                  // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                    // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                   />
                 </div>
                 <div className="col-span-3">
@@ -947,7 +958,9 @@ const CreateAssetAccordion = () => {
             >
               <div className="flex items-center gap-2 text-gray-700">
                 <Circle4 className="h-7 w-7" color="gold"></Circle4>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Print Bar Code</p>
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  Print Bar Code
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
@@ -988,7 +1001,11 @@ const CreateAssetAccordion = () => {
           </Accordion.Item>
         </Accordion>
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
-          <button type="button" className="px-4 py-2 underline">
+          <button
+            type="button"
+            className="px-4 py-2 underline"
+            onClick={() => clearAndGoBack()}
+          >
             Discard
           </button>
           <button
@@ -1019,7 +1036,7 @@ const CreateAssetAccordion = () => {
           </div>
         </Modal> */}
       </form>
-    </div >
+    </div>
   )
 }
 

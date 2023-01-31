@@ -72,7 +72,7 @@ export const authOptions: NextAuthOptions = {
             // console.log(lock_date)
             data = {
               lockedUntil: lock_date,
-              lockedReason: "Too many attempts",
+              lockedReason: "Too many attempts, Account is locked",
               lockedAt: new Date(),
             }
           }
@@ -85,7 +85,7 @@ export const authOptions: NextAuthOptions = {
           })
           throw new Error("Incorrect password. Please try again.")
         }
-        throw new Error("Invalid credentials. Please try again.")
+        throw new Error("Account not found. Please try again.")
       },
     }),
   ],

@@ -451,8 +451,6 @@ const CreateDisposeAccordion = () => {
                         <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
                         <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                           Asset Usage Information
-
-
                         </p>
                       </div>
                     </Accordion.Control>

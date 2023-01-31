@@ -37,9 +37,10 @@ export const assetDisposalRouter = t.router({
               apInvoice: z.string().optional(),
               agreedPrice: z.number().optional(),
               disposalPrice: z.number().optional(),
-              cufsCodeString: z.string().optional(),
+              disposalDesc: z.string().optional(),
               assetId: z.number().optional(),
               disposalTypeId: z.number().optional(),
+              remarks: z.string().optional(),
             })
             .optional(),
           filter: z

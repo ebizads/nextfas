@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { AddressCreateInput, AddressEditInput } from "./address"
+import { DepartmentEditInput } from "./department"
 
 export const EmployeeCreateInput = z.object({
   name: z.string().optional(),

@@ -21,8 +21,8 @@ import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AssetCreateInput } from "../../../server/schemas/asset"
-import { AssetClassType, AssetFieldValues } from "../../../types/generic"
+import { AssetCreateInput, AssetUpdateInput } from "../../../server/schemas/asset"
+import { AssetClassType, AssetEditFieldValues, AssetFieldValues } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { getAddress } from "../../../lib/functions"
 import { Location } from "@prisma/client"
@@ -426,11 +426,15 @@ const CreateAssetAccordion = () => {
                     <TypeSelect
                       name={"assetProjectId"}
                       setValue={setValue}
-                      value={getValues("assetProjectId")?.toString()}
+                      value={getValues("assetProjectId")?.toString()
+                      }
+
                       title={"Project"}
                       placeholder={"Select project"}
                       data={projectsList ?? []}
+
                     />
+
                     <AlertInput>{errors?.assetProjectId?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">

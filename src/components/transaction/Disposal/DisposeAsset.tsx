@@ -40,8 +40,8 @@ const Dispose = (props: {
     limit: number
     setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-    const [checkboxes, setCheckboxes] = useState<number[]>([])
-    const [openPopover, setOpenPopover] = useState<boolean>(false)
+    // const [checkboxes, setCheckboxes] = useState<number[]>([])
+    // const [openPopover, setOpenPopover] = useState<boolean>(false)
     const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
     const [filterBy, setFilterBy] = useState<string[]>(disposalColumn.map((i) => i.value))
 
@@ -61,13 +61,13 @@ const Dispose = (props: {
                         <div className="flex w-fit items-center gap-2">
 
                         </div>
-                        {checkboxes.length > 0 && (
+                        {/* {checkboxes.length > 0 && (
                             <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
                                 {checkboxes.includes(-1)
                                     ? `Delete all record/s ( ${props.asset.length} ) ?`
                                     : `Delete selected record/s ( ${checkboxes.length} )`}
                             </button>
-                        )}
+                        )} */}
                     </div>
                     <div className="flex items-center gap-2">
                         {/* <button
@@ -101,8 +101,8 @@ const Dispose = (props: {
                         </Tabs>
                         <div className="py-4">
                             <DisposalTable
-                                checkboxes={checkboxes}
-                                setCheckboxes={setCheckboxes}
+                                // checkboxes={checkboxes}
+                                // setCheckboxes={setCheckboxes}
                                 rows={props.asset}
                                 filterBy={filterBy}
                                 columns={disposalColumn.filter((col) => filterBy.includes(col.value))}
@@ -122,7 +122,7 @@ const Dispose = (props: {
             </section>
             <section className="mt-8 flex justify-between px-4">
                 <div className="flex items-center gap-2">
-                    <p>Showing </p>
+                    <p>Showing up to </p>
                     <PaginationPopOver
                         paginationPopover={paginationPopover}
                         setPaginationPopover={setPaginationPopover}
@@ -131,7 +131,7 @@ const Dispose = (props: {
                         limit={props.limit}
                         setLimit={props.setLimit}
                     />
-                    <p> of {props.total ?? 0} entries</p>
+                    <p> entries</p>
                 </div>
                 <Pagination
                     page={props.page}

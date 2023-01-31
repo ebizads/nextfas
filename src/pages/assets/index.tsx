@@ -4,13 +4,16 @@ import { trpc } from "../../utils/trpc"
 import DisplayAssets from "../../components/asset/DisplayAssets"
 import { AssetType } from "../../types/generic"
 import { useRouter } from "next/router"
+import { useSearchStore } from "../../store/useStore"
 
 const Assets = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
   const router = useRouter()
+  const { search } = useSearchStore()
   // Get asset by asset id
   const { data } = trpc.asset.findAll.useQuery({
+    search: { number: search },
     limit,
     page,
   })
@@ -20,6 +23,7 @@ const Assets = () => {
 
   useEffect(() => {
     //get and parse all data
+    console.log("sample ", data, search)
     if (data) {
       setAssets(data.assets as AssetType[])
       setAccessiblePage(Math.ceil(data?.count / limit))

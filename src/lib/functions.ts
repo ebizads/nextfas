@@ -163,3 +163,12 @@ export const clearAndGoBack = () => {
   document.forms[0]?.reset()
   router.back()
 }
+
+export const passArrayCheck = (array: Array<string>, password: string) => {
+  for (let x = 0; x + 1 <= array.length; x++) {
+    if ((x = array.length)) {
+      array[x + 1] = password
+    }
+    return array
+  }
+}

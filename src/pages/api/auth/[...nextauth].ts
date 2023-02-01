@@ -7,6 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt"
 import { env } from "../../../env/server.mjs"
 import dayjs from "dayjs"
+import { passArrayCheck } from "../../../lib/functions"
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -63,7 +64,7 @@ export const authOptions: NextAuthOptions = {
             return user
           }
           let data = {}
-          if (user.attempts < 4) {
+          if (user.attempts < 3) {
             // checks if user has remaining attempts
             data = { attempts: (user.attempts += 1) }
           } else {

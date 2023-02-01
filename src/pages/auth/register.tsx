@@ -9,10 +9,13 @@ import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import { CreateUserInput } from "../../server/schemas/user"
+import { passArrayCheck } from "../../lib/functions"
 
 type User = z.infer<typeof CreateUserInput>
 
-const Register = () => {
+
+function Register() {
+
   const { mutate, isLoading, error } = trpc.user.create.useMutation()
   const {
     register,
@@ -36,8 +39,9 @@ const Register = () => {
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
     // Register function
-    console.log(mutate)
     mutate({
+      ...user,
+      oldPassword: user.oldPassword,
       password: user.password,
       email: `test.${user.profile.last_name}@fas.com`,
       name: `${user.profile.first_name} ${user.profile.last_name}`,
@@ -46,13 +50,16 @@ const Register = () => {
         last_name: user.profile.last_name,
       },
       address: {
+        street: "Test",
         city: "Manila",
         country: "Philippines",
         state: "Metro Manila",
         zip: "1000",
       },
+
     })
-    reset()
+    console.log(user)
+
   }
 
   return (
@@ -103,6 +110,14 @@ const Register = () => {
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Register"}
+          </button>
+          <button
+            type="button"
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+            disabled={isLoading}
+            onClick={() => { console.log(errors) }}
           >
             {isLoading ? "Loading..." : "Register"}
           </button>

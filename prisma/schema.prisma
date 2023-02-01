@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String       @id @default(cuid())
   userId            Int
   type              String
   provider          String
@@ -20,17 +20,21 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userArchiveId     Int?
+  UserArchive       UserArchive? @relation(fields: [userArchiveId], references: [id])
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       Int
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String       @id @default(cuid())
+  sessionToken  String       @unique
+  userId        Int
+  expires       DateTime
+  userArchiveId Int?
+  UserArchive   UserArchive? @relation(fields: [userArchiveId], references: [id])
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -57,11 +61,43 @@ model User {
   deletedAt      DateTime?
   lockedUntil    DateTime?
   attempts       Int           @default(0)
+  attemptDate    DateTime?
+  oldPassword    String[]
+  passwordAge    Int?          @default(1)
   accounts       Account[]
   address        Address?
   created_assets Asset[]
   profile        Profile?
   sessions       Session[]
+  ticketTable    ticketTable[]
+}
+
+model UserArchive {
+  id             Int           @id @default(autoincrement())
+  name           String
+  email          String        @unique
+  recovery_email String?
+  username       String?       @unique
+  password       String
+  passwordAge    Int?          @default(1)
+  user_type      String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  emailVerified  DateTime?
+  image          String?
+  deleted        Boolean       @default(false)
+  deletedAt      DateTime?
+  lockedUntil    DateTime?
+  attempts       Int           @default(0)
+  attemptDate    DateTime?
+  oldPassword    String[]
+  addressId      Int?
+  profileId      Int?
+  accounts       Account[]
+  created_assets Asset[]
+  sessions       Session[]
+  address        Address?      @relation(fields: [addressId], references: [id])
+  profile        Profile?      @relation(fields: [profileId], references: [id])
   ticketTable    ticketTable[]
 }
 
@@ -91,7 +127,7 @@ model Employee {
 }
 
 model Profile {
-  id            Int       @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   first_name    String
   middle_name   String?
   last_name     String
@@ -99,32 +135,34 @@ model Profile {
   gender        String?
   image         String?
   date_of_birth DateTime?
-  userId        Int?      @unique
-  employeeId    Int?      @unique
+  userId        Int?          @unique
+  employeeId    Int?          @unique
   phone_no      String?
-  employee      Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employee      Employee?     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  user          User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  UserArchive   UserArchive[]
 }
 
 model Address {
-  id         Int       @id @default(autoincrement())
-  street     String?
-  city       String?
-  state      String?
-  zip        String?
-  country    String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deleted    Boolean   @default(false)
-  deletedAt  DateTime?
-  userId     Int?      @unique
-  companyId  Int?      @unique
-  vendorId   Int?      @unique
-  employeeId Int?      @unique
-  company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vendor     Vendor?   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  id          Int           @id @default(autoincrement())
+  street      String?
+  city        String?
+  state       String?
+  zip         String?
+  country     String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deleted     Boolean       @default(false)
+  deletedAt   DateTime?
+  userId      Int?          @unique
+  companyId   Int?          @unique
+  vendorId    Int?          @unique
+  employeeId  Int?          @unique
+  company     Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employee    Employee?     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  user        User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendor      Vendor?       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  UserArchive UserArchive[]
 }
 
 model Location {
@@ -367,6 +405,7 @@ model Asset {
   subsidiaryId   Int?
   addedById      Int?
   status         String?
+  userArchiveId  Int?
   addedBy        User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
@@ -375,6 +414,7 @@ model Asset {
   parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
   children       Asset[]          @relation("children")
   subsidiary     Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
+  UserArchive    UserArchive?     @relation(fields: [userArchiveId], references: [id])
   vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   AssetDisposal  AssetDisposal?
   management     AssetManagement?
@@ -384,16 +424,18 @@ model Asset {
 }
 
 model ticketTable {
-  id           Int       @id @default(autoincrement())
-  action       String?
-  createdAt    DateTime  @default(now())
-  deleted      Boolean   @default(false)
-  deletedAt    DateTime?
-  modifiedById Int?
-  newData      String?
-  oldData      String?
-  tableId      Int?
-  tableName    String?
-  updatedAt    DateTime  @updatedAt
-  modifiedBy   User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
+  id            Int          @id @default(autoincrement())
+  action        String?
+  createdAt     DateTime     @default(now())
+  deleted       Boolean      @default(false)
+  deletedAt     DateTime?
+  modifiedById  Int?
+  newData       String?
+  oldData       String?
+  tableId       Int?
+  tableName     String?
+  updatedAt     DateTime     @updatedAt
+  userArchiveId Int?
+  modifiedBy    User?        @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
+  UserArchive   UserArchive? @relation(fields: [userArchiveId], references: [id])
 }

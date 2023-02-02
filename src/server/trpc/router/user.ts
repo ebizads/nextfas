@@ -1,9 +1,10 @@
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { env } from "../../../env/client.mjs"
-import { CreateUserInput, EditUserInput } from "../../schemas/user"
+import { ChangeUserPass, CreateUserInput, EditUserInput } from "../../schemas/user"
 import { authedProcedure, t } from "../trpc"
 import bcrypt from "bcrypt"
+import { passArrayCheck } from "../../../lib/functions.js"
 
 export const userRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ input, ctx }) => {
@@ -25,6 +26,7 @@ export const userRouter = t.router({
         .toLowerCase()
 
       const encryptedPassword = await bcrypt.hash(password, 10)
+
       try {
         const user = await ctx.prisma.user.findMany({
           where: {
@@ -95,4 +97,24 @@ export const userRouter = t.router({
       },
     })
   }),
-})
+  change: authedProcedure
+  .input(ChangeUserPass)
+  .mutation(async ({ input, ctx }) => {
+    const { password, passwordAge, id, ...rest } = input
+    const encryptedPassword = await bcrypt.hash(password, 10)
+    return await ctx.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        ...rest,
+        oldPassword: {
+          set: encryptedPassword ?? "",
+        },
+        password: encryptedPassword,
+        passwordAge: passwordAge?.getDate(),
+      },
+    })
+  }),
+  
+})  

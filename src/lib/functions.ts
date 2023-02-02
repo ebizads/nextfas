@@ -165,10 +165,23 @@ export const clearAndGoBack = () => {
 }
 
 export const passArrayCheck = (array: Array<string>, password: string) => {
-  for (let x = 0; x + 1 <= array.length; x++) {
-    if ((x = array.length)) {
-      array[x + 1] = password
-    }
-    return array
+  for (let x = 1; x  <= array.length; x++) {
+    if (array[x-1] == password) {
+      return true
+    } else return false
   }
+}
+export const generateRandomPass = () => {
+  let result = ""
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{};:'\",.<>/?\\|"
+  const charactersLength = characters.length
+  for (let i = 0; i < 12; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
+
+export const passConfirmCheck = (password: string, confirmPassword: string) => {
+  return password == confirmPassword ? true : false
 }

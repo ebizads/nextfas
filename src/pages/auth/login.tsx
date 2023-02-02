@@ -83,9 +83,9 @@ function LoginForm() {
       callbackUrl: "/assets",
     })
 
-    setError(res?.error as string)
+     setError(res?.error as string)
     if (res?.error) {
-      // console.log("May error ", res?.error)
+       console.log("May error ", res?.error)
     } else {
       router.push(res?.url as string)
     }
@@ -195,8 +195,6 @@ const Login = () => {
             onRegister()
           }}
         >
-          Register
-
         </button>
       </main>
     </>

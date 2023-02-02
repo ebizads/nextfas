@@ -63,7 +63,8 @@ model User {
   attempts       Int           @default(0)
   attemptDate    DateTime?
   oldPassword    String[]
-  passwordAge    Int?          @default(1)
+  firstLogin     Boolean?
+  passwordAge    DateTime?
   accounts       Account[]
   address        Address?
   created_assets Asset[]

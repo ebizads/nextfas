@@ -38,6 +38,7 @@ export type AssetFieldValues = z.infer<typeof AssetCreateInput>
 export type AssetEditFieldValues = z.infer<typeof AssetUpdateInput>
 export type TicketHandlerValues = z.infer<typeof ticketTableCreate>
 
+export type UserType = inferProcedureOutput<AppRouter["user"]["findOne"]>
 // export type ModelFieldValues = z.infer<typeof ModelCreateInput>
 // // export type ManagementFieldValues = z.infer<typeof ManagementCreateInput>
 

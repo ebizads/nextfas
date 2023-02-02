@@ -12,6 +12,11 @@ type DeleteState = {
   setModalDel: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type EditableState = {
+  editable: boolean
+  setEditable: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 type SelectedAssetState = {
   selectedAsset: AssetType
   setSelectedAsset: (newAsset: AssetType) => void
@@ -45,6 +50,11 @@ type SearchState = {
   search: string
   setSearch: (newSearch: string) => void
 }
+
+export const useEditableStore = create<EditableState>((set) => ({
+  editable: false,
+  setEditable: () => set((state) => ({ editable: !state.editable })),
+}))
 
 export const useMinimizeStore = create<MinimizeState>((set) => ({
   minimize: false,

@@ -147,7 +147,7 @@ export const RepairDetailsModal = (props: {
                                     //     // setDisposalDesc(text)
                                     //     setValue("remarks", text)
                                     // }}
-                                    placeholder={props.asset?.remarks ?? ""}
+                                    placeholder={props.asset?.notes ?? ""}
                                     minRows={6}
                                     maxRows={6}
                                     classNames={{

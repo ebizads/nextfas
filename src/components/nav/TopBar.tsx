@@ -17,7 +17,7 @@ const TopBar = () => {
       .filter((_, idx) => idx !== 0)
       .map((path) => {
         if (path.includes("_")) {
-          return path.replace("_", " ")
+          return path.replace("_", " ") 
         }
         return path
       })

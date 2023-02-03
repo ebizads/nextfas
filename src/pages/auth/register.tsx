@@ -149,7 +149,7 @@ function Register() {
                 New account registration successful.
               </p>
 
-              <p className="text-center text-lg font-semibold">{passwordCheck}</p>
+              <p className="text-center text-lg font-semibold">Password: {passwordCheck}</p>
             </div>
             <button
               className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"

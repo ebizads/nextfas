@@ -5,23 +5,27 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import InputField from "../../components/atoms/forms/InputField"
 import { trpc } from "../../utils/trpc"
 import { Textarea } from "@mantine/core"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import Modal from "../../components/headless/modal/modal"
 import { passConfirmCheck } from "../../lib/functions"
+import { useSession } from "next-auth/react"
+// import { useSession } from "next-auth/react"
 
 type ChangePass = z.infer<typeof ChangeUserPass>
 
 export const ChangePassModal = (props: {
-  isVisible: any
-  setCloseModal: React.Dispatch<React.SetStateAction<boolean>>
+  isVisible: boolean
+  setVisibile: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [passIncorrect, setPassIncorrect] = useState<boolean>(false)
-  const [confirmPass, setConfirmPass] = useState<boolean>(false)
-  const [password, setPassword] = useState("")
+  const [confirmPass, setConfirmPass] = useState<boolean>(true)
+  const [password, setPassword] = useState<string>("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+
+  const { data: session } = useSession()
 
   const { mutate } = trpc.user.change.useMutation({
     onSuccess() {
@@ -30,90 +34,126 @@ export const ChangePassModal = (props: {
     },
   })
 
-  const { register, handleSubmit, reset, setValue, watch } =
-    useForm<ChangePass>({
-      resolver: zodResolver(ChangeUserPass),
-      defaultValues: {
-        firstLogin: false,
-      },
-    })
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    getValues,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<ChangePass>({
+    resolver: zodResolver(ChangeUserPass),
+    defaultValues: {
+      firstLogin: false,
+      password: "",
+      id: Number(session?.user?.id),
+      passwordAge: 1,
+    },
+  })
 
   const onSubmit = (changeUserPass: ChangePass) => {
     setConfirmPass(passConfirmCheck(password, confirmPassword))
+
     if (confirmPass) {
-        
       mutate({
         ...changeUserPass,
         oldPassword: changeUserPass.oldPassword,
         password: changeUserPass.password,
-        passwordAge: new Date(),
       })
       reset()
-    } else setPassIncorrect(true)
+    } else {
+      setPassIncorrect(true)
+      console.log(confirmPass)
+    }
   }
 
   return (
-    <div className="w-full">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col space-y-4"
-      >
-        <div className="">
-          <div className="flex w-full flex-row justify-between gap-7 py-2">
-            <div className="flex w-full flex-row justify-between gap-7 py-2">
+    <Modal
+      isVisible={props.isVisible}
+      setIsVisible={props.setVisibile}
+      className="max-w-4xl"
+      title="Change Password"
+    >
+      <div className="w-full content-center items-center justify-center">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col space-y-4"
+        >
+          <div className="flex w-full gap-7 py-2">
+            <div className="flex w-full flex-col  gap-7 py-2">
               <label className="font-semibold">Password</label>
 
               <input
                 name="password"
                 type="password"
                 className="border-b"
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(event) => {
+                  setValue("password", event.currentTarget.value)
+                  setPassword(event.currentTarget.value)
+                }}
               />
               <PasswordChecker password={watch().password} />
 
               <label className="font-semibold">Confirm Password</label>
               <input
                 name="confirmpassword"
-                type="confirmpassword"
+                type="password"
                 className="border-b"
                 onChange={(event) => setConfirmPassword(event.target.value)}
               />
+              {passIncorrect && (
+                <div>
+                  <p>Incorrect Password.</p>
+                </div>
+              )}
             </div>
-            {passIncorrect && (
-              <div>
-                <p>Incorrect Password.</p>
-              </div>
-            )}
+
             <hr className="w-full"></hr>
           </div>
-        </div>
-      </form>
+          <button
+            type="submit"
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Loading..." : "Change"}
+          </button>
+          <button
+            type="button"
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+            onClick={() => console.log(password + "     " + confirmPassword)}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Loading..." : "Change"}
+          </button>
+        </form>
 
-      <Modal
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
-        className="max-w-2xl"
-        title="Change Pass Complete"
-      >
-        <div className="flex w-full flex-col px-4 py-2">
-          <div>
-            <p className="text-center text-lg font-semibold">
-              Change password successfully.
-            </p>
+        <Modal
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+          className="max-w-2xl"
+          title="Change Pass Complete"
+        >
+          <div className="flex w-full flex-col px-4 py-2">
+            <div>
+              <p className="text-center text-lg font-semibold">
+                Change password successfully.
+              </p>
+            </div>
+            <div className="flex justify-end py-2">
+              <button
+                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={() => {
+                  setIsVisible(false)
+                  props.setVisibile(false)
+                }}
+              >
+                Close
+              </button>
+            </div>
           </div>
-          <div className="flex justify-end py-2">
-            <button
-              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-              onClick={() => {
-                setIsVisible(false)
-                props.setCloseModal(false)
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </Modal>
-    </div>
+        </Modal>
+      </div>
+    </Modal>
   )
 }

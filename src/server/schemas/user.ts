@@ -44,7 +44,7 @@ export const ChangeUserPass = z.object({
   .min(12, { message: "Password should be at least 12 characters" })
   .max(20, { message: "Password should not be more than 20 characters" }),
   oldPassword: z.array(z.string()).optional().default([]),
-  passwordAge: z.date().nullish().optional(),
+  passwordAge: z.number().nullish().optional(),
   firstLogin: z.boolean().nullish(),
 })
 

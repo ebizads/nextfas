@@ -183,5 +183,5 @@ export const generateRandomPass = () => {
 }
 
 export const passConfirmCheck = (password: string, confirmPassword: string) => {
-  return password == confirmPassword ? true : false
+  return password === confirmPassword ? true : false
 }

@@ -64,7 +64,7 @@ model User {
   attemptDate    DateTime?
   oldPassword    String[]
   firstLogin     Boolean?
-  passwordAge    DateTime?
+  passwordAge    Int?
   accounts       Account[]
   address        Address?
   created_assets Asset[]
@@ -296,6 +296,7 @@ model AssetRepair {
   categoryId   Int?
   assetId      Int?      @unique
   repairStatus String?
+  remarks      String?
   asset        Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 

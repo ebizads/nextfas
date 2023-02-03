@@ -21,6 +21,7 @@ const userSchema = z.object({
     .string()
     .min(1, { message: "The password is invalid" })
     .max(20, { message: "The password is invalid" }),
+  firstLogin:  z.boolean().nullish(),
 })
 
 // Infer the TS type according to the zod schema.
@@ -75,7 +76,6 @@ function LoginForm() {
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
     // Login function
-
     const res = await signIn("credentials", {
       redirect: false,
       username: user.username,

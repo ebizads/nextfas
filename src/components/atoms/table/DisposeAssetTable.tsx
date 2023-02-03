@@ -245,11 +245,11 @@ const DisposeAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Period</p>
-                                            <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"} Months</p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Quantity</p>
-                                            <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"} Units</p>
                                         </div>
                                     </section>
                                     <section className="grid grid-cols-4 gap-4">

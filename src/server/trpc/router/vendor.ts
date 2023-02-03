@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { VendorCreateInput } from "../../schemas/vendor"
+import { VendorCreateInput, VendorEditInput } from "../../schemas/vendor"
 import { authedProcedure, t } from "../trpc"
 
 export const vendorRouter = t.router({
@@ -95,6 +95,33 @@ export const vendorRouter = t.router({
       })
       return vendor
     }),
+  edit: authedProcedure
+    .input(VendorEditInput)
+    .mutation(async ({ ctx, input }) => {
+      const { address, id, ...rest } = input
+
+      try {
+        await ctx.prisma.employee.update({
+          where: {
+            id,
+          },
+          data: {
+            ...rest,
+            address: {
+              update: address,
+            },
+          },
+        })
+
+        return "Vendor edited successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+
   delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
     try {
       await ctx.prisma.vendor.update({

@@ -105,18 +105,24 @@ export const userRouter = t.router({
       const { password, passwordAge, id, oldPassword, ...rest } = input
 
       const encryptedPassword = await bcrypt.hash(password, 10)
-      // const match = await bcrypt.compare(password, "$2b$10$Yc8Z.neAGmNltMqoM36eG.kI9TpoUPAMljttwI5niA2nNjaKClIim")
 
-      // let flag = false;
-      // const user = await ctx.prisma.user.findMany({ where: { id: id } })
-      // const updatedArray = [encryptedPassword, user.find(oldPassword)]
+      // // const user = await ctx.prisma.user.findMany({ where: { id: id } })
+      // // const updatedArray = [encryptedPassword, user.find(oldPassword)]
 
       // for (const arrays of oldPassword) {
       //   const match = await bcrypt.compare(password, arrays)
-      //   if (match) {
-      //     flag = true;
+      //   if (!match) {
+      //     flag = true
       //   }
       // }
+      const sample: string[] = [...oldPassword]
+      for (let i = 0; i <= sample.length; i++) {
+        const match = await bcrypt.compare(password, `${sample[i]}`)
+        if (match) {
+          return false
+        }
+      }
+
       return await ctx.prisma.user.update({
         where: {
           id,
@@ -125,9 +131,9 @@ export const userRouter = t.router({
           oldPassword: {
             set: [encryptedPassword, ...oldPassword],
           },
-          password: "omsim",
+          password: encryptedPassword,
           passwordAge: passwordAge,
-          ...rest
+          ...rest,
         },
       })
     }),

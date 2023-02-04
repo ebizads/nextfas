@@ -10,6 +10,7 @@ import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import Modal from "../../components/headless/modal/modal"
 import { passConfirmCheck } from "../../lib/functions"
 import { useSession } from "next-auth/react"
+import { Session } from "inspector"
 // import bcrypt from "bcrypt"
 
 // import { useSession } from "next-auth/react"
@@ -26,18 +27,28 @@ export const ChangePassModal = (props: {
   const [password, setPassword] = useState<string>("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [changeString, setChangeString] = useState<string>("");
+  const [userId, setUserId] = useState<number>(0);
 
   const { data: session } = useSession()
 
   const { mutate } = trpc.user.change.useMutation({
-    onSuccess() {
-      setIsVisible(true)
+    onSuccess(data) {
+      setIsVisible(true);
+      console.log(data);
+      if (data !== false) {
+        setChangeString("Change Password Succesfully");
+      } else {
+        setChangeString("The password has already been used, please choose a different one.");
+      }
       // invalidate query of asset id when mutations is successful
     },
-    onError(){
+    onError() {
       console.log(error)
     }
   })
+
+  const userData = trpc.user.findOne.useQuery(userId ?? 0);
 
   const {
     register,
@@ -52,25 +63,28 @@ export const ChangePassModal = (props: {
     defaultValues: {
       firstLogin: true,
       password: "",
-      id: Number(session?.user?.id),
+      id: userId ?? 0,
       passwordAge: 1,
     },
   })
 
+  useEffect(() => {
+    setUserId(Number(session?.user?.id))
+  }, [session])
   // const encryptPass = async () =>{
   //   const match = await bcrypt.compare(password, "$2b$10$Yc8Z.neAGmNltMqoM36eG.kI9TpoUPAMljttwI5niA2nNjaKClIim")
   //   console.log(match.toString())
   // }
 
   const onSubmit = (changeUserPass: ChangePass) => {
-    setConfirmPass(passConfirmCheck(password, confirmPassword))
+    // setConfirmPass(passConfirmCheck(password, confirmPassword))
 
-    
+
 
     if (confirmPass) {
       mutate({
         ...changeUserPass,
-        oldPassword: changeUserPass.oldPassword,
+        oldPassword: userData.data?.oldPassword ?? [],
         password: changeUserPass.password,
       })
       reset()
@@ -133,7 +147,7 @@ export const ChangePassModal = (props: {
           <button
             type="button"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            onClick={() => console.log(error)}
+            onClick={() => console.log(errors)}
             disabled={isSubmitting}
           >
             {isSubmitting ? "Loading..." : "Change"}
@@ -149,12 +163,12 @@ export const ChangePassModal = (props: {
           isVisible={isVisible}
           setIsVisible={setIsVisible}
           className="max-w-2xl"
-          title="Change Pass Complete"
+          title="Status"
         >
           <div className="flex w-full flex-col px-4 py-2">
             <div>
               <p className="text-center text-lg font-semibold">
-                Change password successfully.
+                {changeString}
               </p>
             </div>
             <div className="flex justify-end py-2">

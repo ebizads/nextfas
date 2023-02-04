@@ -7,7 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt"
 import { env } from "../../../env/server.mjs"
 import dayjs from "dayjs"
-import { passArrayCheck } from "../../../lib/functions"
+//import { passArrayCheck } from "../../../lib/functions"
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session

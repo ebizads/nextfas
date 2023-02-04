@@ -7,7 +7,6 @@ import {
 } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
-
 import { Address, Company } from "@prisma/client"
 import Router from "next/router"
 
@@ -164,13 +163,16 @@ export const clearAndGoBack = () => {
   router.back()
 }
 
-export const passArrayCheck = (array: Array<string>, password: string) => {
-  for (let x = 1; x  <= array.length; x++) {
-    if (array[x-1] == password) {
-      return true
-    } else return false
-  }
-}
+// export const passArrayCheck = async (array: Array<string>, password: string) => {
+//   for (const arrays of array){
+//     const match = await bcrypt.compare(password, arrays);
+//     if(match){
+//       return true
+//     }
+//   }
+//   return false    
+// }
+
 export const generateRandomPass = () => {
   let result = ""
   const characters =

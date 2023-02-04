@@ -52,9 +52,6 @@ export const EditUserInput = z.object({
   id: z.number(),
   name: z.string().min(1).optional(),
   email: z.string().min(1).optional(),
-  password: z.string().min(1).optional(),
-  passwordAge: z.number().nullish(),
-  oldPassword: z.array(z.string()).optional().default([]),
   user_type: z.string().optional(),
   image: z.string().optional(),
   profile: z.object({

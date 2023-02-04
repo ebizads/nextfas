@@ -10,6 +10,8 @@ import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import Modal from "../../components/headless/modal/modal"
 import { passConfirmCheck } from "../../lib/functions"
 import { useSession } from "next-auth/react"
+// import bcrypt from "bcrypt"
+
 // import { useSession } from "next-auth/react"
 
 type ChangePass = z.infer<typeof ChangeUserPass>
@@ -32,6 +34,9 @@ export const ChangePassModal = (props: {
       setIsVisible(true)
       // invalidate query of asset id when mutations is successful
     },
+    onError(){
+      console.log(error)
+    }
   })
 
   const {
@@ -45,15 +50,22 @@ export const ChangePassModal = (props: {
   } = useForm<ChangePass>({
     resolver: zodResolver(ChangeUserPass),
     defaultValues: {
-      firstLogin: false,
+      firstLogin: true,
       password: "",
       id: Number(session?.user?.id),
       passwordAge: 1,
     },
   })
 
+  // const encryptPass = async () =>{
+  //   const match = await bcrypt.compare(password, "$2b$10$Yc8Z.neAGmNltMqoM36eG.kI9TpoUPAMljttwI5niA2nNjaKClIim")
+  //   console.log(match.toString())
+  // }
+
   const onSubmit = (changeUserPass: ChangePass) => {
     setConfirmPass(passConfirmCheck(password, confirmPassword))
+
+    
 
     if (confirmPass) {
       mutate({
@@ -64,7 +76,7 @@ export const ChangePassModal = (props: {
       reset()
     } else {
       setPassIncorrect(true)
-      console.log(confirmPass)
+      console.log(error)
     }
   }
 
@@ -121,13 +133,18 @@ export const ChangePassModal = (props: {
           <button
             type="button"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            onClick={() => console.log(password + "     " + confirmPassword)}
+            onClick={() => console.log(error)}
             disabled={isSubmitting}
           >
             {isSubmitting ? "Loading..." : "Change"}
           </button>
         </form>
 
+        {error && (
+          <div className="text-wrap mt-2 font-sans text-sm italic text-red-500">
+            {error}
+          </div>
+        )}
         <Modal
           isVisible={isVisible}
           setIsVisible={setIsVisible}

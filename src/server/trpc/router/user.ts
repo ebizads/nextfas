@@ -8,7 +8,6 @@ import {
 } from "../../schemas/user"
 import { authedProcedure, t } from "../trpc"
 import bcrypt from "bcrypt"
-import { passArrayCheck } from "../../../lib/functions.js"
 import { error } from "console"
 
 export const userRouter = t.router({
@@ -73,23 +72,19 @@ export const userRouter = t.router({
   update: authedProcedure
     .input(EditUserInput)
     .mutation(async ({ input, ctx }) => {
-      const { address, id, profile, oldPassword, passwordAge, ...rest } = input
+      const { address, id, profile, ...rest } = input
       return await ctx.prisma.user.update({
         where: {
           id,
         },
         data: {
           ...rest,
-          oldPassword: {
-            set: oldPassword ?? undefined,
-          },
           address: {
             create: address ?? undefined,
           },
           profile: {
             update: profile ?? undefined,
           },
-          passwordAge: passwordAge,
         },
       })
     }),
@@ -108,23 +103,32 @@ export const userRouter = t.router({
     .input(ChangeUserPass)
     .mutation(async ({ input, ctx }) => {
       const { password, passwordAge, id, oldPassword, ...rest } = input
+
       const encryptedPassword = await bcrypt.hash(password, 10)
-      if (oldPassword.includes(encryptedPassword)) {
-        return await ctx.prisma.user.update({
-          where: {
-            id,
+      // const match = await bcrypt.compare(password, "$2b$10$Yc8Z.neAGmNltMqoM36eG.kI9TpoUPAMljttwI5niA2nNjaKClIim")
+
+      // let flag = false;
+      // const user = await ctx.prisma.user.findMany({ where: { id: id } })
+      // const updatedArray = [encryptedPassword, user.find(oldPassword)]
+
+      // for (const arrays of oldPassword) {
+      //   const match = await bcrypt.compare(password, arrays)
+      //   if (match) {
+      //     flag = true;
+      //   }
+      // }
+      return await ctx.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          oldPassword: {
+            set: [encryptedPassword, ...oldPassword],
           },
-          data: {
-            ...rest,
-            oldPassword: {
-              set: encryptedPassword ?? "",
-            },
-            password: encryptedPassword,
-            passwordAge: passwordAge,
-          },
-        })
-      } else {
-        console.log("ugh")
-      }
+          password: "omsim",
+          passwordAge: passwordAge,
+          ...rest
+        },
+      })
     }),
 })

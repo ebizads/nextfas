@@ -574,7 +574,7 @@ const CreateAssetAccordion = () => {
               <div className="flex items-center gap-2 text-gray-700">
                 <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
-                  General
+                  General Information
                 </p>
               </div>
             </Accordion.Control>

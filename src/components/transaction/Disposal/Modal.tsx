@@ -261,7 +261,7 @@ export const DisposeDetailsModal = (props: {
                                 {
                                     props.asset?.disposalStatus === "pending" ?
                                         "Reject"
-                                        : props.asset?.disposalStatus === "approved" ? "Cancel" : "Confirm"
+                                        : props.asset?.disposalStatus === "approved" ? "Cancel Disposal" : "Confirm"
                                 }
                             </button>
                             <button

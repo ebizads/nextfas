@@ -167,7 +167,7 @@ const DisplayDisposeAssets = (props: {
 			/>
 			<section className="mt-8 flex justify-between px-4">
 				<div className="flex items-center gap-2">
-					<p>Showing up to </p>
+					<p>Showing up to</p>
 					<PaginationPopOver
 						paginationPopover={paginationPopover}
 						setPaginationPopover={setPaginationPopover}

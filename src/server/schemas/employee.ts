@@ -5,7 +5,10 @@ import { DepartmentEditInput } from "./department"
 export const EmployeeCreateInput = z.object({
   name: z.string().optional(),
   employee_id: z.string().nullish(),
-  email: z.string().email().nullish(),
+  email: z
+    .string()
+    .regex(/\S+@\S+\.\S+/, "Invalid Email input")
+    .nullish(),
   hired_date: z.date().nullish(),
   position: z.string().nullish(),
   profile: z.object({
@@ -26,7 +29,11 @@ export const EmployeeEditInput = z.object({
   id: z.number(),
   name: z.string().optional(),
   employee_id: z.string().nullish().optional(),
-  email: z.string().email().nullish().optional(),
+  email: z
+    .string()
+    .regex(/.+\..+/, "Format invalid")
+    .nullish()
+    .optional(),
   hired_date: z.date().nullish().optional(),
   position: z.string().nullish().optional(),
   profile: z

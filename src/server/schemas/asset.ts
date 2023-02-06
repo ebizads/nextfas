@@ -132,6 +132,7 @@ export const AssetRepairEditInput = z.object({
   description: z.string().optional(),
   assetPart: z.string().optional(),
   notes: z.string().optional(),
+  remarks: z.string().optional(),
   repairStatus: z.string().optional(),
 
   assetId: z.number().optional(),

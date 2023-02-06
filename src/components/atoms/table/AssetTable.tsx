@@ -175,10 +175,11 @@ const AssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.department?.name}</p>
                     </div>
                     <div className="col-span-1">
-                      {/* <p className="font-light">Currency</p>
-                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p> */}
+                      <p className="font-light">Asset Location</p>
+                      <p className="font-medium">{props.asset?.management?.asset_location}</p>
                     </div>
-                  </section><section className="grid grid-cols-4 gap-4">
+                  </section>
+                  {/* <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Asset Location</p>
                       <p className="font-medium">{props.asset?.management?.asset_location}</p>
@@ -195,7 +196,7 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Type</p>
                       <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
                     </div>
-                  </section>
+                  </section> */}
                   <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Currency</p>
@@ -288,7 +289,7 @@ const AssetDetailsModal = (props: {
                 </div>
               </section> */}
             </div>
-            <div className="mt-4 px-6 border-l">
+            <div className="mt-4 pl-6 border-l">
               <section className="relative">
                 <div className="p-2 border-2 w-[195.2px] h-[107.2px] border-tangerine-300 relative">
                   {

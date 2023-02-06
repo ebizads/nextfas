@@ -236,8 +236,8 @@ export const CreateEmployeeModal = (props: {
               name={"email"}
               register={register}
               placeholder={"--@email.com"}
-
             />
+            <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Departmemt</label>
@@ -282,6 +282,11 @@ export const CreateEmployeeModal = (props: {
             <input
               type="number"
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              onKeyDown={(e) => {
+                if (e.key === "e") {
+                  e.preventDefault()
+                }
+              }}
               onChange={(event) => {
                 if (event.target.value.length > 11) {
                   console.log("more than 11")
@@ -294,8 +299,6 @@ export const CreateEmployeeModal = (props: {
               }
               }
             />
-
-
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">

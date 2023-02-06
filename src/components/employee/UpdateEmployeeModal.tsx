@@ -106,6 +106,7 @@ export const UpdateEmployeeModal = (props: {
   // useEffect(() => { console.log("department: " + props.employee?.team?.department?.name) })
 
 
+
   return (
     <div>
       <div className="flex flex-row-reverse w-full">
@@ -209,7 +210,8 @@ export const UpdateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${props.employee?.employee_id}`}</p>
+            <p className={'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+            >{`${props.employee?.employee_id}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -237,6 +239,7 @@ export const UpdateEmployeeModal = (props: {
               name={"email"}
               register={register}
             />
+            <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Departmemt</label>
@@ -249,7 +252,7 @@ export const UpdateEmployeeModal = (props: {
               name={"department"}
               register={register}
             /> */}
-            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${props.employee?.team?.department?.name}`}</p>
+            <p className={'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}>{`${props.employee?.team?.department?.name}`}</p>
 
           </div>
         </div>
@@ -285,7 +288,13 @@ export const UpdateEmployeeModal = (props: {
               pattern="[0-9]*"
               defaultValue={props.employee?.profile?.phone_no ?? "--"}
               className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              onKeyDown={(e) => {
+                if (e.key === "e") {
+                  e.preventDefault()
+                }
+              }}
               onChange={(event) => {
+
                 if (event.target.value.length > 11) {
                   console.log("more than 11")
                   event.target.value = event.target.value.slice(0, 11);
@@ -375,22 +384,40 @@ export const UpdateEmployeeModal = (props: {
           acceptingMany={false}
         />}
         <hr className="w-full"></hr>
-        <div className="flex w-full justify-end">
-          <button
+        {/* <div className="flex w-full justify-end">
+          {isEditable && <button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={employeeLoading}
           >
-            {employeeLoading ? "Loading..." : "Register"}
-          </button>
+            {employeeLoading ? "Loading..." : "Save"}
+          </button>}
+        </div> */}
+        <div className="flex w-full justify-between">
+          {!(error && errors && (
+            <pre className="mt-2 text-sm italic text-red-500">
+              Something went wrong!
+            </pre>
+          )) ? <div></div> : (error && errors && (
+            <pre className="mt-2 text-sm italic text-red-500">
+              Something went wrong!
+            </pre>
+          ))}
+          {isEditable && <button
+            type="submit"
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+            disabled={employeeLoading}
+          >
+            {employeeLoading ? "Loading..." : "Save"}
+          </button>}
+
         </div>
       </form>
-      {error && errors && (
+      {/* {error && errors && (
         <pre className="mt-2 text-sm italic text-red-500">
           Something went wrong!
-          {JSON.stringify({ error, errors }, null, 2)}
         </pre>
-      )}
+      )} */}
     </div>
   )
 }

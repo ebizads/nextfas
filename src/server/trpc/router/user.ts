@@ -12,11 +12,13 @@ import { error } from "console"
 
 export const userRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ input, ctx }) => {
-    return await ctx.prisma.user.findUnique({
+     const user = await ctx.prisma.user.findUnique({
       where: {
         id: input,
       },
+    
     })
+    return user
   }),
   findAll: authedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.user.findMany({})
@@ -116,11 +118,15 @@ export const userRouter = t.router({
       //   }
       // }
       const sample: string[] = [...oldPassword]
-      for (let i = 0; i <= sample.length; i++) {
+      for (let i = 0; i < sample.length; i++) {
         const match = await bcrypt.compare(password, `${sample[i]}`)
         if (match) {
           return false
         }
+      }
+
+      if (sample.length >= 12) {
+        sample.pop()
       }
 
       return await ctx.prisma.user.update({
@@ -129,7 +135,7 @@ export const userRouter = t.router({
         },
         data: {
           oldPassword: {
-            set: [encryptedPassword, ...oldPassword],
+            set: [encryptedPassword, ...sample],
           },
           password: encryptedPassword,
           passwordAge: passwordAge,

@@ -1,23 +1,41 @@
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import React, { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import LogOutPopOver from "../atoms/popover/LogOutPopOver"
+import { UserType } from "../../types/generic"
+import { trpc } from "../../utils/trpc"
 
 const TopBar = () => {
-
-
   const { data: session } = useSession()
+
+  const [userId, setUserId] = useState<number>(0)
+
+  const { data: user } = trpc.user.findOne.useQuery(userId)
+
+  const [openChangePass, setOpenChangePass] = useState<boolean>(false)
+
+  const [openPromptVisible, setOpenPromptVisible] = useState<boolean>(false)
 
   const [openLogoutPopover, setOpenLogoutPopover] = useState<boolean>(false)
 
   const { pathname } = useRouter()
+
+  useEffect(() => {
+    setUserId(Number(session?.user?.id))
+    console.log(user)
+    if (user?.firstLogin) {
+      setOpenChangePass(true)
+      setOpenPromptVisible(true)
+    }
+    console.log("first login: " + user?.firstLogin)
+  }, [session, user])
   const paths = useMemo(() => {
     const path_array = pathname
       .split("/")
       .filter((_, idx) => idx !== 0)
       .map((path) => {
         if (path.includes("_")) {
-          return path.replace("_", " ") 
+          return path.replace("_", " ")
         }
         return path
       })
@@ -43,9 +61,15 @@ const TopBar = () => {
         <i className="fa-solid fa-bell text-lg text-gray-500" />
         <div className="rounded-full border border-gray-400 px-2 py-1">
           <p className="text-xs">{session?.user?.name}</p>
-
         </div>
-        <LogOutPopOver openPopover={openLogoutPopover} setOpenPopover={setOpenLogoutPopover} />
+        <LogOutPopOver
+          openPopover={openLogoutPopover}
+          setOpenPopover={setOpenLogoutPopover}
+          isVisible={openChangePass}
+          setIsVisible={setOpenChangePass}
+          promptIsVisible={openPromptVisible}
+          setPromptIsVisible={setOpenPromptVisible}
+        />
       </div>
     </div>
   )

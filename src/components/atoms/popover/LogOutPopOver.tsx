@@ -1,19 +1,41 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Popover } from "@mantine/core"
 import { signOut } from "next-auth/react"
 import { ChangePassModal } from "../../../pages/auth/ChangePassModal"
-
+import { useSession } from "next-auth/react"
+import { UserType } from "../../../types/generic"
+import { Prisma } from "@prisma/client"
+import { trpc } from "../../../utils/trpc"
 const LogOutPopOver = (props: {
   openPopover: boolean
   setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
+  isVisible: boolean
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+  promptIsVisible: boolean
+  setPromptIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  const [openChangePass, setOpenChangePass] = useState<boolean>(false)
+  // const [openChangePass, setOpenChangePass] = useState<boolean>(false)
+  //const [openPromptVisible, setOpenPromptVisible] = useState<boolean>(false)
+
+  const { data: session } = useSession()
+  const [userId, setUserId] = useState<number>(0)
+  const { data: user } = trpc.user.findOne.useQuery(userId)
+
+  useEffect(() => {
+    setUserId(Number(session?.user?.id))
+    //console.log(user)
+
+    
+    //setOpenChangePass(props.isVisible)
+  }, [props, session, user])
 
   return (
     <div>
       <ChangePassModal
-        isVisible={openChangePass}
-        setVisibile={setOpenChangePass}
+        isVisible={props.isVisible}
+        setVisible={props.setIsVisible}
+        promptVisible={props.promptIsVisible}
+        setPromptVisible={props.setPromptIsVisible}
       ></ChangePassModal>
       <Popover
         opened={props.openPopover}
@@ -49,7 +71,7 @@ const LogOutPopOver = (props: {
             </button>
             <button
               onClick={() => {
-                setOpenChangePass(true)
+                props.setIsVisible(true)
               }}
               className="flex items-center gap-2 px-6 py-2 hover:bg-tangerine-100"
             >

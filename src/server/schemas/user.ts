@@ -64,6 +64,7 @@ export const EditUserInput = z.object({
     gender: z.string().optional(),
   }),
   address: AddressEditInput,
+  firstLogin: z.boolean().nullish()
 })
 
 export const IdUser = z.object({

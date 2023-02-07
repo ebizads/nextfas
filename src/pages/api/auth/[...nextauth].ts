@@ -7,6 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt"
 import { env } from "../../../env/server.mjs"
 import dayjs from "dayjs"
+import { passArrayCheck } from "../../../lib/functions"
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -63,7 +64,7 @@ export const authOptions: NextAuthOptions = {
             return user
           }
           let data = {}
-          if (user.attempts < 4) {
+          if (user.attempts < 3) {
             // checks if user has remaining attempts
             data = { attempts: (user.attempts += 1) }
           } else {
@@ -72,7 +73,7 @@ export const authOptions: NextAuthOptions = {
             // console.log(lock_date)
             data = {
               lockedUntil: lock_date,
-              lockedReason: "Too many attempts",
+              lockedReason: "Too many attempts, Account is locked",
               lockedAt: new Date(),
             }
           }
@@ -85,7 +86,7 @@ export const authOptions: NextAuthOptions = {
           })
           throw new Error("Incorrect password. Please try again.")
         }
-        throw new Error("Invalid credentials. Please try again.")
+        throw new Error("Account not found. Please try again.")
       },
     }),
   ],

@@ -39,6 +39,7 @@ export const assetRepairRouter = t.router({
               notes: z.string().optional(),
               repairStatus: z.string().optional(),
               assetId: z.number().optional(),
+              remarks: z.string().optional(),
             })
             .optional(),
           filter: z
@@ -64,6 +65,10 @@ export const assetRepairRouter = t.router({
               deleted: true,
             },
           },
+          skip: input?.page
+            ? (input.page - 1) * (input.limit ?? 10)
+            : undefined,
+          take: input?.limit ?? 10,
         }),
         ctx.prisma.assetRepair.count({
           where: {
@@ -77,6 +82,8 @@ export const assetRepairRouter = t.router({
       return {
         assetRepairs,
         count,
+        pages: Math.ceil(count / (input?.limit ?? 0)),
+        total: count,
       }
     }),
   create: authedProcedure

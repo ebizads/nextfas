@@ -71,6 +71,10 @@ const DisplayRepairAssets = (props: {
 		}
 	}, [setRepairAsset, asset, assetNumber, assetId, setSearch])
 
+	useEffect(() => {
+		console.log("page: " + props.page, "limit: " + props.limit, "accessible page: " + props.accessiblePage)
+	})
+
 	return (
 		<div className="space-y-4">
 			<section className="space-y-4">
@@ -131,7 +135,7 @@ const DisplayRepairAssets = (props: {
 								columns={columns}
 							/> */}
 						</div>
-						{checkboxes.length > 0 && (
+						{/* {checkboxes.length > 0 && (
 							<button
 								onClick={() => setOpenModalDel(true)}
 								className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
@@ -142,7 +146,7 @@ const DisplayRepairAssets = (props: {
 									`Delete selected record/s ( ${checkboxes.length} )`
 								)}
 							</button>
-						)}
+						)} */}
 					</div>
 					<div className="flex items-center gap-2">
 						{/* <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
@@ -187,13 +191,13 @@ const DisplayRepairAssets = (props: {
 					}}
 				/>
 			</section>
-			<AssetDeleteModal
+			{/* <AssetDeleteModal
 				checkboxes={checkboxes}
 				setCheckboxes={setCheckboxes}
 				assets={props.assets}
 				openModalDel={openModalDel}
 				setOpenModalDel={setOpenModalDel}
-			/>
+			/> */}
 		</div>
 	);
 };

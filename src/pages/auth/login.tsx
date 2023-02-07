@@ -2,7 +2,6 @@ import { Checkbox } from "@mantine/core"
 import { signIn } from "next-auth/react"
 import Head from "next/head"
 import Image from "next/image"
-import { useRouter } from "next/router"
 import React, { useState } from "react"
 import { InputField } from "../../components/atoms/forms/InputField"
 
@@ -11,7 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
-
+import { router } from "trpc"
+import { userRouter } from "../../server/trpc/router/user"
+import { useRouter } from "next/router"
 // input validations
 // Describe the correctness of data's form.
 const userSchema = z.object({
@@ -48,6 +49,7 @@ function LoginForm() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
 
+
   //get client ip address
   // const { data } = useQuery(["ip"], async () => {
   //   return await fetch("/api/ip").then((res) => res.json())
@@ -81,9 +83,9 @@ function LoginForm() {
       callbackUrl: "/assets",
     })
 
-    setError(res?.error as string)
+     setError(res?.error as string)
     if (res?.error) {
-      // console.log("May error ", res?.error)
+       console.log("May error ", res?.error)
     } else {
       router.push(res?.url as string)
     }
@@ -163,6 +165,11 @@ function LoginForm() {
 }
 
 const Login = () => {
+  const router = useRouter();
+  function onRegister() {
+    router.push("../auth/register")
+  }
+
   return (
     <>
       <Head>
@@ -183,11 +190,12 @@ const Login = () => {
           </div>
           <LoginForm />
         </div>
-        {/* <Link href="/auth/register">
-          <a className="px-4 py-1 text-amber-300 hover:text-amber-400 underline my-2">
-            Register
-          </a>
-        </Link> */}
+        <button
+          onClick={() => {
+            onRegister()
+          }}
+        >
+        </button>
       </main>
     </>
   )

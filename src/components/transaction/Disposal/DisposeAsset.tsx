@@ -95,7 +95,7 @@ const Dispose = (props: {
                                 <Tabs.Tab value="approved"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'approved' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Approved</p></div></Tabs.Tab>
                                 <Tabs.Tab value="rejected"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'rejected' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Rejected</p></div></Tabs.Tab>
                                 <Tabs.Tab value="cancelled"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'cancelled' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Cancelled</p></div></Tabs.Tab>
-                                <Tabs.Tab value="done"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'done' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Done</p></div></Tabs.Tab>
+                                <Tabs.Tab value="done"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'done' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Completed</p></div></Tabs.Tab>
 
                             </Tabs.List>
                         </Tabs>

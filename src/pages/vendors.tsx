@@ -9,7 +9,6 @@ import { Pagination, Select } from "@mantine/core"
 import PaginationPopOver from "../components/atoms/popover/PaginationPopOver"
 import FilterPopOver from "../components/atoms/popover/FilterPopOver"
 import Search from "../components/atoms/search/Search"
-import Modal from "../components/asset/Modal"
 import { TypeOf, z } from "zod"
 import { VendorCreateInput } from "../server/schemas/vendor"
 import { useForm } from "react-hook-form"
@@ -20,6 +19,7 @@ import { Textarea } from "@mantine/core"
 import { ImageJSON } from "../types/table"
 import DropZoneComponent from "../components/dropzone/DropZoneComponent"
 import TypeSelect from "../components/atoms/select/TypeSelect"
+import Modal from "../components/headless/modal/modal"
 
 const Vendors = () => {
   const [page, setPage] = useState(1)
@@ -199,24 +199,17 @@ const Vendors = () => {
             }}
           />
         </section>
-        <Modal isOpen={openModalAdd} setIsOpen={setOpenModalAdd} size={12}>
-          <div className="w-full py-4 px-8">
-            <section className="flex items-center justify-between border-b py-2 text-light-primary">
-              <h4>Add New Vendor</h4>
-              {/* TODO: Reset form */}
-              <i
-                onClick={() => setOpenModalAdd(false)}
-                className="fa-solid fa-xmark cursor-pointer text-lg text-gray-500"
-              />
-            </section>
+        <Modal title="Add New Vendor" isVisible={openModalAdd} setIsVisible={setOpenModalAdd} className="max-w-4xl" >
+          <div className="w-full">
+
             <form
-              className="p-2"
+              // className="p-2"
               onSubmit={(e) => {
                 e.preventDefault()
               }}
               noValidate
             >
-              <div className="grid grid-cols-10 gap-4">
+              <div className="grid grid-cols-10 gap-y-9 gap-x-4">
                 <div className="col-span-5 mt-1">
                   <InputField
                     register={register}
@@ -229,8 +222,6 @@ const Vendors = () => {
 
 
                 <div className="col-span-5">
-
-
                   <label className="sm:text-sm">Vendor Type</label>
                   <Select
                     placeholder="Pick one"
@@ -280,12 +271,18 @@ const Vendors = () => {
                   <label className="sm:text-sm">Phone Number: {`(use " , " for multiple phone numbers)`}</label>
                   <input
                     type="text"
-                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    className="w-full rounded-md border-2 curs border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    onKeyDown={(e) => {
+                      const regex = /^[0-9, ]|Backspace/
+                      if (e.key === "e" || !regex.test(e.key)) {
+                        e.preventDefault()
+                      }
+                    }}
                     onChange={(event) => {
                       const convertToArray = event.currentTarget.value;
 
 
-                      const phonenumString = convertToArray.replace(/[^0-9,]/gi, "").split(",")
+                      const phonenumString = convertToArray.replace(/[^0-9, ]/gi, "").split(",")
                       setValue("phone_no", phonenumString);
                     }}
                     value={watcher.phone_no}
@@ -295,13 +292,39 @@ const Vendors = () => {
 
 
                 <div className="col-span-5">
-                  <InputField
+                  {/* <InputField
                     register={register}
                     label="Fax Number"
                     name="fax_no"
                     type="text"
+                  /> */}
+                  <label className="sm:text-sm mb-2">Fax Number</label>
+                  <input
+                    // disabled={!isEditable}
+
+                    type="number"
+                    pattern="[0-9]*"
+                    className={'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+                    onKeyDown={(e) => {
+                      if (e.key === "e") {
+                        e.preventDefault()
+                      }
+                    }}
+                    onChange={(event) => {
+
+                      if (event.target.value.length > 8) {
+                        console.log("more than 8")
+                        event.target.value = event.target.value.slice(0, 8);
+                      }
+                      setValue(
+                        "fax_no",
+                        event.currentTarget.value.toString()
+                      )
+                    }}
                   />
                   <AlertInput>{errors?.fax_no?.message}</AlertInput>
+                  {/* </div> */}
+                  {/* <AlertInput>{errors?.fax_no?.message}</AlertInput> */}
                 </div>
                 <div className="col-span-5">
                   <InputField
@@ -388,7 +411,8 @@ const Vendors = () => {
                   acceptingMany={true}
                 />
               </div>
-              <div className="flex w-full justify-end gap-2 py-4">
+              <hr className="w-full"></hr>
+              <div className="flex w-full justify-end gap-2 mt-4">
                 {/* TODO: Reset form */}
                 <button
 
@@ -398,7 +422,7 @@ const Vendors = () => {
 
 
                   onClick={() => { console.log(errors) }}
-                  className="py-2 px-4 font-medium underline"
+                  className="px-4 font-medium underline"
                 >
                   Discard
                 </button>
@@ -408,7 +432,8 @@ const Vendors = () => {
                   type="submit"
                   onClick={handleSubmit(onSubmit)}
                   disabled={isSubmitting}
-                  className="rounded-md bg-tangerine-500 py-2 px-6 font-semibold text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
+                  // className="rounded-md bg-tangerine-500 py-2 px-6 font-semibold text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
+                  className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                 >
                   Add Vendor
                 </button>

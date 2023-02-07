@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useState } from "react"
-import { useMinimizeStore } from "../../../store/useStore"
+import React, { useEffect, useState } from "react"
+import { useEditableStore, useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
@@ -41,6 +41,18 @@ const EmployeeTable = (props: {
     // adds id
     props.setCheckboxes((prev) => [...prev, id])
   }
+
+  const { editable, setEditable } = useEditableStore()
+
+  useEffect(() => {
+    if (!updateRecord && editable) {
+      setEditable(false)
+    }
+  }, [setEditable, updateRecord])
+
+  useEffect(() => {
+    console.log("editable: " + editable, "updateRecord: " + updateRecord)
+  })
 
   return (
     <div
@@ -146,15 +158,15 @@ const EmployeeTable = (props: {
         </tbody>
       </table>
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
-      <ShowDetails
+      {/* <ShowDetails
         isVisible={isVisible}
         setIsVisible={setIsVisible}
         info={details!}
-      />
+      /> */}
 
       {details !== null ? (
         <Modal
-          title="Update Employee Record"
+          title={(editable) ? "Update Employee Record" : "Employee Record"}
           isVisible={updateRecord}
           setIsVisible={setUpdateRecord}
           className="max-w-4xl"

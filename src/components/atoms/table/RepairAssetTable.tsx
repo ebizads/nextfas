@@ -183,10 +183,11 @@ const RepairAssetDetailsModal = (props: {
                                             <p className="font-medium">{props.asset?.department?.name}</p>
                                         </div>
                                         <div className="col-span-1">
-                                            {/* <p className="font-light">Currency</p>
-                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p> */}
+                                            <p className="font-light">Asset Location</p>
+                                            <p className="font-medium">{props.asset?.management?.asset_location}</p>
                                         </div>
-                                    </section><section className="grid grid-cols-4 gap-4">
+                                    </section>
+                                    {/* <section className="grid grid-cols-4 gap-4">
                                         <div className="col-span-1">
                                             <p className="font-light">Asset Location</p>
                                             <p className="font-medium">{props.asset?.management?.asset_location}</p>
@@ -203,7 +204,7 @@ const RepairAssetDetailsModal = (props: {
                                             <p className="font-light">Type</p>
                                             <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
                                         </div>
-                                    </section>
+                                    </section> */}
                                     <section className="grid grid-cols-4 gap-4">
                                         <div className="col-span-1">
                                             <p className="font-light">Currency</p>
@@ -245,11 +246,11 @@ const RepairAssetDetailsModal = (props: {
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Period</p>
-                                            <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"} Months</p>
                                         </div>
                                         <div className="col-span-1">
                                             <p className="font-light">Quantity</p>
-                                            <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
+                                            <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"} Units</p>
                                         </div>
                                     </section>
                                     <section className="grid grid-cols-4 gap-4">
@@ -303,7 +304,7 @@ const RepairAssetDetailsModal = (props: {
                             {""}
                             <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
                         </button>
-                        <div className="mt-4 flex flex-col justify-between border-l px-6">
+                        <div className="mt-4 flex flex-col justify-between border-l pl-6">
                             <section className="relative">
                                 <div className="flex-h relative h-[107.2px] w-[195.2px] border-2 border-tangerine-300 p-2">
                                     {!genBarcode && (

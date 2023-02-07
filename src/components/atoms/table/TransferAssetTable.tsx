@@ -16,7 +16,6 @@ import { useReactToPrint } from "react-to-print"
 import JsBarcode from "jsbarcode"
 import Link from "next/link"
 
-
 const TransferAssetDetailsModal = (props: {
   asset: AssetType | null
   openModalDesc: boolean
@@ -28,12 +27,10 @@ const TransferAssetDetailsModal = (props: {
   //   console.log(props.asset.addedBy)
   // }, [])
 
-
   const componentRef = useRef(null)
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   })
-
 
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
@@ -49,18 +46,15 @@ const TransferAssetDetailsModal = (props: {
     })
   }
 
-
   useEffect(() => {
     if (!props.openModalDesc) {
       setGenBarcode(false)
     }
   }, [props.openModalDesc])
 
-
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
   const { transferAsset, setTransferAsset } = useTransferAssetStore()
   // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
-
 
   // console.log("asset number: "+props.asset!.number!);
   return (
@@ -105,7 +99,6 @@ const TransferAssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.parentId !== 0 ? props.asset?.parent?.name : "--"}</p>
                       <p className="text-[0.6rem] text-neutral-500 italic">{props.asset?.parentId !== 0 && props.asset?.parent?.number}</p>
 
-
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Model Name</p>
@@ -140,7 +133,6 @@ const TransferAssetDetailsModal = (props: {
                   </section>
                   <section className="grid grid-cols-4">
 
-
                     <div className="col-span-1">
                       <p className="font-light">Asset Lifetime</p>
                       <p className="font-medium">{props.asset?.management?.asset_lifetime ? props.asset?.management?.asset_lifetime : "--"} Months</p>
@@ -152,7 +144,6 @@ const TransferAssetDetailsModal = (props: {
                   </section>
                 </div>
               </section>
-
 
               <section className="border-b pb-4">
                 <p className="font-medium text-neutral-600 text-base">General Information</p>
@@ -189,27 +180,11 @@ const TransferAssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.department?.name}</p>
                     </div>
                     <div className="col-span-1">
-                      {/* <p className="font-light">Currency</p>
-                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p> */}
-                    </div>
-                  </section><section className="grid grid-cols-4 gap-4">
-                    <div className="col-span-1">
                       <p className="font-light">Asset Location</p>
                       <p className="font-medium">{props.asset?.management?.asset_location}</p>
                     </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Class</p>
-                      <p className="font-medium">{props.asset?.model?.class?.name ?? "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Category</p>
-                      <p className="font-medium">{props.asset?.model?.category?.name ?? "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Type</p>
-                      <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
-                    </div>
                   </section>
+
                   <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Currency</p>
@@ -219,7 +194,6 @@ const TransferAssetDetailsModal = (props: {
                       <p className="font-light">Accounting Method</p>
                       <p className="font-medium">{props.asset?.management?.accounting_method ?? "--"}</p>
                     </div>
-
 
                     <div className="col-span-1">
                       <p className="font-light">Purchase Date</p>
@@ -310,7 +284,7 @@ const TransferAssetDetailsModal = (props: {
               {""}
               <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
             </button>
-            <div className=" mt-4 flex flex-col justify-between border-l px-6">
+            <div className=" mt-4 flex flex-col justify-between border-l pl-6">
               <section className="relative">
                 <div className=" relative flex h-[107.2px] w-[195.2px] border-2 border-tangerine-300 p-2">
                   {!genBarcode && (
@@ -321,7 +295,6 @@ const TransferAssetDetailsModal = (props: {
                       Generate Barcode
                     </button>
                   )}
-
 
                   <div id="printSVG" ref={componentRef}>
                     <svg id="barcode" />
@@ -373,7 +346,6 @@ const TransferAssetDetailsModal = (props: {
                       setTransferAsset(selectedAsset)
                       props.setOpenModalDesc(false)
 
-
                       console.log(
                         "transfer btn clicked: " + selectedAsset?.number
                       )
@@ -403,7 +375,6 @@ const TransferAssetDetailsModal = (props: {
   )
 }
 
-
 const TransferAssetTable = (props: {
   // checkboxes: number[]
   // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
@@ -414,14 +385,11 @@ const TransferAssetTable = (props: {
   //minimize screen toggle
   const { minimize } = useMinimizeStore()
 
-
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
-
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
-
 
   // const selectAllCheckboxes = () => {
   //   if (props.checkboxes.length === 0) {
@@ -430,7 +398,6 @@ const TransferAssetTable = (props: {
   //     props.setCheckboxes([])
   //   }
   // }
-
 
   // const toggleCheckbox = async (id: number) => {
   //   if (props.checkboxes.includes(id)) {
@@ -441,7 +408,6 @@ const TransferAssetTable = (props: {
   //   // adds id
   //   props.setCheckboxes((prev) => [...prev, id])
   // }
-
 
   return (
     <div
@@ -476,7 +442,6 @@ const TransferAssetTable = (props: {
                 {col.name}
               </th>
             ))}
-
 
             {/* <th scope="col" className="p-4 text-center">
               Action
@@ -540,7 +505,6 @@ const TransferAssetTable = (props: {
         </tbody>
       </table>
 
-
       <TransferAssetDetailsModal
         asset={selectedAsset}
         openModalDesc={openModalDesc}
@@ -551,6 +515,5 @@ const TransferAssetTable = (props: {
     </div>
   )
 }
-
 
 export default TransferAssetTable

@@ -4,7 +4,7 @@ import { AssetRepairEditInput } from "../../../server/schemas/asset";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "../../atoms/forms/InputField";
 import { trpc } from "../../../utils/trpc";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../headless/modal/modal";
 import { AssetRepairType } from "../../../types/generic";
 import { Textarea } from "@mantine/core";
@@ -46,6 +46,7 @@ export const RepairDetailsModal = (props: {
     const {
         handleSubmit,
         reset,
+        setValue,
     } = useForm<RepairEdit>({
         resolver: zodResolver(AssetRepairEditInput),
     })
@@ -71,9 +72,13 @@ export const RepairDetailsModal = (props: {
     const [remarks, setRemarks] = useState<string | null>(null)
 
 
-    function setValue(arg0: string, text: string) {
-        throw new Error("Function not implemented.");
-    }
+    // function setValue(arg0: string, text: string) {
+    //     throw new Error("Function not implemented.");
+    // }
+
+    useEffect(() => {
+        console.log(props.asset?.remarks ?? "--")
+    })
 
     return (
         <div className="w-full">
@@ -116,11 +121,11 @@ export const RepairDetailsModal = (props: {
                             </div>
                         </div>
 
-                        {(props.asset?.repairStatus === "pending" || props.asset?.repairStatus === "approved") && <div className="flex flex-row justify-between w-full gap-7">
+                        {(props.asset?.repairStatus === "pending") && <div className="flex flex-row justify-between w-full gap-7">
                             <div className="flex flex-col w-full">
-                                <label className="font-semibold">Remarks</label >
+                                <label className="font-semibold">Comments</label >
                                 <Textarea
-                                    value={props.asset?.notes ?? ""}
+                                    defaultValue={props.asset?.notes ?? ""}
                                     onChange={(event) => {
                                         const text = event.currentTarget.value
                                         setRemarks(text)
@@ -136,9 +141,31 @@ export const RepairDetailsModal = (props: {
                                 />
                             </div>
                         </div>}
+
+                        {(props.asset?.repairStatus === "approved") && <div className="flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full">
+                                <label className="font-semibold">Comments</label >
+                                <Textarea
+                                    defaultValue={props.asset?.remarks ?? ""}
+                                    onChange={(event) => {
+                                        const text = event.currentTarget.value
+                                        setRemarks(text)
+                                        setValue("remarks", text)
+                                    }}
+                                    placeholder={props.asset?.remarks ?? "Remarks"}
+                                    minRows={6}
+                                    maxRows={6}
+                                    classNames={{
+                                        input:
+                                            "w-full border-2 border-gray-400 outline-none text-lg ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+                                    }}
+                                />
+                            </div>
+                        </div>}
+
                         {(props.asset?.repairStatus === "rejected" || props.asset?.repairStatus === "done" || props.asset?.repairStatus === "cancelled") && <div className="flex flex-row justify-between w-full gap-7">
                             <div className="flex flex-col w-full">
-                                <label className="font-semibold">Remarks</label >
+                                <label className="font-semibold">Comments</label >
                                 <Textarea
                                     disabled
                                     // value={remarks ?? ""}
@@ -147,7 +174,7 @@ export const RepairDetailsModal = (props: {
                                     //     // setDisposalDesc(text)
                                     //     setValue("remarks", text)
                                     // }}
-                                    placeholder={props.asset?.notes ?? ""}
+                                    defaultValue={props.asset?.remarks ?? ""}
                                     minRows={6}
                                     maxRows={6}
                                     classNames={{
@@ -173,7 +200,7 @@ export const RepairDetailsModal = (props: {
                                 {
                                     props.asset?.repairStatus === "pending" ?
                                         "Reject"
-                                        : props.asset?.repairStatus === "approved" ? "Cancel Repair" : "Done"
+                                        : props.asset?.repairStatus === "approved" ? "Cancel Repair" : "Confirm"
                                 }
                             </button>
                             <button
@@ -188,7 +215,7 @@ export const RepairDetailsModal = (props: {
                                 {
                                     props.asset?.repairStatus === "pending" ?
                                         "Approve"
-                                        : "Done"
+                                        : "Confirm"
                                 }
                             </button>
 

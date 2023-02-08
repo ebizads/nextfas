@@ -83,7 +83,10 @@ export const UpdateVendorModal = (props: {
   })
 
 
-  useEffect(() => reset(props.vendor as Vendor), [props.vendor, reset])
+  useEffect(() => {
+    reset(props.vendor as Vendor);
+    console.log(props.vendor)
+  }, [props.vendor, reset])
 
 
   const onSubmit = async (vendor: Vendor) => {
@@ -115,7 +118,16 @@ export const UpdateVendorModal = (props: {
 
 
 
-  useEffect(() => { console.log(editable) })
+  // useEffect(() => { console.log(editable) })
+  const [input, setInput] = useState('')
+
+
+  const handleKeyDown = (e: { key: string; preventDefault: () => void }) => {
+    const regex = /[0-9,]/
+    if (!regex.test(e.key)) {
+      e.preventDefault()
+    }
+  }
 
 
   return (
@@ -152,7 +164,8 @@ export const UpdateVendorModal = (props: {
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Vendor Type</label>
             <Select
-              placeholder="Pick one"
+              disabled={!isEditable}
+              defaultValue={props.vendor?.type ?? "--"}
               onChange={(value) => {
                 setValue("type", value ?? "")
               }}
@@ -179,7 +192,7 @@ export const UpdateVendorModal = (props: {
                 },
               })}
               variant="unstyled"
-              className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent  px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
             />
           </div>
 
@@ -194,18 +207,29 @@ export const UpdateVendorModal = (props: {
               name={"email"}
               register={register}
             />
+            <AlertInput>{errors?.email?.message}</AlertInput>
+
           </div>
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Phone Number: {`(use " , " for multiple phone numbers)`}</label>
             <input
               disabled={!isEditable}
-              type="text"
               className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              pattern="[0-9]*"
+              type="text"
+              onKeyDown={(e) => {
+                const regex = /^[0-9, ]|Backspace/
+                if (e.key === "e" || !regex.test(e.key)) {
+                  e.preventDefault()
+                }
+              }}
+              // onInput={(event) => {
+              //   const inputValue = event.currentTarget.value
+
+              // }}
               onChange={(event) => {
                 const convertToArray = event.currentTarget.value;
-
-
-                const phonenumString = convertToArray.replace(/[^0-9,]/gi, "").split(",")
+                const phonenumString = convertToArray.replace(/[^0-9, ]/gi, "").split(",")
                 setValue("phone_no", phonenumString);
               }}
               defaultValue={props.vendor?.phone_no ?? "--"}
@@ -216,17 +240,43 @@ export const UpdateVendorModal = (props: {
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex flex-col sm:w-1/3 md:w-[49%]">
-            <InputField
+          <div className="flex flex-col sm:w-1/3 md:w-[49%] my-0.5">
+            {/* <InputField
               disabled={!isEditable}
               register={register}
               label="Fax Number"
               name="fax_no"
               type="text"
+
+            /> */}
+            <label className="sm:text-sm mb-2">Fax Number</label>
+            <input
+              disabled={!isEditable}
+
+              type="number"
+              pattern="[0-9]*"
+              defaultValue={props.vendor?.fax_no ?? "--"}
+              className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              onKeyDown={(e) => {
+                if (e.key === "e") {
+                  e.preventDefault()
+                }
+              }}
+              onChange={(event) => {
+
+                if (event.target.value.length > 8) {
+                  console.log("more than 8")
+                  event.target.value = event.target.value.slice(0, 8);
+                }
+                setValue(
+                  "fax_no",
+                  event.currentTarget.value.toString()
+                )
+              }}
             />
             <AlertInput>{errors?.fax_no?.message}</AlertInput>
           </div>
-          <div className="flex w-[49%] flex-col">
+          <div className="flex w-[49%] flex-col my-0.5">
             <InputField
               disabled={!isEditable}
               register={register}
@@ -239,7 +289,7 @@ export const UpdateVendorModal = (props: {
 
         </div>
 
-        <div className="flex w-full flex-wrap gap-4 py-2.5">
+        <div className="flex w-full flex-wrap gap-4 py-4">
           <div className="flex w-[18.4%] flex-col">
             <label className="sm:text-sm">Street</label>
             <InputField
@@ -343,13 +393,13 @@ export const UpdateVendorModal = (props: {
               Something went wrong!
             </pre>
           ))}
-          <button
+          {isEditable && <button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={vendorLoading}
           >
             {vendorLoading ? "Loading..." : "Save"}
-          </button>
+          </button>}
 
         </div>
       </form>

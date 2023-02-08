@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useMinimizeStore, useUpdateAssetStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
-import { Checkbox } from "@mantine/core"
+import { Checkbox, Divider } from "@mantine/core"
 import Modal from "../../asset/Modal"
 import { AssetType } from "../../../types/generic"
 import { columns } from "../../../lib/table"
@@ -12,6 +12,7 @@ import { useReactToPrint } from "react-to-print"
 import JsBarcode from "jsbarcode"
 import Link from "next/link"
 import { useSearchStore } from "../../../store/useStore"
+import QRCode from "react-qr-code"
 const AssetDetailsModal = (props: {
   asset: AssetType | null
   openModalDesc: boolean
@@ -25,9 +26,15 @@ const AssetDetailsModal = (props: {
   //   console.log(props.asset.addedBy)
   // }, [])
 
-  const componentRef = useRef(null);
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+  // const componentRef = useRef(null);
+  const barcodeRef = useRef(null);
+  const qrcodeRef = useRef(null);
+
+  const handleBarPrint = useReactToPrint({
+    content: () => barcodeRef.current,
+  });
+  const handleQRPrint = useReactToPrint({
+    content: () => qrcodeRef.current,
   });
 
   const [genBarcode, setGenBarcode] = useState(false)
@@ -44,14 +51,30 @@ const AssetDetailsModal = (props: {
     })
   }
 
+
+  // const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+  // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
+
+  const jsonData = {
+    asset_no: props.asset?.number,
+    asset_name: props.asset?.name,
+    asset_desc: props.asset?.description
+  };
+  const stringifiedData = JSON.stringify(jsonData);
+
+  const [genQRcode, setGenQRcode] = useState(false)
+  const genQR = () => {
+    setGenQRcode(true)
+  }
+
   useEffect(() => {
     if (!props.openModalDesc) {
       setGenBarcode(false)
+      setGenQRcode(false)
     }
   }, [props.openModalDesc])
 
-  const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
-  // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
+
   return (
     <>
       <Modal
@@ -175,10 +198,11 @@ const AssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.department?.name}</p>
                     </div>
                     <div className="col-span-1">
-                      {/* <p className="font-light">Currency</p>
-                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p> */}
+                      <p className="font-light">Asset Location</p>
+                      <p className="font-medium">{props.asset?.management?.asset_location}</p>
                     </div>
-                  </section><section className="grid grid-cols-4 gap-4">
+                  </section>
+                  {/* <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Asset Location</p>
                       <p className="font-medium">{props.asset?.management?.asset_location}</p>
@@ -195,7 +219,7 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Type</p>
                       <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
                     </div>
-                  </section>
+                  </section> */}
                   <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Currency</p>
@@ -288,7 +312,7 @@ const AssetDetailsModal = (props: {
                 </div>
               </section> */}
             </div>
-            <div className="mt-4 px-6 border-l">
+            <div className="mt-4 pl-6 border-l w-[20%]">
               <section className="relative">
                 <div className="p-2 border-2 w-[195.2px] h-[107.2px] border-tangerine-300 relative">
                   {
@@ -297,14 +321,35 @@ const AssetDetailsModal = (props: {
                     </button>
                   }
 
-                  <div id="printSVG" ref={componentRef}>
+                  <div id="printSVG" ref={barcodeRef}>
                     <svg id="barcode" />
                   </div>
                 </div>
                 {
                   genBarcode && <button
                     type="button"
-                    onClick={() => { handlePrint(); console.log("printing barcode") }}
+                    onClick={() => { handleBarPrint(); console.log("printing barcode", "comporef: ", barcodeRef); }}
+                    className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none p-2 rounded-full absolute bottom-3 right-2 bg-tangerine-300 hover:bg-tangerine-400">
+                    {""} <i className="fa-solid fa-print" />
+                  </button>}
+              </section>
+              <br></br>
+              <section className="relative">
+                <div className="p-2 border-2 w-[195.2px] h-[185.14px] border-tangerine-300 relative flex flex-col justify-center">
+                  {
+                    !genQRcode && <button onClick={genQR} className=" z-[10000] outline-none focus:outline-none text-neutral-50 bg-tangerine-400 hover:bg-tangerine-500 rounded-lg px-5 py-2">
+                      Generate QR code
+                    </button>
+                  }
+
+                  {genQRcode && <div id="printSVG1" ref={qrcodeRef} className="flex justify-center items-center mb-3 -ml-2 mt-3">
+                    <QRCode className="w-[80%] h-auto" value={stringifiedData ?? "--"} />
+                  </div>}
+                </div>
+                {
+                  genQRcode && <button
+                    type="button"
+                    onClick={() => { handleQRPrint(); console.log("printing QR code", "comporef: ", qrcodeRef); }}
                     className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none p-2 rounded-full absolute bottom-3 right-2 bg-tangerine-300 hover:bg-tangerine-400">
                     {""} <i className="fa-solid fa-print" />
                   </button>}
@@ -323,7 +368,11 @@ const AssetDetailsModal = (props: {
                   <p className="font-medium">Type</p>
                   <p className="font-light">{props.asset?.model?.type ? props.asset?.model?.type?.name : "--"}</p>
                 </div>
+                {/* <div className="">
+                  <QRCode className="w-[80%] h-auto" value={stringifiedData ?? "--"} />
+                </div> */}
               </section>
+
               <nav className="relative my-2 flex flex-1 flex-col gap-2 ">
                 <button
                   className="outline-none focus:outline-none"

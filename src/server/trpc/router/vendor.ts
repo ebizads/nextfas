@@ -101,7 +101,7 @@ export const vendorRouter = t.router({
       const { address, id, ...rest } = input
 
       try {
-        await ctx.prisma.employee.update({
+        await ctx.prisma.vendor.update({
           where: {
             id,
           },

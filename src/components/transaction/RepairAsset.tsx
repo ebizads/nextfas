@@ -8,31 +8,31 @@ import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import RepairTable from "../atoms/table/RepairTable"
 import { useDisposalStatusStore, useRepairStatusStore } from "../../store/useStore"
 
-type SearchType = {
-  value: string
-  label: string
-}
+// type SearchType = {
+//   value: string
+//   label: string
+// }
 
-const Search = (props: { data: SearchType[] }) => {
-  const [value, setValue] = useState<string | null>(null)
-  return (
-    <Select
-      value={value}
-      placeholder="Search"
-      searchable
-      nothingFound={`Cannot find option`}
-      onChange={setValue}
-      clearable
-      data={[...props.data]}
-      icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
-    />
-  )
-}
+// const Search = (props: { data: SearchType[] }) => {
+//   const [value, setValue] = useState<string | null>(null)
+//   return (
+//     <Select
+//       value={value}
+//       placeholder="Search"
+//       searchable
+//       nothingFound={`Cannot find option`}
+//       onChange={setValue}
+//       clearable
+//       data={[...props.data]}
+//       icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
+//     />
+//   )
+// }
 
 const RepairAsset = (props: {
   total: number
-  asset: AssetRepairType[]
-  assetPage: number
+  assets: AssetRepairType[]
+  accessiblePage: number
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
   limit: number
@@ -44,6 +44,8 @@ const RepairAsset = (props: {
   const [filterBy, setFilterBy] = useState<string[]>(
     repairColumn.map((i) => i.value)
   )
+  // const [assets, setAssets] = useState<AssetType[]>([]);
+  // const [accessiblePage, setAccessiblePage] = useState<number>(0);
 
   const [activeTab, setActiveTab] = useState<string | null>("pending")
   const { status, setStatus } = useRepairStatusStore()
@@ -51,6 +53,11 @@ const RepairAsset = (props: {
   useEffect(() => {
     setStatus(activeTab ?? "pending")
   }, [activeTab, setStatus])
+
+  useEffect(() => {
+    console.log("page: " + props.page, "limit: " + props.limit, "total: " + props.accessiblePage)
+  })
+
 
 
 
@@ -156,7 +163,7 @@ const RepairAsset = (props: {
                         }`
                       }
                     >
-                      Done
+                      Completed
                     </p>{" "}
 
                   </div>
@@ -167,11 +174,9 @@ const RepairAsset = (props: {
               <RepairTable
                 // checkboxes={checkboxes}
                 // setCheckboxes={setCheckboxes}
-                rows={props.asset}
+                rows={props.assets}
                 filterBy={filterBy}
-                columns={repairColumn.filter((col) =>
-                  filterBy.includes(col.value)
-                )}
+                columns={repairColumn.filter((col) => filterBy.includes(col.value))}
               />
             </div>
           </div>
@@ -179,7 +184,7 @@ const RepairAsset = (props: {
       </section>
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">
-          <p>Showing up to </p>
+          <p>Showing up to</p>
           <PaginationPopOver
             paginationPopover={paginationPopover}
             setPaginationPopover={setPaginationPopover}
@@ -193,9 +198,9 @@ const RepairAsset = (props: {
         <Pagination
           page={props.page}
           onChange={props.setPage}
-          total={props.assetPage}
+          total={props.accessiblePage}
           classNames={{
-            item: "bg-transparent selected-page:bg-tangerine-500 border-none",
+            item: 'bg-transparent selected-page:bg-tangerine-500 border-none'
           }}
         />
       </section>

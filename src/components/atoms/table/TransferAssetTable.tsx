@@ -21,7 +21,7 @@ const TransferAssetDetailsModal = (props: {
   openModalDesc: boolean
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
   setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   // useEffect(() => {
   //   console.log(props.asset.addedBy)
@@ -180,27 +180,11 @@ const TransferAssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.department?.name}</p>
                     </div>
                     <div className="col-span-1">
-                      {/* <p className="font-light">Currency</p>
-                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p> */}
-                    </div>
-                  </section><section className="grid grid-cols-4 gap-4">
-                    <div className="col-span-1">
                       <p className="font-light">Asset Location</p>
                       <p className="font-medium">{props.asset?.management?.asset_location}</p>
                     </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Class</p>
-                      <p className="font-medium">{props.asset?.model?.class?.name ?? "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Category</p>
-                      <p className="font-medium">{props.asset?.model?.category?.name ?? "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Type</p>
-                      <p className="font-medium">{props.asset?.model?.type?.name ?? "--"}</p>
-                    </div>
                   </section>
+
                   <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Currency</p>
@@ -242,11 +226,11 @@ const TransferAssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Period</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"} Months</p>
                     </div>
                     <div className="col-span-1">
-                      <p className="font-light">Period</p>
-                      <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
+                      <p className="font-light">Quantity</p>
+                      <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"} Units</p>
                     </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">
@@ -300,7 +284,7 @@ const TransferAssetDetailsModal = (props: {
               {""}
               <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
             </button>
-            <div className=" mt-4 flex flex-col justify-between border-l px-6">
+            <div className=" mt-4 flex flex-col justify-between border-l pl-6">
               <section className="relative">
                 <div className=" relative flex h-[107.2px] w-[195.2px] border-2 border-tangerine-300 p-2">
                   {!genBarcode && (
@@ -392,8 +376,8 @@ const TransferAssetDetailsModal = (props: {
 }
 
 const TransferAssetTable = (props: {
-  checkboxes: number[]
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  // checkboxes: number[]
+  // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
   filterBy: string[]
   rows: AssetType[]
   columns: ColumnType[]
@@ -407,23 +391,23 @@ const TransferAssetTable = (props: {
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
-  const selectAllCheckboxes = () => {
-    if (props.checkboxes.length === 0) {
-      props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
-    } else {
-      props.setCheckboxes([])
-    }
-  }
+  // const selectAllCheckboxes = () => {
+  //   if (props.checkboxes.length === 0) {
+  //     props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
+  //   } else {
+  //     props.setCheckboxes([])
+  //   }
+  // }
 
-  const toggleCheckbox = async (id: number) => {
-    if (props.checkboxes.includes(id)) {
-      // removes id if not selected
-      props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-      return
-    }
-    // adds id
-    props.setCheckboxes((prev) => [...prev, id])
-  }
+  // const toggleCheckbox = async (id: number) => {
+  //   if (props.checkboxes.includes(id)) {
+  //     // removes id if not selected
+  //     props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+  //     return
+  //   }
+  //   // adds id
+  //   props.setCheckboxes((prev) => [...prev, id])
+  // }
 
   return (
     <div
@@ -436,7 +420,7 @@ const TransferAssetTable = (props: {
           <tr>
             <th scope="col" className="py-1">
               <div className="flex items-center justify-center">
-                <Checkbox
+                {/* <Checkbox
                   color={"orange"}
                   onChange={() => {
                     selectAllCheckboxes()
@@ -446,14 +430,14 @@ const TransferAssetTable = (props: {
                     input:
                       "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                   }}
-                />
+                /> */}
               </div>
             </th>
             {props.columns.map((col) => (
               <th
                 key={col.name}
                 scope="col"
-                className="max-w-[10rem] truncate px-6 duration-150"
+                className="max-w-[10rem] truncate px-6 py-4 duration-150"
               >
                 {col.name}
               </th>
@@ -472,7 +456,7 @@ const TransferAssetTable = (props: {
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
-                  <Checkbox
+                  {/* <Checkbox
                     value={row?.id ?? idx}
                     color={"orange"}
                     onChange={(e) => {
@@ -483,7 +467,7 @@ const TransferAssetTable = (props: {
                       input:
                         "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                     }}
-                  />
+                  /> */}
                 </div>
               </td>
               {columns
@@ -526,7 +510,7 @@ const TransferAssetTable = (props: {
         openModalDesc={openModalDesc}
         setOpenModalDesc={setOpenModalDesc}
         setOpenModalDel={setOpenModalDel}
-        setCheckboxes={props.setCheckboxes}
+      // setCheckboxes={props.setCheckboxes}
       />
     </div>
   )

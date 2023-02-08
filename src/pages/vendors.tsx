@@ -272,11 +272,17 @@ const Vendors = () => {
                   <input
                     type="text"
                     className="w-full rounded-md border-2 curs border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    onKeyDown={(e) => {
+                      const regex = /^[0-9, ]|Backspace/
+                      if (e.key === "e" || !regex.test(e.key)) {
+                        e.preventDefault()
+                      }
+                    }}
                     onChange={(event) => {
                       const convertToArray = event.currentTarget.value;
 
 
-                      const phonenumString = convertToArray.replace(/[^0-9,]/gi, "").split(",")
+                      const phonenumString = convertToArray.replace(/[^0-9, ]/gi, "").split(",")
                       setValue("phone_no", phonenumString);
                     }}
                     value={watcher.phone_no}
@@ -286,13 +292,39 @@ const Vendors = () => {
 
 
                 <div className="col-span-5">
-                  <InputField
+                  {/* <InputField
                     register={register}
                     label="Fax Number"
                     name="fax_no"
                     type="text"
+                  /> */}
+                  <label className="sm:text-sm mb-2">Fax Number</label>
+                  <input
+                    // disabled={!isEditable}
+
+                    type="number"
+                    pattern="[0-9]*"
+                    className={'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+                    onKeyDown={(e) => {
+                      if (e.key === "e") {
+                        e.preventDefault()
+                      }
+                    }}
+                    onChange={(event) => {
+
+                      if (event.target.value.length > 8) {
+                        console.log("more than 8")
+                        event.target.value = event.target.value.slice(0, 8);
+                      }
+                      setValue(
+                        "fax_no",
+                        event.currentTarget.value.toString()
+                      )
+                    }}
                   />
                   <AlertInput>{errors?.fax_no?.message}</AlertInput>
+                  {/* </div> */}
+                  {/* <AlertInput>{errors?.fax_no?.message}</AlertInput> */}
                 </div>
                 <div className="col-span-5">
                   <InputField

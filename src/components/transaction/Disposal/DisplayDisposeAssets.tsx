@@ -10,7 +10,7 @@ import DisposeAssetTable from '../../atoms/table/DisposeAssetTable';
 import Modal from '../../headless/modal/modal';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
-import { useDisposeAssetStore, useSearchStore } from '../../../store/useStore';
+import { useDisposeAssetStore, useSearchStore, useEditableStore } from '../../../store/useStore';
 // import { number } from 'zod';
 
 const DisplayDisposeAssets = (props: {
@@ -42,6 +42,8 @@ const DisplayDisposeAssets = (props: {
 
 	const { disposeAsset, setDisposeAsset } = useDisposeAssetStore();
 	const { search, setSearch } = useSearchStore();
+	const { editable, setEditable } = useEditableStore()
+
 	// useEffect(
 	// 	() => {
 	// 		setDisposeAsset(asset as AssetType);
@@ -67,8 +69,9 @@ const DisplayDisposeAssets = (props: {
 				setDisposeAsset(asset as AssetType);
 			}
 		}
+		setEditable(false);
 		setSearch("");
-	}, [setDisposeAsset, asset, assetNumber, assetId, setSearch])
+	}, [setDisposeAsset, asset, assetNumber, assetId, setSearch, setEditable])
 
 	return (
 		<div className="space-y-4">
@@ -187,6 +190,7 @@ const DisplayDisposeAssets = (props: {
 					}}
 				/>
 			</section>
+			<button className='rounded-sm bg-orange-800 text-lg text-gray-900' onClick={() => { setEditable(true) }}>show all</button>
 			{/* <AssetDeleteModal
 				checkboxes={checkboxes}
 				setCheckboxes={setCheckboxes}

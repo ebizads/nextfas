@@ -3,6 +3,7 @@ import {
     useMinimizeStore,
     useDisposeAssetStore,
     useUpdateAssetStore,
+    useEditableStore,
 } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
@@ -27,6 +28,8 @@ const DisposeAssetDetailsModal = (props: {
     // useEffect(() => {
     //   console.log(props.asset.addedBy)
     // }, [])
+    const { editable, setEditable } = useEditableStore()
+
 
     const componentRef = useRef(null)
     const handlePrint = useReactToPrint({
@@ -53,7 +56,7 @@ const DisposeAssetDetailsModal = (props: {
         if (!props.openModalDesc) {
             setGenBarcode(false)
         }
-    }, [props.openModalDesc])
+    }, [props.openModalDesc, setEditable])
 
     const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
     const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
@@ -412,6 +415,7 @@ const DisposeAssetTable = (props: {
     // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
     const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+    const { editable, setEditable } = useEditableStore()
 
     // const selectAllCheckboxes = () => {
     //     if (props.checkboxes.length === 0) {
@@ -471,7 +475,49 @@ const DisposeAssetTable = (props: {
                     </tr>
                 </thead>
                 <tbody>
-                    {props.rows.map((row, idx) => (
+                    {editable ? (props.rows.map((row, idx) => {
+                        if (getProperty("status", row) !== null && getProperty("status", row) !== "disposal" && getProperty("status", row) !== "repair") {
+                            return (
+                                <tr
+                                    key={row?.id ?? idx}
+                                    className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                                >
+                                    <td className="w-4 p-2">
+                                        {/* <div className="flex items-center justify-center">
+                                            <Checkbox
+                                                value={row?.id ?? idx}
+                                                color={"orange"}
+                                                onChange={(e) => {
+                                                    toggleCheckbox(Number(e.target.value))
+                                                }}
+                                                checked={props.checkboxes.includes(row?.id ?? idx)}
+                                                classNames={{
+                                                    input:
+                                                        "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
+                                                }}
+                                            />
+                                        </div> */}
+                                    </td>
+                                    {columns
+                                        .filter((col) => props.filterBy.includes(col.value))
+                                        .map((col) => (
+                                            <td
+                                                key={col.value}
+                                                className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
+                                                onClick={() => {
+                                                    setOpenModalDesc(true)
+                                                    setSelectedAsset(row)
+                                                    console.log(row)
+                                                }}
+                                            >
+                                                {getProperty(col.value, row)}
+                                            </td>
+                                        ))}
+                                </tr>
+                            );
+                        }
+                        return null;
+                    })) : (props.rows.map((row, idx) => (
                         <tr
                             key={row?.id ?? idx}
                             className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
@@ -523,7 +569,7 @@ const DisposeAssetTable = (props: {
                 </button>
               </td> */}
                         </tr>
-                    ))}
+                    )))}
                 </tbody>
             </table>
 

@@ -64,7 +64,11 @@ model User {
   attemptDate    DateTime?
   oldPassword    String[]
   firstLogin     Boolean?
-  passwordAge    Int?
+  lockedAt       DateTime?
+  lockedReason   String?
+  inactivityDate DateTime?
+  validatedDate  DateTime?
+  passwordAge    DateTime?
   accounts       Account[]
   address        Address?
   created_assets Asset[]

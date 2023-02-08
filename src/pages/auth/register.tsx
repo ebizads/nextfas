@@ -68,6 +68,8 @@ function Register() {
         state: "Metro Manila",
         zip: "1000",
       },
+      inactivityDate: new Date(),
+      passwordAge: new Date(),
     })
     console.log(passwordCheck)
     console.log(user)

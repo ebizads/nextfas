@@ -30,6 +30,8 @@ export const CreateUserInput = z.object({
     phone_no: z.string().nullish(),
     gender: z.string().nullish(),
   }),
+  inactivityDate: z.date().nullish(),
+  passwordAge: z.date().nullish(),
   address: AddressCreateInput.optional(),
 })
 
@@ -44,7 +46,7 @@ export const ChangeUserPass = z.object({
   .min(12, { message: "Password should be at least 12 characters" })
   .max(20, { message: "Password should not be more than 20 characters" }),
   oldPassword: z.array(z.string()).optional().default([]),
-  passwordAge: z.number().nullish().optional(),
+  passwordAge: z.date().nullish(),
   firstLogin: z.boolean().nullish(),
 })
 
@@ -64,7 +66,9 @@ export const EditUserInput = z.object({
     gender: z.string().optional(),
   }),
   address: AddressEditInput,
-  firstLogin: z.boolean().nullish()
+  passwordAge: z.date().nullish(),
+  firstLogin: z.boolean().nullish(),
+  inactivityDate: z.date().nullish()
 })
 
 export const IdUser = z.object({

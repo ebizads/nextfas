@@ -61,6 +61,7 @@ export const userRouter = t.router({
             address: {
               create: address,
             },
+            
           },
         })
         return "User created successfully"
@@ -104,7 +105,7 @@ export const userRouter = t.router({
   change: authedProcedure
     .input(ChangeUserPass)
     .mutation(async ({ input, ctx }) => {
-      const { password, passwordAge, id, oldPassword, ...rest } = input
+      const { password, id, oldPassword, ...rest } = input
 
       const encryptedPassword = await bcrypt.hash(password, 10)
 
@@ -138,7 +139,6 @@ export const userRouter = t.router({
             set: [encryptedPassword, ...sample],
           },
           password: encryptedPassword,
-          passwordAge: passwordAge,
           ...rest,
         },
       })

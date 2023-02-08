@@ -34,28 +34,40 @@ export const ChangePassModal = (props: {
   const [dataCheck, setDataCheck] = useState<boolean>(true)
   const [changePassSuccess, setChangePassSuccess] = useState<boolean>(false)
   const [promptCounter, setPromptCounter] = useState<boolean>(true)
+  const [prompterString, setPrompterString] = useState<string | null>(null)
   const { data: session } = useSession()
-  const { data: user } = trpc.user.findOne.useQuery(userId)
+  const { data: user, refetch } = trpc.user.findOne.useQuery(userId)
+
+  const dateNow = new Date()
+  let dayNow = 0
+  if (Boolean(user?.passwordAge)) {
+    dayNow = Number(
+      (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
+        (1000 * 60 * 60 * 24)
+    )
+  }
 
   const { mutate } = trpc.user.change.useMutation({
     onSuccess(data) {
       setIsVisible(true)
+      props.setPromptVisible(true)
       //console.log(data)
       if (data !== false) {
         setChangeString("Change Password Succesfully")
         setDataCheck(true)
-        window.location.reload();
+
+        //window.location.reload();
       } else {
         setChangeString(
           "The password has already been used, please choose a different one."
         ) //todo
         setDataCheck(false)
       }
-      setChangePassSuccess(true)
+      setChangePassSuccess(true), refetch()
       // invalidate query of asset id when mutations is successful
     },
     onError() {
-      console.log(error)
+      console.log(error), refetch()
     },
   })
 
@@ -75,13 +87,20 @@ export const ChangePassModal = (props: {
       firstLogin: false,
       password: "",
       id: userId ?? 0,
-      passwordAge: 1,
     },
   })
 
   useEffect(() => {
+    if (user?.firstLogin) {
+      setPrompterString(
+        "Current password is only one-time use, change your password immediately."
+      )
+    } else if (dayNow > 60) {
+      setPrompterString(
+        "Password age exceeds 60 days, change your password immediately."
+      )
+    }
 
-    
     setUserId(Number(session?.user?.id))
     setConfirmPass(passConfirmCheck(password, confirmPassword))
     if (!confirmPass && confirmPassword.length !== 0) {
@@ -107,7 +126,12 @@ export const ChangePassModal = (props: {
       }
     }
 
-    console.log(confirmPass)
+    // const intervalId = setInterval(() => {
+    //   refetch();
+    //   console.log("userId: " + userId)
+    // }, 1000);
+    // console.log(confirmPass)
+    // clearInterval(intervalId);
   }, [
     user,
     session,
@@ -117,7 +141,11 @@ export const ChangePassModal = (props: {
     changePassSuccess,
     props,
     promptCounter,
-    dataCheck
+    dataCheck,
+    refetch,
+    userId,
+    setPrompterString,
+    dayNow,
   ])
   // const encryptPass = async () =>{
   //   const match = await bcrypt.compare(password, "$2b$10$Yc8Z.neAGmNltMqoM36eG.kI9TpoUPAMljttwI5niA2nNjaKClIim")
@@ -134,6 +162,7 @@ export const ChangePassModal = (props: {
         oldPassword: userData.data?.oldPassword ?? [],
         password: changeUserPass.password,
         id: userId,
+        passwordAge: new Date(),
       })
       reset()
     } else {
@@ -149,11 +178,10 @@ export const ChangePassModal = (props: {
       title="Change Password"
     >
       <div className="w-full content-center items-center justify-center">
-        {Boolean(props.promptVisible) && (
+        {(user?.firstLogin || dayNow > 60) && (
           <div>
             <p className="text-center text-lg font-semibold">
-              Current password is only one-time use, change your password
-              immediately.
+              {prompterString}
             </p>
           </div>
         )}
@@ -231,7 +259,8 @@ export const ChangePassModal = (props: {
                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                 onClick={() => {
                   setIsVisible(false)
-                  if (dataCheck !== false) {
+                  if (dataCheck == true) {
+                    props.setVisible(false)
                     setIsVisible(false)
                     props.setPromptVisible(false)
                   }

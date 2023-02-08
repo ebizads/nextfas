@@ -7,7 +7,6 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt"
 import { env } from "../../../env/server.mjs"
 import dayjs from "dayjs"
-import { number } from "zod"
 //import { passArrayCheck } from "../../../lib/functions"
 
 export const authOptions: NextAuthOptions = {
@@ -44,6 +43,28 @@ export const authOptions: NextAuthOptions = {
         if (user !== null) {
           const dateNow = new Date()
           const hoursNow = dateNow.getHours()
+          if (Boolean(user?.inactivityDate)) {
+            const dateBetween =
+              Number((dateNow.getTime() - (user?.inactivityDate?.getTime() ?? 0))/ (1000 * 60 * 60 * 24))
+            //throw new Error(dateBetween.toString())
+            if (dateBetween > 30 && dateBetween < 60) {
+              throw new Error(
+                `This user is currently locked until. Please contact administrator.`
+              )
+            } else if (dateBetween > 60) {
+              await prisma.user.update({
+                where: {
+                  username: credentials?.username,
+                },
+              data:{
+                deleted: true,
+              }
+              })
+              throw new Error(
+                `This user is deleted. Please contact administrator.`
+              )
+            }
+          }
           if (Boolean(user.lockedUntil)) {
             if (dateNow.getDate() <= (user.lockedUntil?.getDate() ?? 0)) {
               if (dateNow.getHours() <= (user.lockedUntil?.getHours() ?? 0)) {
@@ -82,21 +103,20 @@ export const authOptions: NextAuthOptions = {
               where: {
                 username: credentials?.username,
               },
-              data: { attempts: 0 },
+              data: { attempts: 0, inactivityDate: new Date() },
             })
             return user
           }
           let data = {}
           if (Boolean(user.lockedUntil)) {
-            if (dateNow.getDate() >= (user.lockedUntil?.getDate() ?? 0)) {
-              if (dateNow.getHours() > (user.lockedUntil?.getHours() ?? 0)) {
+            if (dateNow.getDate() == (user.lockedUntil?.getDate() ?? 0)) {
+              if (dateNow.getHours() >= (user.lockedUntil?.getHours() ?? 0)) {
                 data = {
-                  attempts: (user.attempts = 30),
+                  attempts: (user.attempts = 0),
                   lockedUntil: (user.lockedUntil = value),
                   lockedReason: (user.lockedReason = value),
                   lockedAt: (user.lockedAt = value),
                 }
-                //throw new Error("ewan ko")
               } else if (
                 dateNow.getHours() == (user.lockedUntil?.getHours() ?? 0)
               ) {
@@ -109,25 +129,33 @@ export const authOptions: NextAuthOptions = {
                     lockedReason: (user.lockedReason = value),
                     lockedAt: (user.lockedAt = value),
                   }
+                  throw new Error("ewan ko")
                 }
+              }
+            } else if (dateNow.getDate() > (user.lockedUntil?.getDate() ?? 0)) {
+              data = {
+                attempts: (user.attempts = 0),
+                lockedUntil: (user.lockedUntil = value),
+                lockedReason: (user.lockedReason = value),
+                lockedAt: (user.lockedAt = value),
               }
             }
           }
 
           if (user.attemptDate != undefined || null) {
             if (dateNow.getDate() > (user.attemptDate?.getDate() ?? 0)) {
-              if (dateNow.getHours() > Number(user.attemptDate?.getHours() ?? 0)) {
+              if (
+                dateNow.getHours() > Number(user.attemptDate?.getHours() ?? 0)
+              ) {
                 data = {
                   attempts: (user.attempts = 0),
                   lockedUntil: (user.lockedUntil = null),
                   lockedReason: (user.lockedReason = null),
                   lockedAt: (user.lockedAt = null),
                 }
-
-              }
-             // throw new Error(dateNow.getHours().toString() +"ewan ko" + user.attemptDate?.getHours().toString())
-
-              if (dateNow.getHours() == (user.attemptDate?.getHours() ?? 0)) {
+              } else if (
+                dateNow.getHours() == (user.attemptDate?.getHours() ?? 0)
+              ) {
                 if (
                   dateNow.getMinutes() > (user.attemptDate?.getMinutes() ?? 0)
                 ) {
@@ -150,10 +178,17 @@ export const authOptions: NextAuthOptions = {
               // }
             }
           }
+          //throw new Error(dateNow.getHours().toString() +"ewan ko" + user.lockedUntil?.toString())
 
           if (user.attempts < 3) {
             // checks if user has remaining attempts
-            data = { attempts: (user.attempts += 1) }
+
+            data = {
+              attempts: (user.attempts += 1),
+              lockedUntil: user.lockedUntil,
+              lockedReason: user.lockedReason,
+              lockedAt: user.lockedAt,
+            }
           }
 
           if (user.attempts >= 3) {
@@ -172,9 +207,11 @@ export const authOptions: NextAuthOptions = {
             data = {
               attemptDate: new Date(),
               attempts: user.attempts,
+              lockedUntil: user.lockedUntil,
+              lockedReason: user.lockedReason,
+              lockedAt: user.lockedAt,
             }
           }
-
           await prisma.user.update({
             where: {
               username: credentials?.username,

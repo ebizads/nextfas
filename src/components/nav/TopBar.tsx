@@ -25,16 +25,15 @@ const TopBar = () => {
   if (Boolean(user?.passwordAge)) {
     dayNow = Number(
       (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
-        (1000 * 60 * 60 * 24)
+      (1000 * 60 * 60 * 24)
     )
   }
 
   useEffect(() => {
     setUserId(Number(session?.user?.id))
-    console.log("daynow: " + dayNow )
+    console.log("daynow: " + dayNow)
     if (user?.firstLogin || dayNow > 60) {
       setOpenChangePass(true)
-      setOpenPromptVisible(true)
     }
 
     // const intervalId = setInterval(() => {
@@ -82,8 +81,6 @@ const TopBar = () => {
           setOpenPopover={setOpenLogoutPopover}
           isVisible={openChangePass}
           setIsVisible={setOpenChangePass}
-          promptIsVisible={openPromptVisible}
-          setPromptIsVisible={setOpenPromptVisible}
         />
       </div>
     </div>

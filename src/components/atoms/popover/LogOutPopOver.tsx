@@ -11,8 +11,6 @@ const LogOutPopOver = (props: {
   setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
-  promptIsVisible: boolean
-  setPromptIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   // const [openChangePass, setOpenChangePass] = useState<boolean>(false)
   //const [openPromptVisible, setOpenPromptVisible] = useState<boolean>(false)
@@ -25,7 +23,7 @@ const LogOutPopOver = (props: {
     setUserId(Number(session?.user?.id))
     //console.log(user)
 
-    
+
     //setOpenChangePass(props.isVisible)
   }, [props, session, user])
 
@@ -34,8 +32,7 @@ const LogOutPopOver = (props: {
       <ChangePassModal
         isVisible={props.isVisible}
         setVisible={props.setIsVisible}
-        promptVisible={props.promptIsVisible}
-        setPromptVisible={props.setPromptIsVisible}
+
       ></ChangePassModal>
       <Popover
         opened={props.openPopover}

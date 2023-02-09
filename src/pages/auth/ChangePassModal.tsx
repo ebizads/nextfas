@@ -20,8 +20,7 @@ type ChangePass = z.infer<typeof ChangeUserPass>
 export const ChangePassModal = (props: {
   isVisible: boolean
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
-  promptVisible: boolean
-  setPromptVisible: React.Dispatch<React.SetStateAction<boolean>>
+
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const [passIncorrect, setPassIncorrect] = useState<boolean>(false)
@@ -43,14 +42,13 @@ export const ChangePassModal = (props: {
   if (Boolean(user?.passwordAge)) {
     dayNow = Number(
       (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
-        (1000 * 60 * 60 * 24)
+      (1000 * 60 * 60 * 24)
     )
   }
 
   const { mutate } = trpc.user.change.useMutation({
     onSuccess(data) {
       setIsVisible(true)
-      props.setPromptVisible(true)
       //console.log(data)
       if (data !== false) {
         setChangeString("Change Password Succesfully")
@@ -109,7 +107,6 @@ export const ChangePassModal = (props: {
       setPassIncorrect(false)
     }
 
-    console.log("Propmpter: " + props.promptVisible)
 
     console.log("isVisible: " + props.isVisible)
 
@@ -122,7 +119,6 @@ export const ChangePassModal = (props: {
       if (user?.firstLogin) {
         props.setVisible(true)
         console.log("setvisible111: " + props.isVisible)
-        props.setPromptVisible(true)
       }
     }
 
@@ -262,7 +258,6 @@ export const ChangePassModal = (props: {
                   if (dataCheck == true) {
                     props.setVisible(false)
                     setIsVisible(false)
-                    props.setPromptVisible(false)
                   }
                 }}
               >

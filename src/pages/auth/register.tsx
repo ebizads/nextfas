@@ -7,15 +7,15 @@ import { trpc } from "../../utils/trpc"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
-import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import { CreateUserInput } from "../../server/schemas/user"
 import { generateRandomPass } from "../../lib/functions"
 import { User } from "tabler-icons-react"
 import Modal from "../../components/headless/modal/modal"
+import { Accordion } from "@mantine/core"
 
 type User = z.infer<typeof CreateUserInput>
 
-function Register() {
+const Register2 = () => {
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [passwordCheck, setPassword] = useState<string>("")
 
@@ -77,38 +77,32 @@ function Register() {
   }
 
   return (
-    <>
-      <Head>
-        <title>FAS Server</title>
-        <meta name="description" content="Fixed Asset System server" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4">
-        <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
-          Register
-        </h3>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col space-y-4"
-          noValidate
-        >
-          <InputField
-            register={register}
-            label="First Name"
-            name="profile.first_name"
-            className="border-b"
-          />
-          <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
+    <main className="container mx-auto flex flex-col items-center justify-center p-4">
+      <h3 className="mb-2 text-xl font-bold leading-normal text-gray-700 md:text-[2rem]">
+        Register
+      </h3>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col space-y-4"
+        noValidate
+      >
+        <InputField
+          register={register}
+          label="First Name"
+          name="profile.first_name"
+          className="border-b "
+        />
+        <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
 
-          <InputField
-            register={register}
-            label="Last Name"
-            name="profile.last_name"
-            className="border-b"
-          />
-          <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+        <InputField
+          register={register}
+          label="Last Name"
+          name="profile.last_name"
+          className="border-b"
+        />
+        <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
 
-          {/* <InputField
+        {/* <InputField
             label="Password"
             register={register}
             name="password"
@@ -119,53 +113,50 @@ function Register() {
           />
           <PasswordChecker password={watch().password} /> */}
 
-          <AlertInput>{errors?.password?.message}</AlertInput>
-          <button
-            type="submit"
-            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={isLoading}
-            onClick={() => setPassword(generateRandomPass())}
-          >
-            {isLoading ? "Loading..." : "Register"}
-          </button>
-        </form>
-        {error && (
-          <pre className="mt-2 text-sm italic text-red-500">
-            Something went wrong!
-          </pre>
-        )}
-        <Link href="/auth/login">
-          <a className="my-2 px-4 py-1 text-amber-300 underline hover:text-amber-400">
-            Login
-          </a>
-        </Link>
-        <Modal
-          isVisible={completeModal}
-          setIsVisible={setCompleteModal}
-          className="max-w-2xl"
-          title="New Account"
+        <AlertInput>{errors?.password?.message}</AlertInput>
+        <button
+          type="submit"
+          className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+          disabled={isLoading}
+          onClick={() => setPassword(generateRandomPass())}
         >
-          <div className="flex w-full flex-col px-4 py-2">
-            <div>
-              <p className="text-center text-lg font-semibold">
-                New account registration successful.
-              </p>
+          {isLoading ? "Loading..." : "Register"}
+        </button>
+      </form>
+      {error && (
+        <pre className="mt-2 text-sm italic text-red-500">
+          Something went wrong!
+        </pre>
+      )}
 
-              <p className="text-center text-lg font-semibold">Password: {passwordCheck}</p>
-            </div>
-            <button
-              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-              onClick={() => {
-                setCompleteModal(false)
-              }}
-            >
-              Close
-            </button>
+      <Modal
+        isVisible={completeModal}
+        setIsVisible={setCompleteModal}
+        className="max-w-2xl"
+        title="New Account"
+      >
+        <div className="flex w-full flex-col px-4 py-2">
+          <div>
+            <p className="text-center text-lg font-semibold">
+              New account registration successful.
+            </p>
+
+            <p className="text-center text-lg font-semibold">
+              Password: {passwordCheck}
+            </p>
           </div>
-        </Modal>
-      </main>
-    </>
+          <button
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+            onClick={() => {
+              setCompleteModal(false)
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
+    </main>
   )
 }
 
-export default Register
+export default Register2

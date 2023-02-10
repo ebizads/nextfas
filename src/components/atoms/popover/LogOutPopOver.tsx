@@ -72,7 +72,7 @@ const LogOutPopOver = (props: {
               }}
               className="flex items-center gap-2 px-6 py-2 hover:bg-tangerine-100"
             >
-              <i className="fa-solid fa-right-from-bracket" />
+              <i className="fa-solid fa-shield-keyhole" />
               <span>Change Password</span>
             </button>
           </div>

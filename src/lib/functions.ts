@@ -9,6 +9,7 @@ import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
 import { Address, Company } from "@prisma/client"
 import Router from "next/router"
+import { object } from "zod"
 
 const router = Router
 export const getProperty = (

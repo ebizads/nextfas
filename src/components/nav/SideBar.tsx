@@ -5,6 +5,7 @@ import React, { useMemo } from "react"
 import { navigations } from "../../lib/table"
 import { useMinimizeStore } from "../../store/useStore"
 import NavAccordion from "../atoms/accordions/NavAccordion"
+import UserNavAccordion from "../atoms/accordions/UserNavAccordion"
 
 const SideBar = () => {
   const { pathname } = useRouter()
@@ -130,6 +131,11 @@ const SideBar = () => {
             </Link>
           </div>
         ))}
+        <UserNavAccordion
+          paths={paths}
+          minimize={minimize}
+          setMinimize={setMinimize}
+        />
       </div>
     </div>
   )

@@ -110,11 +110,11 @@ export const navigations = [
     icon: "fa-store",
     link: "/vendors",
   },
-  {
-    name: "User Management",
-    icon: "fa-user-pen",
-    link: "/vendors",
-  },
+  // {
+  //   name: "User Management",
+  //   icon: "fa-user-pen",
+  //   link: "/vendors",
+  // },
   // {
   //   name: "Inventory",
   //   icon: "fa-light fa-folders",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pagination } from '@mantine/core';
+import { Pagination, Tooltip } from '@mantine/core';
 import AssetTable, { AssetDeleteModal } from '../../atoms/table/AssetTable';
 import Link from 'next/link';
 import { AssetType } from '../../../types/generic';
@@ -10,7 +10,7 @@ import DisposeAssetTable from '../../atoms/table/DisposeAssetTable';
 import Modal from '../../headless/modal/modal';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
-import { useDisposeAssetStore, useSearchStore, useEditableStore } from '../../../store/useStore';
+import { useDisposeAssetStore, useSearchStore, useGenerateStore } from '../../../store/useStore';
 // import { number } from 'zod';
 
 const DisplayDisposeAssets = (props: {
@@ -42,7 +42,7 @@ const DisplayDisposeAssets = (props: {
 
 	const { disposeAsset, setDisposeAsset } = useDisposeAssetStore();
 	const { search, setSearch } = useSearchStore();
-	const { editable, setEditable } = useEditableStore()
+	const { generate, setGenerate } = useGenerateStore()
 
 	// useEffect(
 	// 	() => {
@@ -69,9 +69,9 @@ const DisplayDisposeAssets = (props: {
 				setDisposeAsset(asset as AssetType);
 			}
 		}
-		setEditable(false);
+		setGenerate(false);
 		setSearch("");
-	}, [setDisposeAsset, asset, assetNumber, assetId, setSearch, setEditable])
+	}, [setDisposeAsset, asset, assetNumber, assetId, setSearch, setGenerate])
 
 	return (
 		<div className="space-y-4">
@@ -168,7 +168,7 @@ const DisplayDisposeAssets = (props: {
 				filterBy={filterBy}
 				columns={columns.filter((col) => filterBy.includes(col.value))}
 			/>
-			<section className="mt-8 flex justify-between px-4">
+			<section className="mt-8 flex justify-between px-2">
 				<div className="flex items-center gap-2">
 					<p>Showing up to</p>
 					<PaginationPopOver
@@ -181,21 +181,29 @@ const DisplayDisposeAssets = (props: {
 					/>
 					<p> entries</p>
 				</div>
-				<Pagination
-					page={props.page}
-					onChange={props.setPage}
-					total={props.accessiblePage}
-					classNames={{
-						item: 'bg-transparent selected-page:bg-tangerine-500 border-none'
-					}}
-				/>
+				<div className='flex flex-row'>
+					<Tooltip label={generate ? "Show all assets" : "Show only available assets"} withArrow>
+						<button
+							className="mx-2 text-gray-700 py-1 font-medium duration-150 hover:underline  disabled:bg-gray-300 disabled:text-gray-500"
+							onClick={() => { setGenerate(true) }}>{generate ? "Show all" : "Show less"}
+						</button>
+					</Tooltip>
+					<Pagination
+						page={props.page}
+						onChange={props.setPage}
+						total={props.accessiblePage}
+						classNames={{
+							item: 'bg-transparent selected-page:bg-tangerine-500 border-none'
+						}}
+					/>
+				</div>
 			</section>
-			<button className='rounded-sm bg-orange-800 text-lg text-gray-900' onClick={() => { setEditable(true) }}>show all</button>
+
 			{/* <AssetDeleteModal
 				checkboxes={checkboxes}
 				setCheckboxes={setCheckboxes}
 				assets={props.assets}
-				openModalDel={openModalDel}
+				openModalDel={openModalDel
 				setOpenModalDel={setOpenModalDel}
 			/> */}
 		</div>

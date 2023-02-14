@@ -2,33 +2,33 @@ import { Pagination, Select, Tabs } from "@mantine/core";
 import Link from "next/link";
 import React, { useState, useEffect } from "react"
 //import { downloadExcel } from "../../lib/functions";
-import { disposalColumn } from "../../lib/table";
+import { disposalColumn } from "../../../lib/table";
 //import { ExcelExportType } from "../../types/employee";
-import FilterPopOver from "../atoms/popover/FilterPopOver";
-import PaginationPopOver from "../atoms/popover/PaginationPopOver";
-import DisposalTable from "../atoms/table/DisposalTable";
-import { DisposeType } from "../../types/generic";
-import { useDisposalStatusStore } from "../../store/useStore";
-type SearchType = {
-    value: string
-    label: string
-}
+import FilterPopOver from "../../atoms/popover/FilterPopOver";
+import PaginationPopOver from "../../atoms/popover/PaginationPopOver";
+import DisposalTable from "../../atoms/table/DisposalTable";
+import { DisposeType } from "../../../types/generic";
+import { useDisposalStatusStore } from "../../../store/useStore";
+// type SearchType = {
+//     value: string
+//     label: string
+// }
 
-const Search = (props: { data: SearchType[] }) => {
-    const [value, setValue] = useState<string | null>(null)
-    return (
-        <Select
-            value={value}
-            placeholder="Search"
-            searchable
-            nothingFound={`Cannot find option`}
-            onChange={setValue}
-            clearable
-            data={[...props.data]}
-            icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
-        />
-    )
-}
+// const Search = (props: { data: SearchType[] }) => {
+//     const [value, setValue] = useState<string | null>(null)
+//     return (
+//         <Select
+//             value={value}
+//             placeholder="Search"
+//             searchable
+//             nothingFound={`Cannot find option`}
+//             onChange={setValue}
+//             clearable
+//             data={[...props.data]}
+//             icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
+//         />
+//     )
+// }
 
 
 const Dispose = (props: {
@@ -40,8 +40,8 @@ const Dispose = (props: {
     limit: number
     setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-    const [checkboxes, setCheckboxes] = useState<number[]>([])
-    const [openPopover, setOpenPopover] = useState<boolean>(false)
+    // const [checkboxes, setCheckboxes] = useState<number[]>([])
+    // const [openPopover, setOpenPopover] = useState<boolean>(false)
     const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
     const [filterBy, setFilterBy] = useState<string[]>(disposalColumn.map((i) => i.value))
 
@@ -59,33 +59,15 @@ const Dispose = (props: {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="flex w-fit items-center gap-2">
-                            <div className="flex-1">
-                                <Search
-                                    data={[
-                                        ...props.asset?.map((obj) => {
-                                            return {
-                                                value: obj?.assetId ?? "",
-                                                label: obj?.asset?.name ?? "",
-                                            }
-                                        }),
-                                    ] as SearchType[]}
-                                />
-                            </div>
-                            <FilterPopOver
-                                openPopover={openPopover}
-                                setOpenPopover={setOpenPopover}
-                                filterBy={filterBy}
-                                setFilterBy={setFilterBy}
-                                columns={disposalColumn}
-                            />
+
                         </div>
-                        {checkboxes.length > 0 && (
+                        {/* {checkboxes.length > 0 && (
                             <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
                                 {checkboxes.includes(-1)
                                     ? `Delete all record/s ( ${props.asset.length} ) ?`
                                     : `Delete selected record/s ( ${checkboxes.length} )`}
                             </button>
-                        )}
+                        )} */}
                     </div>
                     <div className="flex items-center gap-2">
                         {/* <button
@@ -119,8 +101,8 @@ const Dispose = (props: {
                         </Tabs>
                         <div className="py-4">
                             <DisposalTable
-                                checkboxes={checkboxes}
-                                setCheckboxes={setCheckboxes}
+                                // checkboxes={checkboxes}
+                                // setCheckboxes={setCheckboxes}
                                 rows={props.asset}
                                 filterBy={filterBy}
                                 columns={disposalColumn.filter((col) => filterBy.includes(col.value))}
@@ -140,7 +122,7 @@ const Dispose = (props: {
             </section>
             <section className="mt-8 flex justify-between px-4">
                 <div className="flex items-center gap-2">
-                    <p>Showing </p>
+                    <p>Showing up to </p>
                     <PaginationPopOver
                         paginationPopover={paginationPopover}
                         setPaginationPopover={setPaginationPopover}
@@ -149,7 +131,7 @@ const Dispose = (props: {
                         limit={props.limit}
                         setLimit={props.setLimit}
                     />
-                    <p> of {props.total ?? 0} entries</p>
+                    <p> entries</p>
                 </div>
                 <Pagination
                     page={props.page}

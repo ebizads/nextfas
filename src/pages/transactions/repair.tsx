@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react"
 import { trpc } from "../../utils/trpc"
 import RepairAsset from "../../components/transaction/RepairAsset"
 import DashboardLayout from "../../layouts/DashboardLayout"
-import { useRepairStatusStore } from "../../store/useStore"
+import { useRepairAssetStore, useRepairStatusStore } from "../../store/useStore"
+
 
 const AssetRepair = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
 
   const { status } = useRepairStatusStore();
+  const { repairAsset, setRepairAsset } = useRepairAssetStore()
+
 
   useEffect(() => {
     console.log(status);
@@ -21,6 +24,12 @@ const AssetRepair = () => {
     limit,
     page,
   })
+
+  useEffect(() => {
+    setRepairAsset(null);
+  }, [])
+
+
 
   // const repairTable: repairTMP[] = []
 

@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react"
-import { useMinimizeStore, useUpdateAssetStore } from "../../../store/useStore"
+import {
+  useMinimizeStore,
+  useTransferAssetStore,
+  useUpdateAssetStore,
+} from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
 import Modal from "../../asset/Modal"
@@ -11,24 +15,25 @@ import { trpc } from "../../../utils/trpc"
 import { useReactToPrint } from "react-to-print"
 import JsBarcode from "jsbarcode"
 import Link from "next/link"
-import { useSearchStore } from "../../../store/useStore"
-const AssetDetailsModal = (props: {
+
+
+const TransferAssetDetailsModal = (props: {
   asset: AssetType | null
   openModalDesc: boolean
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
   setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
-
+  // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
-
   // useEffect(() => {
   //   console.log(props.asset.addedBy)
   // }, [])
 
-  const componentRef = useRef(null);
+
+  const componentRef = useRef(null)
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-  });
+  })
+
 
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
@@ -40,9 +45,10 @@ const AssetDetailsModal = (props: {
       fontSize: 12,
       textMargin: 6,
       height: 50,
-      width: 1
+      width: 1,
     })
   }
+
 
   useEffect(() => {
     if (!props.openModalDesc) {
@@ -50,8 +56,13 @@ const AssetDetailsModal = (props: {
     }
   }, [props.openModalDesc])
 
+
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+  const { transferAsset, setTransferAsset } = useTransferAssetStore()
   // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
+
+
+  // console.log("asset number: "+props.asset!.number!);
   return (
     <>
       <Modal
@@ -60,7 +71,7 @@ const AssetDetailsModal = (props: {
         setIsOpen={props.setOpenModalDesc}
       >
         <div className="px-8 py-6">
-          <div className="flex w-full text-light-primary text-sm">
+          <div className="flex w-full text-sm text-light-primary">
             <div className="w-[80%] flex flex-col gap-2">
               {/* asset information */}
               <section className="border-b pb-4">
@@ -93,6 +104,7 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Parent Asset</p>
                       <p className="font-medium">{props.asset?.parentId !== 0 ? props.asset?.parent?.name : "--"}</p>
                       <p className="text-[0.6rem] text-neutral-500 italic">{props.asset?.parentId !== 0 && props.asset?.parent?.number}</p>
+
 
                     </div>
                     <div className="col-span-1">
@@ -128,6 +140,7 @@ const AssetDetailsModal = (props: {
                   </section>
                   <section className="grid grid-cols-4">
 
+
                     <div className="col-span-1">
                       <p className="font-light">Asset Lifetime</p>
                       <p className="font-medium">{props.asset?.management?.asset_lifetime ? props.asset?.management?.asset_lifetime : "--"} Months</p>
@@ -139,6 +152,7 @@ const AssetDetailsModal = (props: {
                   </section>
                 </div>
               </section>
+
 
               <section className="border-b pb-4">
                 <p className="font-medium text-neutral-600 text-base">General Information</p>
@@ -206,6 +220,7 @@ const AssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.management?.accounting_method ?? "--"}</p>
                     </div>
 
+
                     <div className="col-span-1">
                       <p className="font-light">Purchase Date</p>
                       <p className="font-medium">{props.asset?.management?.purchase_date ? (props.asset?.management?.purchase_date?.toLocaleDateString()) : "--"}</p>
@@ -237,11 +252,11 @@ const AssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Period</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"}</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_period ?? "--"} Months</p>
                     </div>
                     <div className="col-span-1">
-                      <p className="font-light">Period</p>
-                      <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"}</p>
+                      <p className="font-light">Quantity</p>
+                      <p className="font-medium">{props.asset?.management?.asset_quantity ?? "--"} Units</p>
                     </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">
@@ -288,69 +303,88 @@ const AssetDetailsModal = (props: {
                 </div>
               </section> */}
             </div>
-            <div className="mt-4 px-6 border-l">
+            <button
+              className="outline-none focus:outline-none"
+              onClick={() => props.setOpenModalDesc(false)}
+            >
+              {""}
+              <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
+            </button>
+            <div className=" mt-4 flex flex-col justify-between border-l px-6">
               <section className="relative">
-                <div className="p-2 border-2 w-[195.2px] h-[107.2px] border-tangerine-300 relative">
-                  {
-                    !genBarcode && <button onClick={genBar} className="absolute top-8 left-4 z-[10000] outline-none focus:outline-none text-neutral-50 bg-tangerine-400 hover:bg-tangerine-500 rounded-lg px-5 py-2">
+                <div className=" relative flex h-[107.2px] w-[195.2px] border-2 border-tangerine-300 p-2">
+                  {!genBarcode && (
+                    <button
+                      onClick={genBar}
+                      className="absolute top-8 left-4 z-[10000] rounded-lg bg-tangerine-400 px-5 py-2 text-neutral-50 outline-none hover:bg-tangerine-500 focus:outline-none"
+                    >
                       Generate Barcode
                     </button>
-                  }
+                  )}
+
 
                   <div id="printSVG" ref={componentRef}>
                     <svg id="barcode" />
                   </div>
                 </div>
-                {
-                  genBarcode && <button
+                {genBarcode && (
+                  <button
                     type="button"
-                    onClick={() => { handlePrint(); console.log("printing barcode") }}
-                    className="disabled:cursor-not-allowed flex gap-2 justify-center items-center disabled:bg-tangerine-200 outline-none focus:outline-none p-2 rounded-full absolute bottom-3 right-2 bg-tangerine-300 hover:bg-tangerine-400">
+                    onClick={() => {
+                      handlePrint()
+                      console.log("printing barcode")
+                    }}
+                    className="absolute bottom-3 right-2 flex items-center justify-center gap-2 rounded-full bg-tangerine-300 p-2 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+                  >
                     {""} <i className="fa-solid fa-print" />
-                  </button>}
-              </section>
-              <section className="flex flex-col gap-2 p-2">
-
-                <div className="">
-                  <p className="font-medium">Class</p>
-                  <p className="font-light">{props.asset?.model?.class ? props.asset?.model?.class?.name : "--"}</p>
-                </div>
-                <div className="">
-                  <p className="font-medium">Category</p>
-                  <p className="font-light">{props.asset?.model?.category ? props.asset?.model?.category?.name : "--"}</p>
-                </div>
-                <div className="">
-                  <p className="font-medium">Type</p>
-                  <p className="font-light">{props.asset?.model?.type ? props.asset?.model?.type?.name : "--"}</p>
-                </div>
-              </section>
-              <nav className="relative my-2 flex flex-1 flex-col gap-2 ">
-                <button
-                  className="outline-none focus:outline-none"
-                  onClick={() => props.setOpenModalDesc(false)}
-                >
-                  {""}
-                  <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
-                </button>
-                <p className="font-medium xl:text-lg">Asset Options</p>
-                <Link href="/assets/update"
-                >
-                  <div className="flex items-center gap-2 cursor-pointer rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                    <i className={"fa-solid fa-pen-to-square"} />
-                    Edit
+                  </button>
+                )}
+                <div className="flex flex-col gap-4 py-4">
+                  <div className="">
+                    <p className="font-medium">Class</p>
+                    <p className="font-light">
+                      {props.asset?.model?.class
+                        ? props.asset?.model?.class?.name
+                        : "--"}
+                    </p>
                   </div>
-                </Link>
-                <button
-                  onClick={() => {
-                    props.setOpenModalDel(true)
-                    props.setCheckboxes([props.asset?.id ?? -1])
-                  }}
-                  className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
-                >
-                  <i className={"fa-solid fa-trash-can text-red-500"} />
-                  Delete
-                </button>
-                {/* {navigations[0]?.subType?.map((action, idx) => (
+                  <div className="">
+                    <p className="font-medium">Category</p>
+                    <p className="font-light">
+                      {props.asset?.model?.category
+                        ? props.asset?.model?.category?.name
+                        : "--"}
+                    </p>
+                  </div>
+                  <div className="">
+                    <p className="font-medium">Type</p>
+                    <p className="font-light">
+                      {props.asset?.model?.type
+                        ? props.asset?.model?.type?.name
+                        : "--"}
+                    </p>
+                  </div>
+                </div>
+              </section>
+              <div className="space-y flex flex-col">
+                <nav className="position:relative my-2  flex flex-1 flex-col gap-2 ">
+                  <button
+                    onClick={() => {
+                      setTransferAsset(selectedAsset)
+                      props.setOpenModalDesc(false)
+
+
+                      console.log(
+                        "transfer btn clicked: " + selectedAsset?.number
+                      )
+                    }}
+                  >
+                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#e2e4e9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-300 focus:outline-none xl:text-base">
+                      <i className="fa-solid fa-share"></i>
+                      Transfer
+                    </div>
+                  </button>
+                  {/* {navigations[0]?.subType?.map((action, idx) => (
                   <button
                     key={idx}
                     className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
@@ -359,115 +393,27 @@ const AssetDetailsModal = (props: {
                     {action.name}
                   </button>
                 ))} */}
-              </nav>
+                </nav>
+              </div>
             </div>
           </div>
         </div>
-      </Modal >
-
+      </Modal>
     </>
   )
 }
 
-export const AssetDeleteModal = (props: {
-  checkboxes: number[]
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
-  openModalDel: boolean
-  assets: AssetType[]
-  setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
-  const [showList, setShowList] = useState<boolean>(false)
 
-  //trpc utils for delete
-  const utils = trpc.useContext()
-  const { mutate, isLoading } = trpc.asset.deleteMany.useMutation({
-    onSuccess() {
-      utils.asset.findAll.invalidate()
-    },
-  })
-  const handleDelete = () => {
-    const id_array = [...props.checkboxes]
-    //delete function
-    mutate([...id_array])
-    props.setCheckboxes([])
-    props.setOpenModalDel(false)
-  }
-
-  return (
-    <Modal
-      size={8}
-      isOpen={props.openModalDel}
-      setIsOpen={props.setOpenModalDel}
-    >
-      <div className="m-4 flex flex-col ">
-        <div className="flex flex-col items-center gap-8 text-center">
-          <div>
-            You are about to permanently delete{" "}
-            <button
-              className="border-b border-tangerine-600 text-tangerine-600 hover:bg-tangerine-100"
-              onClick={() => {
-                setShowList(!showList)
-              }}
-            >
-              {props.checkboxes.length}{" "}
-              {props.checkboxes.length > 1 ? "records" : "record"}{" "}
-              <i
-                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
-                  }`}
-              />
-            </button>{" "}
-            from <span className="text-tangerine-600">Assets Table</span>.
-          </div>
-          {showList && props.assets && (
-            <ul className="min-h-10 flex max-h-20 w-fit flex-col overflow-y-auto px-4">
-              {props.assets
-                .filter((asset) => props.checkboxes.includes(asset?.id ?? 0))
-                .map((asset, idx) => (
-                  <li
-                    key={asset?.id ?? idx}
-                    className="flex items-center gap-2 text-red-500"
-                  >
-                    <i className="fa-solid fa-circle text-xs" />
-                    {asset?.number ?? "--"}
-                  </li>
-                ))}
-            </ul>
-          )}
-          <p className="text-neutral-500">
-            <i className="fa-regular fa-circle-exclamation" /> This action is irrevokable, please carefully review the action.
-          </p>
-          <div className="flex items-center justify-end gap-2">
-            <button
-              className="rounded-sm bg-gray-300 px-5 py-1 hover:bg-gray-400"
-              onClick={() => {
-                props.setOpenModalDel(false)
-                props.setCheckboxes([])
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
-              onClick={() => handleDelete()}
-            // disabled={isLoading}
-            >
-              Yes, delete record/s
-            </button>
-          </div>
-        </div>
-      </div>
-    </Modal>
-  )
-}
-const AssetTable = (props: {
-  checkboxes: number[]
-  setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+const TransferAssetTable = (props: {
+  // checkboxes: number[]
+  // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
   filterBy: string[]
   rows: AssetType[]
   columns: ColumnType[]
 }) => {
   //minimize screen toggle
   const { minimize } = useMinimizeStore()
+
 
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
@@ -477,23 +423,25 @@ const AssetTable = (props: {
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
 
-  const selectAllCheckboxes = () => {
-    if (props.checkboxes.length === 0) {
-      props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
-    } else {
-      props.setCheckboxes([])
-    }
-  }
+  // const selectAllCheckboxes = () => {
+  //   if (props.checkboxes.length === 0) {
+  //     props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
+  //   } else {
+  //     props.setCheckboxes([])
+  //   }
+  // }
 
-  const toggleCheckbox = async (id: number) => {
-    if (props.checkboxes.includes(id)) {
-      // removes id if not selected
-      props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-      return
-    }
-    // adds id
-    props.setCheckboxes((prev) => [...prev, id])
-  }
+
+  // const toggleCheckbox = async (id: number) => {
+  //   if (props.checkboxes.includes(id)) {
+  //     // removes id if not selected
+  //     props.setCheckboxes((prev) => prev.filter((e) => e !== id))
+  //     return
+  //   }
+  //   // adds id
+  //   props.setCheckboxes((prev) => [...prev, id])
+  // }
+
 
   return (
     <div
@@ -506,7 +454,7 @@ const AssetTable = (props: {
           <tr>
             <th scope="col" className="py-1">
               <div className="flex items-center justify-center">
-                <Checkbox
+                {/* <Checkbox
                   color={"orange"}
                   onChange={() => {
                     selectAllCheckboxes()
@@ -516,7 +464,7 @@ const AssetTable = (props: {
                     input:
                       "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                   }}
-                />
+                /> */}
               </div>
             </th>
             {props.columns.map((col) => (
@@ -528,6 +476,7 @@ const AssetTable = (props: {
                 {col.name}
               </th>
             ))}
+
 
             {/* <th scope="col" className="p-4 text-center">
               Action
@@ -542,7 +491,7 @@ const AssetTable = (props: {
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
-                  <Checkbox
+                  {/* <Checkbox
                     value={row?.id ?? idx}
                     color={"orange"}
                     onChange={(e) => {
@@ -553,10 +502,9 @@ const AssetTable = (props: {
                       input:
                         "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
                     }}
-                  />
+                  /> */}
                 </div>
               </td>
-
               {columns
                 .filter((col) => props.filterBy.includes(col.value))
                 .map((col) => (
@@ -566,6 +514,7 @@ const AssetTable = (props: {
                     onClick={() => {
                       setOpenModalDesc(true)
                       setSelectedAsset(row)
+                      console.log(row)
                     }}
                   >
                     {getProperty(col.value, row)}
@@ -591,22 +540,17 @@ const AssetTable = (props: {
         </tbody>
       </table>
 
-      <AssetDetailsModal
+
+      <TransferAssetDetailsModal
         asset={selectedAsset}
         openModalDesc={openModalDesc}
         setOpenModalDesc={setOpenModalDesc}
         setOpenModalDel={setOpenModalDel}
-        setCheckboxes={props.setCheckboxes}
-      />
-      <AssetDeleteModal
-        checkboxes={props.checkboxes}
-        setCheckboxes={props.setCheckboxes}
-        assets={props.rows}
-        openModalDel={openModalDel}
-        setOpenModalDel={setOpenModalDel}
+      // setCheckboxes={props.setCheckboxes}
       />
     </div>
   )
 }
 
-export default AssetTable
+
+export default TransferAssetTable

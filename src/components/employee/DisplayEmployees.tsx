@@ -139,7 +139,7 @@ const DisplayEmployees = (props: {
       </section>
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">
-          <p>Showing </p>
+          <p>Showing up to</p>
           <PaginationPopOver
             paginationPopover={paginationPopover}
             setPaginationPopover={setPaginationPopover}
@@ -148,7 +148,7 @@ const DisplayEmployees = (props: {
             limit={props.limit}
             setLimit={props.setLimit}
           />
-          <p> of {props.total ?? 0} entries</p>
+          <p> entries</p>
         </div>
         <Pagination
           page={props.page}

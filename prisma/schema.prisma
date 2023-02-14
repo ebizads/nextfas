@@ -61,14 +61,6 @@ model User {
   deletedAt      DateTime?
   lockedUntil    DateTime?
   attempts       Int           @default(0)
-  attemptDate    DateTime?
-  oldPassword    String[]
-  firstLogin     Boolean?
-  lockedAt       DateTime?
-  lockedReason   String?
-  inactivityDate DateTime?
-  validatedDate  DateTime?
-  passwordAge    DateTime?
   accounts       Account[]
   address        Address?
   created_assets Asset[]
@@ -111,12 +103,11 @@ model Profile {
   gender        String?
   image         String?
   date_of_birth DateTime?
-  userId        Int?          @unique
-  employeeId    Int?          @unique
+  userId        Int?      @unique
+  employeeId    Int?      @unique
   phone_no      String?
-  employee      Employee?     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  user          User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  UserArchive   UserArchive[]
+  employee      Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Address {
@@ -400,48 +391,17 @@ model Asset {
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }
 
-model UserArchive {
-  id             Int           @id @default(autoincrement())
-  name           String
-  email          String        @unique
-  recovery_email String?
-  username       String?       @unique
-  password       String
-  passwordAge    Int?          @default(1)
-  user_type      String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime
-  emailVerified  DateTime?
-  image          String?
-  deleted        Boolean       @default(false)
-  deletedAt      DateTime?
-  lockedUntil    DateTime?
-  attempts       Int           @default(0)
-  attemptDate    DateTime?
-  oldPassword    String[]
-  addressId      Int?
-  profileId      Int?
-  Account        Account[]
-  Asset          Asset[]
-  Session        Session[]
-  Address        Address?      @relation(fields: [addressId], references: [id])
-  Profile        Profile?      @relation(fields: [profileId], references: [id])
-  ticketTable    ticketTable[]
-}
-
 model ticketTable {
-  id            Int          @id @default(autoincrement())
-  action        String?
-  createdAt     DateTime     @default(now())
-  deleted       Boolean      @default(false)
-  deletedAt     DateTime?
-  modifiedById  Int?
-  newData       String?
-  oldData       String?
-  tableId       Int?
-  tableName     String?
-  updatedAt     DateTime
-  userArchiveId Int?
-  User          User?        @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
-  UserArchive   UserArchive? @relation(fields: [userArchiveId], references: [id])
+  id           Int       @id @default(autoincrement())
+  action       String?
+  createdAt    DateTime  @default(now())
+  deleted      Boolean   @default(false)
+  deletedAt    DateTime?
+  modifiedById Int?
+  newData      String?
+  oldData      String?
+  tableId      Int?
+  tableName    String?
+  updatedAt    DateTime  @updatedAt
+  modifiedBy   User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
 }

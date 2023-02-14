@@ -17,6 +17,21 @@ type SelectedAssetState = {
   setSelectedAsset: (newAsset: AssetType) => void
 }
 
+type TransferAssetState = {
+  transferAsset: AssetType
+  setTransferAsset: (newAsset: AssetType) => void
+}
+
+type DisposeAssetState = {
+  disposeAsset: AssetType
+  setDisposeAsset: (newAsset: AssetType) => void
+}
+
+type RepairAssetState = {
+  repairAsset: AssetType
+  setRepairAsset: (newAsset: AssetType) => void
+}
+
 type DisposalStatusState = {
   status: string
   setStatus: (newStatus: string) => void
@@ -24,6 +39,11 @@ type DisposalStatusState = {
 type RepairStatusState = {
   status: string
   setStatus: (newStatus: string) => void
+}
+
+type SearchState = {
+  search: string
+  setSearch: (newSearch: string) => void
 }
 
 export const useMinimizeStore = create<MinimizeState>((set) => ({
@@ -41,6 +61,21 @@ export const useUpdateAssetStore = create<SelectedAssetState>((set) => ({
   setSelectedAsset: (newAsset: AssetType) => set({ selectedAsset: newAsset }),
 }))
 
+export const useDisposeAssetStore = create<DisposeAssetState>((set) => ({
+  disposeAsset: null,
+  setDisposeAsset: (newAsset: AssetType) => set({ disposeAsset: newAsset }),
+}))
+
+export const useTransferAssetStore = create<TransferAssetState>((set) => ({
+  transferAsset: null,
+  setTransferAsset: (newAsset: AssetType) => set({ transferAsset: newAsset }),
+}))
+
+export const useRepairAssetStore = create<RepairAssetState>((set) => ({
+  repairAsset: null,
+  setRepairAsset: (newAsset: AssetType) => set({ repairAsset: newAsset }),
+}))
+
 export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
   status: "pending",
   setStatus: (newStatus: string) => set({ status: newStatus }),
@@ -49,4 +84,9 @@ export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
 export const useRepairStatusStore = create<RepairStatusState>((set) => ({
   status: "pending",
   setStatus: (newStatus: string) => set({ status: newStatus }),
+}))
+
+export const useSearchStore = create<SearchState>((set) => ({
+  search: "",
+  setSearch: (newSearch: string) => set({ search: newSearch }),
 }))

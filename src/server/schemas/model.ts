@@ -77,17 +77,17 @@ export const ModelCreateInput = z.object({
 })
 
 export const ModelEditInput = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   name: z.string().min(1, "Please provide model name"),
-  brand: z.string().optional(),
-  number: z.string().optional(),
+  brand: z.string(),
+  number: z.string(),
 
-  //asset_class: AssetClassEditInput.optional(),
-  classId: z.number().optional(),
-  //asset_category: AssetCategoryEditInput.optional(),
-  categoryId: z.number().optional(),
-  //asset_type: AssetTypeEditInput.optional(),
-  typeId: z.number().optional(),
+  // asset_class: AssetClassCreateInput
+  classId: z.number({ required_error: "Please select asset class" }),
+  //asset_category: AssetCategoryCreateInput,
+  categoryId: z.number({ required_error: "Please select asset category" }),
+  //asset_type: AssetTypeCreateInput,
+  typeId: z.number({ required_error: "Please select asset type" }),
   //type: TypeEditInput.optional(),
 })
 
@@ -96,6 +96,7 @@ export const ManagementCreateInput = z.object({
   original_cost: z.number().optional().nullish(),
   current_cost: z.number().optional().nullish(),
   residual_value: z.number().nullish().nullish(),
+  residual_percentage: z.number().nullish().nullish(),
   purchase_date: z.date().nullish(),
 
   depreciation_start: z.date().nullish(),
@@ -104,6 +105,9 @@ export const ManagementCreateInput = z.object({
   depreciation_period: z.number().nullish(),
   depreciation_lifetime: z.number().nullish(),
   depreciation_rule: z.string().nullish(),
+  asset_lifetime: z.number().nullish(),
+  asset_quantity: z.number().nullish(),
+  asset_location: z.string().nullish(),
   accounting_method: z.string().nullish(),
   remarks: z.string().nullish(),
   // id: z.number(),
@@ -115,6 +119,7 @@ export const ManagementEditInput = z.object({
   original_cost: z.number().optional().nullish(),
   current_cost: z.number().optional().nullish(),
   residual_value: z.number().nullish().nullish(),
+  residual_percentage: z.number().nullish().nullish(),
   purchase_date: z.date().nullish(),
 
   depreciation_start: z.date().nullish(),
@@ -123,6 +128,9 @@ export const ManagementEditInput = z.object({
   depreciation_period: z.number().nullish(),
   depreciation_lifetime: z.number().nullish(),
   depreciation_rule: z.string().nullish(),
+  asset_lifetime: z.number().nullish(),
+  asset_quantity: z.number().nullish(),
+  asset_location: z.string().nullish(),
   accounting_method: z.string().nullish(),
   remarks: z.string().nullish(),
 })

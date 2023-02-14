@@ -1,6 +1,17 @@
 import { Accordion } from "@mantine/core"
 import AlertInput from "../forms/AlertInput"
-import { InputField, InputNumberField } from "../forms/InputField"
+import { InputField } from "../forms/InputField"
+import {
+  ArrowsExchange,
+  Check,
+  Checks,
+  Circle1,
+  Circle2,
+  Circle3,
+  Circle4,
+  Disabled,
+  Search,
+} from "tabler-icons-react"
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
@@ -18,12 +29,18 @@ import {
   AssetClassType,
   AssetEditFieldValues,
   AssetFieldValues,
+  TicketHandlerValues,
 } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
 import JsBarcode from "jsbarcode"
 import { useReactToPrint } from "react-to-print"
 import { useUpdateAssetStore } from "../../../store/useStore"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
+import InputNumberField from "../forms/InputNumberField"
+import { getAddress } from "../../../lib/functions"
+import { Location } from "@prisma/client"
+import { ticketTableCreate } from "../../../server/schemas/ticket"
 
 export const FormErrorMessage = (props: {
   setFormError: React.Dispatch<React.SetStateAction<boolean>>
@@ -45,6 +62,9 @@ const UpdateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.update.useMutation()
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+
+
+  const ticketTable = trpc.ticketTable.create.useMutation()
 
   const {
     register,
@@ -137,21 +157,12 @@ const UpdateAssetAccordion = () => {
     }
   }, [selectedAsset, reset])
 
-  const [classId, setClassId] = useState<string | null>(
-    selectedAsset?.model?.classId?.toString() ?? null
-  )
-  const [categoryId, setCategoryId] = useState<string | null>(
-    selectedAsset?.model?.categoryId?.toString() ?? null
-  )
-  const [typeId, setTypeId] = useState<string | null>(
-    selectedAsset?.model?.typeId?.toString() ?? null
-  )
-  const [companyId, setCompanyId] = useState<string | null>(
-    selectedAsset?.department?.companyId?.toString() ?? null
-  )
-  const [departmentId, setDepartmentId] = useState<string | null>(
-    selectedAsset?.departmentId?.toString() ?? null
-  )
+  const [classId, setClassId] = useState<string | null>(null)
+  const [categoryId, setCategoryId] = useState<string | null>(null)
+  const [typeId, setTypeId] = useState<string | null>(null)
+  const [companyId, setCompanyId] = useState<string | null>(null)
+  const [departmentId, setDepartmentId] = useState<string | null>(null)
+
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAll.useQuery()
@@ -189,6 +200,8 @@ const UpdateAssetAccordion = () => {
     [vendorsData]
   ) as SelectValueType[] | undefined
 
+  const { data: companyData } = trpc.company.findAll.useQuery()
+
   //gets and sets all class, categories, and types
   const { data: classData } = trpc.assetClass.findAll.useQuery()
   const classList = useMemo(
@@ -200,6 +213,48 @@ const UpdateAssetAccordion = () => {
         }),
     [classData]
   ) as SelectValueType[] | undefined
+
+  const { data: employeeData } = trpc.employee.findAll.useQuery()
+  const employeeList = useMemo(
+    () =>
+      employeeData?.employees
+        .filter((item) => item.id != 0)
+        .map((employeeItem) => {
+          return { value: employeeItem.id.toString(), label: employeeItem.name }
+        }),
+    [employeeData]
+  ) as SelectValueType[] | undefined
+
+  //gets and sets all class, categories, and types
+  const { data: departmentData } = trpc.department.findAll.useQuery()
+
+  const selectedDepartment = useMemo(() => {
+    const department = departmentData?.departments.filter(
+      (department) => department.id === Number(departmentId)
+    )[0]
+
+    //set location === floor and room number
+    // setValue('locationId', department?.locationId ?? undefined)
+    return department?.location
+  }, [departmentId, departmentData]) as Location
+
+  const departmentList = useMemo(() => {
+    if (companyId) {
+      const dept = departmentData?.departments.filter(
+        (department) => department.companyId === Number(companyId)
+      )
+      if (dept) {
+        const departments = dept?.map((department) => {
+          return { value: department.id.toString(), label: department.name }
+        }) as SelectValueType[]
+        return departments ?? null
+      }
+    }
+    // console.log(departmentData)
+    setDepartmentId(null)
+    // console.error("Error loading departments")
+    return null
+  }, [companyId, departmentData])
 
   const [description, setDescription] = useState<string | null>(
     selectedAsset?.description ?? null
@@ -268,14 +323,25 @@ const UpdateAssetAccordion = () => {
     return null
   }, [categoryId, selectedClass])
 
-  // const company_address = useMemo(() => {
-  //   if (companyId) {
-  //     const address = companyData?.companies.filter(
-  //       (company) => company.id === Number(companyId)
-  //     )[0]
-  //     return address ?? null
-  //   }
-  // }, [companyId, companyData])
+  const company_address = useMemo(() => {
+    if (companyId) {
+      const address = companyData?.companies.filter(
+        (company) => company.id === Number(companyId)
+      )[0]
+      return address ?? null
+    }
+  }, [companyId, companyData])
+
+  const companyList = useMemo(
+    () =>
+      companyData?.companies
+        .filter((item) => item.id != 0)
+        .map((company) => {
+          return { value: company.id.toString(), label: company.name }
+        }),
+    [companyData]
+  ) as SelectValueType[] | undefined
+
 
   const [loading, setIsLoading] = useState<boolean>(false)
   // const [assetId, setAssetId] = useState<string>(
@@ -324,6 +390,10 @@ const UpdateAssetAccordion = () => {
 
   const router = useRouter()
 
+  // const ticketHandler = useMemo(() => {
+  //   //
+  // }, [])
+
   const onSubmit: SubmitHandler<AssetEditFieldValues> = (
     form_data: AssetEditFieldValues
   ) => {
@@ -359,6 +429,7 @@ const UpdateAssetAccordion = () => {
       console.log("Submitting: ", form_data.parentId)
       mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
 
+      // ticketTable.mutate({ addedById});
       setTimeout(function () {
         setIsLoading(false)
       }, 3000)
@@ -379,6 +450,7 @@ const UpdateAssetAccordion = () => {
     content: () => componentRef.current,
   })
 
+
   const [formError, setFormError] = useState<boolean>(false)
   useEffect(() => {
     setFormError(Object.keys(errors).length > 0 ? true : false)
@@ -395,20 +467,21 @@ const UpdateAssetAccordion = () => {
         {/* <InputField register={register} label="Name" name="name" />
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
-        <Accordion transitionDuration={300} defaultValue={"1"} classNames={{}}>
+        <Accordion transitionDuration={300} multiple={true} defaultValue={['1', '2', '3']} classNames={{}}>
           <Accordion.Item value={"1"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
-              <div className="flex items-center gap-2 text-gray-700">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
+              <div className=" flex items-center gap-2 text-gray-700">
+                {/* <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-yellow-400 p-1 text-sm text-yellow-400">
                   1
-                </div>
-                <p>General Information</p>
+                </div> */}
+                <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Information</p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="grid grid-cols-9 gap-2">
-                <div className="col-span-9 grid grid-cols-6 gap-2">
-                  <div className="col-span-3">
+              <div className="grid grid-cols-9 gap-7">
+                <div className="col-span-9 grid grid-cols-8 gap-7">
+                  <div className="col-span-4">
                     <InputField
                       register={register}
                       label="Name"
@@ -418,7 +491,7 @@ const UpdateAssetAccordion = () => {
                     />
                     <AlertInput>{errors?.name?.message}</AlertInput>
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <InputField
                       register={register}
                       label="Alternate Asset Number"
@@ -427,6 +500,15 @@ const UpdateAssetAccordion = () => {
                     />
                     <AlertInput>{errors?.alt_number?.message}</AlertInput>
                   </div>
+                  {/* <div className="col-span-2">
+                    <InputField
+                      register={register}
+                      required
+                      name={"model.typeId"}
+                      label="Type"
+                      placeholder="Enter Asset Type"
+                    />
+                  </div> */}
                 </div>
                 <div className="col-span-3">
                   <InputField
@@ -437,7 +519,7 @@ const UpdateAssetAccordion = () => {
                   />
                   <AlertInput>{errors?.serial_no?.message}</AlertInput>
                 </div>
-                <div className="col-span-6 grid grid-cols-9 gap-2">
+                <div className="col-span-6 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
                     <TypeSelect
                       name={"parentId"}
@@ -473,58 +555,6 @@ const UpdateAssetAccordion = () => {
                   </div>
                 </div>
                 <div className="col-span-3">
-                  <ClassTypeSelect
-                    query={classId}
-                    setQuery={setClassId}
-                    required
-                    name={"model.classId"}
-                    setValue={setValue}
-                    value={getValues("model.classId")?.toString()}
-                    title={"Class"}
-                    placeholder={"Select asset class"}
-                    data={classList ?? []}
-                  />
-                  <AlertInput>{errors?.model?.classId?.message}</AlertInput>
-                </div>
-                <div className="col-span-3">
-                  <ClassTypeSelect
-                    disabled={!Boolean(classId)}
-                    query={categoryId}
-                    setQuery={setCategoryId}
-                    required
-                    name={"model.categoryId"}
-                    setValue={setValue}
-                    value={getValues("model.categoryId")?.toString()}
-                    title={"Category"}
-                    placeholder={
-                      !Boolean(classId)
-                        ? "Select asset class first"
-                        : "Select asset category"
-                    }
-                    data={categories ?? []}
-                  />
-                  <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
-                </div>
-                <div className="col-span-3">
-                  <ClassTypeSelect
-                    disabled={!Boolean(categoryId)}
-                    query={typeId}
-                    setQuery={setTypeId}
-                    required
-                    name={"model.typeId"}
-                    setValue={setValue}
-                    value={getValues("model.typeId")?.toString()}
-                    title={"Type"}
-                    placeholder={
-                      !Boolean(categoryId)
-                        ? "Select asset category first"
-                        : "Select asset type"
-                    }
-                    data={types ?? []}
-                  />
-                  <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
-                </div>
-                <div className="col-span-3">
                   <InputField
                     required
                     register={register}
@@ -534,26 +564,86 @@ const UpdateAssetAccordion = () => {
                   />
                   <AlertInput>{errors?.model?.name?.message}</AlertInput>
                 </div>
-                <div className="col-span-3">
-                  <InputField
-                    register={register}
-                    label="Model Brand"
-                    placeholder="Model Brand"
-                    name="model.brand"
-                  />
-                  <AlertInput>{errors?.model?.brand?.message}</AlertInput>
+                <div className="col-span-6 grid grid-cols-9 gap-7">
+                  <div className="col-span-3">
+                    <InputField
+                      register={register}
+                      label="Model Brand"
+                      placeholder="Model Brand"
+                      name="model.brand"
+                    />
+                    <AlertInput>{errors?.model?.brand?.message}</AlertInput>
+                  </div>
+                  <div className="col-span-3">
+                    <InputField
+                      register={register}
+                      label="Model Number"
+                      placeholder="Model Number"
+                      name="model.number"
+                    />
+                    <AlertInput>{errors?.model?.number?.message}</AlertInput>
+                  </div>
+                  <div className="col-span-3">
+                    <InputNumberField
+                      register={register}
+                      label="Asset Lifetime"
+                      placeholder="Months"
+                      name={"management.asset_lifetime"}
+                    />
+                  </div>
                 </div>
-                <div className="col-span-3">
-                  <InputField
-                    register={register}
-                    label="Model Number"
-                    placeholder="Model Number"
-                    name="model.number"
-                  />
-                  <AlertInput>{errors?.model?.number?.message}</AlertInput>
+                <div className="col-span-9 grid grid-cols-12 gap-7">
+                  <div className="col-span-3">
+                    <InputNumberField
+                      register={register}
+                      label="Original Cost"
+                      placeholder="Original Cost"
+                      name="management.original_cost"
+                    />
+                    <AlertInput>
+                      {errors?.management?.original_cost?.message}
+                    </AlertInput>
+                  </div>
+                  <div className="col-span-3">
+                    <InputNumberField
+                      register={register}
+                      label="Current Cost"
+                      placeholder="Current Cost"
+                      name="management.current_cost"
+                    />
+                    <AlertInput>
+                      {errors?.management?.current_cost?.message}
+                    </AlertInput>
+                  </div>
+
+                  <div className="col-span-3">
+                    <InputNumberField
+                      register={register}
+                      label="Residual Value"
+                      placeholder="Residual Value"
+                      name={"management.residual_value"}
+                    />
+                    <AlertInput>
+                      {errors?.management?.residual_value?.message}
+                    </AlertInput>
+                  </div>
+                  <div className=" col-span-3">
+                    <InputField
+                      type="number"
+                      register={register}
+                      label="Residual Value Percentage"
+                      placeholder="Residual Value Percentage"
+                      name={"management.residual_percentage"}
+                    />
+                  </div>
+
                 </div>
 
-                <div className="col-span-10">
+
+
+
+
+                <div className="col-span-9">
                   <Textarea
                     value={description ?? ""}
                     onChange={(event) => {
@@ -579,197 +669,32 @@ const UpdateAssetAccordion = () => {
           <Accordion.Item value={"2"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
-                  2
-                </div>
-                <p>Accounting Management</p>
+                <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">General</p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="grid grid-cols-9 gap-2">
-                <div className="col-span-3">
-                  <TypeSelect
-                    isString
-                    name={"management.currency"}
-                    setValue={setValue}
-                    value={getValues("management.currency")}
-                    title={"Currency"}
-                    placeholder={"Select currency type"}
-                    data={[
-                      { value: "PHP", label: "Philippine Peso (Php)" },
-                      { value: "USD", label: "US Dollar (USD)" },
-                    ]}
-                  />
-                  <AlertInput>
-                    {errors?.management?.currency?.message}
-                  </AlertInput>
-                </div>
-                <div className="col-span-3">
-                  <InputNumberField
-                    register={register}
-                    label="Original Cost"
-                    placeholder="Original Cost"
-                    value={selectedAsset?.management?.original_cost?.toString()}
-                    name="management.original_cost"
-                  />
-                  <AlertInput>
-                    {errors?.management?.original_cost?.message}
-                  </AlertInput>
-                </div>
-                <div className="col-span-3">
-                  <InputNumberField
-                    register={register}
-                    label="Current Cost"
-                    placeholder="Current Cost"
-                    value={selectedAsset?.management?.current_cost?.toString()}
-                    name="management.current_cost"
-                  />
-                  <AlertInput>
-                    {errors?.management?.current_cost?.message}
-                  </AlertInput>
-                </div>
-                <div className="col-span-3">
-                  <TypeSelect
-                    isString
-                    name={"management.accounting_method"}
-                    setValue={setValue}
-                    value={getValues("management.accounting_method")}
-                    title={"Accounting Method"}
-                    placeholder={"Select accounting method"}
-                    data={[
-                      "Accrual Basis",
-                      "Cash Basis",
-                      "Modified Cash Basis",
-                    ]}
-                  />
-                  <AlertInput>
-                    {errors?.management?.accounting_method?.message}
-                  </AlertInput>
-                </div>
-                <div className="col-span-3">
-                  <InputNumberField
-                    register={register}
-                    label="Residual Value"
-                    placeholder="Residual Value"
-                    value={selectedAsset?.management?.residual_value?.toString()}
-                    name={"management.residual_value"}
-                  />
-                  <AlertInput>
-                    {errors?.management?.residual_value?.message}
-                  </AlertInput>
-                </div>
-                <div className="col-span-3 space-y-2">
-                  <p className="text-sm text-gray-700">Purchase Date</p>
-                  <DatePicker
-                    placeholder="Month Day, Year"
-                    allowFreeInput
-                    size="sm"
-                    value={getValues("management.purchase_date")}
-                    onChange={(value) => {
-                      setValue("management.purchase_date", value)
-                    }}
-                    classNames={{
-                      input:
-                        "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                    }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                  />
-                </div>
-              </div>
-            </Accordion.Panel>
-          </Accordion.Item>
-          <Accordion.Item value={"3"} className="">
-            <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
-              <div className="flex items-center gap-2 text-gray-700">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
-                  3
-                </div>
-                <p>Logistics & Usage Information</p>
-              </div>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <div className="grid grid-cols-9 gap-2">
-                {/* <div className="col-span-3">
-                  <ClassTypeSelect
-                    query={companyId}
-                    setQuery={setCompanyId}
-                    required
-                    name={"subsidiaryId"}
-                    setValue={setValue}
-                    value={getValues("subsidiaryId")?.toString()}
-                    title={"Company"}
-                    placeholder={"Select company or subsidiary"}
-                    data={
-                      companyList ?? []
-                    }
-                  />
-                  <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
-                </div>
-                <div className="col-span-6">
-                  <div className="text-gray-700">
-                    <div className="flex flex-1 flex-col gap-2">
-                      <label htmlFor="address" className="text-sm">
-                        Company Address
-                      </label>
-                      <input
-                        type="text"
-                        id={"address"}
-                        className={
-                          "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                        }
-                        placeholder="Company Address will appear here"
-                        value={
-                          company_address?.address
-                            ? getAddress(company_address)
-                            : ""
-                        }
-                        disabled
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="col-span-9 grid grid-cols-8 gap-2">
-                  <div className="col-span-2">
+              <div className="grid gap-7">
+                <div className="grid grid-cols-9 col-span-9 gap-7">
+                  <div className="col-span-4">
                     <ClassTypeSelect
-                      query={departmentId}
-                      setQuery={setDepartmentId}
+                      query={companyId}
+                      setQuery={setCompanyId}
                       required
-                      disabled={!Boolean(companyId)}
-                      name={"departmentId"}
+                      name={"subsidiaryId"}
                       setValue={setValue}
-                      value={getValues("departmentId")?.toString()}
-                      title={"Department"}
-                      placeholder={!Boolean(companyId) ? "Select company first" : "Select department type"}
-                      data={
-                        departmentList
-                        ?? []
-                      }
+                      value={getValues("subsidiaryId")?.toString()}
+                      title={"Company"}
+                      placeholder={"Select company or subsidiary"}
+                      data={companyList ?? []}
                     />
-                    <AlertInput>{errors?.departmentId?.message}</AlertInput>
+                    <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
                   </div>
-                  <div className="col-span-2">
-                    <div className="text-gray-700">
-                      <div className="flex flex-1 flex-col gap-2">
-                        <label htmlFor="floor" className="text-sm">
-                          Floor
-                        </label>
-                        <input
-                          type="text"
-                          id={"floor"}
-                          className={
-                            "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                          }
-                          placeholder="Floor no."
-                          value={selectedDepartment?.floor ?? ""}
-                          disabled
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-2">
+                  <div className="col-span-8">
                     <div className="text-gray-700">
                       <div className="flex flex-1 flex-col gap-2">
                         <label htmlFor="address" className="text-sm">
-                          Room
+                          Company Address
                         </label>
                         <input
                           type="text"
@@ -777,31 +702,214 @@ const UpdateAssetAccordion = () => {
                           className={
                             "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                           }
-                          placeholder="Room no."
-                          value={selectedDepartment?.room ?? ""}
+                          placeholder="Company Address will appear here"
+                          value={
+                            company_address?.address
+                              ? getAddress(company_address)
+                              : ""
+                          }
                           disabled
                         />
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-2">
-                    <TypeSelect
-                      name={"custodianId"}
-                      setValue={setValue}
+                  <div className="col-span-12 grid grid-cols-12 gap-7">
+                    <div className="col-span-3">
+                      <ClassTypeSelect
+                        query={departmentId}
+                        setQuery={setDepartmentId}
+                        required
+                        disabled={!Boolean(companyId)}
+                        name={"departmentId"}
+                        setValue={setValue}
+                        value={getValues("departmentId")?.toString()}
+                        title={"Department"}
+                        placeholder={
+                          !Boolean(companyId)
+                            ? "Select company first"
+                            : "Select department type"
+                        }
+                        data={departmentList ?? []}
+                      />
+                      <AlertInput>{errors?.departmentId?.message}</AlertInput>
+                    </div>
+                    <div className="col-span-3">
+                      <div className="text-gray-700">
+                        <div className=" gap-2">
+                          <label htmlFor="floor" className="text-sm">
+                            Floor
+                          </label>
+                          <input
+                            type="text"
+                            id={"floor"}
+                            className={
+                              "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                            }
+                            placeholder="Floor no."
+                            value={selectedDepartment?.floor ?? ""}
+                            disabled
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-span-3">
+                      <div className="text-gray-700">
+                        <div className=" gap-2">
+                          <label htmlFor="address" className="text-sm">
+                            Room
+                          </label>
+                          <input
+                            type="text"
+                            id={"address"}
+                            className={
+                              "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                            }
+                            placeholder="Room no."
+                            value={selectedDepartment?.room ?? ""}
+                            disabled
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-span-3">
+                      <TypeSelect
+                        name={"custodianId"}
+                        setValue={setValue}
+                        value={getValues("custodianId")?.toString()}
+                        title={"Custodian"}
+                        disabled={!Boolean(departmentId)}
+                        placeholder={
+                          !Boolean(departmentId)
+                            ? "Select department first"
+                            : "Assign custodian"
+                        }
+                        data={employeeList ?? []}
+                      />
+                      <AlertInput>{errors?.custodianId?.message}</AlertInput>
+                    </div>
 
-                      value={getValues('custodianId')?.toString()}
-                      title={"Custodian"}
-                      disabled={!Boolean(departmentId)}
-                      placeholder={!Boolean(departmentId) ? "Select department first" : "Assign custodian"}
-                      data={
-                        employeeList
-                        ?? []
-                      }
-                    />
-                    <AlertInput>{errors?.custodianId?.message}</AlertInput>
                   </div>
-                </div> */}
-                <div className="col-span-9 grid grid-cols-8 gap-2">
+                  <div className="col-span-12 grid grid-cols-12 gap-7 ">
+                    <div className="col-span-2">
+                      <ClassTypeSelect
+                        query={classId}
+                        setQuery={setClassId}
+                        required
+                        name={"model.classId"}
+                        setValue={setValue}
+                        value={getValues("model.classId")?.toString()}
+                        title={"Class"}
+                        placeholder={"Select asset class"}
+                        data={classList ?? []}
+                      />
+                      <AlertInput>{errors?.model?.classId?.message}</AlertInput>
+                    </div>
+                    <div className="col-span-2">
+                      <ClassTypeSelect
+                        disabled={!Boolean(classId)}
+                        query={categoryId}
+                        setQuery={setCategoryId}
+                        required
+                        name={"model.categoryId"}
+                        setValue={setValue}
+                        value={getValues("model.categoryId")?.toString()}
+                        title={"Category"}
+                        placeholder={
+                          !Boolean(classId)
+                            ? "Select asset class first"
+                            : "Select asset category"
+                        }
+                        data={categories ?? []}
+                      />
+                      <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
+                    </div>
+                    <div className="col-span-2">
+                      <ClassTypeSelect
+                        disabled={!Boolean(categoryId)}
+                        query={typeId}
+                        setQuery={setTypeId}
+                        required
+                        name={"model.typeId"}
+                        setValue={setValue}
+                        value={getValues("model.typeId")?.toString()}
+                        title={"Type"}
+                        placeholder={
+                          !Boolean(categoryId)
+                            ? "Select asset category first"
+                            : "Select asset type"
+                        }
+                        data={types ?? []}
+                      />
+                      <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
+                    </div>
+                    <div className="col-span-6">
+                      <InputField
+                        register={register}
+                        label="Asset Location"
+                        placeholder="Asset Location"
+                        name="management.asset_location"
+                        required
+                      />
+                    </div>
+
+                  </div>
+                </div>
+                <div className="grid grid-cols-9 col-span-9 gap-7">
+                  <div className="col-span-3">
+                    <TypeSelect
+                      isString
+                      name={"management.currency"}
+                      setValue={setValue}
+                      value={getValues("management.currency")}
+                      title={"Currency"}
+                      placeholder={"Select currency type"}
+                      data={[
+                        { value: "PHP", label: "Philippine Peso (Php)" },
+                        { value: "USD", label: "US Dollar (USD)" },
+                      ]}
+                    />
+                    <AlertInput>
+                      {errors?.management?.currency?.message}
+                    </AlertInput>
+                  </div>
+
+                  <div className="col-span-3">
+                    <TypeSelect
+                      isString
+                      name={"management.accounting_method"}
+                      setValue={setValue}
+                      value={getValues("management.accounting_method")}
+                      title={"Accounting Method"}
+                      placeholder={"Select accounting method"}
+                      data={[
+                        "Accrual Basis",
+                        "Cash Basis",
+                        "Modified Cash Basis",
+                      ]}
+                    />
+                    <AlertInput>
+                      {errors?.management?.accounting_method?.message}
+                    </AlertInput>
+                  </div>
+
+                  <div className="col-span-3 space-y-2">
+                    <p className="text-sm text-gray-700">Purchase Date</p>
+                    <DatePicker
+                      placeholder="Month Day, Year"
+                      allowFreeInput
+                      size="sm"
+                      onChange={(value) => {
+                        setValue("management.purchase_date", value)
+                      }}
+                      classNames={{
+                        input:
+                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                      }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                    />
+                  </div>
+
+                </div>
+                <div className="col-span-9 grid grid-cols-6 gap-7">
                   <div className="col-span-2">
                     <TypeSelect
                       isString
@@ -821,7 +929,7 @@ const UpdateAssetAccordion = () => {
                       Depreciation Start Date
                     </p>
                     <DatePicker
-                      placeholder="Month Day, Year"
+                      placeholder="Month, Day, Year"
                       allowFreeInput
                       size="sm"
                       value={dep_start}
@@ -842,8 +950,8 @@ const UpdateAssetAccordion = () => {
                     <DatePicker
                       placeholder={
                         dep_start
-                          ? "Month Day, Year"
-                          : "Select start date first"
+                          ? "Month, Day, Year"
+                          : "Select start ffirst"
                       }
                       allowFreeInput
                       size="sm"
@@ -860,18 +968,59 @@ const UpdateAssetAccordion = () => {
                       }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                     />
                   </div>
-                  <div className="col-span-2">
-                    <InputNumberField
-                      placeholder="Month/s"
-                      register={register}
-                      label="Period (month/s)"
-                      value={selectedAsset?.management?.depreciation_period?.toString()}
-                      name="management.depreciation_period"
-                    />
-                    <AlertInput>
-                      {errors?.management?.depreciation_period?.message}
-                    </AlertInput>
-                  </div>
+
+                </div>
+
+              </div>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item value={"3"} className="">
+            <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
+              <div className="flex items-center gap-2 text-gray-700">
+                <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Usage</p>
+              </div>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <div className="grid grid-cols-9 col-span-9 gap-7">
+                <div className="col-span-3 space-y-2">
+                  <p className="text-sm text-gray-700">
+                    Date of Usage
+                  </p>
+                  <DatePicker
+                    placeholder="Month, Day, Year"
+                    // allowFreeInput
+                    size="sm"
+                    value={
+                      dep_start
+                    }
+                    disabled
+                    classNames={{
+                      input:
+                        "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400"
+                    }}
+
+                  // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                  />
+                </div>
+                <div className="col-span-3">
+                  <InputNumberField
+                    placeholder="Month/s"
+                    register={register}
+                    label="Period (month/s)"
+                    name="management.depreciation_period"
+                  />
+                  <AlertInput>
+                    {errors?.management?.depreciation_period?.message}
+                  </AlertInput>
+                </div>
+                <div className="col-span-3">
+                  <InputNumberField
+                    register={register}
+                    label="Asset Quantity"
+                    placeholder="Asset Quantity"
+                    name="management.asset_quantity"
+                  />
                 </div>
                 <div className="col-span-9">
                   <Textarea
@@ -902,10 +1051,8 @@ const UpdateAssetAccordion = () => {
               className="uppercase outline-none focus:outline-none active:outline-none"
             >
               <div className="flex items-center gap-2 text-gray-700">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-700 p-1 text-sm">
-                  4
-                </div>
-                <p>Print Bar Code</p>
+                <Circle4 className="h-7 w-7" color="gold"></Circle4>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Print Bar Code</p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
@@ -916,7 +1063,7 @@ const UpdateAssetAccordion = () => {
                     className="flex h-[10rem] w-[25rem] items-center justify-center rounded-md border-2 border-dashed border-neutral-400"
                   >
                     <p className="text-center italic text-neutral-400">
-                      Barcode will appear here, please select company and
+                      Barcode will appear here, please select `company a`nd
                       department
                     </p>
                   </div>

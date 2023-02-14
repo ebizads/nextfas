@@ -22,6 +22,7 @@ import { DatePicker } from "@mantine/dates"
 import { SelectValueType } from "../select/TypeSelect"
 import Link from "next/link"
 import AlertInput from "../forms/AlertInput"
+import { useDisposeAssetStore } from "../../../store/useStore"
 // import { AssetFieldValues } from "../../../types/generic"
 
 export type Dispose = z.infer<typeof AssetDisposalCreateInput>
@@ -45,10 +46,13 @@ const CreateDisposeAccordion = () => {
   const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
   const { data: disposalTypes } = trpc.disposalType.findAll.useQuery()
 
+  const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
+
+
   //const utils = trpc.useContext()
 
   const disposalTypeList = useMemo(() => {
-    const list = disposalTypes?.disposalTypes.map((employee) => {
+    const list = disposalTypes?.disposalTypes.map((employee: { id: { toString: () => any }; name: any }) => {
       return { value: employee.id.toString(), label: employee.name }
     }) as SelectValueType[]
     return list ?? []
@@ -119,6 +123,9 @@ const CreateDisposeAccordion = () => {
     getValues("disposalTypeId") === 1
       ? setValue("disposalPrice", 0)
       : resetField("disposalPrice")
+    getValues("disposalTypeId") === 1
+      ? setValue("tradedItem", "")
+      : resetField("tradedItem")
   }, [getValues, resetField, setValue, selectedType])
 
   useEffect(() => {
@@ -130,21 +137,9 @@ const CreateDisposeAccordion = () => {
   }, [assetNumber, asset])
 
   useEffect(() => {
-    if (assetNumber !== "") {
-      if (asset === null || asset?.deleted === true) {
-        setSearchModal(true)
-        setAssetNumber("")
-      } else if (asset?.status === "disposal") {
-        setValidateString("The asset is already in for disposal")
-        setValidateModal(true)
-        setAssetNumber("")
-      } else if (asset?.status === "repair") {
-        setValidateString("The asset is in for repair.")
-        setValidateModal(true)
-        setAssetNumber("")
-      }
-    }
-  }, [asset, assetNumber, assetId])
+    setAssetNumber(disposeAsset?.number ?? "")
+  }, [setAssetNumber, disposeAsset])
+
 
   const steps = useMemo(
     () => [
@@ -181,6 +176,11 @@ const CreateDisposeAccordion = () => {
   const { state, stepperProps, stepsProps, nextStep, prevStep } = useStepper({
     steps,
   })
+
+  const resetDisposeAsset = () => {
+    setDisposeAsset(null)
+    console.log("dapat wala na")
+  }
 
   return (
     <div className="px-4">
@@ -227,10 +227,7 @@ const CreateDisposeAccordion = () => {
                   <div className="flex flex-col">
                     <span className="text-xs">Step {index + 1}</span>
                     <span className="font-bold">{steps[index]?.label}</span>
-                    {/* <div>
-                                        {state.currentStep >= index ? <span className="rounded-3xl border px-2 text-sm bg-[#FEF3C7] border-[#FEF3C7] text-[#F59E0B]">{state.currentStep === index ? "Ongoing" : "Completed"}</span>
-                                            : <span className="rounded-3xl border px-2 text-sm border-[#0f1a2a86] text-[#0f1a2a86]">Pending</span>}
-                                    </div> */}
+
                   </div>
                 </div>
               </li>
@@ -238,7 +235,7 @@ const CreateDisposeAccordion = () => {
           </ol>
         </nav>
       </div>
-      {state.currentStep === 0 && (
+      {/* {state.currentStep === 0 && (
         <div className="w-full py-4">
           <div className="flex w-80 flex-row rounded-sm border border-[#F2F2F2] bg-[#F2F2F2] px-4 py-2">
             <input
@@ -259,6 +256,7 @@ const CreateDisposeAccordion = () => {
           </div>
         </div>
       )}
+  
 
       <Modal
         className="max-w-lg"
@@ -279,14 +277,15 @@ const CreateDisposeAccordion = () => {
         <div className="py-2">
           <p className="text-center text-lg font-semibold">{validateString}</p>
         </div>
-      </Modal>
+      </Modal> */}
+
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         {asset !== null && state.currentStep === 0 && (
           <div>
             <div className="rounded-md bg-white drop-shadow-lg">
               <div className="p-5">
-                <Accordion defaultValue="transfer">
-                  <Accordion.Item value="Asset Details">
+                <Accordion multiple={true} defaultValue={['asset_details', 'general_information', 'asset_usage_info']}>
+                  <Accordion.Item value="asset_details">
                     <Accordion.Control>
                       <div className="flex flex-row">
                         <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
@@ -302,13 +301,13 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Asset Number
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
                               {asset?.number ?? ""}
                             </p>
                           </div>
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Asset Name</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.name ?? ""}
                             </p>
                           </div>
@@ -316,7 +315,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Alternate Asset Number
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.alt_number ?? ""}
                             </p>
                           </div>
@@ -326,19 +325,19 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Parent Asset
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.parent?.name ?? ""}
                             </p>
                           </div>
                           <div className="flex w-[60%] flex-col py-2">
                             <label className="font-semibold">Project</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.project?.name ?? ""}
                             </p>
                           </div>
                           <div className="flex w-[60%] flex-col py-2">
                             <label className="font-semibold">Asset Type</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.model?.type?.name ?? ""}
                             </p>
                           </div>
@@ -352,7 +351,7 @@ const CreateDisposeAccordion = () => {
                             <textarea
                               value={asset?.description ?? ""}
                               readOnly
-                              className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                              className="resize-none rounded-md border-2 border-gray-400 bg-gray-200 px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                             ></textarea>
                           </div>
                         </div>
@@ -361,7 +360,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Accounting Method
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.depreciation_rule ?? ""}
                             </p>
                           </div>
@@ -369,7 +368,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Asset Lifetime
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {getLifetime(
                                 asset?.management?.depreciation_start ??
                                 new Date(),
@@ -382,7 +381,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Asset Serial Number
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.number ?? ""}
                             </p>
                           </div>
@@ -405,14 +404,14 @@ const CreateDisposeAccordion = () => {
                         <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Subsidiary</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.subsidiary?.name ?? ""}
                             </p>
                           </div>
 
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Custodian</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.custodian?.name ?? ""}
                             </p>
                           </div>
@@ -422,7 +421,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Purchase Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.purchase_date?.toString() ??
                                 ""}
                             </p>
@@ -431,13 +430,13 @@ const CreateDisposeAccordion = () => {
                         <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Department</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.department?.name ?? ""}
                             </p>
                           </div>
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Class</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.model?.class?.name ?? ""}
                             </p>
                           </div>
@@ -446,12 +445,14 @@ const CreateDisposeAccordion = () => {
                     </Accordion.Panel>
                   </Accordion.Item>
 
-                  <Accordion.Item value="focus-ring">
+                  <Accordion.Item value="asset_usage_info">
                     <Accordion.Control>
                       <div className="flex flex-row">
                         <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
                         <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                           Asset Usage Information
+
+
                         </p>
                       </div>
                     </Accordion.Control>
@@ -462,8 +463,8 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Depreciation Start Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_start?.toString() ??
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                              {asset?.management?.depreciation_start?.toLocaleDateString() ??
                                 ""}
                             </p>
                           </div>
@@ -471,14 +472,14 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Depreciation End Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_end?.toString() ??
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                              {asset?.management?.depreciation_end?.toLocaleDateString() ??
                                 ""}
                             </p>
                           </div>
                           <div className="flex w-full flex-col py-2">
                             <label className="font-semibold">Period</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.depreciation_period ?? ""}
                             </p>
                           </div>
@@ -488,7 +489,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Original Cost
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.original_cost ?? ""}
                             </p>
                           </div>
@@ -496,7 +497,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Current Cost
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.current_cost ?? ""}
                             </p>
                           </div>
@@ -504,7 +505,7 @@ const CreateDisposeAccordion = () => {
                             <label className="font-semibold">
                               Depreciation Method
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.depreciation_rule ?? ""}
                             </p>
                           </div>
@@ -513,7 +514,7 @@ const CreateDisposeAccordion = () => {
                       <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                         <div className="flex w-full flex-col py-2">
                           <label className="font-semibold">Currency</label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                             {asset?.management?.currency ?? ""}
                           </p>
                         </div>
@@ -521,7 +522,7 @@ const CreateDisposeAccordion = () => {
                           <label className="font-semibold">
                             Residual Value
                           </label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                             {asset?.management?.residual_value ?? ""}
                           </p>
                         </div>
@@ -531,14 +532,25 @@ const CreateDisposeAccordion = () => {
                 </Accordion>
 
                 <hr className="w-full"></hr>
-                <div className="flex w-full justify-end py-3">
-                  <button
-                    type="button"
-                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={nextStep}
-                  >
-                    Next
-                  </button>
+                <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+                  <div className="flex w-full justify-center gap-3">
+                    <button
+                      type="button"
+                      className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={nextStep}
+                    >
+                      Next
+                    </button>
+                  </div>
+                  <div className="flex w-full justify-center">
+                    <button
+                      type="button"
+                      className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={resetDisposeAsset}
+                    >
+                      Cancel Process
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -585,18 +597,6 @@ const CreateDisposeAccordion = () => {
                     />
                   </div>
                   <div className="flex w-full flex-col">
-                    <label className="font-semibold">CUFS Code String</label>
-
-                    <InputField
-                      register={register}
-                      name="cufsCodeString"
-                      type={"text"}
-                      label={""}
-                    />
-                  </div>
-                </div>
-                <div className="flex w-full flex-row justify-between gap-7 py-2">
-                  <div className="flex w-full flex-col">
                     <label className="font-semibold">Disposal Date</label>
                     <DatePicker
                       onChange={(value) => {
@@ -612,45 +612,41 @@ const CreateDisposeAccordion = () => {
                       className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                     />
                   </div>
-                  <div className="flex w-full flex-col">
-                    <label className="font-semibold">Date of Completion</label>
-                    <DatePicker
-                      onChange={(value) => {
-                        setCompletionDate(value as Date)
-                        setValue("completionDate", value as Date)
-                      }}
-                      value={completionDate}
-                      minDate={new Date()}
-                      dropdownType="modal"
-                      placeholder="Pick Date"
-                      size="sm"
-                      variant="unstyled"
-                      className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                    />
-                  </div>
                 </div>
-                {selectedType !== "1" && (
-                  <div>
-                    <div className="flex w-full flex-row justify-between gap-7 py-2">
-                      <div className="flex w-full flex-col">
-                        <label className="font-semibold">Customer Name</label>
-                        <InputField
-                          register={register}
-                          name="customerName"
-                          type={"text"}
-                          label={""}
-                        />
-                      </div>
-                      <div className="flex w-full flex-col">
-                        <label className="font-semibold">Telephone No.</label>
-                        <InputField
-                          register={register}
-                          name="telephoneNo"
-                          type={"text"}
-                          label={""}
-                        />
-                      </div>
+                {/* <div className="flex w-full flex-row justify-between gap-7 py-2">
+                  <div className="flex w-full flex-col">
+                    
+                  </div>
+                  <div className="flex w-full flex-col">
+
+                  </div>
+                </div> */}
+                {
+                  selectedType !== "1" &&
+                  (<div className="flex w-full flex-row justify-between gap-7 py-2">
+                    <div className="flex w-full flex-col">
+                      <label className="font-semibold">Customer Name</label>
+                      <InputField
+                        register={register}
+                        name="customerName"
+                        type={"text"}
+                        label={""}
+                      />
                     </div>
+                    <div className="flex w-full flex-col">
+                      <label className="font-semibold">Telephone No.</label>
+                      <InputField
+                        register={register}
+                        name="telephoneNo"
+                        type={"text"}
+                        label={""}
+                      />
+                    </div>
+                  </div>)
+                }
+                {(selectedType !== "1" && selectedType !== "3") && (
+                  <div>
+
                     <div className="flex w-full flex-row justify-between gap-7 py-2">
                       <div className="flex w-full flex-col">
                         <label className="font-semibold">
@@ -698,16 +694,32 @@ const CreateDisposeAccordion = () => {
                     </div>
                   </div>
                 )}
+                {
+                  (selectedType !== "1" && selectedType !== "2") &&
+                  <div className="flex w-full flex-row justify-between gap-7 py-2">
+                    <div className="flex w-full flex-col">
+                      <label className="font-semibold">Traded Items</label>
+                      <InputField
+                        register={register}
+                        name="tradedItems"
+                        type={"text"}
+                        label={""}
+                      />
+                      <AlertInput>{errors?.tradedItem?.message}</AlertInput>
+                    </div>
+
+                  </div>
+                }
                 <hr className="w-full"></hr>
-                <div className="flex w-full justify-between py-3">
-                  <button
-                    type="button"
-                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={prevStep}
-                  >
-                    Previous
-                  </button>
-                  {
+                <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+                  <div className="flex w-full justify-center gap-3">
+                    <button
+                      type="button"
+                      className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={prevStep}
+                    >
+                      Back
+                    </button>
                     <button
                       type="button"
                       className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -715,7 +727,16 @@ const CreateDisposeAccordion = () => {
                     >
                       Next
                     </button>
-                  }
+                  </div>
+                  <div className="flex w-full justify-center">
+                    <button
+                      type="button"
+                      className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={resetDisposeAsset}
+                    >
+                      Cancel Process
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -818,6 +839,12 @@ const CreateDisposeAccordion = () => {
                         <AlertInput>{errors?.telephoneNo?.message}</AlertInput>
                       </div>
                     </div>
+
+                  </div>
+                )}
+                {
+                  (selectedType !== "1" && selectedType !== "3") &&
+                  <div>
                     <div className="flex w-full flex-row justify-between gap-7 py-2">
                       <div className="flex w-full flex-col">
                         <label className="font-semibold">
@@ -872,46 +899,28 @@ const CreateDisposeAccordion = () => {
                         <AlertInput>{errors?.agreedPrice?.message}</AlertInput>
                       </div>
                     </div>
-                    <div className="flex w-full flex-row justify-between gap-7 py-2">
-                      <div className="flex w-full flex-col">
-                        <label className="font-semibold">
-                          Date of Completion
-                        </label>
-                        <DatePicker
-                          disabled
-                          value={completionDate}
-                          minDate={new Date()}
-                          dropdownType="modal"
-                          placeholder="Pick Date"
-                          size="sm"
-                          variant="unstyled"
-                          className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                        />
-                        <AlertInput>
-                          {errors?.completionDate?.message}
-                        </AlertInput>
-                      </div>
-                      <div className="flex w-full flex-col">
-                        <label className="font-semibold">
-                          CUFS Code String
-                        </label>
-                        <InputField
-                          disabled
-                          register={register}
-                          name="cufsCodeString"
-                          type={"text"}
-                          label={""}
-                        />
-                        <AlertInput>
-                          {errors?.cufsCodeString?.message}
-                        </AlertInput>
-                      </div>
-                    </div>
                   </div>
-                )}
+                }
+                {
+                  (selectedType !== "1" && selectedType !== "2") &&
+                  <div className="flex w-full flex-row justify-between gap-7 py-2">
+                    <div className="flex w-full flex-col">
+                      <label className="font-semibold">Traded Items</label>
+                      <InputField
+                        disabled
+                        register={register}
+                        name="tradedItems"
+                        type={"text"}
+                        label={""}
+                      />
+                      <AlertInput>{errors?.tradedItem?.message}</AlertInput>
+                    </div>
+
+                  </div>
+                }
 
                 <hr className="w-full"></hr>
-                <div className="flex w-full justify-between py-3">
+                {/* <div className="flex w-full justify-between py-3">
                   <button
                     type="button"
                     className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -926,6 +935,32 @@ const CreateDisposeAccordion = () => {
                   >
                     Dispose
                   </button>
+                </div> */}
+                <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+                  <div className="flex w-full justify-center gap-3">
+                    <button
+                      type="button"
+                      className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={prevStep}
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                    >
+                      Dispose
+                    </button>
+                  </div>
+                  <div className="flex w-full justify-center">
+                    <button
+                      type="button"
+                      className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                      onClick={resetDisposeAsset}
+                    >
+                      Cancel Process
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -936,18 +971,18 @@ const CreateDisposeAccordion = () => {
         isVisible={completeModal}
         setIsVisible={setCompleteModal}
         className="max-w-2xl"
-        title="Transfer Complete"
+        title="Asset Disposed"
       >
-        <div className="flex w-full flex-col px-4 py-2">
+        <div className="flex w-full flex-col px-4 pt-2">
           <div>
             <p className="text-center text-lg font-semibold">
               Asset successfully added to disposal.
             </p>
           </div>
-          <div className="flex justify-end py-2">
-            <Link href={"/assets"}>
-              <button className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500">
-                Continue
+          <div className="pt-5 flex justify-end py-2">
+            <Link href={"/transactions/disposal"}>
+              <button onClick={resetDisposeAsset} className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500">
+                Return
               </button>
             </Link>
           </div>

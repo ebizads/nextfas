@@ -61,13 +61,13 @@ export default function Modal({
                       {title}
 
                       <div>
-                        <i className="fa-thin fa-x hover:cursor-pointer" onClick={closeModal}></i>
+                        <i className="fa-thin fa-circle-xmark hover:cursor-pointer" onClick={closeModal}></i>
                       </div>
 
                     </Dialog.Title>
                   </div>
                   <hr className="w-full"></hr>
-                  <div className="px-6 pb-6">
+                  <div className="px-6 py-6">
                     {children}
                   </div>
                 </Dialog.Panel>

@@ -3,12 +3,19 @@ import { signOut, useSession } from "next-auth/react"
 import Head from "next/head"
 import Link from "next/link"
 import { trpc } from "../utils/trpc"
+import { useEffect } from "react"
+import { useRouter } from "next/router"
 
 const Home: NextPage = () => {
+  const router = useRouter()
   const { data: session } = useSession()
   const { data } = trpc.asset.findAll.useQuery({
     page: 1,
     limit: 1,
+  })
+
+  useEffect(() => {
+    router.push("/assets")
   })
 
   return (
@@ -22,14 +29,6 @@ const Home: NextPage = () => {
         <h1 className="text-5xl font-extrabold leading-normal text-gray-700 md:text-[5rem]">
           FAS <span className="text-amber-300">development</span> server
         </h1>
-        <pre>
-          Assets:
-          {JSON.stringify(
-            data?.assets?.map((e) => e.name),
-            null,
-            2
-          )}
-        </pre>
         <p className="text-gray-700">{session?.user?.name}</p>
         {session ? (
           <button

@@ -1,15 +1,16 @@
+
 import React, { useEffect, useState } from "react"
 import VendorTable from "../components/atoms/table/VendorTable"
 import DashboardLayout from "../layouts/DashboardLayout"
 import { vendorColumns } from "../lib/table"
 import { VendorType } from "../types/generic"
 import { trpc } from "../utils/trpc"
-import { Pagination } from "@mantine/core"
+import { Pagination, Select } from "@mantine/core"
 import PaginationPopOver from "../components/atoms/popover/PaginationPopOver"
 import FilterPopOver from "../components/atoms/popover/FilterPopOver"
 import Search from "../components/atoms/search/Search"
 import Modal from "../components/asset/Modal"
-import { z } from "zod"
+import { TypeOf, z } from "zod"
 import { VendorCreateInput } from "../server/schemas/vendor"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -24,14 +25,34 @@ const Vendors = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
 
+
   // Get asset by asset id
   const { data } = trpc.vendor.findAll.useQuery({
     limit,
     page,
   })
 
+
   const [vendors, setVendors] = useState<VendorType[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
+  const [checkboxes, setCheckboxes] = useState<number[]>([])
+  const [openPopover, setOpenPopover] = useState<boolean>(false)
+  const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
+  // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+  const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
+
+
+  const utils = trpc.useContext()
+
+
+  const [filterBy, setFilterBy] = useState<string[]>(
+    vendorColumns.map((i) => i.value)
+  )
+
+
+  const [images, setImage] = useState<ImageJSON[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
 
   useEffect(() => {
     //get and parse all data
@@ -41,13 +62,34 @@ const Vendors = () => {
     }
   }, [data, limit])
 
+
   // Infer the TS type according to the zod schema.
   type Vendor = z.infer<typeof VendorCreateInput>
+
+
+  const {
+    mutate,
+  } = trpc.vendor.create.useMutation({
+    onSuccess: () => {
+      utils.vendor.findAll.invalidate()
+      setOpenModalAdd(false);
+    },
+  })
+
+
+  const deleteVendor = trpc.vendor.deleteMany.useMutation({
+    onSuccess: () => {
+      utils.vendor.findAll.invalidate()
+
+
+    }
+  })
+
 
   const {
     register,
     handleSubmit,
-    // watch,
+    watch,
     // clearErrors,
     setValue,
     formState: { errors, isSubmitting },
@@ -56,29 +98,26 @@ const Vendors = () => {
     defaultValues: {},
   })
 
-  const [checkboxes, setCheckboxes] = useState<number[]>([])
-  const [openPopover, setOpenPopover] = useState<boolean>(false)
-  const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
-  // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-  const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
 
-  const [filterBy, setFilterBy] = useState<string[]>(
-    vendorColumns.map((i) => i.value)
-  )
+  const watcher = watch()
 
-  const [images, setImage] = useState<ImageJSON[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const onSubmit = async (vendor: Vendor) => {
     // Register function
     console.log(vendor)
+    mutate({
+      ...vendor
+    })
   }
+
 
   return (
     <DashboardLayout>
       {/* <pre>{JSON.stringify(vendors, null, 2)}</pre> */}
       <div className="space-y-4">
-        <section className="space-y-4">
+
+        <section className="space-y-6">
+          <h3 className="text-xl font-medium">Vendors</h3>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex w-fit items-center gap-2">
@@ -106,6 +145,7 @@ const Vendors = () => {
                 <button
                   // onClick={() => setOpenModalDel(true)}
                   className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
+                  onClick={() => { deleteVendor.mutate(checkboxes); setCheckboxes([]) }}
                 >
                   {checkboxes.includes(-1)
                     ? `Delete all record/s ( ${vendors.length} ) ?`
@@ -114,10 +154,10 @@ const Vendors = () => {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
+              {/* <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
                 <i className="fa-solid fa-print text-xs" />
                 Print CVs
-              </button>
+              </button> */}
               <button
                 onClick={() => {
                   setOpenModalAdd(true)
@@ -139,7 +179,7 @@ const Vendors = () => {
         />
         <section className="mt-8 flex justify-between px-4">
           <div className="flex items-center gap-2">
-            <p>Showing </p>
+            <p>Showing up to</p>
             <PaginationPopOver
               paginationPopover={paginationPopover}
               setPaginationPopover={setPaginationPopover}
@@ -148,7 +188,7 @@ const Vendors = () => {
               limit={limit}
               setLimit={setLimit}
             />
-            <p> of {data?.count} entries</p>
+            <p> entries</p>
           </div>
           <Pagination
             page={page}
@@ -177,7 +217,7 @@ const Vendors = () => {
               noValidate
             >
               <div className="grid grid-cols-10 gap-4">
-                <div className="col-span-5">
+                <div className="col-span-5 mt-1">
                   <InputField
                     register={register}
                     label="Company Name"
@@ -186,25 +226,46 @@ const Vendors = () => {
                   />
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
+
+
                 <div className="col-span-5">
-                  <TypeSelect
-                    name={"name"}
-                    setValue={setValue}
-                    title={"Type"}
-                    placeholder={"Pick asset type"}
-                    data={["Company", "Individual"]}
+
+
+                  <label className="sm:text-sm">Vendor Type</label>
+                  <Select
+                    placeholder="Pick one"
+                    onChange={(value) => {
+                      setValue("type", value ?? "")
+                    }}
+                    data={["Manufacturer", "Supplier", "Servicing", "Others"]}
+                    styles={(theme) => ({
+                      item: {
+                        // applies styles to selected item
+                        "&[data-selected]": {
+                          "&, &:hover": {
+                            backgroundColor:
+                              theme.colorScheme === "light"
+                                ? theme.colors.orange[3]
+                                : theme.colors.orange[1],
+                            color:
+                              theme.colorScheme === "dark"
+                                ? theme.white
+                                : theme.black,
+                          },
+                        },
+
+
+                        // applies styles to hovered item (with mouse or keyboard)
+                        "&[data-hovered]": {},
+                      },
+                    })}
+                    variant="unstyled"
+                    className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                   />
                 </div>
-                <div className="col-span-5">
-                  <InputField
-                    register={register}
-                    label="Company Address"
-                    name="address"
-                    type="text"
-                  />
-                  <AlertInput>{errors?.address?.message}</AlertInput>
-                </div>
-                <div className="col-span-5">
+
+
+                <div className="col-span-5 -mt-1">
                   <InputField
                     register={register}
                     label="Email"
@@ -214,32 +275,25 @@ const Vendors = () => {
                   <AlertInput>{errors?.email?.message}</AlertInput>
                 </div>
                 <div className="col-span-5">
-                  <InputField
-                    register={register}
-                    label="Phone Number"
-                    name="phone_no"
+
+
+                  <label className="sm:text-sm">Phone Number: {`(use " , " for multiple phone numbers)`}</label>
+                  <input
                     type="text"
+                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    onChange={(event) => {
+                      const convertToArray = event.currentTarget.value;
+
+
+                      const phonenumString = convertToArray.replace(/[^0-9,]/gi, "").split(",")
+                      setValue("phone_no", phonenumString);
+                    }}
+                    value={watcher.phone_no}
                   />
                   <AlertInput>{errors?.phone_no?.message}</AlertInput>
                 </div>
-                <div className="col-span-5">
-                  <InputField
-                    register={register}
-                    label="Alt Phone Number"
-                    name="alt_phone_no"
-                    type="text"
-                  />
-                  {/* <AlertInput>{errors?.alt_phone_no?.message}</AlertInput> */}
-                </div>
-                <div className="col-span-5">
-                  <InputField
-                    register={register}
-                    label="Website"
-                    name="url"
-                    type="text"
-                  />
-                  {/* <AlertInput>{errors?.url?.message}</AlertInput> */}
-                </div>
+
+
                 <div className="col-span-5">
                   <InputField
                     register={register}
@@ -248,6 +302,70 @@ const Vendors = () => {
                     type="text"
                   />
                   <AlertInput>{errors?.fax_no?.message}</AlertInput>
+                </div>
+                <div className="col-span-5">
+                  <InputField
+                    register={register}
+                    label="Website"
+                    name="website"
+                    type="text"
+                  />
+                  <AlertInput>{errors?.website?.message}</AlertInput>
+                </div>
+                <div className="col-span-2">
+                  <label className="sm:text-sm">Street</label>
+                  <InputField
+                    type={"text"}
+                    label={""}
+                    name="address.street"
+                    register={register}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="sm:text-sm">Barangay</label>
+                  <InputField
+                    type={"text"}
+                    label={""}
+                    name={"address.state"}
+                    register={register}
+                  />
+
+
+                  <AlertInput>{errors?.address?.state?.message}</AlertInput>
+                </div>
+                <div className="col-span-2">
+                  <label className="sm:text-sm">City</label>
+                  <InputField
+                    type={"text"}
+                    label={""}
+                    name={"address.city"}
+                    register={register}
+                  />
+
+
+                  <AlertInput>{errors?.address?.city?.message}</AlertInput>
+                </div>
+                <div className="col-span-2">
+                  <label className="sm:text-sm">Zip Code</label>
+                  <InputField
+                    type={"text"}
+                    label={""}
+                    name={"address.zip"}
+                    register={register}
+                  />
+                  <AlertInput>{errors?.address?.zip?.message}</AlertInput>
+                </div>
+                <div className="col-span-2">
+                  <label className="sm:text-sm">Country</label>
+                  <InputField
+                    type={"text"}
+                    label={""}
+                    name={"address.country"}
+                    register={register}
+                  />
+
+
+                  <AlertInput>{errors?.address?.country?.message}</AlertInput>
                 </div>
                 <div className="col-span-10">
                   <Textarea
@@ -273,12 +391,21 @@ const Vendors = () => {
               <div className="flex w-full justify-end gap-2 py-4">
                 {/* TODO: Reset form */}
                 <button
-                  onClick={() => setOpenModalAdd(false)}
+
+
+                  type="reset"
+                  // onClick={() => setOpenModalAdd(false)}
+
+
+                  onClick={() => { console.log(errors) }}
                   className="py-2 px-4 font-medium underline"
                 >
                   Discard
                 </button>
                 <button
+
+
+                  type="submit"
                   onClick={handleSubmit(onSubmit)}
                   disabled={isSubmitting}
                   className="rounded-md bg-tangerine-500 py-2 px-6 font-semibold text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
@@ -294,4 +421,8 @@ const Vendors = () => {
   )
 }
 
+
 export default Vendors
+
+
+

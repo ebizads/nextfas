@@ -17,7 +17,7 @@ const Employee = () => {
     return (
         <DashboardLayout>
             <div className="space-y-6">
-                <h3 className="text-xl font-medium">Assets</h3>
+                <h3 className="text-xl font-medium">Employees</h3>
                 <DisplayEmployees
                     total={data?.total ?? 0}
                     employees={data?.employees ?? []}

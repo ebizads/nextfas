@@ -27,14 +27,14 @@ const SideBar = () => {
           setMinimize((prev) => !prev)
         }}
       >
-        {/* <Image
-        src={"/FASlogo.svg"}
-        alt="This is a FAS Logo"
-        width={110}
-        height={60}
-        className=""
-      /> */}
-        <p className="text-2xl font-semibold">Fixed Assets System</p>
+        <Image
+          src={"/FAS-Logo.svg"}
+          alt="This is a FAS Logo"
+          width={450}
+          height={200}
+          className=""
+        />
+        {/* <p className="text-2xl font-semibold">Fixed Assets System</p> */}
       </div>
       <div className="flex w-full flex-col border-b">
         {!minimize && (

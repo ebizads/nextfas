@@ -12,11 +12,10 @@ import { error } from "console"
 
 export const userRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ input, ctx }) => {
-     const user = await ctx.prisma.user.findUnique({
+    const user = await ctx.prisma.user.findUnique({
       where: {
         id: input,
       },
-    
     })
     return user
   }),
@@ -48,6 +47,12 @@ export const userRouter = t.router({
         await ctx.prisma.user.create({
           data: {
             ...rest,
+            address: {
+              create: address ?? undefined,
+            },
+            profile: {
+              create: profile ?? undefined,
+            },
             oldPassword: {
               set: encryptedPassword ?? "",
             },
@@ -55,13 +60,6 @@ export const userRouter = t.router({
             password: encryptedPassword,
             email: username + env.NEXT_PUBLIC_CLIENT_EMAIL,
             username,
-            profile: {
-              create: profile ?? undefined,
-            },
-            address: {
-              create: address,
-            },
-            
           },
         })
         return "User created successfully"

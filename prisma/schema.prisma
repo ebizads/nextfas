@@ -68,12 +68,19 @@ model User {
   lockedReason   String?
   inactivityDate DateTime?
   validatedDate  DateTime?
+  superviseeId   Int?
+  teamId         Int?
   passwordAge    DateTime?
+  hired_date     DateTime?
+  position       String?
+  user_Id        String?
   accounts       Account[]
   address        Address?
   created_assets Asset[]
   profile        Profile?
   sessions       Session[]
+  Usersupervisee Team?         @relation("Usersupervisors", fields: [superviseeId], references: [id])
+  Userteam       Team?         @relation("Usermembers", fields: [teamId], references: [id])
   ticketTable    ticketTable[]
 }
 
@@ -349,16 +356,18 @@ model Department {
 }
 
 model Team {
-  id           Int         @id @default(autoincrement())
-  name         String
-  departmentId Int?        @unique
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  deletedAt    DateTime?
-  deleted      Boolean     @default(false)
-  supervisors  Employee[]  @relation("supervisors")
-  members      Employee[]  @relation("members")
-  department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  id              Int         @id @default(autoincrement())
+  name            String
+  departmentId    Int?        @unique
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  deletedAt       DateTime?
+  deleted         Boolean     @default(false)
+  supervisors     Employee[]  @relation("supervisors")
+  members         Employee[]  @relation("members")
+  department      Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  Usersupervisors User[]      @relation("Usersupervisors")
+  Usermembers     User[]      @relation("Usermembers")
 }
 
 model AssetProject {

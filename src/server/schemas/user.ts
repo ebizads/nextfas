@@ -29,22 +29,29 @@ export const CreateUserInput = z.object({
     date_of_birth: z.date().nullish(),
     phone_no: z.string().nullish(),
     gender: z.string().nullish(),
+    image: z.string().nullish(),
   }),
+  user_Id: z.string().nullish(),
   inactivityDate: z.date().nullish(),
   passwordAge: z.date().nullish(),
-  address: AddressCreateInput.optional(),
+  hired_date: z.date().nullish(),
+  position: z.string().nullish(),
+  address: AddressCreateInput,
+  teamId: z.number().optional(),
 })
 
 export const ChangeUserPass = z.object({
   id: z.number(),
-  password: z.string().regex(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{1,}$/,
-    {
-      message: "Password does not match the given restrictions",
-    }
-  )
-  .min(12, { message: "Password should be at least 12 characters" })
-  .max(20, { message: "Password should not be more than 20 characters" }),
+  password: z
+    .string()
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{1,}$/,
+      {
+        message: "Password does not match the given restrictions",
+      }
+    )
+    .min(12, { message: "Password should be at least 12 characters" })
+    .max(20, { message: "Password should not be more than 20 characters" }),
   oldPassword: z.array(z.string()).optional().default([]),
   passwordAge: z.date().nullish(),
   firstLogin: z.boolean().nullish(),
@@ -68,7 +75,7 @@ export const EditUserInput = z.object({
   address: AddressEditInput,
   passwordAge: z.date().nullish(),
   firstLogin: z.boolean().nullish(),
-  inactivityDate: z.date().nullish()
+  inactivityDate: z.date().nullish(),
 })
 
 export const IdUser = z.object({

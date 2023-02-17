@@ -17,15 +17,26 @@ export const userRouter = t.router({
         id: input,
       },
     })
+
     return user
   }),
+  findValidate: authedProcedure
+    .input(z.number())
+    .query(async ({ input, ctx }) => {
+      const validate = await ctx.prisma.validateTable.findUnique({
+        where: {
+          userId: input,
+        },
+      })
+      return validate
+    }),
   findAll: authedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.user.findMany({})
   }),
   create: authedProcedure
     .input(CreateUserInput)
     .mutation(async ({ input, ctx }) => {
-      const { address, profile, password, name, ...rest } = input
+      const { address, profile, password, validateTable, name, ...rest } = input
       let username = (profile.first_name[0] + profile.last_name)
         .replace(" ", "")
         .toLowerCase()
@@ -47,6 +58,9 @@ export const userRouter = t.router({
         await ctx.prisma.user.create({
           data: {
             ...rest,
+            validateTable: {
+              create: validateTable ?? undefined,
+            },
             address: {
               create: address ?? undefined,
             },

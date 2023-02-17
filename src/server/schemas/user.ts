@@ -17,6 +17,10 @@ export const CreateUserInput = z.object({
   user_type: z.string().nullish(),
   image: z.string().nullish(),
   firstLogin: z.boolean().nullish(),
+  validateTable: z.object({
+    certificate: z.string().nullish(),
+    validationDate: z.date().nullish(),
+  }),
   profile: z.object({
     first_name: z
       .string({ required_error: "First Name is required" })

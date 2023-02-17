@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
 import { CreateUserInput } from "../../server/schemas/user"
-import { generateRandomPass } from "../../lib/functions"
+import { generateRandomPass, generateCertificate } from "../../lib/functions"
 import { User } from "tabler-icons-react"
 import Modal from "../../components/headless/modal/modal"
 import DropZoneComponent from "../../components/dropzone/DropZoneComponent"
@@ -18,6 +18,7 @@ import { DatePicker } from "@mantine/dates"
 import { SelectValueType } from "../../components/atoms/select/TypeSelect"
 import moment from "moment"
 import { ImageJSON } from "../../types/table"
+import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 
 type User = z.infer<typeof CreateUserInput>
 
@@ -26,13 +27,16 @@ const Register2 = () => {
   const [date, setDate] = useState<Date>(new Date())
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [passwordCheck, setPassword] = useState<string>("")
+  const [certificateCheck, setCertificate] = useState<string>("")
   const [searchValue, onSearchChange] = useState("")
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoadingNow, setIsLoading] = useState<boolean>(false)
+  const futureDate = new Date()
+  futureDate.setFullYear(futureDate.getFullYear() + 1)
+
   const { mutate, isLoading, error } = trpc.user.create.useMutation({
     onSuccess() {
       setCompleteModal(true)
-
       // invalidate query of asset id when mutations is successful
       //utils.asset.findAll.invalidate()
     },
@@ -48,7 +52,8 @@ const Register2 = () => {
 
   useEffect(() => {
     setUserId(moment().format("YY-MDhms"))
-  }, [setUserId])
+    setCertificate(generateCertificate())
+  }, [setUserId, setCertificate])
 
   const {
     register,
@@ -82,6 +87,10 @@ const Register2 = () => {
         last_name: "",
         image: "",
       },
+      validateTable: {
+        certificate: "",
+        validationDate: futureDate,
+      },
       firstLogin: true,
       password: "",
     },
@@ -89,42 +98,47 @@ const Register2 = () => {
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
-    // Register function
-    mutate({
-      firstLogin: true,
-      name: `${user.profile.first_name} ${user.profile.last_name}`,
-      user_type: "user",
-      image: "",
-      oldPassword: user.oldPassword,
-      password: passwordCheck,
-      user_Id: env.NEXT_PUBLIC_CLIENT_USER_ID + userId,
-      teamId: user.teamId,
-      hired_date: new Date(),
-      position: user.position,
-      profile: {
-        first_name: user.profile.first_name,
-        middle_name: user.profile.middle_name,
-        last_name: user.profile.last_name,
-        image: images[0]?.file ?? "",
-      },
-      email: user.email,
-      address: {
-        city: user.address?.city,
-        country: user.address?.country,
-        street: user.address?.street,
-        zip: user.address?.zip,
-      },
-      inactivityDate: new Date(),
-      passwordAge: new Date(),
-    })
-    console.log("UserID: " + user.user_Id)
-    console.log(user)
+    console.log("ewaaaa"),
+      // Register function
+      mutate({
+        firstLogin: true,
+        name: `${user.profile.first_name} ${user.profile.last_name}`,
+        user_type: "user",
+        image: "",
+        oldPassword: user.oldPassword,
+        password: passwordCheck,
+        user_Id: env.NEXT_PUBLIC_CLIENT_USER_ID + userId,
+        teamId: user.teamId,
+        hired_date: new Date(),
+        position: user.position,
+        profile: {
+          first_name: user.profile.first_name,
+          middle_name: user.profile.middle_name,
+          last_name: user.profile.last_name,
+          image: images[0]?.file ?? "",
+        },
+        email: user.email,
+        address: {
+          city: user.address?.city,
+          country: user.address?.country,
+          street: user.address?.street,
+          zip: user.address?.zip,
+        },
+        inactivityDate: new Date(),
+        passwordAge: new Date(),
+        validateTable: {
+            certificate: certificateCheck,
+            validationDate: futureDate,
+          },
+      }),
+    console.log("Cert: " + certificateCheck)
+    console.log(user.validateTable)
     reset()
   }
 
   return (
     <main className="container mx-auto flex flex-col justify-center p-4">
-      <h3 className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text mb-2 text-xl font-bold leading-normal text-transparent md:text-[2rem]">
+      <h3 className="mb-2 bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text text-xl font-bold leading-normal text-transparent md:text-[2rem]">
         Register
       </h3>
       <form
@@ -222,7 +236,10 @@ const Register2 = () => {
               name={"user_Id"}
               register={register}
             /> */}
-            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${env.NEXT_PUBLIC_CLIENT_USER_ID}`}{userId}</p>
+            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
+              {`${env.NEXT_PUBLIC_CLIENT_USER_ID}`}
+              {userId}
+            </p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -411,6 +428,7 @@ const Register2 = () => {
             onClick={() => {
               setCompleteModal(false)
               setUserId(moment().format("YY-MDhms"))
+              setCertificate(generateCertificate())
             }}
           >
             Close

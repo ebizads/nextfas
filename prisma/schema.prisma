@@ -46,21 +46,21 @@ model VerificationToken {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   name           String
-  email          String        @unique
+  email          String         @unique
   recovery_email String?
-  username       String?       @unique
+  username       String?        @unique
   password       String
   user_type      String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   emailVerified  DateTime?
   image          String?
-  deleted        Boolean       @default(false)
+  deleted        Boolean        @default(false)
   deletedAt      DateTime?
   lockedUntil    DateTime?
-  attempts       Int           @default(0)
+  attempts       Int            @default(0)
   attemptDate    DateTime?
   oldPassword    String[]
   firstLogin     Boolean?
@@ -73,15 +73,16 @@ model User {
   passwordAge    DateTime?
   hired_date     DateTime?
   position       String?
-  user_Id        String?
+  user_Id        String?        @unique
   accounts       Account[]
   address        Address?
   created_assets Asset[]
   profile        Profile?
   sessions       Session[]
-  Usersupervisee Team?         @relation("Usersupervisors", fields: [superviseeId], references: [id])
-  Userteam       Team?         @relation("Usermembers", fields: [teamId], references: [id])
+  Usersupervisee Team?          @relation("Usersupervisors", fields: [superviseeId], references: [id])
+  Userteam       Team?          @relation("Usermembers", fields: [teamId], references: [id])
   ticketTable    ticketTable[]
+  validateTable  validateTable?
 }
 
 model UserArchive {
@@ -111,6 +112,14 @@ model UserArchive {
   address        Address?      @relation(fields: [addressId], references: [id])
   profile        Profile?      @relation(fields: [profileId], references: [id])
   ticketTable    ticketTable[]
+}
+
+model validateTable {
+  id             Int       @id @default(autoincrement())
+  certificate    String?
+  validationDate DateTime?
+  userId         Int?      @unique
+  user           User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Employee {

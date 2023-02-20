@@ -22,13 +22,10 @@ export const AddressCreateInput = z.object({
 
 export const AddressEditInput = z
   .object({
-    id: z.number(),
     street: z.string().nullish().optional(),
     city: z.string().nullish().optional(),
     state: z.string().nullish().optional(),
     zip: z.string().nullish().optional(),
     country: z.string().nullish().optional(),
-    shipping_address: z.string().nullish().optional(),
-    billing_address: z.string().nullish().optional(),
   })
   .optional()

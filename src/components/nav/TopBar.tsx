@@ -6,6 +6,7 @@ import { UserType } from "../../types/generic"
 import { trpc } from "../../utils/trpc"
 import Modal from "../headless/modal/modal"
 import { signOut } from "next-auth/react"
+import { useCounterValidateStore } from "../../store/useStore"
 
 const TopBar = () => {
   const { data: session } = useSession()
@@ -22,7 +23,7 @@ const TopBar = () => {
 
   const [openLogoutPopover, setOpenLogoutPopover] = useState<boolean>(false)
 
-  const [counter, setCounter] = useState<boolean>(false)
+  const {counterCheck, setCounterCheck} = useCounterValidateStore()
 
   const { pathname } = useRouter()
 
@@ -51,9 +52,9 @@ const TopBar = () => {
     if (Boolean(validateTable?.validationDate)) {
       if (dateNow >= (validateTable?.validationDate ?? new Date())) {
         setOpenPromptVisible(true)
-      } else if (validateDate <= 14 && !counter) {
+      } else if (validateDate <= 14 && !counterCheck) {
         setOpenPromptVisible(true)
-        setCounter(true)
+        setCounterCheck(true)
       }
     }
 
@@ -63,7 +64,7 @@ const TopBar = () => {
     // }, 5000)
 
     console.log("first login: " + user?.firstLogin?.toString())
-  }, [session, user, dayNow, refetch, userId, dateNow, validateTable, counter])
+  }, [session, user, dayNow, refetch, userId, dateNow, validateTable, validateDate, counterCheck, setCounterCheck])
   const paths = useMemo(() => {
     const path_array = pathname
       .split("/")
@@ -107,25 +108,14 @@ const TopBar = () => {
           <div className="flex w-full flex-col px-4 py-2">
             <div>
               <p className="text-center text-lg font-semibold">
-                Account needs revalidation! contact administrator
+                Account needs revalidation!
               </p>
-              {
-                !counter &&(
-                  <p className="text-center text-lg font-semibold">
-                    the account will force logout
-                  </p>
-                )
-              }
             </div>
             <div className="flex justify-end py-2">
               <button
                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                 onClick={() => {
                   setOpenPromptVisible(false)
-                  {
-                    !counter &&
-                      signOut({ callbackUrl: `${window.location.origin}` })
-                  }
                 }}
               >
                 Close

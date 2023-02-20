@@ -75,10 +75,17 @@ export const EditUserInput = z.object({
     date_of_birth: z.date().optional(),
     phone_no: z.string().optional(),
     gender: z.string().optional(),
+    image: z.string().nullish(),
   }),
-  address: AddressEditInput,
+  validateTable: z.object({
+    certificate: z.string().nullish(),
+    validationDate: z.date().nullish(),
+  }),
   passwordAge: z.date().nullish(),
-  firstLogin: z.boolean().nullish(),
+  hired_date: z.date().nullish(),
+  position: z.string().nullish(),
+  address: AddressEditInput,
+  teamId: z.number().optional(),
   inactivityDate: z.date().nullish(),
 })
 

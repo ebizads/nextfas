@@ -16,6 +16,11 @@ export const userRouter = t.router({
       where: {
         id: input,
       },
+      include:{
+        address: true,
+        profile: true,
+        validateTable: true,
+      }
     })
 
     return user
@@ -87,13 +92,16 @@ export const userRouter = t.router({
   update: authedProcedure
     .input(EditUserInput)
     .mutation(async ({ input, ctx }) => {
-      const { address, id, profile, ...rest } = input
+      const { address, id, profile, validateTable, ...rest } = input
       return await ctx.prisma.user.update({
         where: {
           id,
         },
         data: {
           ...rest,
+          validateTable: {
+            create: validateTable ?? undefined,
+          },
           address: {
             create: address ?? undefined,
           },

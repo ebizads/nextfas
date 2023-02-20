@@ -156,7 +156,7 @@ const UpdateAssetAccordion = () => {
       )
       setValue("management.remarks", selectedAsset.management?.remarks)
     }
-  }, [selectedAsset, reset])
+  }, [selectedAsset, reset, setValue])
 
   const [classId, setClassId] = useState<string | null>(null)
   const [categoryId, setCategoryId] = useState<string | null>(null)
@@ -397,6 +397,7 @@ const UpdateAssetAccordion = () => {
 
   const onSubmit: SubmitHandler<AssetEditFieldValues> = (
     form_data: AssetEditFieldValues
+    
   ) => {
     // console.log(form_data)
 

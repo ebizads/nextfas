@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react"
 import { UserType } from "../../../types/generic"
 import { Prisma } from "@prisma/client"
 import { trpc } from "../../../utils/trpc"
+import { UserValidateModal } from "../../user/UserValidateModal"
 const LogOutPopOver = (props: {
   openPopover: boolean
   setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
@@ -18,11 +19,10 @@ const LogOutPopOver = (props: {
   const { data: session } = useSession()
   const [userId, setUserId] = useState<number>(0)
   const { data: user } = trpc.user.findOne.useQuery(userId)
-
+  const [validateIsVisible, setValidate] = useState<boolean>(false)
   useEffect(() => {
     setUserId(Number(session?.user?.id))
     //console.log(user)
-
 
     //setOpenChangePass(props.isVisible)
   }, [props, session, user])
@@ -32,8 +32,12 @@ const LogOutPopOver = (props: {
       <ChangePassModal
         isVisible={props.isVisible}
         setVisible={props.setIsVisible}
-
       ></ChangePassModal>
+
+      <UserValidateModal
+        openModalDesc={validateIsVisible}
+        setOpenModalDesc={setValidate}
+      ></UserValidateModal>
       <Popover
         opened={props.openPopover}
         onClose={() => props.setOpenPopover(false)}
@@ -75,6 +79,15 @@ const LogOutPopOver = (props: {
               <i className="fa-solid fa-shield-keyhole" />
               <span>Change Password</span>
             </button>
+            <button
+              onClick={() => {
+                setValidate(true)
+              }}
+              className="flex items-center gap-2 px-6 py-2 hover:bg-tangerine-100"
+            >
+              <i className="fa-solid fa-shield-keyhole" />
+              <span>Validate User</span>
+            </button>{" "}
           </div>
         </Popover.Dropdown>
       </Popover>

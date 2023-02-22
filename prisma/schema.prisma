@@ -46,35 +46,42 @@ model VerificationToken {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  name           String
-  email          String        @unique
-  recovery_email String?
-  username       String?       @unique
-  password       String
-  user_type      String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  emailVerified  DateTime?
-  image          String?
-  deleted        Boolean       @default(false)
-  deletedAt      DateTime?
-  lockedUntil    DateTime?
-  attempts       Int           @default(0)
-  attemptDate    DateTime?
-  oldPassword    String[]
-  firstLogin     Boolean?
-  lockedAt       DateTime?
-  lockedReason   String?
-  inactivityDate DateTime?
-  validatedDate  DateTime?
-  passwordAge    DateTime?
-  accounts       Account[]
-  address        Address?
-  created_assets Asset[]
-  profile        Profile?
-  sessions       Session[]
-  ticketTable    ticketTable[]
+  id                           Int           @id @default(autoincrement())
+  name                         String
+  email                        String        @unique
+  recovery_email               String?
+  username                     String?       @unique
+  password                     String
+  user_type                    String?
+  createdAt                    DateTime      @default(now())
+  updatedAt                    DateTime      @updatedAt
+  emailVerified                DateTime?
+  image                        String?
+  deleted                      Boolean       @default(false)
+  deletedAt                    DateTime?
+  lockedUntil                  DateTime?
+  attempts                     Int           @default(0)
+  attemptDate                  DateTime?
+  oldPassword                  String[]
+  firstLogin                   Boolean?
+  lockedAt                     DateTime?
+  lockedReason                 String?
+  inactivityDate               DateTime?
+  validatedDate                DateTime?
+  superviseeId                 Int?
+  teamId                       Int?
+  passwordAge                  DateTime?
+  hired_date                   DateTime?
+  position                     String?
+  user_Id                      String?
+  accounts                     Account[]
+  address                      Address?
+  created_assets               Asset[]
+  profile                      Profile?
+  sessions                     Session[]
+  Team_User_superviseeIdToTeam Team?         @relation("User_superviseeIdToTeam", fields: [superviseeId], references: [id])
+  Team_User_teamIdToTeam       Team?         @relation("User_teamIdToTeam", fields: [teamId], references: [id])
+  ticketTable                  ticketTable[]
 }
 
 model UserArchive {
@@ -349,16 +356,18 @@ model Department {
 }
 
 model Team {
-  id           Int         @id @default(autoincrement())
-  name         String
-  departmentId Int?        @unique
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  deletedAt    DateTime?
-  deleted      Boolean     @default(false)
-  supervisors  Employee[]  @relation("supervisors")
-  members      Employee[]  @relation("members")
-  department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  id                           Int         @id @default(autoincrement())
+  name                         String
+  departmentId                 Int?        @unique
+  createdAt                    DateTime    @default(now())
+  updatedAt                    DateTime    @updatedAt
+  deletedAt                    DateTime?
+  deleted                      Boolean     @default(false)
+  supervisors                  Employee[]  @relation("supervisors")
+  members                      Employee[]  @relation("members")
+  department                   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  User_User_superviseeIdToTeam User[]      @relation("User_superviseeIdToTeam")
+  User_User_teamIdToTeam       User[]      @relation("User_teamIdToTeam")
 }
 
 model AssetProject {

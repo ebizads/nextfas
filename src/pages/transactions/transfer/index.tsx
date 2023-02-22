@@ -25,9 +25,12 @@ const AssetTransfer = () => {
 
 	const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
+	const [flag, setFlag] = useState(false);
+
 	useEffect(() => {
 		setTransferAsset(null);
-	}, [])
+		console.log(transferAsset);
+	}, [flag, setTransferAsset])
 
 
 
@@ -48,16 +51,15 @@ const AssetTransfer = () => {
 	return (
 		<DashboardLayout>
 			<div>
-				{transferAsset && <Transfer />}
-				{!transferAsset && <DisplayTransferAssets
+				{/* <button onClick={() => { console.log(transferAsset?.number); }}>button</button> */}
+				{(transferAsset?.number === "" || transferAsset?.number === null || transferAsset?.number === undefined) ? <DisplayTransferAssets
 					total={data?.count ?? 0}
 					assets={assets}
 					accessiblePage={accessiblePage}
 					page={page}
 					setPage={setPage}
 					limit={limit}
-					setLimit={setLimit}
-				/>}
+					setLimit={setLimit} /> : <Transfer />}
 			</div>
 		</DashboardLayout>
 	);

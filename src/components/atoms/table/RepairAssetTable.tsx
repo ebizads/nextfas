@@ -496,7 +496,7 @@ const RepairAssetTable = (props: {
                     </tr>
                 </thead>
                 <tbody>
-                    {generate ? (props.rows.map((row, idx) => {
+                    {!generate ? (props.rows.map((row, idx) => {
                         if (getProperty("status", row) !== null && getProperty("status", row) !== "disposal" && getProperty("status", row) !== "repair") {
                             return (
                                 <tr

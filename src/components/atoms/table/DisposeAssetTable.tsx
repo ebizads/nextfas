@@ -31,7 +31,7 @@ const DisposeAssetDetailsModal = (props: {
     // useEffect(() => {
     //   console.log(props.asset.addedBy)
     // }, [])
-    const { generate, setGenerate } = useGenerateStore()
+    // const { generate, setGenerate } = useGenerateStore()
     const barcodeRef = useRef(null);
     const qrcodeRef = useRef(null);
 
@@ -446,6 +446,8 @@ const DisposeAssetTable = (props: {
         setGenerate(false)
     }, [setGenerate])
 
+    console.log(generate);
+
     // const selectAllCheckboxes = () => {
     //     if (props.checkboxes.length === 0) {
     //         props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
@@ -504,7 +506,7 @@ const DisposeAssetTable = (props: {
                     </tr>
                 </thead>
                 <tbody>
-                    {generate ? (props.rows.map((row, idx) => {
+                    {!generate ? (props.rows.map((row, idx) => {
                         if (getProperty("status", row) !== null && getProperty("status", row) !== "disposal" && getProperty("status", row) !== "repair") {
                             return (
                                 <tr

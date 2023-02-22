@@ -343,6 +343,8 @@ const UpdateAssetAccordion = () => {
     [companyData]
   ) as SelectValueType[] | undefined
 
+  console.log(company_address);
+
 
   const [loading, setIsLoading] = useState<boolean>(false)
   // const [assetId, setAssetId] = useState<string>(
@@ -671,7 +673,9 @@ const UpdateAssetAccordion = () => {
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">General Information</p>
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  General Information
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>

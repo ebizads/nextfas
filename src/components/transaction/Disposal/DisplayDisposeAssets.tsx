@@ -69,9 +69,9 @@ const DisplayDisposeAssets = (props: {
 				setDisposeAsset(asset as AssetType);
 			}
 		}
-		setGenerate(false);
+		// setGenerate(false);
 		setSearch("");
-	}, [setDisposeAsset, asset, assetNumber, assetId, setSearch, setGenerate])
+	}, [setDisposeAsset, asset, assetNumber, assetId, setSearch])
 
 	return (
 		<div className="space-y-4">
@@ -182,10 +182,10 @@ const DisplayDisposeAssets = (props: {
 					<p> entries</p>
 				</div>
 				<div className='flex flex-row'>
-					<Tooltip label={generate ? "Show all assets" : "Show only available assets"} withArrow>
+					<Tooltip label={!generate ? "Show all assets" : "Show only available assets"} withArrow>
 						<button
 							className="mx-2 text-gray-700 py-1 font-medium duration-150 hover:underline  disabled:bg-gray-300 disabled:text-gray-500"
-							onClick={() => { setGenerate(true) }}>{generate ? "Show all" : "Show less"}
+							onClick={() => { setGenerate(true) }}>{!generate ? "Show all" : "Show less"}
 						</button>
 					</Tooltip>
 					<Pagination

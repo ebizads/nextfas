@@ -72,8 +72,8 @@ const DisplayRepairAssets = (props: {
 
 			setSearch("");
 		}
-		setGenerate(false);
-	}, [setRepairAsset, asset, assetNumber, assetId, setSearch, setGenerate])
+		// setGenerate(false);
+	}, [setRepairAsset, asset, assetNumber, assetId, setSearch])
 
 	useEffect(() => {
 		console.log("page: " + props.page, "limit: " + props.limit, "accessible page: " + props.accessiblePage)
@@ -187,10 +187,10 @@ const DisplayRepairAssets = (props: {
 					<p> entries</p>
 				</div>
 				<div className='flex flex-row'>
-					<Tooltip label={generate ? "Show all assets" : "Show only available assets"} withArrow>
+					<Tooltip label={!generate ? "Show all assets" : "Show only available assets"} withArrow>
 						<button
 							className="mx-2 text-gray-700 py-1 font-medium duration-150 hover:underline  disabled:bg-gray-300 disabled:text-gray-500"
-							onClick={() => { setGenerate(true) }}>{generate ? "Show all" : "Show less"}
+							onClick={() => { setGenerate(true) }}>{!generate ? "Show all" : "Show less"}
 						</button>
 					</Tooltip>
 					<Pagination

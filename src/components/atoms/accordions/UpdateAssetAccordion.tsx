@@ -170,8 +170,8 @@ const UpdateAssetAccordion = () => {
   const assetsList = useMemo(
     () =>
       assetsData?.assets
-        .filter((item) => item.id != 0)
-        .map((asset) => {
+        .filter((item: { id: number }) => item.id != 0)
+        .map((asset: { id: { toString: () => any }; name: any }) => {
           return { value: asset.id.toString(), label: asset.name }
         }),
     [assetsData]
@@ -182,8 +182,8 @@ const UpdateAssetAccordion = () => {
   const projectsList = useMemo(
     () =>
       projectsData
-        ?.filter((item) => item.id != 0)
-        .map((project) => {
+        ?.filter((item: { id: number }) => item.id != 0)
+        .map((project: { id: { toString: () => any }; name: any }) => {
           return { value: project.id.toString(), label: project.name }
         }),
     [projectsData]
@@ -194,8 +194,8 @@ const UpdateAssetAccordion = () => {
   const vendorsList = useMemo(
     () =>
       vendorsData?.vendors
-        .filter((item) => item.id != 0)
-        .map((vendor) => {
+        .filter((item: { id: number }) => item.id != 0)
+        .map((vendor: { id: { toString: () => any }; name: any }) => {
           return { value: vendor.id.toString(), label: vendor.name }
         }),
     [vendorsData]
@@ -208,8 +208,8 @@ const UpdateAssetAccordion = () => {
   const classList = useMemo(
     () =>
       classData
-        ?.filter((item) => item.id != 0)
-        .map((classItem) => {
+        ?.filter((item: { id: number }) => item.id != 0)
+        .map((classItem: { id: { toString: () => any }; name: any }) => {
           return { value: classItem.id.toString(), label: classItem.name }
         }),
     [classData]
@@ -219,8 +219,8 @@ const UpdateAssetAccordion = () => {
   const employeeList = useMemo(
     () =>
       employeeData?.employees
-        .filter((item) => item.id != 0)
-        .map((employeeItem) => {
+        .filter((item: { id: number }) => item.id != 0)
+        .map((employeeItem: { id: { toString: () => any }; name: any }) => {
           return { value: employeeItem.id.toString(), label: employeeItem.name }
         }),
     [employeeData]
@@ -231,7 +231,7 @@ const UpdateAssetAccordion = () => {
 
   const selectedDepartment = useMemo(() => {
     const department = departmentData?.departments.filter(
-      (department) => department.id === Number(departmentId)
+      (department: { id: number }) => department.id === Number(departmentId)
     )[0]
 
     //set location === floor and room number
@@ -245,7 +245,7 @@ const UpdateAssetAccordion = () => {
         (department) => department.companyId === Number(companyId)
       )
       if (dept) {
-        const departments = dept?.map((department) => {
+        const departments = dept?.map((department: { id: { toString: () => any }; name: any }) => {
           return { value: department.id.toString(), label: department.name }
         }) as SelectValueType[]
         return departments ?? null
@@ -280,14 +280,14 @@ const UpdateAssetAccordion = () => {
   const categories = useMemo(() => {
     if (classId) {
       const selectedClass = classData?.filter(
-        (classItem) => classItem.id === Number(classId)
+        (classItem: { id: number }) => classItem.id === Number(classId)
       )[0]
       if (selectedClass) {
         //sets selected class
         setSelectedClass(selectedClass)
 
         //filters all the categories based on the selected class
-        const categories = selectedClass.categories.map((category) => {
+        const categories = selectedClass.categories.map((category: { id: { toString: () => any }; name: any }) => {
           return { value: category.id.toString(), label: category.name }
         }) as SelectValueType[]
         return categories ?? null
@@ -305,11 +305,11 @@ const UpdateAssetAccordion = () => {
   const types = useMemo(() => {
     if (categoryId) {
       const selectedCategory = selectedClass?.categories.filter(
-        (category) => category.id === Number(categoryId)
+        (category: { id: number }) => category.id === Number(categoryId)
       )[0]
       if (selectedCategory) {
         //filters all types in the selected category based on the selected class
-        const types = selectedCategory?.types.map((type) => {
+        const types = selectedCategory?.types.map((type: { id: { toString: () => any }; name: any }) => {
           return { value: type.id.toString(), label: type.name }
         }) as SelectValueType[]
         return types ?? null
@@ -327,7 +327,7 @@ const UpdateAssetAccordion = () => {
   const company_address = useMemo(() => {
     if (companyId) {
       const address = companyData?.companies.filter(
-        (company) => company.id === Number(companyId)
+        (company: { id: number }) => company.id === Number(companyId)
       )[0]
       return address ?? null
     }
@@ -336,12 +336,14 @@ const UpdateAssetAccordion = () => {
   const companyList = useMemo(
     () =>
       companyData?.companies
-        .filter((item) => item.id != 0)
-        .map((company) => {
+        .filter((item: { id: number }) => item.id != 0)
+        .map((company: { id: { toString: () => any }; name: any }) => {
           return { value: company.id.toString(), label: company.name }
         }),
     [companyData]
   ) as SelectValueType[] | undefined
+
+  console.log(company_address);
 
 
   const [loading, setIsLoading] = useState<boolean>(false)
@@ -671,7 +673,9 @@ const UpdateAssetAccordion = () => {
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
                 <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">General Information</p>
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  General Information
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>

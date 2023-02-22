@@ -15,6 +15,7 @@ export type InputFieldType = {
   disabled?: boolean
   displayOnly?: boolean
   value?: string
+  onChange?: string
 }
 
 export const InputField = ({
@@ -28,6 +29,7 @@ export const InputField = ({
   required,
   placeholder,
   disabled,
+  onChange,
 }: // displayOnly
 
   InputFieldType) => {

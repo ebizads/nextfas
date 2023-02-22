@@ -263,7 +263,7 @@ export const CreateEmployeeModal = (props: {
             type={"text"}
           /> */}
             <DatePicker
-              dropdownType="modal"
+              dropdownType="popover"
               placeholder="Pick Date"
               size="sm"
               variant="unstyled"

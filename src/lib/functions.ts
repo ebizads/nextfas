@@ -7,9 +7,10 @@ import {
 } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
-
 import { Address, Company } from "@prisma/client"
+import Router from "next/router"
 
+const router = Router
 export const getProperty = (
   filter: string,
   type: AssetType | EmployeeType | VendorType | DisposeType | AssetRepairType
@@ -155,4 +156,34 @@ export const convertMonthsToYears = (months: number) => {
 
 export const convertDaysToMonths = (days: number) => {
   return Math.floor(days / 30)
+}
+
+export const clearAndGoBack = () => {
+  document.forms[0]?.reset()
+  router.back()
+}
+
+// export const passArrayCheck = async (array: Array<string>, password: string) => {
+//   for (const arrays of array){
+//     const match = await bcrypt.compare(password, arrays);
+//     if(match){
+//       return true
+//     }
+//   }
+//   return false    
+// }
+
+export const generateRandomPass = () => {
+  let result = ""
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{};:'\",.<>/?\\|"
+  const charactersLength = characters.length
+  for (let i = 0; i < 12; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
+
+export const passConfirmCheck = (password: string, confirmPassword: string) => {
+  return password === confirmPassword ? true : false
 }

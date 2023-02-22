@@ -1,16 +1,48 @@
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import React, { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import LogOutPopOver from "../atoms/popover/LogOutPopOver"
+import { UserType } from "../../types/generic"
+import { trpc } from "../../utils/trpc"
 
 const TopBar = () => {
-
-
   const { data: session } = useSession()
+
+  const [userId, setUserId] = useState<number>(0)
+
+  const { data: user, refetch } = trpc.user.findOne.useQuery(userId)
+
+  const [openChangePass, setOpenChangePass] = useState<boolean>(false)
+
+  const [openPromptVisible, setOpenPromptVisible] = useState<boolean>(false)
 
   const [openLogoutPopover, setOpenLogoutPopover] = useState<boolean>(false)
 
   const { pathname } = useRouter()
+
+  const dateNow = new Date()
+  let dayNow = 0
+  if (Boolean(user?.passwordAge)) {
+    dayNow = Number(
+      (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
+      (1000 * 60 * 60 * 24)
+    )
+  }
+
+  useEffect(() => {
+    setUserId(Number(session?.user?.id))
+    console.log("daynow: " + dayNow)
+    if (user?.firstLogin || dayNow > 60) {
+      setOpenChangePass(true)
+    }
+
+    // const intervalId = setInterval(() => {
+    //   refetch()
+    //   console.log("userId: " + userId)
+    // }, 5000)
+
+    console.log("first login: " + user?.firstLogin?.toString())
+  }, [session, user, dayNow, refetch, userId])
   const paths = useMemo(() => {
     const path_array = pathname
       .split("/")
@@ -43,9 +75,13 @@ const TopBar = () => {
         <i className="fa-solid fa-bell text-lg text-gray-500" />
         <div className="rounded-full border border-gray-400 px-2 py-1">
           <p className="text-xs">{session?.user?.name}</p>
-
         </div>
-        <LogOutPopOver openPopover={openLogoutPopover} setOpenPopover={setOpenLogoutPopover} />
+        <LogOutPopOver
+          openPopover={openLogoutPopover}
+          setOpenPopover={setOpenLogoutPopover}
+          isVisible={openChangePass}
+          setIsVisible={setOpenChangePass}
+        />
       </div>
     </div>
   )

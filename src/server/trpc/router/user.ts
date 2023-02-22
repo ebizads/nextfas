@@ -1,17 +1,24 @@
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { env } from "../../../env/client.mjs"
-import { CreateUserInput, EditUserInput } from "../../schemas/user"
+import {
+  ChangeUserPass,
+  CreateUserInput,
+  EditUserInput,
+} from "../../schemas/user"
 import { authedProcedure, t } from "../trpc"
 import bcrypt from "bcrypt"
+import { error } from "console"
 
 export const userRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ input, ctx }) => {
-    return await ctx.prisma.user.findUnique({
+     const user = await ctx.prisma.user.findUnique({
       where: {
         id: input,
       },
+    
     })
+    return user
   }),
   findAll: authedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.user.findMany({})
@@ -19,12 +26,13 @@ export const userRouter = t.router({
   create: authedProcedure
     .input(CreateUserInput)
     .mutation(async ({ input, ctx }) => {
-      const { address, profile, password, ...rest } = input
+      const { address, profile, password, name, ...rest } = input
       let username = (profile.first_name[0] + profile.last_name)
         .replace(" ", "")
         .toLowerCase()
 
       const encryptedPassword = await bcrypt.hash(password, 10)
+
       try {
         const user = await ctx.prisma.user.findMany({
           where: {
@@ -40,6 +48,10 @@ export const userRouter = t.router({
         await ctx.prisma.user.create({
           data: {
             ...rest,
+            oldPassword: {
+              set: encryptedPassword ?? "",
+            },
+            name: name,
             password: encryptedPassword,
             email: username + env.NEXT_PUBLIC_CLIENT_EMAIL,
             username,
@@ -49,6 +61,7 @@ export const userRouter = t.router({
             address: {
               create: address,
             },
+            
           },
         })
         return "User created successfully"
@@ -89,4 +102,45 @@ export const userRouter = t.router({
       },
     })
   }),
+  change: authedProcedure
+    .input(ChangeUserPass)
+    .mutation(async ({ input, ctx }) => {
+      const { password, id, oldPassword, ...rest } = input
+
+      const encryptedPassword = await bcrypt.hash(password, 10)
+
+      // // const user = await ctx.prisma.user.findMany({ where: { id: id } })
+      // // const updatedArray = [encryptedPassword, user.find(oldPassword)]
+
+      // for (const arrays of oldPassword) {
+      //   const match = await bcrypt.compare(password, arrays)
+      //   if (!match) {
+      //     flag = true
+      //   }
+      // }
+      const sample: string[] = [...oldPassword]
+      for (let i = 0; i < sample.length; i++) {
+        const match = await bcrypt.compare(password, `${sample[i]}`)
+        if (match) {
+          return false
+        }
+      }
+
+      if (sample.length >= 12) {
+        sample.pop()
+      }
+
+      return await ctx.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          oldPassword: {
+            set: [encryptedPassword, ...sample],
+          },
+          password: encryptedPassword,
+          ...rest,
+        },
+      })
+    }),
 })

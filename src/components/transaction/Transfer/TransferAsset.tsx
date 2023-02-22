@@ -9,20 +9,22 @@ import {
     Circle3,
     Search,
 } from "tabler-icons-react"
-import { Accordion, Checkbox, Select } from "@mantine/core"
+import { Accordion, Checkbox, Select, Textarea } from "@mantine/core"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../atoms/forms/InputField"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetEditInput } from "../../../server/schemas/asset"
 import { z } from "zod"
-import { SelectValueType } from "../../atoms/select/TypeSelect"
-import { getLifetime } from "../../../lib/functions"
+import { ClassTypeSelect, SelectValueType } from "../../atoms/select/TypeSelect"
+import { getAddress, getLifetime } from "../../../lib/functions"
 import Modal from "../../headless/modal/modal"
 import Link from "next/link"
 import { useTransferAssetStore } from "../../../store/useStore"
 import { Asset, AssetType } from "@prisma/client"
 import { DatePicker } from "@mantine/dates"
+import AlertInput from "../../atoms/forms/AlertInput"
+import InputNumberField from "../../atoms/forms/InputNumberField"
 
 export type Assets = z.infer<typeof AssetEditInput>
 
@@ -86,7 +88,7 @@ const Transfer = ({ }) => {
         },
     })
 
-    const { register, handleSubmit, reset, setValue } = useForm<Assets>({
+    const { register, handleSubmit, reset, setValue, getValues } = useForm<Assets>({
         resolver: zodResolver(AssetEditInput),
     })
 
@@ -141,13 +143,44 @@ const Transfer = ({ }) => {
 
     const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
-    useEffect(() => setAssetNumber(transferAsset?.number ?? ""), [])
 
     const resetTransferAsset = () => {
         setTransferAsset(null)
         console.log("dapat wala na")
     }
 
+    const [companyId, setCompanyId] = useState<string>("")
+    const { data: companyData } = trpc.company.findAll.useQuery()
+
+    useEffect(() => {
+        setAssetNumber(transferAsset?.number ?? "")
+        setCompanyId(asset?.subsidiaryId?.toString() ?? "")
+
+    }, [asset?.subsidiaryId, transferAsset?.number])
+
+
+
+    const company_address = useMemo(() => {
+        if (companyId) {
+            const address = companyData?.companies.filter(
+                (company: { id: number }) => company.id === Number(companyId)
+            )[0]
+            return address ?? null
+        }
+    }, [companyId, companyData])
+
+    const companyList = useMemo(
+        () =>
+            companyData?.companies
+                .filter((item: { id: number }) => item.id != 0)
+                .map((company: { id: { toString: () => any }; name: any }) => {
+                    return { value: company.id.toString(), label: company.name }
+                }),
+        [companyData]
+    ) as SelectValueType[] | undefined
+
+
+    // console.log(company_address);
     return (
         <div className="px-4">
             <div>
@@ -225,8 +258,8 @@ const Transfer = ({ }) => {
                     <div>
                         <div className="rounded-md bg-white drop-shadow-lg">
                             <div className="p-5">
-                                <Accordion multiple={true} defaultValue={['asset_details', 'general_information', 'asset_usage_info']}>
-                                    <Accordion.Item value="asset_details">
+                                <Accordion multiple={true} defaultValue={['1', '2', '3']}>
+                                    {/* <Accordion.Item value="asset_details">
                                         <Accordion.Control>
                                             <div className="flex flex-row">
                                                 <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
@@ -361,9 +394,243 @@ const Transfer = ({ }) => {
                                                 </div>
                                             </div>
                                         </Accordion.Panel>
+                                    </Accordion.Item> */}
+
+                                    <Accordion.Item value={"1"} className="">
+                                        <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
+                                            <div className=" flex items-center gap-2 text-gray-700">
+                                                {/* <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-yellow-400 p-1 text-sm text-yellow-400">
+                                                    1
+                                                </div> */}
+                                                <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
+                                                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Information</p>
+                                            </div>
+                                        </Accordion.Control>
+                                        <Accordion.Panel>
+                                            <div className="grid grid-cols-9 gap-7">
+                                                <div className="col-span-9 grid grid-cols-8 gap-7">
+                                                    <div className="col-span-4">
+                                                        <InputField
+                                                            register={register}
+                                                            label="Name"
+                                                            name="name"
+                                                            placeholder="Name"
+                                                            // className="placeholder:font-semibold"
+                                                            disabled
+                                                        // required
+                                                        />
+                                                        {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                                                    </div>
+                                                    <div className="col-span-4">
+                                                        <InputField
+                                                            register={register}
+                                                            label="Alternate Asset Number"
+                                                            placeholder="Alternate Asset Number"
+                                                            name="alt_number"
+                                                            disabled
+
+                                                        />
+                                                        {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
+                                                    </div>
+                                                    {/* <div className="col-span-2">
+                                                        <InputField
+                                                            register={register}
+                                                            required
+                                                            name={"model.typeId"}
+                                                            label="Type"
+                                                            placeholder="Enter Asset Type"
+                                                        />
+                                                    </div> */}
+                                                </div>
+                                                <div className="col-span-3">
+                                                    <InputField
+                                                        register={register}
+                                                        label="Serial Number"
+                                                        placeholder="Serial Number"
+                                                        name="serial_no"
+                                                        disabled
+
+                                                    />
+                                                    {/* <AlertInput>{errors?.serial_no?.message}</AlertInput> */}
+                                                </div>
+                                                <div className="col-span-6 grid grid-cols-9 gap-7">
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            name={"parentId"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("parentId")?.toString()}
+                                                            label={"Parent Asset"}
+                                                            // placeholder={"Select parent asset"}
+                                                            // data={assetsList ?? []}
+                                                            disabled
+
+                                                        />
+                                                        {/* <AlertInput>{errors?.parentId?.message}</AlertInput> */}
+                                                    </div>
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            name={"assetProjectId"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("assetProjectId")?.toString()}
+                                                            label={"Project"}
+                                                            // placeholder={"Select project"}
+                                                            // data={projectsList ?? []}
+                                                            disabled
+
+                                                        />
+                                                        {/* <AlertInput>{errors?.assetProjectId?.message}</AlertInput> */}
+                                                    </div>
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            name={"vendorId"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("vendorId")?.toString()}
+                                                            label={"Vendor"}
+                                                            // placeholder={"Select vendor"}
+                                                            // data={vendorsList ?? []}
+                                                            disabled
+
+                                                        />
+                                                        {/* <AlertInput>{errors?.vendorId?.message}</AlertInput> */}
+                                                    </div>
+                                                </div>
+                                                <div className="col-span-3">
+                                                    <InputField
+                                                        // required
+                                                        register={register}
+                                                        label="Model Name"
+                                                        placeholder="Model Name"
+                                                        name="model.name"
+                                                        disabled
+
+                                                    />
+                                                    {/* <AlertInput>{errors?.model?.name?.message}</AlertInput> */}
+                                                </div>
+                                                <div className="col-span-6 grid grid-cols-9 gap-7">
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            register={register}
+                                                            label="Model Brand"
+                                                            placeholder="Model Brand"
+                                                            name="model.brand"
+                                                            disabled
+                                                        />
+                                                        {/* <AlertInput>{errors?.model?.brand?.message}</AlertInput> */}
+                                                    </div>
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            register={register}
+                                                            label="Model Number"
+                                                            placeholder="Model Number"
+                                                            name="model.number"
+                                                            disabled
+                                                        />
+                                                        {/* <AlertInput>{errors?.model?.number?.message}</AlertInput> */}
+                                                    </div>
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            register={register}
+                                                            label="Asset Lifetime"
+                                                            placeholder="Months"
+                                                            name={"management.asset_lifetime"}
+                                                            disabled
+
+
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="col-span-9 grid grid-cols-12 gap-7">
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            register={register}
+                                                            label="Original Cost"
+                                                            placeholder="Original Cost"
+                                                            name="management.original_cost"
+                                                            disabled
+                                                        />
+                                                        {/* <AlertInput>
+                                                            {errors?.management?.original_cost?.message}
+                                                        </AlertInput> */}
+                                                    </div>
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            register={register}
+                                                            label="Current Cost"
+                                                            placeholder="Current Cost"
+                                                            name="management.current_cost"
+                                                            disabled
+                                                        />
+                                                        {/* <AlertInput>
+                                                            {errors?.management?.current_cost?.message}
+                                                        </AlertInput> */}
+                                                    </div>
+
+                                                    <div className="col-span-3">
+                                                        <InputField
+                                                            register={register}
+                                                            label="Residual Value"
+                                                            placeholder="Residual Value"
+                                                            name={"management.residual_value"}
+                                                            disabled
+                                                        />
+                                                        {/* <AlertInput>
+                                                            {errors?.management?.residual_value?.message}
+                                                        </AlertInput> */}
+                                                    </div>
+                                                    <div className=" col-span-3">
+                                                        <InputField
+                                                            type="number"
+                                                            register={register}
+                                                            label="Residual Value Percentage"
+                                                            placeholder="Residual Value Percentage"
+                                                            name={"management.residual_percentage"}
+                                                            disabled
+                                                        />
+                                                    </div>
+
+                                                </div>
+
+
+
+
+
+                                                <div className="col-span-9">
+                                                    {/* <textarea
+                                                        value={asset?.description ?? ""}
+                                                        readOnly
+                                                        className="h-[100%] resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 w-[100%]"
+                                                    >
+
+                                                    </textarea> */}
+
+                                                    <Textarea
+                                                        value={asset?.description ?? ""}
+                                                        // onChange={(event) => {
+                                                        //     const text = event.currentTarget.value
+                                                        //     setDescription(text)
+                                                        //     setValue("description", text)
+                                                        // }}
+                                                        // placeholder="Asset Description"
+                                                        label="Asset Description"
+                                                        minRows={6}
+                                                        maxRows={6}
+                                                        readOnly
+                                                        classNames={{
+                                                            input:
+                                                                " w-full border-2 border-gray-400 outline-none focus:border-gray-400 cursor-default focus:outline-none focus:ring-0 mt-2 bg-gray-200 text-gray-400",
+                                                            label:
+                                                                "font-sans text-sm font-normal text-gray-600 text-light",
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Accordion.Panel>
                                     </Accordion.Item>
 
-                                    <Accordion.Item value="general_information">
+                                    {/* <Accordion.Item value="general_information">
                                         <Accordion.Control>
                                             <div className="flex flex-row">
                                                 <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
@@ -435,9 +702,487 @@ const Transfer = ({ }) => {
                                                 </div>
                                             </div>
                                         </Accordion.Panel>
+                                    </Accordion.Item> */}
+
+                                    <Accordion.Item value={"2"} className="">
+                                        <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
+                                            <div className="flex items-center gap-2 text-gray-700">
+                                                <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
+                                                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                                                    General Information
+                                                </p>
+                                            </div>
+                                        </Accordion.Control>
+                                        <Accordion.Panel>
+                                            <div className="grid gap-7">
+                                                <div className="grid grid-cols-9 col-span-9 gap-7">
+                                                    <div className="col-span-4">
+                                                        <InputField
+                                                            // query={companyId}
+                                                            // setQuery={setCompanyId}
+                                                            // required
+                                                            name={"subsidiary.name"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("subsidiaryId")?.toString()}
+                                                            label={"Company"}
+                                                            placeholder={"Select company or subsidiary"}
+                                                            disabled
+                                                        // data={companyList ?? []}
+                                                        />
+                                                        {/* <ClassTypeSelect
+                                                            query={companyId}
+                                                            setQuery={setCompanyId}
+                                                            required
+                                                            defaultValue={asset?.subsidiary?.name}
+                                                            name={"subsidiary.name"}
+                                                            setValue={setValue}
+                                                            value={getValues("subsidiaryId")?.toString()}
+                                                            title={"Company"}
+                                                            placeholder={"Select company or subsidiary"}
+                                                            data={companyList ?? []}
+                                                        /> */}
+
+                                                        {/* <AlertInput>{errors?.subsidiaryId?.message}</AlertInput> */}
+                                                    </div>
+                                                    <div className="col-span-8">
+                                                        <div className="text-gray-700">
+                                                            <div className="flex flex-1 flex-col gap-2">
+                                                                {/* <label htmlFor="address" className="text-sm">
+                                                                    Company Address
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    id={"address"}
+                                                                    className={
+                                                                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                                                                    }
+                                                                    placeholder="Company Address will appear here"
+                                                                    value={
+                                                                        company_address?.address
+                                                                            ? getAddress(company_address)
+                                                                            : ""
+                                                                    }
+                                                                    disabled
+                                                                /> */}
+                                                                {/* <InputField
+                                                                    // query={companyId}
+                                                                    // setQuery={setCompanyId}
+                                                                    // required
+                                                                    name={"getAddress(company_address)"}
+                                                                    register={register}
+                                                                    // setValue={setValue}
+                                                                    // value={getValues("subsidiaryId")?.toString()}
+                                                                    label={"Company"}
+                                                                    // placeholder={"Select company or subsidiary"}
+                                                                    disabled
+                                                                // data={companyList ?? []}
+                                                                /> */}
+                                                                <label htmlFor="address" className="text-sm">
+                                                                    Company Address
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    id={"address"}
+                                                                    className={
+                                                                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                                                                    }
+                                                                    placeholder={company_address?.address
+                                                                        ? getAddress(company_address)
+                                                                        : ""}
+                                                                    value={
+                                                                        company_address?.address
+                                                                            ? getAddress(company_address)
+                                                                            : ""
+                                                                    }
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-span-12 grid grid-cols-12 gap-7">
+                                                        <div className="col-span-3">
+                                                            <InputField
+                                                                // query={companyId}
+                                                                // setQuery={setCompanyId}
+                                                                // required
+                                                                name={"department.name"}
+                                                                register={register}
+                                                                // setValue={setValue}
+                                                                // value={getValues("subsidiaryId")?.toString()}
+                                                                label={"Department"}
+                                                                // placeholder={"Select company or subsidiary"}
+                                                                disabled
+                                                            // data={companyList ?? []}
+                                                            />
+                                                        </div>
+                                                        <div className="col-span-3">
+                                                            <div className="text-gray-700">
+                                                                <div className=" gap-2">
+                                                                    <InputField
+                                                                        // query={companyId}
+                                                                        // setQuery={setCompanyId}
+                                                                        // required
+                                                                        name={"department.location.floor"}
+                                                                        register={register}
+                                                                        // setValue={setValue}
+                                                                        // value={getValues("subsidiaryId")?.toString()}
+                                                                        label={"Floor"}
+                                                                        // placeholder={"Select company or subsidiary"}
+                                                                        disabled
+                                                                    // data={companyList ?? []}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-span-3">
+                                                            <div className="text-gray-700">
+                                                                <div className=" gap-2">
+                                                                    <InputField
+                                                                        // query={companyId}
+                                                                        // setQuery={setCompanyId}
+                                                                        // required
+                                                                        name={"department.location.room"}
+                                                                        register={register}
+                                                                        // setValue={setValue}
+                                                                        // value={getValues("subsidiaryId")?.toString()}
+                                                                        label={"Room"}
+                                                                        // placeholder={"Select company or subsidiary"}
+                                                                        disabled
+                                                                    // data={companyList ?? []}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-span-3">
+                                                            <InputField
+                                                                // query={companyId}
+                                                                // setQuery={setCompanyId}
+                                                                // required
+                                                                name={"custodian.name"}
+                                                                register={register}
+                                                                // setValue={setValue}
+                                                                // value={getValues("subsidiaryId")?.toString()}
+                                                                label={"Custodian"}
+                                                                // placeholder={"Select company or subsidiary"}
+                                                                disabled
+                                                            // data={companyList ?? []}
+                                                            />
+                                                        </div>
+
+                                                    </div>
+                                                    <div className="col-span-12 grid grid-cols-12 gap-7 ">
+                                                        <div className="col-span-2">
+                                                            {/* <ClassTypeSelect
+                                                                query={classId}
+                                                                setQuery={setClassId}
+                                                                required
+                                                                name={"model.classId"}
+                                                                setValue={setValue}
+                                                                value={getValues("model.classId")?.toString()}
+                                                                title={"Class"}
+                                                                placeholder={"Select asset class"}
+                                                                data={classList ?? []}
+                                                            /> */}
+
+                                                            <InputField
+                                                                // query={companyId}
+                                                                // setQuery={setCompanyId}
+                                                                // required
+                                                                name={"model.class.name"}
+                                                                register={register}
+                                                                // setValue={setValue}
+                                                                // value={getValues("subsidiaryId")?.toString()}
+                                                                label={"Class"}
+                                                                // placeholder={"Select company or subsidiary"}
+                                                                disabled
+                                                            // data={companyList ?? []}
+                                                            />
+                                                            {/* <AlertInput>{errors?.model?.classId?.message}</AlertInput> */}
+                                                        </div>
+                                                        <div className="col-span-2">
+                                                            {/* <ClassTypeSelect
+                                                                disabled={!Boolean(classId)}
+                                                                query={categoryId}
+                                                                setQuery={setCategoryId}
+                                                                required
+                                                                name={"model.categoryId"}
+                                                                setValue={setValue}
+                                                                value={getValues("model.categoryId")?.toString()}
+                                                                title={"Category"}
+                                                                placeholder={
+                                                                    !Boolean(classId)
+                                                                        ? "Select asset class first"
+                                                                        : "Select asset category"
+                                                                }
+                                                                data={categories ?? []}
+                                                            /> */}
+
+                                                            <InputField
+                                                                // query={companyId}
+                                                                // setQuery={setCompanyId}
+                                                                // required
+                                                                name={"model.category.name"}
+                                                                register={register}
+                                                                // setValue={setValue}
+                                                                // value={getValues("subsidiaryId")?.toString()}
+                                                                label={"Category"}
+                                                                // placeholder={"Select company or subsidiary"}
+                                                                disabled
+                                                            // data={companyList ?? []}
+                                                            />
+                                                            {/* <AlertInput>{errors?.model?.categoryId?.message}</AlertInput> */}
+                                                        </div>
+                                                        <div className="col-span-2">
+                                                            {/* <ClassTypeSelect
+                                                                disabled={!Boolean(categoryId)}
+                                                                query={typeId}
+                                                                setQuery={setTypeId}
+                                                                required
+                                                                name={"model.typeId"}
+                                                                setValue={setValue}
+                                                                value={getValues("model.typeId")?.toString()}
+                                                                title={"Type"}
+                                                                placeholder={
+                                                                    !Boolean(categoryId)
+                                                                        ? "Select asset category first"
+                                                                        : "Select asset type"
+                                                                }
+                                                                data={types ?? []}
+                                                            /> */}
+
+                                                            <InputField
+                                                                // query={companyId}
+                                                                // setQuery={setCompanyId}
+                                                                // required
+                                                                name={"model.type.name"}
+                                                                register={register}
+                                                                // setValue={setValue}
+                                                                // value={getValues("subsidiaryId")?.toString()}
+                                                                label={"Type"}
+                                                                // placeholder={"Select company or subsidiary"}
+                                                                disabled
+                                                            // data={companyList ?? []}
+                                                            />
+                                                            {/* <AlertInput>{errors?.model?.typeId?.message}</AlertInput> */}
+                                                        </div>
+                                                        <div className="col-span-6">
+                                                            <InputField
+                                                                register={register}
+                                                                label="Asset Location"
+                                                                placeholder="Asset Location"
+                                                                name="management.asset_location"
+
+                                                                disabled
+                                                            />
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-9 col-span-9 gap-7">
+                                                    <div className="col-span-3">
+                                                        {/* <TypeSelect
+                                                            isString
+                                                            name={"management.currency"}
+                                                            setValue={setValue}
+                                                            value={getValues("management.currency")}
+                                                            title={"Currency"}
+                                                            placeholder={"Select currency type"}
+                                                            data={[
+                                                                { value: "PHP", label: "Philippine Peso (Php)" },
+                                                                { value: "USD", label: "US Dollar (USD)" },
+                                                            ]}
+                                                        />
+                                                        <AlertInput>
+                                                            {errors?.management?.currency?.message}
+                                                        </AlertInput> */}
+
+                                                        <InputField
+                                                            // query={companyId}
+                                                            // setQuery={setCompanyId}
+                                                            // required
+                                                            name={"management.currency"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("subsidiaryId")?.toString()}
+                                                            label={"Currency"}
+                                                            // placeholder={"Select company or subsidiary"}
+                                                            disabled
+                                                        // data={companyList ?? []}
+                                                        />
+                                                    </div>
+
+                                                    <div className="col-span-3">
+                                                        {/* <TypeSelect
+                                                            isString
+                                                            name={"management.accounting_method"}
+                                                            setValue={setValue}
+                                                            value={getValues("management.accounting_method")}
+                                                            title={"Accounting Method"}
+                                                            placeholder={"Select accounting method"}
+                                                            data={[
+                                                                "Accrual Basis",
+                                                                "Cash Basis",
+                                                                "Modified Cash Basis",
+                                                            ]}
+                                                        /> */}
+                                                        {/* <AlertInput>
+                                                            {errors?.management?.accounting_method?.message}
+                                                        </AlertInput> */}
+
+                                                        <InputField
+                                                            // query={companyId}
+                                                            // setQuery={setCompanyId}
+                                                            // required
+                                                            name={"management.accounting_method"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("subsidiaryId")?.toString()}
+                                                            label={"Accounting Method"}
+                                                            // placeholder={"Select company or subsidiary"}
+                                                            disabled
+                                                        // data={companyList ?? []}
+                                                        />
+                                                    </div>
+
+                                                    <div className="col-span-3 space-y-2">
+                                                        {/* <p className="text-sm text-gray-700">Purchase Date</p> */}
+                                                        {/* <DatePicker
+                                                            placeholder="Month Day, Year"
+                                                            allowFreeInput
+                                                            size="sm"
+                                                            onChange={(value) => {
+                                                                setValue("management.purchase_date", value)
+                                                            }}
+                                                            classNames={{
+                                                                input:
+                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                                                        /> */}
+                                                        <InputField
+                                                            // query={companyId}
+                                                            // setQuery={setCompanyId}
+                                                            // required
+                                                            name={"management.purchase_date"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("subsidiaryId")?.toString()}
+                                                            label={"Purchase Date"}
+                                                            // placeholder={"Select company or subsidiary"}
+                                                            disabled
+                                                        // data={companyList ?? []}
+                                                        />
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div className="col-span-9 grid grid-cols-6 gap-7">
+                                                    <div className="col-span-2">
+                                                        {/* <TypeSelect
+                                                            isString
+                                                            name={"management.depreciation_rule"}
+                                                            setValue={setValue}
+                                                            value={getValues("management.depreciation_rule")}
+                                                            title={"Depreciation Method"}
+                                                            placeholder={"Select method"}
+                                                            data={["Straight Line", "Others"]}
+                                                        />
+                                                        <AlertInput>
+                                                            {errors?.management?.depreciation_rule?.message}
+                                                        </AlertInput> */}
+                                                        <InputField
+                                                            // query={companyId}
+                                                            // setQuery={setCompanyId}
+                                                            // required
+                                                            name={"management.depreciation_rule"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("subsidiaryId")?.toString()}
+                                                            label={"Depreciation Method"}
+                                                            // placeholder={"Select company or subsidiary"}
+                                                            disabled
+                                                        // data={companyList ?? []}
+                                                        />
+                                                    </div>
+                                                    <div className="col-span-2 space-y-2">
+                                                        {/* <p className="text-sm text-gray-700">
+                                                            Depreciation Start Date
+                                                        </p>
+                                                        <DatePicker
+                                                            placeholder="Month, Day, Year"
+                                                            allowFreeInput
+                                                            size="sm"
+                                                            value={dep_start}
+                                                            onChange={(value) => {
+                                                                setDepStart(value)
+                                                                setValue("management.depreciation_start", value)
+                                                            }}
+                                                            classNames={{
+                                                                input:
+                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                                                        /> */}
+                                                        <InputField
+                                                            // query={companyId}
+                                                            // setQuery={setCompanyId}
+                                                            // required
+                                                            name={"management.depreciation_start"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("subsidiaryId")?.toString()}
+                                                            label={"Depreciation Start Date"}
+                                                            // placeholder={"Select company or subsidiary"}
+                                                            disabled
+                                                        // data={companyList ?? []}
+                                                        />
+                                                    </div>
+                                                    <div className="col-span-2 space-y-2">
+                                                        {/* <p className="text-sm text-gray-700">
+                                                            Depreciation End Date
+                                                        </p>
+                                                        <DatePicker
+                                                            placeholder={
+                                                                dep_start
+                                                                    ? "Month, Day, Year"
+                                                                    : "Select start ffirst"
+                                                            }
+                                                            allowFreeInput
+                                                            size="sm"
+                                                            value={dep_end}
+                                                            disabled={!Boolean(dep_start)}
+                                                            minDate={dep_start ? dep_start : new Date()}
+                                                            onChange={(value) => {
+                                                                setDepEnd(value)
+                                                                setValue("management.depreciation_end", value)
+                                                            }}
+                                                            classNames={{
+                                                                input:
+                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                                                        /> */}
+                                                        <InputField
+                                                            // query={companyId}
+                                                            // setQuery={setCompanyId}
+                                                            // required
+                                                            name={"management.depreciation_end"}
+                                                            register={register}
+                                                            // setValue={setValue}
+                                                            // value={getValues("subsidiaryId")?.toString()}
+                                                            label={"Depreciation End Date"}
+                                                            // placeholder={"Select company or subsidiary"}
+                                                            disabled
+                                                        // data={companyList ?? []}
+                                                        />
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </Accordion.Panel>
                                     </Accordion.Item>
 
-                                    <Accordion.Item value="asset_usage_info">
+                                    {/* <Accordion.Item value="asset_usage_info">
                                         <Accordion.Control>
                                             <div className="flex flex-row">
                                                 <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
@@ -548,6 +1293,84 @@ const Transfer = ({ }) => {
                                                 </div>
                                             </div>
                                         </Accordion.Panel>
+                                    </Accordion.Item> */}
+                                    <Accordion.Item value={"3"} className="">
+                                        <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
+                                            <div className="flex items-center gap-2 text-gray-700">
+                                                <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
+                                                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Usage</p>
+                                            </div>
+                                        </Accordion.Control>
+                                        <Accordion.Panel>
+                                            <div className="grid grid-cols-9 col-span-9 gap-7">
+                                                <div className="col-span-3 space-y-2">
+                                                    <InputField
+                                                        // query={companyId}
+                                                        // setQuery={setCompanyId}
+                                                        // required
+                                                        name={"management.depreciation_start"}
+                                                        register={register}
+                                                        // setValue={setValue}
+                                                        // value={getValues("subsidiaryId")?.toString()}
+                                                        label={"Date of Usage"}
+                                                        // placeholder={"Select company or subsidiary"}
+                                                        disabled
+                                                    // data={companyList ?? []}
+                                                    />
+                                                </div>
+                                                <div className="col-span-3">
+                                                    <InputField
+                                                        // query={companyId}
+                                                        // setQuery={setCompanyId}
+                                                        // required
+                                                        name={"management.depreciation_period"}
+                                                        register={register}
+                                                        // setValue={setValue}
+                                                        // value={getValues("subsidiaryId")?.toString()}
+                                                        label={"Period (month/s)"}
+                                                        // placeholder={"Select company or subsidiary"}
+                                                        disabled
+                                                    // data={companyList ?? []}
+                                                    />
+                                                </div>
+                                                <div className="col-span-3">
+                                                    <InputField
+                                                        // query={companyId}
+                                                        // setQuery={setCompanyId}
+                                                        // required
+                                                        name={"management.asset_quantity"}
+                                                        register={register}
+                                                        // setValue={setValue}
+                                                        // value={getValues("subsidiaryId")?.toString()}
+                                                        label={"Asset Quantity"}
+                                                        // placeholder={"Select company or subsidiary"}
+                                                        disabled
+                                                    // data={companyList ?? []}
+                                                    />
+                                                </div>
+                                                <div className="col-span-9">
+                                                    <Textarea
+                                                        value={asset?.remarks ?? ""}
+                                                        // onChange={(event) => {
+                                                        //     const text = event.currentTarget.value
+                                                        //     setDescription(text)
+                                                        //     setValue("description", text)
+                                                        // }}
+                                                        // placeholder="Asset Description"
+                                                        label="Remarks"
+                                                        minRows={6}
+                                                        maxRows={6}
+                                                        readOnly
+                                                        classNames={{
+                                                            input:
+                                                                " w-full border-2 border-gray-400 outline-none focus:border-gray-400 cursor-default focus:outline-none focus:ring-0 mt-2 bg-gray-200 text-gray-400",
+                                                            label:
+                                                                "font-sans text-sm font-normal text-gray-600 text-light",
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Accordion.Panel>
                                     </Accordion.Item>
                                 </Accordion>
 
@@ -578,7 +1401,11 @@ const Transfer = ({ }) => {
                 )}
                 {state.currentStep == 1 && (
                     <div className="rounded-md bg-white drop-shadow-lg">
+
                         <div className="p-5">
+                            <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text p-2 font-sans text-xl font-semibold uppercase text-transparent">
+                                Location
+                            </p>
                             <div className="flex flex-wrap py-2">
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                                     <div className="flex w-full flex-col py-2">
@@ -657,6 +1484,35 @@ const Transfer = ({ }) => {
                                 </div>
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                                     <div className="flex w-full flex-col py-2">
+                                        <div className="flex flex-row gap-2 mb-2">
+                                            <label className="font-semibold w-full">Floor</label>
+                                            <label className="font-semibold w-full">Room</label>
+                                        </div>
+
+                                        <div className="flex flex-row gap-2">
+                                            <input
+                                                type="text"
+                                                id={"floor"}
+                                                className={
+                                                    "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                                                }
+                                                placeholder="Floor no."
+                                                value={department?.location?.floor ?? ""}
+                                                disabled
+                                            />
+
+                                            <input
+                                                type="text"
+                                                id={"floor"}
+                                                className={
+                                                    "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                                                }
+                                                placeholder="Room no."
+                                                value={department?.location?.room ?? ""}
+                                                disabled
+                                            /></div>
+                                    </div>
+                                    <div className="flex w-full flex-col py-2">
                                         <label className="font-semibold">Transfer Date</label>
                                         <DatePicker
                                             dropdownType="popover"
@@ -673,17 +1529,7 @@ const Transfer = ({ }) => {
                                             className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                                         />
                                     </div>
-                                    <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Location</label>
-                                        <InputField
-                                            // disabled={!editable}
-                                            type={"text"}
-                                            label={""}
-                                            name={"email"}
-                                            register={register}
-                                            placeholder={"Enter asset transfer location"}
-                                        />
-                                    </div>
+
                                 </div>
                                 <div className="flex w-full flex-row justify-between gap-7 px-4">
                                     <Checkbox
@@ -716,7 +1562,7 @@ const Transfer = ({ }) => {
                                     >
                                         Back
                                     </button>
-                                    {(selectedEMP !== "" || checked) && (
+                                    {((selectedEMP !== "") || checked) && ( //TODO: add transfer_date to schema and to this conditional statement
                                         <button
                                             type="button"
                                             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -828,7 +1674,7 @@ const Transfer = ({ }) => {
                                         <InputField
                                             disabled={true}
                                             register={register}
-                                            name="name"
+                                            name="management.residual_value"
                                             type={"text"}
                                             label={""}
                                         />

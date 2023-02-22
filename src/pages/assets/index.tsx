@@ -5,6 +5,7 @@ import DisplayAssets from "../../components/asset/DisplayAssets"
 import { AssetType } from "../../types/generic"
 import { useRouter } from "next/router"
 import { useSearchStore } from "../../store/useStore"
+import Modal from "../../components/asset/Modal"
 
 const Assets = () => {
   const [page, setPage] = useState(1)
@@ -17,6 +18,7 @@ const Assets = () => {
     limit,
     page,
   })
+  const [completeModal, setCompleteModal] = useState<boolean>(false)
 
   const [assets, setAssets] = useState<AssetType[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
@@ -42,8 +44,7 @@ const Assets = () => {
           page={page}
           setPage={setPage}
           limit={limit}
-          setLimit={setLimit}
-        />
+          setLimit={setLimit} user={null}        />
       </div>
     </DashboardLayout>
   )

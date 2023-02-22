@@ -1,6 +1,6 @@
 import Head from "next/head"
 import Link from "next/link"
-import React from "react"
+import React, { useState } from "react"
 import { z } from "zod"
 import { InputField } from "../../components/atoms/forms/InputField"
 import { trpc } from "../../utils/trpc"
@@ -9,11 +9,25 @@ import { useForm } from "react-hook-form"
 import AlertInput from "../../components/atoms/forms/AlertInput"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import { CreateUserInput } from "../../server/schemas/user"
+import { generateRandomPass } from "../../lib/functions"
+import { User } from "tabler-icons-react"
+import Modal from "../../components/headless/modal/modal"
 
 type User = z.infer<typeof CreateUserInput>
 
-const Register = () => {
-  const { mutate, isLoading, error } = trpc.user.create.useMutation()
+function Register() {
+  const [completeModal, setCompleteModal] = useState<boolean>(false)
+  const [passwordCheck, setPassword] = useState<string>("")
+
+  const { mutate, isLoading, error } = trpc.user.create.useMutation({
+    onSuccess() {
+      setCompleteModal(true)
+
+      // invalidate query of asset id when mutations is successful
+      //utils.asset.findAll.invalidate()
+    },
+  })
+
   const {
     register,
     handleSubmit,
@@ -29,6 +43,7 @@ const Register = () => {
         first_name: "",
         last_name: "",
       },
+      firstLogin: true,
       password: "",
     },
   })
@@ -36,9 +51,10 @@ const Register = () => {
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
     // Register function
-    console.log(mutate)
     mutate({
-      password: user.password,
+      ...user,
+      oldPassword: user.oldPassword,
+      password: passwordCheck,
       email: `test.${user.profile.last_name}@fas.com`,
       name: `${user.profile.first_name} ${user.profile.last_name}`,
       profile: {
@@ -46,12 +62,17 @@ const Register = () => {
         last_name: user.profile.last_name,
       },
       address: {
+        street: "Test",
         city: "Manila",
         country: "Philippines",
         state: "Metro Manila",
         zip: "1000",
       },
+      inactivityDate: new Date(),
+      passwordAge: new Date(),
     })
+    console.log(passwordCheck)
+    console.log(user)
     reset()
   }
 
@@ -87,7 +108,7 @@ const Register = () => {
           />
           <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
 
-          <InputField
+          {/* <InputField
             label="Password"
             register={register}
             name="password"
@@ -96,13 +117,14 @@ const Register = () => {
             withIcon="fa-solid fa-eye"
             isPassword={true}
           />
-          <PasswordChecker password={watch().password} />
+          <PasswordChecker password={watch().password} /> */}
 
           <AlertInput>{errors?.password?.message}</AlertInput>
           <button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={isLoading}
+            onClick={() => setPassword(generateRandomPass())}
           >
             {isLoading ? "Loading..." : "Register"}
           </button>
@@ -117,6 +139,30 @@ const Register = () => {
             Login
           </a>
         </Link>
+        <Modal
+          isVisible={completeModal}
+          setIsVisible={setCompleteModal}
+          className="max-w-2xl"
+          title="New Account"
+        >
+          <div className="flex w-full flex-col px-4 py-2">
+            <div>
+              <p className="text-center text-lg font-semibold">
+                New account registration successful.
+              </p>
+
+              <p className="text-center text-lg font-semibold">Password: {passwordCheck}</p>
+            </div>
+            <button
+              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+              onClick={() => {
+                setCompleteModal(false)
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </Modal>
       </main>
     </>
   )

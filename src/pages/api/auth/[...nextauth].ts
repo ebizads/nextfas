@@ -7,6 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt"
 import { env } from "../../../env/server.mjs"
 import dayjs from "dayjs"
+//import { passArrayCheck } from "../../../lib/functions"
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -38,16 +39,60 @@ export const authOptions: NextAuthOptions = {
             username: credentials?.username,
           },
         })
-
-        if (Boolean(user?.lockedUntil)) {
-          throw new Error(
-            `This user is currently locked until ${dayjs(
-              user?.lockedUntil
-            )}. Please contact administrator.`
-          )
-        }
-
+        const value = null
         if (user !== null) {
+          const dateNow = new Date()
+          const hoursNow = dateNow.getHours()
+          if (Boolean(user?.inactivityDate)) {
+            const dateBetween =
+              Number((dateNow.getTime() - (user?.inactivityDate?.getTime() ?? 0))/ (1000 * 60 * 60 * 24))
+            //throw new Error(dateBetween.toString())
+            if (dateBetween > 30 && dateBetween < 60) {
+              throw new Error(
+                `This user is currently locked until. Please contact administrator.`
+              )
+            } else if (dateBetween > 60) {
+              await prisma.user.update({
+                where: {
+                  username: credentials?.username,
+                },
+              data:{
+                deleted: true,
+              }
+              })
+              throw new Error(
+                `This user is deleted. Please contact administrator.`
+              )
+            }
+          }
+          if (Boolean(user.lockedUntil)) {
+            if (dateNow.getDate() <= (user.lockedUntil?.getDate() ?? 0)) {
+              if (dateNow.getHours() <= (user.lockedUntil?.getHours() ?? 0)) {
+                if (Number(user.lockedUntil?.getHours()) > Number(hoursNow)) {
+                  throw new Error(
+                    `This user is currently locked until ${dayjs(
+                      user.lockedUntil
+                    )}. Please contact administrator.`
+                  )
+                } else if (
+                  Number(user.lockedUntil?.getHours()) == Number(hoursNow)
+                ) {
+                  if (
+                    Number(user.lockedUntil?.getMinutes() ?? 0) >
+                    Number(dateNow.getMinutes())
+                  ) {
+                    throw new Error(
+                      `This user is currently locked until ${dayjs(
+                        user.lockedUntil
+                      )}. Please contact administrator.`
+                    )
+                  }
+                }
+              }
+            }
+          } else {
+            user.lockedUntil = null
+          }
           const isValid = bcrypt.compareSync(
             credentials?.password ?? "",
             user.password
@@ -58,25 +103,115 @@ export const authOptions: NextAuthOptions = {
               where: {
                 username: credentials?.username,
               },
-              data: { attempts: 0 },
+              data: { attempts: 0, inactivityDate: new Date() },
             })
             return user
           }
           let data = {}
-          if (user.attempts < 4) {
-            // checks if user has remaining attempts
-            data = { attempts: (user.attempts += 1) }
-          } else {
-            // locks user if user reached 5 attempts
-            const lock_date = dayjs().add(60, "day").toDate()
-            // console.log(lock_date)
-            data = {
-              lockedUntil: lock_date,
-              lockedReason: "Too many attempts",
-              lockedAt: new Date(),
+          if (Boolean(user.lockedUntil)) {
+            if (dateNow.getDate() == (user.lockedUntil?.getDate() ?? 0)) {
+              if (dateNow.getHours() >= (user.lockedUntil?.getHours() ?? 0)) {
+                data = {
+                  attempts: (user.attempts = 0),
+                  lockedUntil: (user.lockedUntil = value),
+                  lockedReason: (user.lockedReason = value),
+                  lockedAt: (user.lockedAt = value),
+                }
+              } else if (
+                dateNow.getHours() == (user.lockedUntil?.getHours() ?? 0)
+              ) {
+                if (
+                  dateNow.getMinutes() > (user.lockedUntil?.getMinutes() ?? 0)
+                ) {
+                  data = {
+                    attempts: (user.attempts = 0),
+                    lockedUntil: (user.lockedUntil = value),
+                    lockedReason: (user.lockedReason = value),
+                    lockedAt: (user.lockedAt = value),
+                  }
+                  throw new Error("ewan ko")
+                }
+              }
+            } else if (dateNow.getDate() > (user.lockedUntil?.getDate() ?? 0)) {
+              data = {
+                attempts: (user.attempts = 0),
+                lockedUntil: (user.lockedUntil = value),
+                lockedReason: (user.lockedReason = value),
+                lockedAt: (user.lockedAt = value),
+              }
             }
           }
 
+          if (user.attemptDate != undefined || null) {
+            if (dateNow.getDate() > (user.attemptDate?.getDate() ?? 0)) {
+              if (
+                dateNow.getHours() > Number(user.attemptDate?.getHours() ?? 0)
+              ) {
+                data = {
+                  attempts: (user.attempts = 0),
+                  lockedUntil: (user.lockedUntil = null),
+                  lockedReason: (user.lockedReason = null),
+                  lockedAt: (user.lockedAt = null),
+                }
+              } else if (
+                dateNow.getHours() == (user.attemptDate?.getHours() ?? 0)
+              ) {
+                if (
+                  dateNow.getMinutes() > (user.attemptDate?.getMinutes() ?? 0)
+                ) {
+                  data = {
+                    attempts: (user.attempts = 0),
+                    lockedUntil: (user.lockedUntil = null),
+                    lockedReason: (user.lockedReason = null),
+                    lockedAt: (user.lockedAt = null),
+                  }
+                }
+              }
+
+              // else if (newDay > 1) {
+              //   data = {
+              //     attempts: (user.attempts = 0),
+              //     lockedUntil: (user.lockedUntil = null),
+              //     lockedReason: (user.lockedReason = null),
+              //     lockedAt: (user.lockedAt = null),
+              //   }
+              // }
+            }
+          }
+          //throw new Error(dateNow.getHours().toString() +"ewan ko" + user.lockedUntil?.toString())
+
+          if (user.attempts < 3) {
+            // checks if user has remaining attempts
+
+            data = {
+              attempts: (user.attempts += 1),
+              lockedUntil: user.lockedUntil,
+              lockedReason: user.lockedReason,
+              lockedAt: user.lockedAt,
+            }
+          }
+
+          if (user.attempts >= 3) {
+            // locks user if user reached 5 attempts
+            const lock_date = dayjs().minute(60).toDate()
+            // console.log(lock_date)
+            data = {
+              lockedUntil: lock_date,
+              lockedReason: "Too many attempts, Account is locked",
+              lockedAt: new Date(),
+            }
+            //throw new Error(data.lockedReason)
+          }
+
+          if (user.attempts == 1) {
+            data = {
+              attemptDate: new Date(),
+              attempts: user.attempts,
+              lockedUntil: user.lockedUntil,
+              lockedReason: user.lockedReason,
+              lockedAt: user.lockedAt,
+            }
+          }
           await prisma.user.update({
             where: {
               username: credentials?.username,
@@ -85,7 +220,7 @@ export const authOptions: NextAuthOptions = {
           })
           throw new Error("Incorrect password. Please try again.")
         }
-        throw new Error("Invalid credentials. Please try again.")
+        throw new Error("Account not found. Please try again.")
       },
     }),
   ],

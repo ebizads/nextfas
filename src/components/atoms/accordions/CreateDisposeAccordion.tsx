@@ -1,4 +1,4 @@
-import { Accordion, Select } from "@mantine/core"
+import { Accordion, Select, Textarea } from "@mantine/core"
 import { useStepper } from "headless-stepper"
 import React, { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -17,7 +17,7 @@ import { trpc } from "../../../utils/trpc"
 import Modal from "../../headless/modal/modal"
 import InputField from "../forms/InputField"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { getLifetime } from "../../../lib/functions"
+import { getAddress, getLifetime } from "../../../lib/functions"
 import { DatePicker } from "@mantine/dates"
 import { SelectValueType } from "../select/TypeSelect"
 import Link from "next/link"
@@ -182,6 +182,37 @@ const CreateDisposeAccordion = () => {
     console.log("dapat wala na")
   }
 
+
+  const [companyId, setCompanyId] = useState<string>("")
+  const { data: companyData } = trpc.company.findAll.useQuery()
+
+  useEffect(() => {
+    setCompanyId(asset?.subsidiaryId?.toString() ?? "")
+
+  }, [asset?.subsidiaryId])
+
+
+  const company_address = useMemo(() => {
+    if (companyId) {
+      const address = companyData?.companies.filter(
+        (company: { id: number }) => company.id === Number(companyId)
+      )[0]
+      return address ?? null
+    }
+  }, [companyId, companyData])
+
+  const companyList = useMemo(
+    () =>
+      companyData?.companies
+        .filter((item: { id: number }) => item.id != 0)
+        .map((company: { id: { toString: () => any }; name: any }) => {
+          return { value: company.id.toString(), label: company.name }
+        }),
+    [companyData]
+  ) as SelectValueType[] | undefined
+
+  // console.log(asset?.management?.purchase_date);
+
   return (
     <div className="px-4">
       <div>
@@ -284,115 +315,330 @@ const CreateDisposeAccordion = () => {
           <div>
             <div className="rounded-md bg-white drop-shadow-lg">
               <div className="p-5">
-                <Accordion multiple={true} defaultValue={['asset_details', 'general_information', 'asset_usage_info']}>
-                  <Accordion.Item value="asset_details">
-                    <Accordion.Control>
-                      <div className="flex flex-row">
+                <Accordion multiple={true} defaultValue={['1', '2', '3']}>
+                  {/* <Accordion.Item value="asset_details">
+                                        <Accordion.Control>
+                                            <div className="flex flex-row">
+                                                <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
+                                                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                                                    Asset Details
+                                                </p>
+                                            </div>
+                                        </Accordion.Control>
+                                        <Accordion.Panel>
+                                            <div className="flex flex-wrap py-2">
+                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
+                                                    <div className="flex w-full flex-col py-2">
+                                                        <label className="font-semibold">
+                                                            Asset Number
+                                                        </label>
+                                                        <InputField
+                                                            disabled={true}
+                                                            register={register}
+                                                            name="number"
+                                                            type={"text"}
+                                                            label={""}
+                                                        />
+                                                    </div>
+                                                    <div className="flex w-full flex-col py-2">
+                                                        <label className="font-semibold">Asset Name</label>
+                                                        <InputField
+                                                            disabled={true}
+                                                            register={register}
+                                                            name="name"
+                                                            type={"text"}
+                                                            label={""}
+                                                        />
+                                                    </div>
+                                                    <div className="flex w-full flex-col py-2">
+                                                        <label className="font-semibold">
+                                                            Alternate Asset Number
+                                                        </label>
+                                                        <InputField
+                                                            disabled={true}
+                                                            register={register}
+                                                            name="alt_number"
+                                                            type={"text"}
+                                                            label={""}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
+                                                    <div className="flex w-full flex-col py-2">
+                                                        <label className="font-semibold">
+                                                            Parent Asset
+                                                        </label>
+                                                        <InputField
+                                                            disabled={true}
+                                                            register={register}
+                                                            name="parent.name"
+                                                            type={"text"}
+                                                            label={""}
+                                                        />
+                                                    </div>
+                                                    <div className="flex w-[60%] flex-col py-2">
+                                                        <label className="font-semibold">Project</label>
+                                                        <InputField
+                                                            disabled={true}
+                                                            register={register}
+                                                            name="project.name"
+                                                            type={"text"}
+                                                            label={""}
+                                                        />
+                                                    </div>
+                                                    <div className="flex w-[60%] flex-col py-2">
+                                                        <label className="font-semibold">Asset Type</label>
+                                                        <InputField
+                                                            disabled={true}
+                                                            register={register}
+                                                            name="model.type.name"
+                                                            type={"text"}
+                                                            label={""}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
+                                                    <div className="flex w-[60%] flex-col py-2">
+                                                        <label className="font-semibold">
+                                                            Asset Description
+                                                        </label>
+                                                        <textarea
+                                                            value={asset?.description ?? ""}
+                                                            readOnly
+                                                            className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                                        ></textarea>
+                                                    </div>
+                                                </div>
+                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
+                                                    <div className="flex w-full flex-col py-2">
+                                                        <label className="font-semibold">
+                                                            Accounting Method
+                                                        </label>
+                                                        <InputField
+                                                            disabled={true}
+                                                            register={register}
+                                                            name="management.depreciation_rule"
+                                                            type={"text"}
+                                                            label={""}
+                                                        />
+                                                    </div>
+                                                    <div className="flex w-full flex-col py-2">
+                                                        <label className="font-semibold">
+                                                            Asset Lifetime
+                                                        </label>
+                                                        <p className="my-2 w-full rounded-md border-2 border-gray-400  px-4 py-2  outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 bg-gray-200 text-gray-400">
+                                                            {getLifetime(
+                                                                asset?.management?.depreciation_start ??
+                                                                new Date(),
+                                                                asset?.management?.depreciation_end ??
+                                                                new Date()
+                                                            )}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex w-full flex-col py-2">
+                                                        <label className="font-semibold">
+                                                            Asset Serial Number
+                                                        </label>
+                                                        <InputField
+                                                            disabled={true}
+                                                            register={register}
+                                                            name="serial_no"
+                                                            type={"text"}
+                                                            label={""}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Accordion.Panel>
+                                    </Accordion.Item> */}
+
+                  <Accordion.Item value={"1"} className="">
+                    <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
+                      <div className=" flex items-center gap-2 text-gray-700">
+                        {/* <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-yellow-400 p-1 text-sm text-yellow-400">
+                                                    1
+                                                </div> */}
                         <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
-                        <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
-                          Asset Details
-                        </p>
+                        <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Information</p>
                       </div>
                     </Accordion.Control>
                     <Accordion.Panel>
-                      <div className="flex flex-wrap py-2">
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
+                      <div className="grid grid-cols-9 gap-7">
+                        <div className="col-span-9 grid grid-cols-8 gap-7">
+                          <div className="col-span-4">
+                            <label className="text-sm">
                               Asset Number
                             </label>
                             <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
                               {asset?.number ?? ""}
                             </p>
                           </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">Asset Name</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.name ?? ""}
-                            </p>
-                          </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
+                          <div className="col-span-4">
+                            <label className="text-sm">
                               Alternate Asset Number
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
                               {asset?.alt_number ?? ""}
                             </p>
                           </div>
+                          {/* <div className="col-span-2">
+                                                        <InputField
+                                                            register={register}
+                                                            required
+                                                            name={"model.typeId"}
+                                                            label="Type"
+                                                            placeholder="Enter Asset Type"
+                                                        />
+                                                    </div> */}
                         </div>
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
+                        <div className="col-span-3">
+                          <label className="text-sm">
+                            Serial Number
+                          </label>
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
+                            {asset?.serial_no ?? ""}
+                          </p>
+                        </div>
+                        <div className="col-span-6 grid grid-cols-9 gap-7">
+                          <div className="col-span-3">
+                            <label className="text-sm">
                               Parent Asset
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
                               {asset?.parent?.name ?? ""}
                             </p>
                           </div>
-                          <div className="flex w-[60%] flex-col py-2">
-                            <label className="font-semibold">Project</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.project?.name ?? ""}
+                          <div className="col-span-3">
+                            <label className="text-sm">
+                              Project
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.project?.name}
                             </p>
                           </div>
-                          <div className="flex w-[60%] flex-col py-2">
-                            <label className="font-semibold">Asset Type</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.model?.type?.name ?? ""}
+                          <div className="col-span-3">
+                            <label className="text-sm">
+                              Vendor
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.vendor?.name ?? ""}
                             </p>
                           </div>
                         </div>
-
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-[60%] flex-col py-2">
-                            <label className="font-semibold">
-                              Asset Description
-                            </label>
-                            <textarea
-                              value={asset?.description ?? ""}
-                              readOnly
-                              className="resize-none rounded-md border-2 border-gray-400 bg-gray-200 px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                            ></textarea>
-                          </div>
+                        <div className="col-span-3">
+                          <label className="text-sm">
+                            Model Name
+                          </label>
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            {asset?.model?.name ?? ""}
+                          </p>
                         </div>
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
-                              Accounting Method
+                        <div className="col-span-6 grid grid-cols-9 gap-7">
+                          <div className="col-span-3">
+                            <label className="text-sm">
+                              Model Brand
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_rule ?? ""}
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.model?.brand ?? ""}
                             </p>
                           </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
+                          <div className="col-span-3">
+                            <label className="text-sm">
+                              Model Number
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.model?.number ?? ""}
+                            </p>
+                          </div>
+                          <div className="col-span-3">
+                            <label className="text-sm">
                               Asset Lifetime
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {getLifetime(
-                                asset?.management?.depreciation_start ??
-                                new Date(),
-                                asset?.management?.depreciation_end ??
-                                new Date()
-                              )}
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.asset_lifetime}
                             </p>
                           </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
-                              Asset Serial Number
+                        </div>
+                        <div className="col-span-9 grid grid-cols-12 gap-7">
+                          <div className="col-span-3">
+                            <label className="text-sm">
+                              Original Cost
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.number ?? ""}
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.original_cost}
                             </p>
                           </div>
+                          <div className="col-span-3">
+                            <label className="text-sm">
+                              Current Cost
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.current_cost}
+                            </p>
+                          </div>
+
+                          <div className="col-span-3">
+                            <label className="text-sm">
+                              Residual Value
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.residual_value}
+                            </p>
+                          </div>
+                          <div className=" col-span-3">
+                            <label className="text-sm">
+                              Residual Value Percentage
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.residual_percentage}
+                            </p>
+                          </div>
+
+                        </div>
+
+
+
+
+
+                        <div className="col-span-9">
+                          {/* <textarea
+                                                        value={asset?.description ?? ""}
+                                                        readOnly
+                                                        className="h-[100%] resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 w-[100%]"
+                                                    >
+
+                                                    </textarea> */}
+                          <label className="text-sm">
+                            Asset Description
+                          </label>
+                          <Textarea
+                            value={asset?.description ?? ""}
+                            // onChange={(event) => {
+                            //     const text = event.currentTarget.value
+                            //     setDescription(text)
+                            //     setValue("description", text)
+                            // }}
+                            // placeholder="Asset Description"
+                            label=""
+                            minRows={6}
+                            maxRows={6}
+                            readOnly
+                            classNames={{
+                              input:
+                                " w-full border-2 border-gray-400 outline-none focus:border-gray-400 cursor-default focus:outline-none focus:ring-0 mt-2 bg-gray-200 text-gray-400",
+                              label:
+                                "font-sans text-sm font-normal text-gray-600 text-light",
+                            }}
+                          />
                         </div>
                       </div>
                     </Accordion.Panel>
                   </Accordion.Item>
 
-                  <Accordion.Item value="general_information">
-                    <Accordion.Control>
-                      <div className="flex flex-row">
+                  <Accordion.Item value={"2"} className="">
+                    <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
+                      <div className="flex items-center gap-2 text-gray-700">
                         <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
                         <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                           General Information
@@ -400,131 +646,357 @@ const CreateDisposeAccordion = () => {
                       </div>
                     </Accordion.Control>
                     <Accordion.Panel>
-                      <div className="flex flex-wrap py-2">
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">Subsidiary</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                      <div className="grid gap-7">
+                        <div className="grid grid-cols-9 col-span-9 gap-7">
+                          <div className="col-span-4">
+                            <label className="text-sm">
+                              Company
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
                               {asset?.subsidiary?.name ?? ""}
                             </p>
                           </div>
-
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">Custodian</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.custodian?.name ?? ""}
+                          <div className="col-span-8">
+                            <label className="text-sm">
+                              Company Address
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {company_address?.address
+                                ? getAddress(company_address)
+                                : ""}
                             </p>
                           </div>
+                          <div className="col-span-12 grid grid-cols-12 gap-7">
+                            <div className="col-span-3">
+                              <label className="text-sm">
+                                Department
+                              </label>
+                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                                {asset?.department?.name ?? ""}
+                              </p>
+                            </div>
+                            <div className="col-span-3">
+                              <label className="text-sm">
+                                Floor
+                              </label>
+                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                                {asset?.department?.location?.floor ?? ""}
+                              </p>
+                            </div>
+                            <div className="col-span-3">
+                              <label className="text-sm">
+                                Room
+                              </label>
+                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                                {asset?.department?.location?.room ?? ""}
+                              </p>
+                            </div>
+                            <div className="col-span-3">
+                              <label className="text-sm">
+                                Custodian
+                              </label>
+                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                                {asset?.custodian?.name ?? ""}
+                              </p>
+                            </div>
+
+                          </div>
+                          <div className="col-span-12 grid grid-cols-12 gap-7 ">
+                            <div className="col-span-2">
+                              {/* <ClassTypeSelect
+                                                                query={classId}
+                                                                setQuery={setClassId}
+                                                                required
+                                                                name={"model.classId"}
+                                                                setValue={setValue}
+                                                                value={getValues("model.classId")?.toString()}
+                                                                title={"Class"}
+                                                                placeholder={"Select asset class"}
+                                                                data={classList ?? []}
+                                                            /> */}
+
+                              <label className="text-sm">
+                                Class
+                              </label>
+                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                                {asset?.model?.class?.name ?? ""}
+                              </p>
+                            </div>
+                            <div className="col-span-2">
+                              {/* <ClassTypeSelect
+                                                                disabled={!Boolean(classId)}
+                                                                query={categoryId}
+                                                                setQuery={setCategoryId}
+                                                                required
+                                                                name={"model.categoryId"}
+                                                                setValue={setValue}
+                                                                value={getValues("model.categoryId")?.toString()}
+                                                                title={"Category"}
+                                                                placeholder={
+                                                                    !Boolean(classId)
+                                                                        ? "Select asset class first"
+                                                                        : "Select asset category"
+                                                                }
+                                                                data={categories ?? []}
+                                                            /> */}
+
+                              <label className="text-sm">
+                                Category
+                              </label>
+                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                                {asset?.model?.category?.name ?? ""}
+                              </p>
+                            </div>
+                            <div className="col-span-2">
+                              {/* <ClassTypeSelect
+                                                                disabled={!Boolean(categoryId)}
+                                                                query={typeId}
+                                                                setQuery={setTypeId}
+                                                                required
+                                                                name={"model.typeId"}
+                                                                setValue={setValue}
+                                                                value={getValues("model.typeId")?.toString()}
+                                                                title={"Type"}
+                                                                placeholder={
+                                                                    !Boolean(categoryId)
+                                                                        ? "Select asset category first"
+                                                                        : "Select asset type"
+                                                                }
+                                                                data={types ?? []}
+                                                            /> */}
+
+                              <label className="text-sm">
+                                Type
+                              </label>
+                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                                {asset?.model?.type?.name ?? ""}
+                              </p>
+                            </div>
+                            <div className="col-span-6">
+                              <label className="text-sm">
+                                Class
+                              </label>
+                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                                {asset?.management?.asset_location ?? ""}
+                              </p>
+                            </div>
+
+                          </div>
                         </div>
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
+                        <div className="grid grid-cols-9 col-span-9 gap-7">
+                          <div className="col-span-3">
+                            {/* <TypeSelect
+                                                            isString
+                                                            name={"management.currency"}
+                                                            setValue={setValue}
+                                                            value={getValues("management.currency")}
+                                                            title={"Currency"}
+                                                            placeholder={"Select currency type"}
+                                                            data={[
+                                                                { value: "PHP", label: "Philippine Peso (Php)" },
+                                                                { value: "USD", label: "US Dollar (USD)" },
+                                                            ]}
+                                                        />
+                                                        <AlertInput>
+                                                            {errors?.management?.currency?.message}
+                                                        </AlertInput> */}
+
+                            <label className="text-sm">
+                              Currency
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.currency ?? ""}
+                            </p>
+                          </div>
+
+                          <div className="col-span-3">
+                            {/* <TypeSelect
+                                                            isString
+                                                            name={"management.accounting_method"}
+                                                            setValue={setValue}
+                                                            value={getValues("management.accounting_method")}
+                                                            title={"Accounting Method"}
+                                                            placeholder={"Select accounting method"}
+                                                            data={[
+                                                                "Accrual Basis",
+                                                                "Cash Basis",
+                                                                "Modified Cash Basis",
+                                                            ]}
+                                                        /> */}
+                            {/* <AlertInput>
+                                                            {errors?.management?.accounting_method?.message}
+                                                        </AlertInput> */}
+
+                            <label className="text-sm">
+                              Accounting Method
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.accounting_method ?? ""}
+                            </p>
+                          </div>
+
+                          <div className="col-span-3 space-y-2">
+                            {/* <p className="text-sm text-gray-700">Purchase Date</p> */}
+                            {/* <DatePicker
+                                                            placeholder="Month Day, Year"
+                                                            allowFreeInput
+                                                            size="sm"
+                                                            onChange={(value) => {
+                                                                setValue("management.purchase_date", value)
+                                                            }}
+                                                            classNames={{
+                                                                input:
+                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                                                        /> */}
+                            <label className="text-sm">
                               Purchase Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.purchase_date?.toString() ??
-                                ""}
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.purchase_date?.toString() ?? ""}
                             </p>
                           </div>
+
                         </div>
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">Department</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.department?.name ?? ""}
+
+
+                        <div className="col-span-9 grid grid-cols-6 gap-7">
+                          <div className="col-span-2">
+                            {/* <TypeSelect
+                                                            isString
+                                                            name={"management.depreciation_rule"}
+                                                            setValue={setValue}
+                                                            value={getValues("management.depreciation_rule")}
+                                                            title={"Depreciation Method"}
+                                                            placeholder={"Select method"}
+                                                            data={["Straight Line", "Others"]}
+                                                        />
+                                                        <AlertInput>
+                                                            {errors?.management?.depreciation_rule?.message}
+                                                        </AlertInput> */}
+                            <label className="text-sm">
+                              Depreciation Rule
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.depreciation_rule ?? ""}
                             </p>
                           </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">Class</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.model?.class?.name ?? ""}
+                          <div className="col-span-2 space-y-2">
+                            {/* <p className="text-sm text-gray-700">
+                                                            Depreciation Start Date
+                                                        </p>
+                                                        <DatePicker
+                                                            placeholder="Month, Day, Year"
+                                                            allowFreeInput
+                                                            size="sm"
+                                                            value={dep_start}
+                                                            onChange={(value) => {
+                                                                setDepStart(value)
+                                                                setValue("management.depreciation_start", value)
+                                                            }}
+                                                            classNames={{
+                                                                input:
+                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                                                        /> */}
+                            <label className="text-sm">
+                              Depreciation Start Date
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.depreciation_start?.toString() ?? ""}
                             </p>
                           </div>
+                          <div className="col-span-2 space-y-2">
+                            {/* <p className="text-sm text-gray-700">
+                                                            Depreciation End Date
+                                                        </p>
+                                                        <DatePicker
+                                                            placeholder={
+                                                                dep_start
+                                                                    ? "Month, Day, Year"
+                                                                    : "Select start ffirst"
+                                                            }
+                                                            allowFreeInput
+                                                            size="sm"
+                                                            value={dep_end}
+                                                            disabled={!Boolean(dep_start)}
+                                                            minDate={dep_start ? dep_start : new Date()}
+                                                            onChange={(value) => {
+                                                                setDepEnd(value)
+                                                                setValue("management.depreciation_end", value)
+                                                            }}
+                                                            classNames={{
+                                                                input:
+                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                                                        /> */}
+                            <label className="text-sm">
+                              Depreciation End Date
+                            </label>
+                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              {asset?.management?.depreciation_end?.toString() ?? ""}
+                            </p>
+                          </div>
+
                         </div>
+
                       </div>
                     </Accordion.Panel>
                   </Accordion.Item>
 
-                  <Accordion.Item value="asset_usage_info">
-                    <Accordion.Control>
-                      <div className="flex flex-row">
+                  <Accordion.Item value={"3"} className="">
+                    <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
+                      <div className="flex items-center gap-2 text-gray-700">
                         <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
-                        <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
-                          Asset Usage Information
-
-
-                        </p>
+                        <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Usage</p>
                       </div>
                     </Accordion.Control>
                     <Accordion.Panel>
-                      <div className="flex flex-wrap py-2">
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
-                              Depreciation Start Date
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_start?.toLocaleDateString() ??
-                                ""}
-                            </p>
-                          </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
-                              Depreciation End Date
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_end?.toLocaleDateString() ??
-                                ""}
-                            </p>
-                          </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">Period</label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_period ?? ""}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
-                              Original Cost
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.original_cost ?? ""}
-                            </p>
-                          </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
-                              Current Cost
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.current_cost ?? ""}
-                            </p>
-                          </div>
-                          <div className="flex w-full flex-col py-2">
-                            <label className="font-semibold">
-                              Depreciation Method
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                              {asset?.management?.depreciation_rule ?? ""}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                        <div className="flex w-full flex-col py-2">
-                          <label className="font-semibold">Currency</label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                            {asset?.management?.currency ?? ""}
-                          </p>
-                        </div>
-                        <div className="flex w-full flex-col py-2">
-                          <label className="font-semibold">
-                            Residual Value
+                      <div className="grid grid-cols-9 col-span-9 gap-7">
+                        <div className="col-span-3 space-y-2">
+                          <label className="text-sm">
+                            Date of Usage
                           </label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                            {asset?.management?.residual_value ?? ""}
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            {asset?.management?.depreciation_start?.toString() ?? ""}
                           </p>
+                        </div>
+                        <div className="col-span-3">
+                          <label className="text-sm">
+                            Period
+                          </label>
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            {asset?.management?.depreciation_period}
+                          </p>
+                        </div>
+                        <div className="col-span-3">
+                          <label className="text-sm">
+                            Asset Quantity
+                          </label>
+                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            {asset?.management?.asset_quantity ?? ""}
+                          </p>
+                        </div>
+                        <div className="col-span-9">
+                          <Textarea
+                            value={asset?.remarks ?? ""}
+                            // onChange={(event) => {
+                            //     const text = event.currentTarget.value
+                            //     setDescription(text)
+                            //     setValue("description", text)
+                            // }}
+                            // placeholder="Asset Description"
+                            label="Remarks"
+                            minRows={6}
+                            maxRows={6}
+                            readOnly
+                            classNames={{
+                              input:
+                                " w-full border-2 border-gray-400 outline-none focus:border-gray-400 cursor-default focus:outline-none focus:ring-0 mt-2 bg-gray-200 text-gray-400",
+                              label:
+                                "font-sans text-sm font-normal text-gray-600 text-light",
+                            }}
+                          />
                         </div>
                       </div>
                     </Accordion.Panel>

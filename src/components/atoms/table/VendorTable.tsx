@@ -1,13 +1,18 @@
 import { Avatar, Checkbox } from "@mantine/core"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { getProperty, getPropertyDisposal } from "../../../lib/functions"
 import { vendorColumns } from "../../../lib/table"
-import { useMinimizeStore } from "../../../store/useStore"
+import { useEditableStore, useMinimizeStore } from "../../../store/useStore"
 import { VendorType } from "../../../types/generic"
 import { ColumnType } from "../../../types/table"
-import Modal from "../../asset/Modal"
+import Modal from "../../headless/modal/modal"
+// import Modal from "../../asset/Modal"
 import { trpc } from "../../../utils/trpc"
 
+
+import {
+  UpdateVendorModal,
+} from "../../vendor/UpdateVendorModal"
 
 const VendorTable = (props: {
   checkboxes: number[]
@@ -15,13 +20,17 @@ const VendorTable = (props: {
   filterBy: string[]
   rows: VendorType[]
   columns: ColumnType[]
+
 }) => {
   //minimize screen toggle
   const { minimize } = useMinimizeStore()
 
 
+  const [isVisible, setIsVisible] = useState<boolean>(false)
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [selectedAsset, setSelectedAsset] = useState<VendorType | null>(null)
+  const [updateRecord, setUpdateRecord] = useState<boolean>(false)
+  const [details, setDetails] = useState<VendorType>()
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
 
@@ -58,6 +67,17 @@ const VendorTable = (props: {
     props.setCheckboxes((prev) => [...prev, id])
   }
 
+  const { editable, setEditable } = useEditableStore()
+
+  useEffect(() => {
+    if (!updateRecord && editable) {
+      setEditable(false)
+    }
+  }, [setEditable, updateRecord])
+
+  useEffect(() => {
+    console.log("editable: " + editable, "updateRecord: " + updateRecord)
+  })
 
   return (
     <div
@@ -130,8 +150,11 @@ const VendorTable = (props: {
                     key={col.value}
                     className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
                     onClick={() => {
-                      setOpenModalDesc(true)
-                      setSelectedAsset(row)
+                      // setOpenModalDesc(true)
+                      // setSelectedAsset(row)
+
+                      setDetails(row)
+                      setUpdateRecord(true)
                     }}
                   >
                     {getPropertyDisposal(col.value, row) ?? "Invalid data"}
@@ -152,7 +175,7 @@ const VendorTable = (props: {
         </tbody>
       </table>
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
-      <Modal isOpen={openModalDesc} setIsOpen={setOpenModalDesc} size={8} >
+      {/* <Modal isOpen={openModalDesc} setIsOpen={setOpenModalDesc} size={8} >
         <pre><>
           {selectedAsset === null ? (
             <div></div>
@@ -216,7 +239,23 @@ const VendorTable = (props: {
             </div>
           )}
         </></pre>
-      </Modal>
+      </Modal> */}
+
+      {details !== null ? (
+        <Modal
+          title={editable ? "Update Vendor Record" : "Vendor Record"}
+          isVisible={updateRecord}
+          setIsVisible={setUpdateRecord}
+          className="max-w-[57rem]"
+        >
+          <UpdateVendorModal
+            vendor={details as VendorType}
+            setIsVisible={setUpdateRecord}
+          />
+        </Modal>
+      ) : (
+        <div></div>
+      )}
     </div>
   )
 }

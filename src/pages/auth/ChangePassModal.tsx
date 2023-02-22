@@ -17,7 +17,7 @@ import { Session } from "inspector"
 
 type ChangePass = z.infer<typeof ChangeUserPass>
 
-export const ChangePassModal = (props: {
+const ChangePassModal = (props: {
   isVisible: boolean
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
@@ -284,3 +284,4 @@ export const ChangePassModal = (props: {
     </Modal>
   )
 }
+export default ChangePassModal

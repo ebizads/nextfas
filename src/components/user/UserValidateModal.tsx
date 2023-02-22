@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from "react"
 import { env } from "../../env/client.mjs"
 import { trpc } from "../../utils/trpc"
 import { useSession } from "next-auth/react"
-import { useForm } from "react-hook-form"
+import { UserType } from "../../types/generic"
+import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { EditUserInput } from "../../server/schemas/user"
@@ -13,9 +14,11 @@ import { Select } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 export type User = z.infer<typeof EditUserInput>
 
-export const UserValidateModal = (props: {
+const UserValidateModal = (props: {
   openModalDesc: boolean
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   // useEffect(() => {
   //   console.log(props.asset.addedBy)
@@ -31,6 +34,7 @@ export const UserValidateModal = (props: {
   const [certificateCheck, setCertificate] = useState<string>("")
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [userId, setUserId] = useState<number>(0)
+  const [name, setName] = useState<string>("")
   const { data: session } = useSession()
   const { data: user } = trpc.user.findOne.useQuery(userId)
   const { data: teams } = trpc.team.findOne.useQuery(user?.teamId ?? 0)
@@ -53,8 +57,9 @@ export const UserValidateModal = (props: {
 
   useEffect(() => {
     setUserId(Number(session?.user?.id))
+    setName(user?.name ?? "")
     setCertificate(generateCertificate())
-  }, [session?.user?.id])
+  }, [session, session?.user?.id, user?.name])
 
   const {
     mutate,
@@ -63,7 +68,6 @@ export const UserValidateModal = (props: {
   } = trpc.user.update.useMutation({
     onSuccess() {
       setCompleteModal(true)
-
       // invalidate query of asset id when mutations is successful
     },
   })
@@ -74,38 +78,68 @@ export const UserValidateModal = (props: {
     formState: { errors },
   } = useForm<User>({
     resolver: zodResolver(EditUserInput),
+    // defaultValues: {
+    //   name: `${user?.profile?.first_name ?? ""} ${
+    //     user?.profile?.last_name ?? ""
+    //   }`,
+    // },
   })
 
-  const onSubmit = async (user: User) => {
-    // Register function
+  const onSubmit = async (userForm: User) => {
+    console.log("this: " + userForm.toString())
     mutate({
-      ...user,
-      name: `${user.profile.first_name} ${user.profile.last_name}`,
-      teamId: user.teamId,
-      hired_date: new Date(),
-      position: user.position,
-      profile: {
-        first_name: user.profile.first_name,
-        middle_name: user.profile.middle_name,
-        last_name: user.profile.last_name,
-        // image: images[0]?.file ?? "",
-      },
-      email: user.email,
-      address: {
-        city: user.address?.city,
-        country: user.address?.country,
-        street: user.address?.street,
-        zip: user.address?.zip,
-      },
-      inactivityDate: new Date(),
-      passwordAge: new Date(),
+      ...userForm,
+      name: `${
+        userForm.profile?.first_name
+          ? userForm.profile?.first_name
+          : user?.profile?.first_name
+      } ${
+        userForm.profile?.last_name
+          ? userForm.profile?.last_name
+          : user?.profile?.last_name
+      }`,
+
+      id: userId,
       validateTable: {
         certificate: certificateCheck,
         validationDate: futureDate,
       },
     })
-    reset()
+    setName(userForm?.name?.toString() ?? "")
+    console.log(name)
+    console.log(userForm)
   }
+  // async (user: User) => {
+  //   // Register function
+  //   mutate({
+  //     ...user,
+  //     //id: user.id ?? undefined,
+  //     name: `${user.profile.first_name} ${user.profile.last_name}`,
+  //     teamId: user.teamId,
+  //     hired_date: user.hired_date,
+  //     position: user.position,
+  //     profile: {
+  //       first_name: user.profile.first_name,
+  //       middle_name: user.profile.middle_name,
+  //       last_name: user.profile.last_name,
+  //       // image: images[0]?.file ?? "",
+  //     },
+  //     email: user.email,
+  //     address: {
+  //       city: user.address?.city,
+  //       country: user.address?.country,
+  //       street: user.address?.street,
+  //       zip: user.address?.zip,
+  //     },
+  //     inactivityDate: new Date(),
+  //     passwordAge: new Date(),
+  //     validateTable: {
+  //       certificate: certificateCheck,
+  //       validationDate: futureDate,
+  //     },
+  //   })
+  //   reset()
+  // }
   return (
     <Modal
       isVisible={props.openModalDesc}
@@ -140,18 +174,24 @@ export const UserValidateModal = (props: {
                 <label className="sm:text-sm">First Name</label>
                 <input
                   className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                  name="profile.first_name"
+                  id="profile.first_name"
                   type={"text"}
                   placeholder={user?.profile?.first_name ?? ""}
+                  onChange={(e) => {
+                    setValue("profile.first_name", e.currentTarget.value)
+                  }}
                   disabled={!isEditable}
                 />
               </div>
               <div className="flex w-[32%] flex-col">
                 <label className="sm:text-sm">Middle Name (Optional)</label>
                 <input
+                  onChange={(e) => {
+                    setValue("profile.middle_name", e.currentTarget.value)
+                  }}
                   type={"text"}
-                  name={"profile.middle_name"}
-                  value={user?.profile?.middle_name ?? ""}
+                  id={"profile.middle_name"}
+                  placeholder={user?.profile?.middle_name ?? ""}
                   className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   disabled={!isEditable}
                 />
@@ -161,9 +201,12 @@ export const UserValidateModal = (props: {
                 <input
                   className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   type={"text"}
-                  name={"profile.last_name"}
-                  value={user?.profile?.last_name ?? ""}
+                  id={"profile.last_name"}
+                  placeholder={user?.profile?.last_name ?? ""}
                   disabled={!isEditable}
+                  onChange={(e) => {
+                    setValue("profile.last_name", e.currentTarget.value)
+                  }}
                 />
               </div>
             </div>
@@ -173,12 +216,12 @@ export const UserValidateModal = (props: {
                 <label className="sm:text-sm">Team</label>
                 <Select
                   disabled={!isEditable}
-                  placeholder={teams?.name?.toString() ?? "Pick One"}
                   onChange={(value) => {
                     setValue("teamId", Number(value) ?? 0)
                     onSearchChange(value ?? "0")
                   }}
-                  value={searchValue}
+                  value={searchValue ? searchValue : teams?.name ?? "Pick One"}
+                  placeholder={teams?.name}
                   data={teamList}
                   styles={(theme) => ({
                     item: {
@@ -203,23 +246,29 @@ export const UserValidateModal = (props: {
                   variant="unstyled"
                   className={
                     isEditable
-                      ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                      : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                      ? " w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                      : " w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
                   }
                 />
               </div>
               <div className="flex w-[32%] flex-col">
                 <label className="sm:text-sm">User Number</label>
-                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent bg-gray-200 px-4  py-2  text-gray-400 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
-                  {`${env.NEXT_PUBLIC_CLIENT_USER_ID}`}
-                  {userId}
-                </p>
+                <input
+                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                  value={userId}
+                  type={"text"}
+                  // name={"id"}
+                  disabled
+                />
               </div>
               <div className="flex w-[32%] flex-col">
                 <label className="sm:text-sm">Designation / Position</label>
                 <input
+                  onChange={(e) => {
+                    setValue("position", e.currentTarget.value)
+                  }}
                   className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                  value={user?.position ?? ""}
+                  placeholder={user?.position ?? ""}
                   type={"text"}
                   name={"position"}
                   disabled={!isEditable}
@@ -236,6 +285,9 @@ export const UserValidateModal = (props: {
                   type={"text"}
                   name={"email"}
                   placeholder={user?.email}
+                  onChange={(e) => {
+                    setValue("email", e.currentTarget.value)
+                  }}
                 />
               </div>
               <div className="flex w-[49%] flex-col">
@@ -271,6 +323,9 @@ export const UserValidateModal = (props: {
               <div className="flex w-[49%] flex-col">
                 <label className="mb-2 sm:text-sm">Mobile Number</label>
                 <input
+                  onChange={(e) => {
+                    setValue("profile.phone_no", e.currentTarget.value)
+                  }}
                   className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   disabled={!isEditable}
                   type="number"
@@ -282,6 +337,9 @@ export const UserValidateModal = (props: {
                 <div className="flex w-[18.4%] flex-col">
                   <label className="sm:text-sm">Street</label>
                   <input
+                    onChange={(e) => {
+                      setValue("address.street", e.currentTarget.value)
+                    }}
                     className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
@@ -292,6 +350,9 @@ export const UserValidateModal = (props: {
                 <div className="flex w-[18.4%] flex-col">
                   <label className="sm:text-sm">Barangay</label>
                   <input
+                    onChange={(e) => {
+                      setValue("address.state", e.currentTarget.value)
+                    }}
                     className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
@@ -302,6 +363,9 @@ export const UserValidateModal = (props: {
                 <div className="flex w-[18.4%] flex-col">
                   <label className="sm:text-sm">City</label>
                   <input
+                    onChange={(e) => {
+                      setValue("address.city", e.currentTarget.value)
+                    }}
                     className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
@@ -312,6 +376,9 @@ export const UserValidateModal = (props: {
                 <div className="flex w-[18.4%] flex-col">
                   <label className="sm:text-sm">Zip Code</label>
                   <input
+                    onChange={(e) => {
+                      setValue("address.zip", e.currentTarget.value)
+                    }}
                     className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
@@ -322,6 +389,9 @@ export const UserValidateModal = (props: {
                 <div className="flex w-[18.4%] flex-col">
                   <label className="sm:text-sm">Country</label>
                   <input
+                    onChange={(e) => {
+                      setValue("address.country", e.currentTarget.value)
+                    }}
                     className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
@@ -344,15 +414,19 @@ export const UserValidateModal = (props: {
                     User validated and updated successfully.
                   </p>
                 </div>
-                <button
-                  className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                  onClick={() => {
-                    setCompleteModal(false)
-                    setCertificate(generateCertificate())
-                  }}
-                >
-                  Close
-                </button>
+                <div className="flex justify-end py-2">
+                  <button
+                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                    onClick={() => {
+                      setCompleteModal(false)
+                      props.setOpenModalDesc(false)
+                      setCertificate(generateCertificate())
+                      window.location.reload()
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </Modal>
           </main>
@@ -360,7 +434,7 @@ export const UserValidateModal = (props: {
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={isLoading}
-            onClick={()=> console.log("ewan")}
+            onClick={() => console.log(errors)}
           >
             {isLoading ? "Loading..." : "Save"}
           </button>
@@ -369,3 +443,4 @@ export const UserValidateModal = (props: {
     </Modal>
   )
 }
+export default UserValidateModal

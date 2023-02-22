@@ -16,11 +16,11 @@ export const userRouter = t.router({
       where: {
         id: input,
       },
-      include:{
+      include: {
         address: true,
         profile: true,
         validateTable: true,
-      }
+      },
     })
 
     return user
@@ -93,23 +93,31 @@ export const userRouter = t.router({
     .input(EditUserInput)
     .mutation(async ({ input, ctx }) => {
       const { address, id, profile, validateTable, ...rest } = input
-      return await ctx.prisma.user.update({
-        where: {
-          id,
-        },
-        data: {
-          ...rest,
-          validateTable: {
-            create: validateTable ?? undefined,
+      try {
+        await ctx.prisma.user.update({
+          where: {
+            id,
           },
-          address: {
-            create: address ?? undefined,
+          data: {
+            ...rest,
+            validateTable: {
+              update: validateTable ?? undefined,
+            },
+            address: {
+              update: address ?? undefined,
+            },
+            profile: {
+              update: profile ?? undefined,
+            },
+          
           },
-          profile: {
-            update: profile ?? undefined,
-          },
-        },
-      })
+        })
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
     }),
   delete: authedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
     return await ctx.prisma.user.update({

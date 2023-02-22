@@ -23,9 +23,11 @@ const TopBar = () => {
 
   const [openLogoutPopover, setOpenLogoutPopover] = useState<boolean>(false)
 
-  const {counterCheck, setCounterCheck} = useCounterValidateStore()
+  const { counterCheck, setCounterCheck } = useCounterValidateStore()
 
   const { pathname } = useRouter()
+
+  const [sessionName, setSessionName] = useState<string>("")
 
   const dateNow = new Date()
   let dayNow = 0
@@ -44,15 +46,18 @@ const TopBar = () => {
   }
 
   useEffect(() => {
+    setSessionName(user?.name ?? "")
     setUserId(Number(session?.user?.id))
     if (user?.firstLogin || dayNow > 60) {
       setOpenChangePass(true)
     }
 
     if (Boolean(validateTable?.validationDate)) {
-      if (dateNow >= (validateTable?.validationDate ?? new Date())) {
-        setOpenPromptVisible(true)
-      } else if (validateDate <= 14 && !counterCheck) {
+      if (
+        (dateNow >= (validateTable?.validationDate ?? new Date()) &&
+          !counterCheck) ||
+        (validateDate <= 14 && !counterCheck)
+      ) {
         setOpenPromptVisible(true)
         setCounterCheck(true)
       }
@@ -64,7 +69,18 @@ const TopBar = () => {
     // }, 5000)
 
     console.log("first login: " + user?.firstLogin?.toString())
-  }, [session, user, dayNow, refetch, userId, dateNow, validateTable, validateDate, counterCheck, setCounterCheck])
+  }, [
+    session,
+    user,
+    dayNow,
+    refetch,
+    userId,
+    dateNow,
+    validateTable,
+    validateDate,
+    counterCheck,
+    setCounterCheck,
+  ])
   const paths = useMemo(() => {
     const path_array = pathname
       .split("/")
@@ -96,7 +112,7 @@ const TopBar = () => {
       <div className="flex items-center gap-2">
         <i className="fa-solid fa-bell text-lg text-gray-500" />
         <div className="rounded-full border border-gray-400 px-2 py-1">
-          <p className="text-xs">{session?.user?.name}</p>
+          <p className="text-xs">{sessionName}</p>
         </div>
 
         <Modal
@@ -129,6 +145,7 @@ const TopBar = () => {
           setOpenPopover={setOpenLogoutPopover}
           isVisible={openChangePass}
           setIsVisible={setOpenChangePass}
+          
         />
       </div>
     </div>

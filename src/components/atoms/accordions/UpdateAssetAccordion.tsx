@@ -387,7 +387,7 @@ const UpdateAssetAccordion = () => {
         width: 1,
       })
     }
-  }, [assetId, asset_number])
+  }, [assetId, asset_number, setValue])
 
   const router = useRouter()
 
@@ -397,7 +397,6 @@ const UpdateAssetAccordion = () => {
 
   const onSubmit: SubmitHandler<AssetEditFieldValues> = (
     form_data: AssetEditFieldValues
-    
   ) => {
     // console.log(form_data)
 
@@ -1118,6 +1117,7 @@ const UpdateAssetAccordion = () => {
             type="submit"
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             onClick={() => console.log(errors)}
+            
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

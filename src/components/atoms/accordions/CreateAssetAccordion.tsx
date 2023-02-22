@@ -315,7 +315,7 @@ const CreateAssetAccordion = () => {
         width: 1,
       })
     }
-  }, [assetId, asset_number])
+  }, [assetId, asset_number, setValue])
 
   const router = useRouter()
   const { data: session } = useSession()

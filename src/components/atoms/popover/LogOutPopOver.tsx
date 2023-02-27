@@ -5,6 +5,7 @@ import ChangePassModal from "../../../pages/auth/ChangePassModal"
 import { useSession } from "next-auth/react"
 import { trpc } from "../../../utils/trpc"
 import UserValidateModal from "../../user/UserValidateModal"
+import { useEditableStore } from "../../../store/useStore"
 
 const LogOutPopOver = (props: {
   openPopover: boolean
@@ -15,20 +16,23 @@ const LogOutPopOver = (props: {
   // const [openChangePass, setOpenChangePass] = useState<boolean>(false)
   //const [openPromptVisible, setOpenPromptVisible] = useState<boolean>(false)
 
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isCounter, setIsCounter] = useState<number>(0)
   const { data: session } = useSession()
   const [userId, setUserId] = useState<number>(0)
   const { data: user } = trpc.user.findOne.useQuery(userId)
   const [validateIsVisible, setValidate] = useState<boolean>(false)
+  const [updateRecord, setUpdateRecord] = useState<boolean>(false)
+  const { editable, setEditable } = useEditableStore()
+
   useEffect(() => {
+    if (!validateIsVisible && editable) {
+      setEditable(false)
+    }
     setUserId(Number(session?.user?.id))
     //console.log(user)
 
-    if(!validateIsVisible){
-      setIsOpen(false)
-    }
     //setOpenChangePass(props.isVisible)
-  }, [props, session, user, validateIsVisible])
+  }, [editable, props, session, setEditable, user, validateIsVisible])
 
   return (
     <div>
@@ -40,9 +44,8 @@ const LogOutPopOver = (props: {
       <UserValidateModal
         openModalDesc={validateIsVisible}
         setOpenModalDesc={setValidate}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
       ></UserValidateModal>
+      
       <Popover
         opened={props.openPopover}
         onClose={() => props.setOpenPopover(false)}
@@ -87,12 +90,13 @@ const LogOutPopOver = (props: {
             <button
               onClick={() => {
                 setValidate(true)
+                setIsCounter(0)
               }}
               className="flex items-center gap-2 px-6 py-2 hover:bg-tangerine-100"
             >
               <i className="fa-solid fa-check" />
               <span>Validate User</span>
-            </button>{" "}
+            </button>
           </div>
         </Popover.Dropdown>
       </Popover>

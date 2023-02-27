@@ -12,7 +12,7 @@ export const userNavigations = [
       {
         icon: "fa-regular fa-users",
         name: "All Users",
-        link: "/transactions/repair",
+        link: "/auth/",
       },
       {
         icon: "fa-regular fa-user",

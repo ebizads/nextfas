@@ -17,8 +17,6 @@ export type User = z.infer<typeof EditUserInput>
 const UserValidateModal = (props: {
   openModalDesc: boolean
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
-  isOpen: boolean
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   // useEffect(() => {
   //   console.log(props.asset.addedBy)
@@ -42,6 +40,7 @@ const UserValidateModal = (props: {
   const [searchValue, onSearchChange] = useState<string>(
     user?.teamId?.toString() ?? "0"
   )
+
   const futureDate = new Date()
 
   futureDate.setFullYear(futureDate.getFullYear() + 1)
@@ -59,7 +58,11 @@ const UserValidateModal = (props: {
     setUserId(Number(session?.user?.id))
     setName(user?.name ?? "")
     setCertificate(generateCertificate())
-  }, [session, session?.user?.id, user?.name])
+    
+    if(!props.openModalDesc){
+      setIsEditable(false)
+    }
+  }, [props.openModalDesc, session, session?.user?.id, user?.name])
 
   const {
     mutate,

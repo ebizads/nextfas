@@ -3,6 +3,7 @@ import {
   AssetType,
   DisposeType,
   EmployeeType,
+  UserType,
   VendorType,
 } from "../types/generic"
 import * as XLSX from "xlsx"
@@ -14,7 +15,7 @@ import { object } from "zod"
 const router = Router
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType | DisposeType | AssetRepairType
+  type: AssetType | EmployeeType | VendorType | DisposeType | AssetRepairType | UserType
 
   //subfilter?: string
 ) => {
@@ -70,6 +71,24 @@ export const getName = (filter: string, type: EmployeeType) => {
     : filter === "middle_name"
     ? Object.getOwnPropertyDescriptor(type?.profile, "middle_name")?.value
     : Object.getOwnPropertyDescriptor(type?.profile, "last_name")?.value
+}
+
+export const getNameUser = (filter: string, type: UserType) => {
+  return filter === "first_name"
+    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value 
+    : filter === "middle_name"
+    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value 
+}
+
+export const getAddressUser = (
+  type:
+    | UserType
+    | (Company & {
+        address: Address | null
+      })
+) => {
+  return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
 }
 
 export const getAddress = (

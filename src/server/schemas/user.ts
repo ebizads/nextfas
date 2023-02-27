@@ -68,8 +68,8 @@ export const EditUserInput = z.object({
   user_type: z.string().nullish(),
   image: z.string().nullish(),
   profile: z.object({
-    first_name: z.string().optional(),
-    last_name: z.string().optional(),
+    first_name: z.string().min(1).optional(),
+    last_name: z.string().min(1).optional(),
     middle_name: z.string().nullish(),
     suffix: z.string().nullish(),
     date_of_birth: z.date().nullish(),
@@ -85,8 +85,10 @@ export const EditUserInput = z.object({
   hired_date: z.date().nullish(),
   position: z.string().nullish(),
   address: AddressEditInput,
-  teamId: z.number().nullish(),
+  teamId: z.number().optional(),
   inactivityDate: z.date().nullish(),
+  user_Id: z.string().nullish().optional(),
+
 })
 
 export const IdUser = z.object({

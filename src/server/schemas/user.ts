@@ -39,9 +39,9 @@ export const CreateUserInput = z.object({
   inactivityDate: z.date().nullish(),
   passwordAge: z.date().nullish(),
   hired_date: z.date().nullish(),
-  position: z.string().nullish(),
+  position: z.string({required_error: "Position is required"}).min(1, {message: "Position is required"}),
   address: AddressCreateInput,
-  teamId: z.number().optional(),
+  teamId: z.number({required_error: "Team is required"}),
 })
 
 export const ChangeUserPass = z.object({
@@ -68,8 +68,8 @@ export const EditUserInput = z.object({
   user_type: z.string().nullish(),
   image: z.string().nullish(),
   profile: z.object({
-    first_name: z.string().min(1).optional(),
-    last_name: z.string().min(1).optional(),
+    first_name: z.string().min(1),
+    last_name: z.string().min(1),
     middle_name: z.string().nullish(),
     suffix: z.string().nullish(),
     date_of_birth: z.date().nullish(),

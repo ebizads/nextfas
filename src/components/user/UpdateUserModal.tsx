@@ -16,6 +16,8 @@ import { UserType } from "../../types/generic"
 import { useEditableStore } from "../../store/useStore"
 // import { useEditableStore } from "../../store/useStore"
 import { EditUserInput } from "../../server/schemas/user"
+import { generateCertificate } from "../../lib/functions"
+import Modal from "../headless/modal/modal"
 
 export type User = z.infer<typeof EditUserInput>
 
@@ -31,12 +33,22 @@ const UpdateUserModal = (props: {
   const [searchValue, onSearchChange] = useState<string>(
     props.user?.user_Id?.toString() ?? "0"
   )
+  const futureDate = new Date()
+  const [completeModal, setCompleteModal] = useState<boolean>(false)
+  const [certificateCheck, setCertificate] = useState<string>("")
+  const [check, setCheck] = useState<string>("")
   const [date, setDate] = useState(props.user?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
+  const { data: user } = trpc.user.findOne.useQuery(
+    Number(props.user?.user_Id) ?? 0
+  )
+  const { data: singleTeams } = trpc.team.findOne.useQuery(
+    props.user?.teamId ?? 0
+  )
 
   const teamList = useMemo(() => {
     const list = teams?.teams.map(
@@ -54,9 +66,8 @@ const UpdateUserModal = (props: {
   } = trpc.user.update.useMutation({
     onSuccess() {
       console.log("omsim")
-      // invalidate query of asset id when mutations is successful
-      utils.employee.findAll.invalidate()
-      props.setIsVisible(false)
+      setCompleteModal(true)
+      utils.user.findAll.invalidate()
       setImage([])
     },
   })
@@ -70,13 +81,33 @@ const UpdateUserModal = (props: {
     resolver: zodResolver(EditUserInput),
   })
 
-  useEffect(() => reset(props.user as User), [props.user, reset])
+  useEffect(() => {
+    reset(props.user as User)
+    setCertificate(generateCertificate)
+  }, [props.user, reset])
 
-  const onSubmit = async (user: User) => {
+  const onSubmit = async (userForm: User) => {
     // Register function
+    console.log(userForm)
+    setCheck(Boolean(props.user?.validateTable?.certificate) ? props.user?.validateTable?.certificate ?? "" : certificateCheck)
+  
     mutate({
-      ...user,
-      name: `${user.profile?.first_name} ${user.profile?.last_name}`,
+      ...userForm,
+      name: `${
+        userForm.profile?.first_name
+          ? userForm.profile?.first_name
+          : user?.profile?.first_name
+      } ${
+        userForm.profile?.last_name
+          ? userForm.profile?.last_name
+          : user?.profile?.last_name
+      }`,
+
+      id: userForm.id,
+      validateTable: {
+        certificate: check,
+        validationDate: props.user?.validateTable?.validationDate ?? futureDate,
+      },
     })
     reset()
   }
@@ -157,7 +188,7 @@ const UpdateUserModal = (props: {
             <label className="sm:text-sm">Team</label>
             <Select
               disabled={!isEditable}
-              placeholder="Pick one"
+              placeholder={singleTeams?.name ? singleTeams?.name : "Pick One"}
               onChange={(value) => {
                 setValue("teamId", Number(value) ?? 0)
                 onSearchChange(value ?? "0")
@@ -237,20 +268,16 @@ const UpdateUserModal = (props: {
           </div>
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Departmemt</label>
-            {/* <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.employee?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
+
             <p
               className={
                 "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
               }
-            >{`${props.user?.Userteam?.department?.name}`}</p>
+            >
+              {props.user?.Userteam?.department?.name
+                ? `${props.user?.Userteam?.department?.name}`
+                : "--"}
+            </p>
           </div>
         </div>
 
@@ -289,7 +316,7 @@ const UpdateUserModal = (props: {
               defaultValue={props.user?.profile?.phone_no ?? "--"}
               className={
                 isEditable
-                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-800 placeholder-gray-600  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
                   : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
               }
               onKeyDown={(e) => {
@@ -372,15 +399,6 @@ const UpdateUserModal = (props: {
           </div>
         </div>
 
-        {isEditable && (
-          <DropZoneComponent
-            setImage={setImage}
-            setIsLoading={setIsLoading}
-            images={images}
-            isLoading={isLoading}
-            acceptingMany={false}
-          />
-        )}
         <hr className="w-full"></hr>
         {/* <div className="flex w-full justify-end">
           {isEditable && <button
@@ -409,6 +427,32 @@ const UpdateUserModal = (props: {
               </pre>
             )
           )}
+          <Modal
+              isVisible={completeModal}
+              setIsVisible={setCompleteModal}
+              className="max-w-2xl"
+              title="Updated User Account"
+            >
+              <div className="flex w-full flex-col px-4 py-2">
+                <div>
+                  <p className="text-center text-lg font-semibold">
+                    User validated and updated successfully.
+                  </p>
+                </div>
+                <div className="flex justify-end py-2">
+                  <button
+                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                    onClick={() => {
+                      setCompleteModal(false)
+                      props.setIsVisible(false)
+                      setCertificate(generateCertificate())
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </Modal>
           {isEditable && (
             <button
               type="submit"

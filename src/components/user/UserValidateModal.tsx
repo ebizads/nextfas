@@ -58,8 +58,8 @@ const UserValidateModal = (props: {
     setUserId(Number(session?.user?.id))
     setName(user?.name ?? "")
     setCertificate(generateCertificate())
-    
-    if(!props.openModalDesc){
+
+    if (!props.openModalDesc) {
       setIsEditable(false)
     }
   }, [props.openModalDesc, session, session?.user?.id, user?.name])
@@ -176,7 +176,7 @@ const UserValidateModal = (props: {
               <div className="flex w-[32%] flex-col">
                 <label className="sm:text-sm">First Name</label>
                 <input
-                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   id="profile.first_name"
                   type={"text"}
                   placeholder={user?.profile?.first_name ?? ""}
@@ -195,14 +195,14 @@ const UserValidateModal = (props: {
                   type={"text"}
                   id={"profile.middle_name"}
                   placeholder={user?.profile?.middle_name ?? ""}
-                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   disabled={!isEditable}
                 />
               </div>
               <div className="flex w-[32%] flex-col">
                 <label className="sm:text-sm">Last Name</label>
                 <input
-                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   type={"text"}
                   id={"profile.last_name"}
                   placeholder={user?.profile?.last_name ?? ""}
@@ -257,7 +257,7 @@ const UserValidateModal = (props: {
               <div className="flex w-[32%] flex-col">
                 <label className="sm:text-sm">User Number</label>
                 <input
-                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   value={userId}
                   type={"text"}
                   // name={"id"}
@@ -270,7 +270,7 @@ const UserValidateModal = (props: {
                   onChange={(e) => {
                     setValue("position", e.currentTarget.value)
                   }}
-                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   placeholder={user?.position ?? ""}
                   type={"text"}
                   name={"position"}
@@ -283,7 +283,7 @@ const UserValidateModal = (props: {
               <div className="flex w-[49%] flex-col">
                 <label className="sm:text-sm">Email</label>
                 <input
-                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   disabled={!isEditable}
                   type={"text"}
                   name={"email"}
@@ -296,7 +296,7 @@ const UserValidateModal = (props: {
               <div className="flex w-[49%] flex-col">
                 <label className="sm:text-sm">Departmemt</label>
 
-                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent bg-gray-200 px-4  py-2  text-gray-400 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
+                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent bg-gray-200 px-4  py-2  text-gray-400 placeholder-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
                   {"--"}
                 </p>
               </div>
@@ -329,7 +329,7 @@ const UserValidateModal = (props: {
                   onChange={(e) => {
                     setValue("profile.phone_no", e.currentTarget.value)
                   }}
-                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                  className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                   disabled={!isEditable}
                   type="number"
                   name="mobile_number"
@@ -343,7 +343,7 @@ const UserValidateModal = (props: {
                     onChange={(e) => {
                       setValue("address.street", e.currentTarget.value)
                     }}
-                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
                     name={"address.street"}
@@ -356,7 +356,7 @@ const UserValidateModal = (props: {
                     onChange={(e) => {
                       setValue("address.state", e.currentTarget.value)
                     }}
-                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                    className="ring-tangerine-400/ w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  placeholder-gray-600 outline-none placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
                     name={"address.state"}
@@ -369,7 +369,7 @@ const UserValidateModal = (props: {
                     onChange={(e) => {
                       setValue("address.city", e.currentTarget.value)
                     }}
-                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
                     name={"address.city"}
@@ -382,7 +382,7 @@ const UserValidateModal = (props: {
                     onChange={(e) => {
                       setValue("address.zip", e.currentTarget.value)
                     }}
-                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
                     name={"address.zip"}
@@ -395,7 +395,7 @@ const UserValidateModal = (props: {
                     onChange={(e) => {
                       setValue("address.country", e.currentTarget.value)
                     }}
-                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                    className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
                     name={"address.country"}
@@ -414,7 +414,7 @@ const UserValidateModal = (props: {
               <div className="flex w-full flex-col px-4 py-2">
                 <div>
                   <p className="text-center text-lg font-semibold">
-                    User validated and updated successfully.
+                    User updated successfully.
                   </p>
                 </div>
                 <div className="flex justify-end py-2">
@@ -441,6 +441,7 @@ const UserValidateModal = (props: {
           >
             {isLoading ? "Loading..." : "Save"}
           </button>
+          
         </form>
       </div>
     </Modal>

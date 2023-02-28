@@ -28,7 +28,7 @@ const Register2 = () => {
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [passwordCheck, setPassword] = useState<string>("")
   const [certificateCheck, setCertificate] = useState<string>("")
-  const [searchValue, onSearchChange] = useState("")
+  const [searchValue, onSearchChange] = useState<string>("")
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoadingNow, setIsLoading] = useState<boolean>(false)
   const futureDate = new Date()
@@ -63,7 +63,7 @@ const Register2 = () => {
     reset,
     formState: { errors },
   } = useForm<User>({
-    resolver: zodResolver(CreateUserInput), // Configuration the validation with the zod schema.
+    resolver: zodResolver(CreateUserInput),
     defaultValues: {
       name: "test",
       user_Id: `${env.NEXT_PUBLIC_CLIENT_USER_ID}${userId}`,
@@ -71,7 +71,6 @@ const Register2 = () => {
       //   name: ""
       // },
       // superviseeId: 0,
-      teamId: 0,
       email: "",
       hired_date: new Date(),
       position: "",
@@ -93,7 +92,7 @@ const Register2 = () => {
       },
       firstLogin: true,
       password: "",
-    },
+    }, // Configuration the validation with the zod schema.
   })
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
@@ -127,11 +126,11 @@ const Register2 = () => {
         inactivityDate: new Date(),
         passwordAge: new Date(),
         validateTable: {
-            certificate: certificateCheck,
-            validationDate: futureDate,
-          },
+          certificate: certificateCheck,
+          validationDate: futureDate,
+        },
       }),
-    console.log("Cert: " + certificateCheck)
+      console.log("Cert: " + certificateCheck)
     console.log(user.validateTable)
     reset()
   }
@@ -194,9 +193,10 @@ const Register2 = () => {
             <Select
               placeholder="Pick one"
               onChange={(value) => {
-                setValue("teamId", Number(value) ?? 0)
+                setValue("teamId", Number(value))
                 onSearchChange(value ?? "")
               }}
+              
               value={searchValue}
               data={teamList}
               styles={(theme) => ({
@@ -222,7 +222,9 @@ const Register2 = () => {
               variant="unstyled"
               className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
+            <AlertInput>{errors?.teamId?.message}</AlertInput>
           </div>
+
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">User Number</label>
             {/* <InputField
@@ -336,7 +338,9 @@ const Register2 = () => {
                 name="address.street"
                 register={register}
               />
+              <AlertInput>{errors?.address?.street?.message}</AlertInput>
             </div>
+
             <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
@@ -345,9 +349,9 @@ const Register2 = () => {
                 name={"address.state"}
                 register={register}
               />
-
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
             </div>
+
             <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
@@ -383,14 +387,13 @@ const Register2 = () => {
           </div>
         </div>
 
-        <DropZoneComponent
+        {/* <DropZoneComponent
           setImage={setImage}
           setIsLoading={setIsLoading}
           images={images}
           isLoading={isLoadingNow}
           acceptingMany={false}
-        />
-        <AlertInput>{errors?.password?.message}</AlertInput>
+        /> */}
         <button
           type="submit"
           className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"

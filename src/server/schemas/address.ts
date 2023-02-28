@@ -1,7 +1,10 @@
 import { z } from "zod"
 
 export const AddressCreateInput = z.object({
-  street: z.string().nullish(),
+  street: z
+    .string({ required_error: "Street is required" })
+    .min(1, "Street is required")
+    .nullish(),
   city: z
     .string({ required_error: "City is required" })
     .min(1, "City is required")

@@ -6,9 +6,14 @@ import { navigations } from "../../lib/table"
 import { useMinimizeStore } from "../../store/useStore"
 import NavAccordion from "../atoms/accordions/NavAccordion"
 import UserNavAccordion from "../atoms/accordions/UserNavAccordion"
+import { trpc } from "../../utils/trpc"
+import { useSession } from "next-auth/react"
 
 const SideBar = () => {
   const { pathname } = useRouter()
+  const { data: session } = useSession()
+
+  const { data: user } = trpc.user.findOne.useQuery(Number(session?.user?.id))
   const paths = useMemo(() => {
     return pathname.split("/").filter((item, idx) => idx !== 0)
   }, [pathname])
@@ -131,11 +136,11 @@ const SideBar = () => {
             </Link>
           </div>
         ))}
-        <UserNavAccordion
+        {(user?.user_type ?? "") === "admin" && <UserNavAccordion
           paths={paths}
           minimize={minimize}
           setMinimize={setMinimize}
-        />
+        />}
       </div>
     </div>
   )

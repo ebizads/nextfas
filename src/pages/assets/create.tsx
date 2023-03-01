@@ -9,7 +9,7 @@ const CreateAsset = () => {
       <div className="h-full space-y-6">
         <h3 className="text-xl font-medium">Add Asset</h3>
         <div className="h-full w-full">
-          <div className="rounded-md h-full bg-white border p-2 flex flex-col gap-2">
+          <div className="rounded-md h-screen bg-white border p-2 flex flex-col gap-2">
             <CreateAssetAccordion />
           </div>
         </div>

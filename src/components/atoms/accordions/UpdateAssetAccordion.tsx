@@ -156,7 +156,7 @@ const UpdateAssetAccordion = () => {
       )
       setValue("management.remarks", selectedAsset.management?.remarks)
     }
-  }, [selectedAsset, reset])
+  }, [selectedAsset, reset, setValue])
 
   const [classId, setClassId] = useState<string | null>(null)
   const [categoryId, setCategoryId] = useState<string | null>(null)
@@ -389,7 +389,7 @@ const UpdateAssetAccordion = () => {
         width: 1,
       })
     }
-  }, [assetId, asset_number])
+  }, [assetId, asset_number, setValue])
 
   const router = useRouter()
 
@@ -1121,6 +1121,7 @@ const UpdateAssetAccordion = () => {
             type="submit"
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             onClick={() => console.log(errors)}
+            
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

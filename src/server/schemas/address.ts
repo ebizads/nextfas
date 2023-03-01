@@ -1,7 +1,10 @@
 import { z } from "zod"
 
 export const AddressCreateInput = z.object({
-  street: z.string().nullish(),
+  street: z
+    .string({ required_error: "Street is required" })
+    .min(1, "Street is required")
+    .nullish(),
   city: z
     .string({ required_error: "City is required" })
     .min(1, "City is required")
@@ -22,13 +25,10 @@ export const AddressCreateInput = z.object({
 
 export const AddressEditInput = z
   .object({
-    id: z.number(),
-    street: z.string().nullish().optional(),
-    city: z.string().nullish().optional(),
-    state: z.string().nullish().optional(),
-    zip: z.string().nullish().optional(),
-    country: z.string().nullish().optional(),
-    shipping_address: z.string().nullish().optional(),
-    billing_address: z.string().nullish().optional(),
+    street: z.string().nullish(),
+    city: z.string().nullish(),
+    state: z.string().nullish(),
+    zip: z.string().nullish(),
+    country: z.string().nullish(),
   })
   .optional()

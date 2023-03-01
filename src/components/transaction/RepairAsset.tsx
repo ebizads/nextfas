@@ -6,7 +6,7 @@ import { AssetRepairType } from "../../types/generic"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import RepairTable from "../atoms/table/RepairTable"
-import { useDisposalStatusStore, useRepairStatusStore } from "../../store/useStore"
+import { useRepairStatusStore } from "../../store/useStore"
 
 // type SearchType = {
 //   value: string

@@ -5,10 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import InputField from "../../components/atoms/forms/InputField"
 import { trpc } from "../../utils/trpc"
 import { Textarea } from "@mantine/core"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import Modal from "../../components/headless/modal/modal"
-import { passConfirmCheck } from "../../lib/functions"
+import { clearAndGoBack, passConfirmCheck } from "../../lib/functions"
 import { useSession } from "next-auth/react"
 import { Session } from "inspector"
 // import bcrypt from "bcrypt"
@@ -17,12 +17,11 @@ import { Session } from "inspector"
 
 type ChangePass = z.infer<typeof ChangeUserPass>
 
-export const ChangePassModal = (props: {
+const ChangePassModal = (props: {
   isVisible: boolean
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
-
 }) => {
-  const [isVisible, setIsVisible] = useState<boolean>(true)
+  const [isVisible, setIsVisible] = useState<boolean>(false)
   const [passIncorrect, setPassIncorrect] = useState<boolean>(false)
   const [confirmPass, setConfirmPass] = useState<boolean>(false)
   const [password, setPassword] = useState<string>("")
@@ -32,17 +31,30 @@ export const ChangePassModal = (props: {
   const [userId, setUserId] = useState<number>(0)
   const [dataCheck, setDataCheck] = useState<boolean>(true)
   const [changePassSuccess, setChangePassSuccess] = useState<boolean>(false)
-  const [promptCounter, setPromptCounter] = useState<boolean>(true)
   const [prompterString, setPrompterString] = useState<string | null>(null)
   const { data: session } = useSession()
   const { data: user, refetch } = trpc.user.findOne.useQuery(userId)
+
+  const clearAndClose = () => {
+    setPassword("")
+    setConfirmPassword("")
+
+    const form = document.getElementById("1") as HTMLFormElement
+    if (form) {
+      form.reset()
+    }
+
+    console.log("pass: " + password)
+    setPassIncorrect(false)
+    props.setVisible(false)
+  }
 
   const dateNow = new Date()
   let dayNow = 0
   if (Boolean(user?.passwordAge)) {
     dayNow = Number(
       (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
-      (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24)
     )
   }
 
@@ -107,7 +119,6 @@ export const ChangePassModal = (props: {
       setPassIncorrect(false)
     }
 
-
     console.log("isVisible: " + props.isVisible)
 
     // if (!props.isVisible && session?.user?.firstLogin ) {
@@ -136,7 +147,7 @@ export const ChangePassModal = (props: {
     password,
     changePassSuccess,
     props,
-    promptCounter,
+
     dataCheck,
     refetch,
     userId,
@@ -170,7 +181,7 @@ export const ChangePassModal = (props: {
     <Modal
       isVisible={props.isVisible}
       setIsVisible={props.setVisible}
-      className="max-w-4xl"
+      className="max-w-xl"
       title="Change Password"
     >
       <div className="w-full content-center items-center justify-center">
@@ -182,55 +193,58 @@ export const ChangePassModal = (props: {
           </div>
         )}
         <form
+          id="1"
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col space-y-4"
         >
-          <div className="flex w-full gap-7 py-2">
-            <div className="flex w-full flex-col  gap-7 py-2">
-              <label className="font-semibold">Password</label>
+          {/* <div className="flex w-full gap-7 py-2"> */}
+          <div className="my-5 flex w-full flex-col gap-4 py-2">
+            <label className="font-semibold">Password</label>
 
-              <input
-                name="password"
-                type="password"
-                className="border-b"
-                onChange={(event) => {
-                  setValue("password", event.currentTarget.value)
-                  setPassword(event.currentTarget.value)
-                }}
-              />
-              <PasswordChecker password={watch().password} />
+            <input
+              name="password"
+              type="password"
+              className="w-full rounded-md border-2 border-gray-400  p-1  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              onChange={(event) => {
+                setValue("password", event.currentTarget.value)
+                setPassword(event.currentTarget.value)
+              }}
+            />
+            {password && <PasswordChecker password={watch().password} />}
 
-              <label className="font-semibold">Confirm Password</label>
-              <input
-                name="confirmpassword"
-                type="password"
-                className="border-b"
-                onChange={(event) => setConfirmPassword(event.target.value)}
-              />
-              {passIncorrect && (
-                <div>
-                  <p>Password not match.</p>
-                </div>
-              )}
-            </div>
-
-            <hr className="w-full"></hr>
+            <label className="font-semibold">Confirm Password</label>
+            <input
+              name="confirmpassword"
+              type="password"
+              className="w-full rounded-md border-2 border-gray-400 p-1  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              onChange={(event) => setConfirmPassword(event.target.value)}
+            />
+            {passIncorrect && (
+              <div>
+                <p>Password not match.</p>
+              </div>
+            )}
           </div>
-          <button
-            type="submit"
-            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Loading..." : "Change"}
-          </button>
-          <button
-            type="button"
-            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            onClick={() => console.log(errors)}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Loading..." : "Change"}
-          </button>
+
+          <hr className="w-full"></hr>
+          {/* </div> */}
+          <div className="mt-2 flex w-full justify-end gap-2 text-lg">
+            <button
+              type="button"
+              className="px-4 py-2 underline"
+              onClick={() => clearAndClose()}
+            >
+              Discard
+            </button>
+            <button
+              type="submit"
+              className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+              onClick={() => console.log(errors)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Change"}
+            </button>
+          </div>
         </form>
 
         {error && (
@@ -266,31 +280,8 @@ export const ChangePassModal = (props: {
             </div>
           </div>
         </Modal>
-        {/* <Modal
-          isVisible={props.promptVisible}
-          setIsVisible={props.setPromptVisible}
-          className="max-w-2xl"
-          title="Change One Time Pass!"
-        >
-          <div className="flex w-full flex-col px-4 py-2">
-            <div>
-              <p className="text-center text-lg font-semibold">
-                Password is only one-time use, change your password immediately.
-              </p>
-            </div>
-            <div className="flex justify-end py-2">
-              <button
-                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                onClick={() => {
-                  props.setPromptVisible(false)
-                }}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </Modal> */}
       </div>
     </Modal>
   )
 }
+export default ChangePassModal

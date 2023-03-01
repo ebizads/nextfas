@@ -105,7 +105,7 @@ function LoginForm() {
         )}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col space-y-4"
+          className="flex flex-col space-y-4" 
         >
           <div>
             <InputField

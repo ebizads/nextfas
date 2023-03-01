@@ -1,5 +1,6 @@
 //constants
 
+import { UserType } from "../types/generic"
 import { ColumnType, DetailType, NavType } from "../types/table"
 
 export const columns = [
@@ -21,6 +22,16 @@ export const vendorColumns = [
   { value: "email", name: "Email" },
   { value: "phone_no", name: "Phone Number" },
   { value: "address.city", name: "City" },
+] as ColumnType[]
+
+export const userColumns = [
+  { value: "user_Id", name: "User ID" },
+  { value: "first_name", name: "First Name" },
+  { value: "last_name", name: "Last Name" },
+  { value: "city", name: "Street Address" },
+  { value: "hired_date", name: "Hire Date" },
+  { value: "team", name: "Team" },
+  { value: "email", name: "Email" },
 ] as ColumnType[]
 
 export const employeeColumns = [
@@ -110,11 +121,11 @@ export const navigations = [
     icon: "fa-store",
     link: "/vendors",
   },
-  {
-    name: "User Management",
-    icon: "fa-user-pen",
-    link: "/vendors",
-  },
+  // {
+  //   name: "User Management",
+  //   icon: "fa-user-pen",
+  //   link: "/vendors",
+  // },
   // {
   //   name: "Inventory",
   //   icon: "fa-light fa-folders",

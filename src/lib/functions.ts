@@ -3,17 +3,19 @@ import {
   AssetType,
   DisposeType,
   EmployeeType,
+  UserType,
   VendorType,
 } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
 import { Address, Company } from "@prisma/client"
 import Router from "next/router"
+import { object } from "zod"
 
 const router = Router
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType | DisposeType | AssetRepairType
+  type: AssetType | EmployeeType | VendorType | DisposeType | AssetRepairType | UserType
 
   //subfilter?: string
 ) => {
@@ -69,6 +71,24 @@ export const getName = (filter: string, type: EmployeeType) => {
     : filter === "middle_name"
     ? Object.getOwnPropertyDescriptor(type?.profile, "middle_name")?.value
     : Object.getOwnPropertyDescriptor(type?.profile, "last_name")?.value
+}
+
+export const getNameUser = (filter: string, type: UserType) => {
+  return filter === "first_name"
+    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value 
+    : filter === "middle_name"
+    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value 
+}
+
+export const getAddressUser = (
+  type:
+    | UserType
+    | (Company & {
+        address: Address | null
+      })
+) => {
+  return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
 }
 
 export const getAddress = (
@@ -179,6 +199,17 @@ export const generateRandomPass = () => {
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{};:'\",.<>/?\\|"
   const charactersLength = characters.length
   for (let i = 0; i < 12; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
+
+export const generateCertificate = () => {
+  let result = ""
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{};:'\",.<>/?\\|"
+  const charactersLength = characters.length
+  for (let i = 0; i < 30; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength))
   }
   return result

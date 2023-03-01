@@ -21,7 +21,6 @@ const PasswordChecker = ({ password }: { password: string }) => {
     return password.match(checkSpecialCharacter) ? true : false
   }, [password])
   const noConsecutiveNumber = useMemo(() => {
-    
     const checkConsecutiveNumber = /\d{2,}/gm
     return password.match(checkConsecutiveNumber) ? false : true
   }, [password])
@@ -56,9 +55,11 @@ const PasswordChecker = ({ password }: { password: string }) => {
   return (
     <div
       className={`space-y-2 overflow-hidden rounded-md text-xs transition-height duration-150 ${
-        checkAll
-          ? "border-green-500 bg-green-50 text-green-500"
-          : "border-red-500 bg-red-50 text-red-500"
+        password
+          ? checkAll
+            ? "border-green-500 bg-green-50 text-green-500"
+            : "border-red-500 bg-red-50 text-red-500"
+          : ""
       } ${password.length === 0 ? "max-h-0" : "max-h-96 border p-4"}`}
     >
       <PasswordMatcher

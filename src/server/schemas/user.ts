@@ -62,7 +62,7 @@ export const ChangeUserPass = z.object({
 })
 
 export const EditUserInput = z.object({
-  id: z.number().optional(),
+  id: z.number(),
   name: z.string().optional(),
   email: z.string().optional(),
   user_type: z.string().nullish(),
@@ -88,9 +88,9 @@ export const EditUserInput = z.object({
   teamId: z.number().optional(),
   inactivityDate: z.date().nullish(),
   user_Id: z.string().nullish().optional(),
-
 })
 
 export const IdUser = z.object({
   id: z.number(),
 })
+

@@ -18,7 +18,7 @@ export const AssetCreateInput = z.object({
   model: ModelCreateInput,
   custodianId: z.number().optional(),
   departmentId: z.number({ required_error: "Please provide a department" }),
-  vendorId: z.number().optional(),
+  vendorId: z.number({ required_error: "Please provide a vendor" }),
   subsidiaryId: z.number({
     required_error: "Please provide a company/subsidiary",
   }),

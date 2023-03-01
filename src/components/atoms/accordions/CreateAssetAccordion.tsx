@@ -84,7 +84,7 @@ const CreateAssetAccordion = () => {
       // },
       // number: "",
       // parentId: 0,
-      // projectId: 0,
+      // assetProjectId: 0,
       // remarks: "",
       // serial_no: "",
       // subsidiaryId: 0,
@@ -429,11 +429,13 @@ const CreateAssetAccordion = () => {
                 <div className="col-span-6 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
                     <TypeSelect
+
                       name={"parentId"}
                       setValue={setValue}
                       value={getValues("parentId")?.toString()}
                       title={"Parent Asset"}
                       placeholder={"Select parent asset"}
+
                       data={assetsList ?? []}
                     />
                     <AlertInput>{errors?.parentId?.message}</AlertInput>
@@ -452,6 +454,7 @@ const CreateAssetAccordion = () => {
                   </div>
                   <div className="col-span-3">
                     <TypeSelect
+                      required
                       name={"vendorId"}
                       setValue={setValue}
                       value={getValues("vendorId")?.toString()}
@@ -650,13 +653,9 @@ const CreateAssetAccordion = () => {
                             className={
                               "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                             }
-                            disabled={!Boolean(departmentId)}
-                            placeholder={
-                              !Boolean(companyId)
-                                ? "Select company first"
-                                : "Select Floor type"
-                            }
-                          //value={selectedDepartment?.floor ?? ""}
+                            placeholder="Floor no."
+                            value={selectedDepartment?.floor ?? ""}
+                            disabled
                           />
                         </div>
                       </div>
@@ -670,16 +669,12 @@ const CreateAssetAccordion = () => {
                           <input
                             type="text"
                             id={"address"}
-                            disabled={!Boolean(departmentId)}
                             className={
                               "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                             }
-                            placeholder={
-                              !Boolean(companyId)
-                                ? "Select company first"
-                                : "Select department type"
-                            }
-                          //value={selectedDepartment?.room ?? ""}
+                            placeholder="Room no."
+                            value={selectedDepartment?.room ?? ""}
+                            disabled
                           />
                         </div>
                       </div>

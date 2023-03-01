@@ -17,6 +17,11 @@ type EditableState = {
   setEditable: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type GenerateState = {
+  generate: boolean
+  setGenerate: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 type SelectedAssetState = {
   selectedAsset: AssetType
   setSelectedAsset: (newAsset: AssetType) => void
@@ -58,6 +63,11 @@ type counterValidateState = {
 export const useEditableStore = create<EditableState>((set) => ({
   editable: false,
   setEditable: () => set((state) => ({ editable: !state.editable })),
+}))
+
+export const useGenerateStore = create<GenerateState>((set) => ({
+  generate: false,
+  setGenerate: () => set((state) => ({ generate: !state.generate })),
 }))
 
 export const useMinimizeStore = create<MinimizeState>((set) => ({

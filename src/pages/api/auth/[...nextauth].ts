@@ -44,24 +44,50 @@ export const authOptions: NextAuthOptions = {
           const dateNow = new Date()
           const hoursNow = dateNow.getHours()
           if (Boolean(user?.inactivityDate)) {
-            const dateBetween =
-              Number((dateNow.getTime() - (user?.inactivityDate?.getTime() ?? 0))/ (1000 * 60 * 60 * 24))
+            const dateBetween = Number(
+              (dateNow.getTime() - (user?.inactivityDate?.getTime() ?? 0)) /
+                (1000 * 60 * 60 * 24)
+            )
+            console.log("Date: " + dateBetween)
             //throw new Error(dateBetween.toString())
             if (dateBetween > 30 && dateBetween < 60) {
               throw new Error(
-                `This user is currently locked until. Please contact administrator.`
+                `This user is currently locked. Please contact administrator.`
               )
-            } else if (dateBetween > 60) {
+            } else if (dateBetween >= 60 && dateBetween < 90) {
               await prisma.user.update({
                 where: {
                   username: credentials?.username,
                 },
-              data:{
-                deleted: true,
-              }
+                data: {
+                  deleted: true,
+                },
               })
               throw new Error(
                 `This user is deleted. Please contact administrator.`
+              )
+            } else if (dateBetween >= 90) {
+              await prisma.userArchive.create({
+                data: {
+                  user_Id: user?.user_Id?? "",
+                  position: user?.position ?? "",
+                  teamId: user?.teamId ?? 0,
+                  old_id: user?.id ?? 0,
+                  name: user?.name ?? "",
+                  email: user?.email ?? "",
+                  username: user?.username ?? "",
+                  hired_date: user?.hired_date,
+                  user_type: user?.user_type ?? ""
+                  
+                },
+              }),
+              await prisma.user.delete({
+                where: {
+                  id: user?.id
+                }
+              })
+              throw new Error(
+                `This user is deleted in the database. Please contact administrator.`
               )
             }
           }

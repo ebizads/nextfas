@@ -105,7 +105,7 @@ const UpdateUserModal = (props: {
           ? userForm.profile?.last_name
           : user?.profile?.last_name
       }`,
-
+      teamId: userForm.teamId,
       id: userForm.id,
       validateTable: {
         certificate: check,

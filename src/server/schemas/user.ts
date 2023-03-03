@@ -44,6 +44,15 @@ export const CreateUserInput = z.object({
   teamId: z.number({required_error: "Team is required"}),
 })
 
+export const CreateArchiveUser = z.object({
+  name: z.string().optional().nullish(),
+  email: z.string().email().optional().nullish(),
+  user_Id: z.string().nullish(),
+  hired_date: z.date().nullish(),
+  position: z.string().optional().nullish(),
+  old_id: z.number().optional(),
+  teamId: z.number().nullish(),
+})
 export const ChangeUserPass = z.object({
   id: z.number(),
   password: z

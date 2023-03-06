@@ -15,9 +15,10 @@ import { SelectValueType } from "../atoms/select/TypeSelect"
 import { UserType } from "../../types/generic"
 import { useEditableStore } from "../../store/useStore"
 // import { useEditableStore } from "../../store/useStore"
-import { EditUserInput } from "../../server/schemas/user"
+import { CreateArchiveUser, EditUserInput } from "../../server/schemas/user"
 import { generateCertificate } from "../../lib/functions"
 import Modal from "../headless/modal/modal"
+import { stubFalse } from "lodash"
 
 export type User = z.infer<typeof EditUserInput>
 
@@ -34,6 +35,7 @@ const UpdateUserModal = (props: {
     props.user?.user_Id?.toString() ?? "0"
   )
   const futureDate = new Date()
+  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [certificateCheck, setCertificate] = useState<string>("")
   const [check, setCheck] = useState<string>("")
@@ -43,6 +45,7 @@ const UpdateUserModal = (props: {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
+
   const { data: user } = trpc.user.findOne.useQuery(
     Number(props.user?.user_Id) ?? 0
   )
@@ -50,9 +53,9 @@ const UpdateUserModal = (props: {
     props.user?.teamId ?? 0
   )
 
-  const lockedChecker = futureDate < (props.user?.lockedUntil ?? "") ? true : false
-  
-  
+  const lockedChecker =
+    futureDate < (props.user?.lockedUntil ?? "") ? true : false
+
   const teamList = useMemo(() => {
     const list = teams?.teams.map(
       (team: { id: { toString: () => any }; name: any }) => {
@@ -93,7 +96,7 @@ const UpdateUserModal = (props: {
   const onSubmit = async (userForm: User) => {
     // Register function
     console.log(userForm)
-  
+
     mutate({
       ...userForm,
       name: `${
@@ -117,6 +120,10 @@ const UpdateUserModal = (props: {
 
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [updated, setUpdated] = useState(false)
+
+  const handleDelete = () => {
+    setOpenModalDel(true)
+  }
 
   const handleEditable = () => {
     setIsEditable(true)
@@ -431,40 +438,65 @@ const UpdateUserModal = (props: {
             )
           )}
           <Modal
-              isVisible={completeModal}
-              setIsVisible={setCompleteModal}
-              className="max-w-2xl"
-              title="Updated User Account"
-            >
-              <div className="flex w-full flex-col px-4 py-2">
-                <div>
-                  <p className="text-center text-lg font-semibold">
-                    User updated successfully.
-                  </p>
-                </div>
-                <div className="flex justify-end py-2">
-                  <button
-                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={() => {
-                      setCompleteModal(false)
-                      props.setIsVisible(false)
-                      setCertificate(generateCertificate())
-                    }}
-                  >
-                    Close
-                  </button>
-                </div>
+            isVisible={completeModal}
+            setIsVisible={setCompleteModal}
+            className="max-w-2xl"
+            title="Updated User Account"
+          >
+            <div className="flex w-full flex-col px-4 py-2">
+              <div>
+                <p className="text-center text-lg font-semibold">
+                  User updated successfully.
+                </p>
               </div>
-            </Modal>
+              <div className="flex justify-end py-2">
+                <button
+                  className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={() => {
+                    setCompleteModal(false)
+                    props.setIsVisible(false)
+                    setCertificate(generateCertificate())
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </Modal>
           {isEditable && (
-            <button
-              type="submit"
-              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-              disabled={userLoading}
-            >
-              {userLoading ? "Loading..." : lockedChecker? "Unlock and save ":"Save"}
-            </button>
+            <div className="space-x-1">
+              <button
+                type="button"
+                className="rounded bg-red-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={() => {
+                  handleDelete(), setIsLoading(true)
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Delete"}
+              </button>
+
+              <button
+                type="submit"
+                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                disabled={userLoading}
+              >
+                {userLoading
+                  ? "Loading..."
+                  : lockedChecker
+                  ? "Unlock and save "
+                  : "Save"}
+              </button>
+            </div>
           )}
+          <UserDeleteModal
+            user={props.user}
+            openModalDel={openModalDel}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            setOpenModalDel={setOpenModalDel}
+            setIsVisible={props.setIsVisible}
+          />
         </div>
       </form>
       {/* {error && errors && (
@@ -476,3 +508,64 @@ const UpdateUserModal = (props: {
   )
 }
 export default UpdateUserModal
+
+export const UserDeleteModal = (props: {
+  user: UserType
+  openModalDel: boolean
+  isLoading: boolean
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  //trpc utils for delete
+  const { mutate} = trpc.user.createArchive.useMutation({
+    onSuccess() {
+      console.log()
+      props.setOpenModalDel(false)
+      props.setIsLoading(false)
+      props.setIsVisible(false)
+      window.location.reload()
+    },
+  })
+  const handleDelete = async () => {
+    mutate({
+      old_id: Number(props.user?.id),
+    })
+  }
+
+  return (
+    <Modal
+      className="max-w-2xl"
+      title="Delete User Account"
+      isVisible={props.openModalDel}
+      setIsVisible={props.setOpenModalDel}
+    >
+      <div className="m-4 flex flex-col ">
+        <div className="flex flex-col items-center gap-8 text-center">
+          <div>You are about to permanently delete </div>
+          <p className="text-neutral-500">
+            <i className="fa-regular fa-circle-exclamation" /> This action is
+            irrevokable, please carefully review the action.
+          </p>
+          <div className="flex items-center justify-end gap-2">
+            <button
+              className="rounded-sm bg-gray-300 px-5 py-1 hover:bg-gray-400"
+              onClick={() => {
+                props.setOpenModalDel(false)
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
+              onClick={() => handleDelete()}
+              // disabled={isLoading}
+            >
+              Yes, delete record
+            </button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  )
+}

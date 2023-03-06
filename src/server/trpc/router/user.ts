@@ -12,9 +12,8 @@ import { authedProcedure, t } from "../trpc"
 import { trpc } from "../../../utils/trpc"
 import bcrypt from "bcrypt"
 import { Prisma } from "@prisma/client"
-import { error } from "console"
-import { rest } from "lodash"
-import { create } from "domain"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { prisma } from "../../../server/db/client"
 
 export const userRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ input, ctx }) => {
@@ -208,28 +207,33 @@ export const userRouter = t.router({
     .input(CreateArchiveUser)
     .mutation(async ({ input, ctx }) => {
       const { old_id } = input
-      const user = await ctx.prisma.user.findUnique({
-        where: {
-          id: old_id,
-        },
-      })
 
       try {
-        await ctx.prisma.userArchive.create({
-          data: {
-            user_Id: user?.user_Id?? "",
-            position: user?.position ?? "",
-            teamId: user?.teamId ?? 0,
-            old_id: old_id ?? 0,
-            name: user?.name ?? "",
-            email: user?.email ?? "",
-            username: user?.username ?? "",
-            hired_date: user?.hired_date,
-            user_type: user?.user_type ?? ""
-            
+        const user = await ctx.prisma.user.findUnique({
+          where: {
+            id: old_id,
           },
         })
-        return "User created successfully"
+
+        await ctx.prisma.userArchive.create({
+          data: {
+            user_Id: user?.user_Id,
+            position: user?.position,
+            teamId: user?.teamId,
+            old_id: user?.id ?? -1,
+            name: user?.name,
+            email: user?.email,
+            username: user?.username,
+            hired_date: user?.hired_date,
+            user_type: user?.user_type,
+          },
+        }),
+          await ctx.prisma.user.delete({
+            where: {
+              id: user?.id,
+            },
+          })
+        return `This user is deleted in the database. Please contact administrator.`
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",

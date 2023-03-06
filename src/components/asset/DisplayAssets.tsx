@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Pagination } from "@mantine/core"
 import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
-import { ChangePassModal } from "../../pages/auth/ChangePassModal"
 import Link from "next/link"
 import { AssetType } from "../../types/generic"
 import { columns } from "../../lib/table"

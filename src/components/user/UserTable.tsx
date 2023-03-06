@@ -51,7 +51,7 @@ const UserTable = (props: {
       setEditable(false)
     }
     setUserId(Number(details?.id))
-  }, [editable, setEditable, updateRecord])
+  }, [details?.id, editable, setEditable, updateRecord])
 
   useEffect(() => {
     // console.log("ewan: " + Boolean(props.rows))

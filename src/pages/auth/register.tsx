@@ -123,6 +123,7 @@ const Register2 = () => {
           middle_name: user.profile.middle_name,
           last_name: user.profile.last_name,
           image: images[0]?.file ?? "",
+          phone_no: user.profile.phone_no
         },
         email: user.email,
         address: {

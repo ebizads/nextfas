@@ -17,6 +17,11 @@ type EditableState = {
   setEditable: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type UserEditableState = {
+  userEditable: boolean
+  setUserEditable: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 type GenerateState = {
   generate: boolean
   setGenerate: React.Dispatch<React.SetStateAction<boolean>>
@@ -63,6 +68,11 @@ type counterValidateState = {
 export const useEditableStore = create<EditableState>((set) => ({
   editable: false,
   setEditable: () => set((state) => ({ editable: !state.editable })),
+}))
+
+export const useUserEditableStore = create<UserEditableState>((set) => ({
+  userEditable: false,
+  setUserEditable: () => set((state) => ({ userEditable: !state.userEditable })),
 }))
 
 export const useGenerateStore = create<GenerateState>((set) => ({

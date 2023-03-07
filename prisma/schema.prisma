@@ -347,13 +347,13 @@ model Department {
   assets     Asset[]
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  teams      Team?
+  teams      Team[]
 }
 
 model Team {
   id              Int         @id @default(autoincrement())
   name            String
-  departmentId    Int?        @unique
+  departmentId    Int?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   deletedAt       DateTime?

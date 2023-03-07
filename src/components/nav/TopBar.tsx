@@ -29,6 +29,7 @@ const TopBar = () => {
 
   const [sessionName, setSessionName] = useState<string>("")
 
+
   const dateNow = new Date()
   let dayNow = 0
   let validateDate = 0
@@ -67,7 +68,7 @@ const TopBar = () => {
     //   refetch()
     //   console.log("userId: " + userId)
     // }, 5000)
-
+    
     console.log("first login: " + user?.firstLogin?.toString())
   }, [
     session,
@@ -94,6 +95,18 @@ const TopBar = () => {
     return path_array
   }, [pathname])
 
+  // const {mutate} = trpc.user.createArchive.useMutation({onSuccess(){
+  //   console.log("ayos na")
+  // }})
+
+  // const tryMutate = async () => {
+  //   console.log("trial: " + userId)
+
+  //   mutate({
+  //     old_id: userId,
+  //     teamId: 0,
+  //   })
+  // }
   return (
     <div className="flex max-h-[7vh] min-h-[7vh] items-center justify-between border-b px-4">
       <div className="flex gap-4 text-light-secondary">
@@ -114,6 +127,15 @@ const TopBar = () => {
         <div className="rounded-full border border-gray-400 px-2 py-1">
           <p className="text-xs">{sessionName}</p>
         </div>
+        {/* <button
+        type = "button"
+        className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+        onClick={() => {
+          tryMutate()
+        }}
+        >
+          Try
+        </button> */}
 
         <Modal
           isVisible={openPromptVisible}

@@ -3,13 +3,17 @@ import { z } from "zod"
 import { env } from "../../../env/client.mjs"
 import {
   ChangeUserPass,
+  CreateArchiveUser,
   CreateUserInput,
   EditUserInput,
+  IdUser,
 } from "../../schemas/user"
 import { authedProcedure, t } from "../trpc"
+import { trpc } from "../../../utils/trpc"
 import bcrypt from "bcrypt"
 import { Prisma } from "@prisma/client"
-import { error } from "console"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { prisma } from "../../../server/db/client"
 
 export const userRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ input, ctx }) => {
@@ -25,17 +29,18 @@ export const userRouter = t.router({
           include: {
             department: {
               include: {
-                location: true
-              }
-            }
-          }
-        }
+                location: true,
+              },
+            },
+          },
+        },
 
       },
     })
 
     return user
   }),
+
   findAll: authedProcedure
     .input(
       z
@@ -198,6 +203,46 @@ export const userRouter = t.router({
         })
       }
     }),
+
+  createArchive: authedProcedure
+    .input(CreateArchiveUser)
+    .mutation(async ({ input, ctx }) => {
+      const { old_id } = input
+
+      try {
+        const user = await ctx.prisma.user.findUnique({
+          where: {
+            id: old_id,
+          },
+        })
+
+        await ctx.prisma.userArchive.create({
+          data: {
+            user_Id: user?.user_Id,
+            position: user?.position,
+            teamId: user?.teamId,
+            old_id: user?.id ?? -1,
+            name: user?.name,
+            email: user?.email,
+            username: user?.username,
+            hired_date: user?.hired_date,
+            user_type: user?.user_type,
+          },
+        }),
+          await ctx.prisma.user.delete({
+            where: {
+              id: user?.id,
+            },
+          })
+        return `This user is deleted in the database. Please contact administrator.`
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+
   update: authedProcedure
     .input(EditUserInput)
     .mutation(async ({ input, ctx }) => {
@@ -209,6 +254,40 @@ export const userRouter = t.router({
           },
           data: {
             ...rest,
+
+            validateTable: {
+              update: validateTable ?? undefined,
+            },
+            address: {
+              update: address ?? undefined,
+            },
+            profile: {
+              update: profile ?? undefined,
+            },
+          },
+        })
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  updateAdmin: authedProcedure
+    .input(EditUserInput)
+    .mutation(async ({ input, ctx }) => {
+      const { address, id, profile, validateTable, ...rest } = input
+      try {
+        await ctx.prisma.user.update({
+          where: {
+            id,
+          },
+          data: {
+            ...rest,
+            lockedAt: null,
+            lockedUntil: null,
+            lockedReason: null,
+            attempts: 0,
             validateTable: {
               update: validateTable ?? undefined,
             },

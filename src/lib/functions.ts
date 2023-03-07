@@ -11,6 +11,9 @@ import { ExcelExportType } from "../types/employee"
 import { Address, Company } from "@prisma/client"
 import Router from "next/router"
 import { object } from "zod"
+import { trpc } from "../utils/trpc"
+import { useState } from "react"
+
 
 const router = Router
 export const getProperty = (
@@ -218,3 +221,4 @@ export const generateCertificate = () => {
 export const passConfirmCheck = (password: string, confirmPassword: string) => {
   return password === confirmPassword ? true : false
 }
+

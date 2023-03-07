@@ -8,6 +8,7 @@ import { UserType } from "../../types/generic"
 import { userColumns } from "../../lib/table"
 import { getAddressUser, getNameUser, getProperty } from "../../lib/functions"
 import UpdateUserModal from "./UpdateUserModal"
+import { trpc } from "../../utils/trpc"
 
 const UserTable = (props: {
   checkboxes: number[]
@@ -17,9 +18,13 @@ const UserTable = (props: {
   columns: ColumnType[]
 }) => {
   const { minimize } = useMinimizeStore()
+
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
   const [details, setDetails] = useState<UserType>()
+  const [userId, setUserId] = useState<number>(0)
+  const { data: user, refetch } = trpc.user.findOne.useQuery(userId)
+  const futureDate = new Date()
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -45,16 +50,19 @@ const UserTable = (props: {
     if (!updateRecord && editable) {
       setEditable(false)
     }
-  }, [editable, setEditable, updateRecord])
+    setUserId(Number(details?.id))
+  }, [details?.id, editable, setEditable, updateRecord])
 
   useEffect(() => {
     // console.log("ewan: " + Boolean(props.rows))
   })
-
+  const lockedChecker = futureDate < (details?.lockedUntil ?? "") ? true : false
+  
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -134,6 +142,7 @@ const UserTable = (props: {
                       // console.log(row)
                       // ternary operator that returns special values for date, name, and address
                       col.value === "team"
+
                         ? (row?.Userteam?.name ? row?.Userteam?.name : "--")
                         : col.value === "hired_date"
                           ? (row?.hired_date?.toDateString() ? row?.hired_date?.toDateString() : "--")
@@ -141,10 +150,7 @@ const UserTable = (props: {
                             ? getNameUser(col.value, row)
                             : col.value === "city"
                               ? ((getAddressUser(row).includes("undefined")) ? "--" : getAddressUser(row))
-                              : getProperty(col.value, row)
-
-
-                    }
+                              : getProperty(col.value, row)                    }
                   </td>
                 ))}
               {/* <td className="max-w-[10rem] space-x-2 text-center">
@@ -169,7 +175,15 @@ const UserTable = (props: {
 
       {details !== null ? (
         <Modal
-          title={(editable) ? "Update User Record" : "User Record"}
+          title={
+            lockedChecker
+              ? editable
+                ? "Update User Record \uD83D\uDD12"
+                : "User Record \uD83D\uDD12"
+              : editable
+              ? "Update User Record"
+              : "User Record"
+          }
           isVisible={updateRecord}
           setIsVisible={setUpdateRecord}
           className="max-w-4xl"
@@ -187,5 +201,3 @@ const UserTable = (props: {
 }
 
 export default UserTable
-
-

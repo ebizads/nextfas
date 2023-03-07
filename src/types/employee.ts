@@ -1,6 +1,10 @@
-import { address, profile } from "@prisma/client"
-import { EmployeeType } from "./generic"
+import { Address, Profile } from "@prisma/client"
+import { EmployeeType, UserType } from "./generic"
 
 export type ExcelExportType = Partial<EmployeeType> &
-  Partial<address> &
-  Partial<profile>
+  Partial<Address> &
+  Partial<Profile>
+
+  export type ExcelExportTypeUser = Partial<UserType> &
+  Partial<Address> &
+  Partial<Profile>

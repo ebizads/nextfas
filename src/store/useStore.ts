@@ -17,6 +17,11 @@ type EditableState = {
   setEditable: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type UserEditableState = {
+  userEditable: boolean
+  setUserEditable: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 type GenerateState = {
   generate: boolean
   setGenerate: React.Dispatch<React.SetStateAction<boolean>>
@@ -56,9 +61,18 @@ type SearchState = {
   setSearch: (newSearch: string) => void
 }
 
+type counterValidateState = {
+  counterCheck: boolean
+  setCounterCheck: (counterStatus: boolean) => void
+}
 export const useEditableStore = create<EditableState>((set) => ({
   editable: false,
   setEditable: () => set((state) => ({ editable: !state.editable })),
+}))
+
+export const useUserEditableStore = create<UserEditableState>((set) => ({
+  userEditable: false,
+  setUserEditable: () => set((state) => ({ userEditable: !state.userEditable })),
 }))
 
 export const useGenerateStore = create<GenerateState>((set) => ({
@@ -109,4 +123,9 @@ export const useRepairStatusStore = create<RepairStatusState>((set) => ({
 export const useSearchStore = create<SearchState>((set) => ({
   search: "",
   setSearch: (newSearch: string) => set({ search: newSearch }),
+}))
+
+export const useCounterValidateStore = create<counterValidateState>((set) => ({
+  counterCheck: false,
+  setCounterCheck: (counterStatus: boolean) => set({ counterCheck: counterStatus }),
 }))

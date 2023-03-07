@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Pagination } from "@mantine/core"
 import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
-import { ChangePassModal } from "../../pages/auth/ChangePassModal"
 import Link from "next/link"
 import { AssetType } from "../../types/generic"
 import { columns } from "../../lib/table"
@@ -23,13 +22,13 @@ const DisplayAssets = (props: {
   limit: number
   setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-  
+
   const { search, setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-  
+
   const [firstLogin, setFirstLogin] = useState<boolean>(false)
 
   const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
@@ -38,7 +37,7 @@ const DisplayAssets = (props: {
   useEffect(
     () => {
       setSearch("");
-      
+
     },
     [setSearch]
 
@@ -133,7 +132,7 @@ const DisplayAssets = (props: {
         openModalDel={openModalDel}
         setOpenModalDel={setOpenModalDel}
       />
-      
+
     </div >
   )
 }

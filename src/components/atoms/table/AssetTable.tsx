@@ -183,7 +183,7 @@ const AssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Team</p>
-                      <p className="font-medium">{props.asset?.department?.teams?.name}</p>
+                      <p className="font-medium">{props.asset?.department?.teams[props.asset?.custodian?.teamId ?? 0]?.name ?? "--"}</p>
                     </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">

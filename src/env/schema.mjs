@@ -21,6 +21,7 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_CLIENT_EMAIL: z.string(),
   NEXT_PUBLIC_CLIENT_EMPLOYEE_ID: z.string(),
   NEXT_PUBLIC_CLIENT_ASSET_ID: z.string(),
+  NEXT_PUBLIC_CLIENT_USER_ID: z.string(),
 })
 
 /**
@@ -33,4 +34,6 @@ export const clientEnv = {
   NEXT_PUBLIC_CLIENT_EMAIL: process.env.NEXT_PUBLIC_CLIENT_EMAIL,
   NEXT_PUBLIC_CLIENT_EMPLOYEE_ID: process.env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID,
   NEXT_PUBLIC_CLIENT_ASSET_ID: process.env.NEXT_PUBLIC_CLIENT_ASSET_ID,
+  NEXT_PUBLIC_CLIENT_USER_ID: process.env.NEXT_PUBLIC_CLIENT_USER_ID,
+
 }

@@ -315,7 +315,7 @@ const CreateAssetAccordion = () => {
         width: 1,
       })
     }
-  }, [assetId, asset_number])
+  }, [assetId, asset_number, setValue])
 
   const router = useRouter()
   const { data: session } = useSession()
@@ -862,6 +862,7 @@ const CreateAssetAccordion = () => {
                       size="sm"
                       value={dep_end}
                       disabled={!Boolean(dep_start)}
+                      //
                       minDate={dep_start ? dep_start : new Date()}
                       onChange={(value) => {
                         setDepEnd(value)
@@ -1030,6 +1031,10 @@ const CreateAssetAccordion = () => {
             </div>
           </div>
         </Modal> */}
+
+
+
+        {/* */}
       </form>
     </div>
   )

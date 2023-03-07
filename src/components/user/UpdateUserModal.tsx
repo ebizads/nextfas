@@ -9,20 +9,21 @@ import AlertInput from "../atoms/forms/AlertInput"
 import { InputField } from "../atoms/forms/InputField"
 import { Select } from "@mantine/core"
 //import DropZoneComponent from "../dropzone/DropZoneComponent"
-import { EmployeeEditInput } from "../../server/schemas/employee"
 import { ImageJSON } from "../../types/table"
 import DropZoneComponent from "../dropzone/DropZoneComponent"
 import { SelectValueType } from "../atoms/select/TypeSelect"
-import { EmployeeType } from "../../types/generic"
+import { UserType } from "../../types/generic"
 import { useEditableStore } from "../../store/useStore"
 // import { useEditableStore } from "../../store/useStore"
+import { CreateArchiveUser, EditUserInput } from "../../server/schemas/user"
+import { generateCertificate } from "../../lib/functions"
+import Modal from "../headless/modal/modal"
+import { stubFalse } from "lodash"
 
+export type User = z.infer<typeof EditUserInput>
 
-export type Employee = z.infer<typeof EmployeeEditInput>
-
-
-export const UpdateEmployeeModal = (props: {
-  employee: EmployeeType
+const UpdateUserModal = (props: {
+  user: UserType
   // setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
   // images: ImageJSON[]
   // setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
@@ -31,87 +32,115 @@ export const UpdateEmployeeModal = (props: {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [searchValue, onSearchChange] = useState<string>(
-    props.employee?.teamId?.toString() ?? "0"
+    props.user?.user_Id?.toString() ?? "0"
   )
-  const [date, setDate] = useState(props.employee?.hired_date ?? new Date())
+  const futureDate = new Date()
+  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+  const [completeModal, setCompleteModal] = useState<boolean>(false)
+  const [certificateCheck, setCertificate] = useState<string>("")
+  const [check, setCheck] = useState<string>("")
+  const [date, setDate] = useState(props.user?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
 
+  const { data: user } = trpc.user.findOne.useQuery(
+    Number(props.user?.user_Id) ?? 0
+  )
+  const { data: singleTeams } = trpc.team.findOne.useQuery(
+    props.user?.teamId ?? 0
+  )
 
+  const lockedChecker =
+    futureDate < (props.user?.lockedUntil ?? "") ? true : false
 
   const teamList = useMemo(() => {
-    const list = teams?.teams.map((team: { id: { toString: () => any }; name: any }) => {
-      return { value: team.id.toString(), label: team.name }
-    }) as SelectValueType[]
+    const list = teams?.teams.map(
+      (team: { id: { toString: () => any }; name: any }) => {
+        return { value: team.id.toString(), label: team.name }
+      }
+    ) as SelectValueType[]
     return list ?? []
   }, [teams]) as SelectValueType[]
 
-
   const {
     mutate,
-    isLoading: employeeLoading,
+    isLoading: userLoading,
     error,
-  } = trpc.employee.edit.useMutation({
+  } = trpc.user.updateAdmin.useMutation({
     onSuccess() {
       console.log("omsim")
-      // invalidate query of asset id when mutations is successful
-      utils.employee.findAll.invalidate()
-      props.setIsVisible(false)
+      setCompleteModal(true)
+      utils.user.findAll.invalidate()
       setImage([])
     },
   })
+
   const {
     register,
     handleSubmit,
     reset,
     setValue,
     formState: { errors },
-  } = useForm<Employee>({
-    resolver: zodResolver(EmployeeEditInput),
+  } = useForm<User>({
+    resolver: zodResolver(EditUserInput),
   })
 
+  useEffect(() => {
+    reset(props.user as User)
+    setCertificate(generateCertificate)
+  }, [props.user, reset])
 
-  useEffect(() => reset(props.employee as Employee), [props.employee, reset])
-
-
-  const onSubmit = async (employee: Employee) => {
+  const onSubmit = async (userForm: User) => {
     // Register function
+    console.log(userForm)
+  
     mutate({
-      ...employee,
-      name: `${employee.profile?.first_name} ${employee.profile?.last_name}`,
+      ...userForm,
+      name: `${userForm.profile?.first_name
+        ? userForm.profile?.first_name
+        : user?.profile?.first_name
+        } ${userForm.profile?.last_name
+          ? userForm.profile?.last_name
+          : user?.profile?.last_name
+      }`,
+      teamId: userForm.teamId,
+      id: userForm.id,
+      validateTable: {
+        certificate: check,
+        validationDate: props.user?.validateTable?.validationDate ?? futureDate,
+      },
     })
     reset()
   }
 
-  const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [updated, setUpdated] = useState(false);
+  const [isEditable, setIsEditable] = useState<boolean>(false)
+  const [updated, setUpdated] = useState(false)
 
-
+  const handleDelete = () => {
+    setOpenModalDel(true)
+  }
 
   const handleEditable = () => {
-
-    setIsEditable(true);
+    setIsEditable(true)
   }
 
   const handleIsEditable = () => {
     if (!updated) {
-      setEditable(!editable);
-      setUpdated(true);
+      setEditable(!editable)
+      setUpdated(true)
     }
-  };
+  }
 
   // useEffect(() => { console.log("department: " + props.employee?.team?.department?.name) })
 
-
-
   return (
     <div>
-      <div className="flex flex-row-reverse w-full">
-        <div className="flex space-x-1 align-middle items-center ">
-          <p className="text-gray-500 uppercase text-xs">edit form </p>
+      <div className="flex w-full flex-row-reverse">
+        <div className="flex items-center space-x-1 align-middle ">
+          <p className="text-xs uppercase text-gray-500">edit form </p>
           <i
             className="fa-light fa-pen-to-square cursor-pointer"
             onClick={() => {
@@ -162,13 +191,12 @@ export const UpdateEmployeeModal = (props: {
           </div>
         </div>
 
-
         <div className="flex w-full flex-wrap gap-4 py-2.5">
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Team</label>
             <Select
               disabled={!isEditable}
-              placeholder="Pick one"
+              placeholder={singleTeams?.name ? singleTeams?.name : "Pick One"}
               onChange={(value) => {
                 setValue("teamId", Number(value) ?? 0)
                 onSearchChange(value ?? "0")
@@ -191,18 +219,21 @@ export const UpdateEmployeeModal = (props: {
                     },
                   },
 
-
                   // applies styles to hovered item (with mouse or keyboard)
                   "&[data-hovered]": {},
                 },
               })}
               variant="unstyled"
-              className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
             {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
           </div>
           <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Employee Number</label>
+            <label className="sm:text-sm">User Number</label>
             {/* <InputField
                
               type={"text"}
@@ -210,8 +241,11 @@ export const UpdateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className={'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
-            >{`${props.employee?.employee_id}`}</p>
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{`${props.user?.user_Id}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -219,11 +253,10 @@ export const UpdateEmployeeModal = (props: {
               type={"text"}
               disabled={!isEditable}
               label={""}
-              // placeholder={props.employee?.}
+              placeholder={props.user?.position?.toString()}
               name={"position"}
               register={register}
             />
-
 
             <AlertInput>{errors?.position?.message}</AlertInput>
           </div>
@@ -243,17 +276,16 @@ export const UpdateEmployeeModal = (props: {
           </div>
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Departmemt</label>
-            {/* <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.employee?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
-            <p className={'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}>{`${props.employee?.team?.department?.name}`}</p>
 
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >
+              {props.user?.Userteam?.department?.name
+                ? `${props.user?.Userteam?.department?.name}`
+                : "--"}
+            </p>
           </div>
         </div>
 
@@ -275,29 +307,35 @@ export const UpdateEmployeeModal = (props: {
                 setValue("hired_date", value)
                 value === null ? setDate(new Date()) : setDate(value)
               }}
-              className={isEditable ? 'my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              className={
+                isEditable
+                  ? "my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
           </div>
 
-
           <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm mb-2">Mobile Number</label>
+            <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
               disabled={!isEditable}
               type="number"
               pattern="[0-9]*"
-              defaultValue={props.employee?.profile?.phone_no ?? "--"}
-              className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              defaultValue={props.user?.profile?.phone_no ?? "--"}
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-800 placeholder-gray-600  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
               onKeyDown={(e) => {
                 if (e.key === "e") {
                   e.preventDefault()
                 }
               }}
               onChange={(event) => {
-
                 if (event.target.value.length > 11) {
                   console.log("more than 11")
-                  event.target.value = event.target.value.slice(0, 11);
+                  event.target.value = event.target.value.slice(0, 11)
                 }
                 setValue(
                   "profile.phone_no",
@@ -305,7 +343,6 @@ export const UpdateEmployeeModal = (props: {
                 )
               }}
             />
-
 
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
@@ -330,7 +367,6 @@ export const UpdateEmployeeModal = (props: {
                 register={register}
               />
 
-
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
             </div>
             <div className="flex w-[18.4%] flex-col">
@@ -342,7 +378,6 @@ export const UpdateEmployeeModal = (props: {
                 disabled={!isEditable}
                 register={register}
               />
-
 
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
@@ -367,22 +402,11 @@ export const UpdateEmployeeModal = (props: {
                 register={register}
               />
 
-
               <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
           </div>
         </div>
 
-
-        {isEditable && <DropZoneComponent
-
-
-          setImage={setImage}
-          setIsLoading={setIsLoading}
-          images={images}
-          isLoading={isLoading}
-          acceptingMany={false}
-        />}
         <hr className="w-full"></hr>
         {/* <div className="flex w-full justify-end">
           {isEditable && <button
@@ -394,23 +418,83 @@ export const UpdateEmployeeModal = (props: {
           </button>}
         </div> */}
         <div className="flex w-full justify-between">
-          {!(error && errors && (
-            <pre className="mt-2 text-sm italic text-red-500">
-              Something went wrong!
-            </pre>
-          )) ? <div></div> : (error && errors && (
-            <pre className="mt-2 text-sm italic text-red-500">
-              Something went wrong!
-            </pre>
-          ))}
-          {isEditable && <button
-            type="submit"
-            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={employeeLoading}
-          >
-            {employeeLoading ? "Loading..." : "Save"}
-          </button>}
+          {!(
+            error &&
+            errors && (
+              <pre className="mt-2 text-sm italic text-red-500">
+                Something went wrong!
+              </pre>
+            )
+          ) ? (
+            <div></div>
+          ) : (
+            error &&
+            errors && (
+              <pre className="mt-2 text-sm italic text-red-500">
+                Something went wrong!
+              </pre>
+            )
+          )}
+          <Modal
+              isVisible={completeModal}
+              setIsVisible={setCompleteModal}
+              className="max-w-2xl"
+              title="Updated User Account"
+            >
+              <div className="flex w-full flex-col px-4 py-2">
+                <div>
+                  <p className="text-center text-lg font-semibold">
+                    User updated successfully.
+                  </p>
+                </div>
+                <div className="flex justify-end py-2">
+                  <button
+                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                    onClick={() => {
+                      setCompleteModal(false)
+                      props.setIsVisible(false)
+                      setCertificate(generateCertificate())
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </Modal>
+          {isEditable && (
+            <div className="space-x-1">
+              <button
+                type="button"
+                className="rounded bg-red-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={() => {
+                  handleDelete(), setIsLoading(true)
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Delete"}
+              </button>
 
+              <button
+                type="submit"
+                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                disabled={userLoading}
+              >
+                {userLoading
+                  ? "Loading..."
+                  : lockedChecker
+                  ? "Unlock and save "
+                  : "Save"}
+              </button>
+            </div>
+          )}
+          <UserDeleteModal
+            user={props.user}
+            openModalDel={openModalDel}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            setOpenModalDel={setOpenModalDel}
+            setIsVisible={props.setIsVisible}
+          />
         </div>
       </form>
       {/* {error && errors && (
@@ -421,4 +505,65 @@ export const UpdateEmployeeModal = (props: {
     </div>
   )
 }
+export default UpdateUserModal
 
+export const UserDeleteModal = (props: {
+  user: UserType
+  openModalDel: boolean
+  isLoading: boolean
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  //trpc utils for delete
+  const { mutate} = trpc.user.createArchive.useMutation({
+    onSuccess() {
+      console.log()
+      props.setOpenModalDel(false)
+      props.setIsLoading(false)
+      props.setIsVisible(false)
+      window.location.reload()
+    },
+  })
+  const handleDelete = async () => {
+    mutate({
+      old_id: Number(props.user?.id),
+    })
+  }
+
+  return (
+    <Modal
+      className="max-w-2xl"
+      title="Delete User Account"
+      isVisible={props.openModalDel}
+      setIsVisible={props.setOpenModalDel}
+    >
+      <div className="m-4 flex flex-col ">
+        <div className="flex flex-col items-center gap-8 text-center">
+          <div>You are about to permanently delete </div>
+          <p className="text-neutral-500">
+            <i className="fa-regular fa-circle-exclamation" /> This action is
+            irrevokable, please carefully review the action.
+          </p>
+          <div className="flex items-center justify-end gap-2">
+            <button
+              className="rounded-sm bg-gray-300 px-5 py-1 hover:bg-gray-400"
+              onClick={() => {
+                props.setOpenModalDel(false)
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
+              onClick={() => handleDelete()}
+              // disabled={isLoading}
+            >
+              Yes, delete record
+            </button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  )
+}

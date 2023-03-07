@@ -83,7 +83,7 @@ const UserTable = (props: {
                   scope="col"
                   className="max-w-[10rem] truncate px-6 py-4 duration-150"
                 >
-                {/* {console.log(col)} */}
+                  {/* {console.log(col)} */}
                   {col.name}
                 </th>
               ))}
@@ -134,15 +134,15 @@ const UserTable = (props: {
                       // console.log(row)
                       // ternary operator that returns special values for date, name, and address
                       col.value === "team"
-                      ? (row?.Userteam?.name ? row?.Userteam?.name: "--")
-                      : col.value === "hired_date"
-                        ? (row?.hired_date?.toDateString() ? row?.hired_date?.toDateString(): "--")
-                        : col.value.match(/_name/g)
-                          ? getNameUser(col.value, row)
-                          : col.value === "city"
-                            ? ((getAddressUser(row).includes("undefined"))? "--" :  getAddressUser(row))
-                            : getProperty(col.value, row)
-                              
+                        ? (row?.Userteam?.name ? row?.Userteam?.name : "--")
+                        : col.value === "hired_date"
+                          ? (row?.hired_date?.toDateString() ? row?.hired_date?.toDateString() : "--")
+                          : col.value.match(/_name/g)
+                            ? getNameUser(col.value, row)
+                            : col.value === "city"
+                              ? ((getAddressUser(row).includes("undefined")) ? "--" : getAddressUser(row))
+                              : getProperty(col.value, row)
+
 
                     }
                   </td>

@@ -30,113 +30,113 @@ export const userRouter = t.router({
             }
           }
         }
-        
+
       },
     })
 
     return user
   }),
   findAll: authedProcedure
-  .input(
-    z
-      .object({
-        page: z.number().optional(),
-        limit: z.number().optional(),
-        search: z
-          .object({
-            name: z.string().optional(),
-            user_id: z.string().optional(),
-            email: z.string().optional(),
-            team: z
-              .object({
-                name: z.string().optional(),
-                department: z
-                  .object({
-                    id: z.number(),
-                  })
-                  .optional(),
-              })
-              .optional(),
-          })
-          .optional(),
-        filter: z
-          .object({
-            hired_date: z.date().optional(),
-            subsidiary: z.string().optional(),
-          })
-          .optional(),
-      })
-      .optional()
-  )
-  .query(async ({ ctx, input }) => {
-    try {
-      const [user, count] = await ctx.prisma.$transaction(
-        [
-          ctx.prisma.user.findMany({
-            orderBy: {
-              createdAt: "desc",
-            },
-            include: {
-              address: true,
-              profile: true,
-              validateTable: true,
-              Userteam: {
-                include: {
-                  department: {
-                    include: {
-                      location: true,
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              name: z.string().optional(),
+              user_id: z.string().optional(),
+              email: z.string().optional(),
+              team: z
+                .object({
+                  name: z.string().optional(),
+                  department: z
+                    .object({
+                      id: z.number(),
+                    })
+                    .optional(),
+                })
+                .optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              hired_date: z.date().optional(),
+              subsidiary: z.string().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const [user, count] = await ctx.prisma.$transaction(
+          [
+            ctx.prisma.user.findMany({
+              orderBy: {
+                createdAt: "desc",
+              },
+              include: {
+                address: true,
+                profile: true,
+                validateTable: true,
+                Userteam: {
+                  include: {
+                    department: {
+                      include: {
+                        location: true,
+                      },
                     },
                   },
                 },
               },
-            },
-            where: {
-              NOT: {
-                deleted: true,
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+                // hired_date: input?.filter?.hired_date,
+                // name: { contains: input?.search?.name },
+                // employee_id: { contains: input?.search?.employee_id },
+                // email: { contains: input?.search?.email },
+                // team: {
+                //   department: {
+                //     id: {
+                //       equals: input?.search?.team?.department?.id,
+                //     },
+                //   },
+                // },
               },
-              // hired_date: input?.filter?.hired_date,
-              // name: { contains: input?.search?.name },
-              // employee_id: { contains: input?.search?.employee_id },
-              // email: { contains: input?.search?.email },
-              // team: {
-              //   department: {
-              //     id: {
-              //       equals: input?.search?.team?.department?.id,
-              //     },
-              //   },
-              // },
-            },
-            skip: input?.page
-              ? (input.page - 1) * (input.limit ?? 10)
-              : undefined,
-            take: input?.limit ?? 10,
-          }),
-          ctx.prisma.user.count({
-            where: {
-              NOT: {
-                deleted: true,
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+              take: input?.limit ?? 10,
+            }),
+            ctx.prisma.user.count({
+              where: {
+                NOT: {
+                  deleted: true,
+                },
               },
-            },
-          }),
-        ],
-        {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        }
-      )
+            }),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        )
 
-      return {
-        user,
-        pages: Math.ceil(count / (input?.limit ?? 0)),
-        total: count,
+        return {
+          user,
+          pages: Math.ceil(count / (input?.limit ?? 0)),
+          total: count,
+        }
+      } catch (error) {
+        console.log(error)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
       }
-    } catch (error) {
-      console.log(error)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: JSON.stringify(error),
-      })
-    }
-  }),
+    }),
   findValidate: authedProcedure
     .input(z.number())
     .query(async ({ input, ctx }) => {

@@ -133,16 +133,12 @@ const DisplayUsers = (props: {
               <i className="fa-solid fa-print text-xs" />
               Generate CVs
             </button> */}
-            <button
-              onClick={() => {
-                
-                <Link href={"reports/register"}></Link>
-              }}
-              className="-md flex gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none"
-            >
-              <i className="fa-regular fa-plus text-xs" />
-              Register
-            </button>
+            <Link href={"/reports/register"}>
+              <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
+                <i className="fa-regular fa-plus text-xs" />
+                <p>Register</p>
+              </div>
+            </Link>
           </div>
         </div>
 

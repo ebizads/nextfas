@@ -48,11 +48,15 @@ const EmployeeTable = (props: {
     if (!updateRecord && editable) {
       setEditable(false)
     }
-  }, [setEditable, updateRecord])
+  }, [setEditable, updateRecord, editable])
 
   useEffect(() => {
     console.log("editable: " + editable, "updateRecord: " + updateRecord)
   })
+
+  if (editable) {
+    console.log("dapat maging editable");
+  }
 
   return (
     <div

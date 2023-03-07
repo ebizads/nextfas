@@ -45,7 +45,7 @@ const LogOutPopOver = (props: {
         openModalDesc={validateIsVisible}
         setOpenModalDesc={setValidate}
       ></UserValidateModal>
-      
+
       <Popover
         opened={props.openPopover}
         onClose={() => props.setOpenPopover(false)}

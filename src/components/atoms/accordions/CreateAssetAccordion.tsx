@@ -862,6 +862,7 @@ const CreateAssetAccordion = () => {
                       size="sm"
                       value={dep_end}
                       disabled={!Boolean(dep_start)}
+                      //
                       minDate={dep_start ? dep_start : new Date()}
                       onChange={(value) => {
                         setDepEnd(value)
@@ -1030,6 +1031,10 @@ const CreateAssetAccordion = () => {
             </div>
           </div>
         </Modal> */}
+
+
+
+        {/* */}
       </form>
     </div>
   )

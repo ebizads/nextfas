@@ -54,7 +54,7 @@ const ChangePassModal = (props: {
   if (Boolean(user?.passwordAge)) {
     dayNow = Number(
       (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
-        (1000 * 60 * 60 * 24)
+      (1000 * 60 * 60 * 24)
     )
   }
 
@@ -198,7 +198,7 @@ const ChangePassModal = (props: {
           className="flex flex-col space-y-4"
         >
           {/* <div className="flex w-full gap-7 py-2"> */}
-          <div className="my-5 flex w-full flex-col gap-4 py-2">
+          <div className="mb-4 flex w-full flex-col gap-4 py-2">
             <label className="font-semibold">Password</label>
 
             <input
@@ -221,7 +221,7 @@ const ChangePassModal = (props: {
             />
             {passIncorrect && (
               <div>
-                <p>Password not match.</p>
+                <p className="text-red-600">Passwords do not match.</p>
               </div>
             )}
           </div>

@@ -19,6 +19,7 @@ import { SelectValueType } from "../../components/atoms/select/TypeSelect"
 import moment from "moment"
 import { ImageJSON } from "../../types/table"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
+import Employee from "../employees"
 
 type User = z.infer<typeof CreateUserInput>
 
@@ -46,6 +47,13 @@ const Register2 = () => {
   const teamList = useMemo(() => {
     const list = teams?.teams.map((team) => {
       return { value: team.id.toString(), label: team.name }
+    }) as SelectValueType[]
+    return list ?? []
+  }, [teams]) as SelectValueType[]
+
+  const teamList1 = useMemo(() => {
+    const list = teams?.teams.map((team) => {
+      return { value: team.id.toString(), label: team.department?.name }
     }) as SelectValueType[]
     return list ?? []
   }, [teams]) as SelectValueType[]
@@ -136,7 +144,7 @@ const Register2 = () => {
   }
 
   return (
-    <main className="container mx-auto flex flex-col justify-center p-4">
+    <main className="container mx-auto flex flex-col justify-center p-2">
       <h3 className="mb-2 bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text text-xl font-bold leading-normal text-transparent md:text-[2rem]">
         Register
       </h3>
@@ -146,32 +154,35 @@ const Register2 = () => {
         noValidate
       >
         <div className="flex w-full flex-wrap gap-4 py-2.5">
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">First Name</label>
+          <div className="flex w-[32.3%] flex-col">
+            {/* <label className="sm:text-sm"></label> */}
             <InputField
               register={register}
               name="profile.first_name"
               type={"text"}
-              label={""}
+              label={"First Name"}
+              required
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
           </div>
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Middle Name (Optional)</label>
+          <div className="flex w-[32.3%] flex-col">
+            {/* <label className="sm:text-sm">Middle Name (Optional)</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Middle Name (Optional)"}
               name={"profile.middle_name"}
               register={register}
+
             />
           </div>
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Last Name</label>
+          <div className="flex w-[32.3%] flex-col">
+            {/* <label className="sm:text-sm">Last Name</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Last Name"}
               name={"profile.last_name"}
               register={register}
+              required
             />
             <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
           </div>
@@ -188,15 +199,15 @@ const Register2 = () => {
           />
           <PasswordChecker password={watch().password} /> */}
         <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Team</label>
+          <div className="flex w-[32.3%] flex-col">
+            <label className="sm:text-sm">Team<span className="text-red-500">*</span></label>
             <Select
               placeholder="Pick one"
               onChange={(value) => {
                 setValue("teamId", Number(value))
                 onSearchChange(value ?? "")
               }}
-              
+
               value={searchValue}
               data={teamList}
               styles={(theme) => ({
@@ -225,7 +236,7 @@ const Register2 = () => {
             <AlertInput>{errors?.teamId?.message}</AlertInput>
           </div>
 
-          <div className="flex w-[32%] flex-col">
+          <div className="flex w-[32.3%] flex-col">
             <label className="sm:text-sm">User Number</label>
             {/* <InputField
               disabled
@@ -238,18 +249,19 @@ const Register2 = () => {
               name={"user_Id"}
               register={register}
             /> */}
-            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
+            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
               {`${env.NEXT_PUBLIC_CLIENT_USER_ID}`}
               {userId}
             </p>
           </div>
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Designation / Position</label>
+          <div className="flex w-[32.3%] flex-col">
+            {/* <label className="sm:text-sm">Designation / Position</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Designation / Position"}
               name={"position"}
               register={register}
+              required
             />
 
             <AlertInput>{errors?.position?.message}</AlertInput>
@@ -258,31 +270,53 @@ const Register2 = () => {
 
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm">Email</label>
+            {/* <label className="sm:text-sm">Email</label> */}
             <InputField
               // disabled={!editable}
               type={"text"}
-              label={""}
+              label={"Email"}
               name={"email"}
               register={register}
               placeholder={"--@email.com"}
+              required
             />
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
           <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm">Departmemt</label>
-            {/* <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              // disabled={!editable}
-              label={""}
-              value={props.employee?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
-            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
-              {"--"}
-            </p>
+            <label className="sm:text-sm">Deparment<span className="text-red-500">*</span></label>
+            <Select
+              placeholder="--"
+              onChange={(value) => {
+                setValue("teamId", Number(value))
+                onSearchChange(value ?? "")
+              }}
+              disabled
+              value={searchValue}
+              data={teamList1}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-2 py-0.5 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  disabled:bg-gray-200 disabled:text-gray-400 "
+            />
+            <AlertInput>{errors?.teamId?.message}</AlertInput>
           </div>
         </div>
 
@@ -330,7 +364,7 @@ const Register2 = () => {
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[18.94%] flex-col">
               <label className="sm:text-sm">Street</label>
               <InputField
                 type={"text"}
@@ -341,7 +375,7 @@ const Register2 = () => {
               <AlertInput>{errors?.address?.street?.message}</AlertInput>
             </div>
 
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[18.94%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
@@ -352,7 +386,7 @@ const Register2 = () => {
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
             </div>
 
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[18.94%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
                 type={"text"}
@@ -363,7 +397,7 @@ const Register2 = () => {
 
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[18.94%] flex-col">
               <label className="sm:text-sm">Zip Code</label>
               <InputField
                 type={"text"}
@@ -373,7 +407,7 @@ const Register2 = () => {
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[18.94%] flex-col">
               <label className="sm:text-sm">Country</label>
               <InputField
                 type={"text"}
@@ -394,14 +428,16 @@ const Register2 = () => {
           isLoading={isLoadingNow}
           acceptingMany={false}
         /> */}
-        <button
-          type="submit"
-          className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-          disabled={isLoading}
-          onClick={() => setPassword(generateRandomPass())}
-        >
-          {isLoading ? "Loading..." : "Register"}
-        </button>
+        <div className="mt-2 flex w-full justify-end gap-2 text-lg">
+          <button
+            type="submit"
+            className=" rounded-md bg-tangerine-500  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            disabled={isLoading}
+            onClick={() => setPassword(generateRandomPass())}
+          >
+            {isLoading ? "Loading..." : "Register"}
+          </button>
+        </div>
       </form>
       {error && (
         <pre className="mt-2 text-sm italic text-red-500">
@@ -426,16 +462,19 @@ const Register2 = () => {
               Password: {passwordCheck}
             </p>
           </div>
-          <button
-            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            onClick={() => {
-              setCompleteModal(false)
-              setUserId(moment().format("YY-MDhms"))
-              setCertificate(generateCertificate())
-            }}
-          >
-            Close
-          </button>
+          <hr className="w-full absolute left-0 bottom-[5.5rem]" />
+          <div className="flex flex-row justify-end mt-16">
+            <button
+              className="w-[20%] rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+              onClick={() => {
+                setCompleteModal(false)
+                setUserId(moment().format("YY-MDhms"))
+                setCertificate(generateCertificate())
+              }}
+            >
+              Close
+            </button>
+          </div>
         </div>
       </Modal>
     </main>

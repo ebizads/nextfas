@@ -1443,7 +1443,7 @@ const CreateDisposeAccordion = () => {
         isVisible={completeModal}
         setIsVisible={setCompleteModal}
         className="max-w-2xl"
-        title="Asset Disposed"
+        title="Dispose Asset"
       >
         <div className="flex w-full flex-col px-4 pt-2">
           <div>

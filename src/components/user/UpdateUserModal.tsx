@@ -93,15 +93,12 @@ const UpdateUserModal = (props: {
   const onSubmit = async (userForm: User) => {
     // Register function
     console.log(userForm)
-  
     mutate({
       ...userForm,
-      name: `${
-        userForm.profile?.first_name
-          ? userForm.profile?.first_name
-          : user?.profile?.first_name
-      } ${
-        userForm.profile?.last_name
+      name: `${userForm.profile?.first_name
+        ? userForm.profile?.first_name
+        : user?.profile?.first_name
+        } ${userForm.profile?.last_name
           ? userForm.profile?.last_name
           : user?.profile?.last_name
       }`,
@@ -431,31 +428,31 @@ const UpdateUserModal = (props: {
             )
           )}
           <Modal
-              isVisible={completeModal}
-              setIsVisible={setCompleteModal}
-              className="max-w-2xl"
-              title="Updated User Account"
-            >
-              <div className="flex w-full flex-col px-4 py-2">
-                <div>
-                  <p className="text-center text-lg font-semibold">
-                    User updated successfully.
-                  </p>
-                </div>
-                <div className="flex justify-end py-2">
-                  <button
-                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={() => {
-                      setCompleteModal(false)
-                      props.setIsVisible(false)
-                      setCertificate(generateCertificate())
-                    }}
-                  >
-                    Close
-                  </button>
-                </div>
+            isVisible={completeModal}
+            setIsVisible={setCompleteModal}
+            className="max-w-2xl"
+            title="Updated User Account"
+          >
+            <div className="flex w-full flex-col px-4 py-2">
+              <div>
+                <p className="text-center text-lg font-semibold">
+                  User validated and updated successfully.
+                </p>
               </div>
-            </Modal>
+              <div className="flex justify-end py-2">
+                <button
+                  className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={() => {
+                    setCompleteModal(false)
+                    props.setIsVisible(false)
+                    setCertificate(generateCertificate())
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </Modal>
           {isEditable && (
             <button
               type="submit"

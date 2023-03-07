@@ -142,21 +142,15 @@ const UserTable = (props: {
                       // console.log(row)
                       // ternary operator that returns special values for date, name, and address
                       col.value === "team"
-                        ? row?.Userteam?.name
-                          ? row?.Userteam?.name
-                          : "--"
+
+                        ? (row?.Userteam?.name ? row?.Userteam?.name : "--")
                         : col.value === "hired_date"
-                        ? row?.hired_date?.toDateString()
-                          ? row?.hired_date?.toDateString()
-                          : "--"
-                        : col.value.match(/_name/g)
-                        ? getNameUser(col.value, row)
-                        : col.value === "city"
-                        ? getAddressUser(row).includes("undefined")
-                          ? "--"
-                          : getAddressUser(row)
-                        : getProperty(col.value, row)
-                    }
+                          ? (row?.hired_date?.toDateString() ? row?.hired_date?.toDateString() : "--")
+                          : col.value.match(/_name/g)
+                            ? getNameUser(col.value, row)
+                            : col.value === "city"
+                              ? ((getAddressUser(row).includes("undefined")) ? "--" : getAddressUser(row))
+                              : getProperty(col.value, row)                    }
                   </td>
                 ))}
               {/* <td className="max-w-[10rem] space-x-2 text-center">

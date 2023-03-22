@@ -70,10 +70,10 @@ export const getPropertyDisposal = (
 
 export const getName = (filter: string, type: EmployeeType) => {
   return filter === "first_name"
-    ? Object.getOwnPropertyDescriptor(type?.profile, "first_name")?.value
+    ? Object.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object.getOwnPropertyDescriptor(type?.profile, "middle_name")?.value
-    : Object.getOwnPropertyDescriptor(type?.profile, "last_name")?.value
+    ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+    : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getNameUser = (filter: string, type: UserType) => {

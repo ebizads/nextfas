@@ -19,7 +19,6 @@ const Assets = () => {
     page,
   })
   const [completeModal, setCompleteModal] = useState<boolean>(false)
-
   const [assets, setAssets] = useState<AssetType[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
 

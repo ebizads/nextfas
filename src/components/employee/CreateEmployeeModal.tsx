@@ -110,7 +110,7 @@ export const CreateEmployeeModal = (props: {
         city: employee.address?.city,
         country: employee.address?.country,
         street: employee.address?.street,
-        state: employee.address?.state,
+        // state: employee.address?.state,
         zip: employee.address?.zip,
       },
       profile: {
@@ -302,7 +302,7 @@ export const CreateEmployeeModal = (props: {
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[25%] flex-col">
               <label className="sm:text-sm">Street</label>
               <InputField
                 type={"text"}
@@ -311,7 +311,7 @@ export const CreateEmployeeModal = (props: {
                 register={register}
               />
             </div>
-            <div className="flex w-[18.4%] flex-col">
+            {/* <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
@@ -322,7 +322,7 @@ export const CreateEmployeeModal = (props: {
 
 
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
-            </div>
+            </div> */}
             <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField

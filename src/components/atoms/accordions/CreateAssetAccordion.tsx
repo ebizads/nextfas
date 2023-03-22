@@ -391,9 +391,9 @@ const CreateAssetAccordion = () => {
                   <div className="col-span-4">
                     <InputField
                       register={register}
-                      label="Name"
+                      label="Asset Name"
                       name="name"
-                      placeholder="Name"
+                      placeholder="Asset Name"
                       required
                     />
                     <AlertInput>{errors?.name?.message}</AlertInput>
@@ -541,6 +541,7 @@ const CreateAssetAccordion = () => {
                   <div className=" col-span-3">
                     <InputField
                       type="number"
+                      required
                       register={register}
                       label="Residual Value Percentage"
                       placeholder="Residual Value Percentage"
@@ -770,7 +771,7 @@ const CreateAssetAccordion = () => {
                       setValue={setValue}
                       value={getValues("management.currency")}
                       title={"Currency"}
-                      placeholder={"Select currency type"}
+                      placeholder={"Select currency"}
                       data={[
                         { value: "PHP", label: "Philippine Peso (Php)" },
                         { value: "USD", label: "US Dollar (USD)" },
@@ -803,7 +804,7 @@ const CreateAssetAccordion = () => {
                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">Purchase Date</p>
                     <DatePicker
-                      placeholder="Month Day, Year"
+                      placeholder="Month, Day, Year"
                       allowFreeInput
                       size="sm"
                       onChange={(value) => {
@@ -856,7 +857,7 @@ const CreateAssetAccordion = () => {
                     </p>
                     <DatePicker
                       placeholder={
-                        dep_start ? "Month, Day, Year" : "Select start ffirst"
+                        dep_start ? "Month, Day, Year" : "Select start date first"
                       }
                       allowFreeInput
                       size="sm"
@@ -895,8 +896,6 @@ const CreateAssetAccordion = () => {
                     placeholder="Month, Day, Year"
                     // allowFreeInput
                     size="sm"
-                    value={dep_start}
-                    disabled
                     classNames={{
                       input:
                         "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400",
@@ -921,6 +920,7 @@ const CreateAssetAccordion = () => {
                     register={register}
                     label="Asset Quantity"
                     placeholder="Asset Quantity"
+                    value="1"
                     name="management.asset_quantity"
                   />
                 </div>

@@ -300,7 +300,7 @@ export const UpdateVendorModal = (props: {
               disabled={!isEditable}
             />
           </div>
-          <div className="flex w-[18.4%] flex-col">
+          {/* <div className="flex w-[18.4%] flex-col">
             <label className="sm:text-sm">Barangay</label>
             <InputField
               type={"text"}
@@ -312,7 +312,7 @@ export const UpdateVendorModal = (props: {
 
 
             <AlertInput>{errors?.address?.state?.message}</AlertInput>
-          </div>
+          </div> */}
           <div className="flex w-[18.4%] flex-col">
             <label className="sm:text-sm">City</label>
             <InputField

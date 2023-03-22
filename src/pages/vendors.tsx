@@ -298,7 +298,7 @@ const Vendors = () => {
                     name="fax_no"
                     type="text"
                   /> */}
-                  <label className="sm:text-sm mb-2">Fax Number</label>
+                  <label className="sm:text-sm mb-2">Fax Number/LandLine Number</label>
                   <input
                     // disabled={!isEditable}
 
@@ -335,7 +335,7 @@ const Vendors = () => {
                   />
                   <AlertInput>{errors?.website?.message}</AlertInput>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-3">
                   <label className="sm:text-sm">Street</label>
                   <InputField
                     type={"text"}
@@ -344,7 +344,7 @@ const Vendors = () => {
                     register={register}
                   />
                 </div>
-                <div className="col-span-2">
+                {/* <div className="col-span-2">
                   <label className="sm:text-sm">Barangay</label>
                   <InputField
                     type={"text"}
@@ -355,7 +355,7 @@ const Vendors = () => {
 
 
                   <AlertInput>{errors?.address?.state?.message}</AlertInput>
-                </div>
+                </div> */}
                 <div className="col-span-2">
                   <label className="sm:text-sm">City</label>
                   <InputField

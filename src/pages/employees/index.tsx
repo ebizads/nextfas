@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 import DashboardLayout from '../../layouts/DashboardLayout'
 import { trpc } from '../../utils/trpc'
 import DisplayEmployees from '../../components/employee/DisplayEmployees'
+import { useSearchStore } from '../../store/useStore'
 
 const Employee = () => {
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(10)
-
+    const { search } = useSearchStore()
+    
     const { data } = trpc.employee.findAll.useQuery({
+        search: { employee_id: search },
         limit,
         page,
     })

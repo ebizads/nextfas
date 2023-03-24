@@ -49,7 +49,7 @@ const DisplayAssets = (props: {
           <div className="flex items-center gap-2">
             <div className="flex w-fit items-center gap-2">
               <div className="flex-1">
-                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset" onChange={(e) => setSearch(e.currentTarget.value)}>
+                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset No" onChange={(e) => setSearch(e.currentTarget.value)}>
                 </input>
                 {/* <Search
                   data={[
@@ -85,7 +85,7 @@ const DisplayAssets = (props: {
           <div className="flex items-center gap-2">
             <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
               <i className="fa-solid fa-print text-xs" />
-              Print CVs
+              Print Asset
             </button>
             <Link href={"/assets/create"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">

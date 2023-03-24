@@ -152,12 +152,8 @@ export const employeeRouter = t.router({
           data: {
             ...rest,
             profile: {
-              connectOrCreate: {
-                where: {
-                  id: 0,
-                },
-                create: profile,
-              },
+              
+                create: profile ?? undefined
             },
             address: {
               connectOrCreate: {

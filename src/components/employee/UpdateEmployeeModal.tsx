@@ -310,7 +310,7 @@ export const UpdateEmployeeModal = (props: {
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[20%] flex-col">
               <label className="sm:text-sm">Street</label>
               <InputField
                 type={"text"}
@@ -320,7 +320,7 @@ export const UpdateEmployeeModal = (props: {
                 disabled={!isEditable}
               />
             </div>
-            <div className="flex w-[18.4%] flex-col">
+            {/* <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
@@ -332,7 +332,7 @@ export const UpdateEmployeeModal = (props: {
 
 
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
-            </div>
+            </div> */}
             <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField

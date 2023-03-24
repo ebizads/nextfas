@@ -60,7 +60,7 @@ const DisplayTransferAssets = (props: {
                             <div className="flex-1">
                                 <div className="w-full py-4">
                                     <div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm py-2">
-                                        <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset" onChange={(e) => setSearch(e.currentTarget.value)}>
+                                        <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset No." onChange={(e) => setSearch(e.currentTarget.value)}>
 
                                             {/* <input
 											type="text"

@@ -119,12 +119,13 @@ export const formatBytes = (bytes: number) => {
 export const downloadExcel = (data: ExcelExportType[]) => {
   // if (!data) {
   // csv null fall back
-  const worksheet = XLSX.utils.json_to_sheet(data ?? [])
+  // const worksheet = XLSX.utils.json_to_sheet(data || [])
+  const worksheet = XLSX.utils.json_to_sheet(data !== null && data !== undefined ? data : [])
   const workbook = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "DataSheet.xlsx")
+  XLSX.writeFile(workbook, "Employee_Sheet.xlsx")
   // }
 
   return

@@ -23,7 +23,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <TopBar />
         {/* Content */}
 
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence mode="wait">
           <AnimatedPage>
             <section className={`flex w-full flex-1 flex-col p-4`}>
               {children}

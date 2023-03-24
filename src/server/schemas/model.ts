@@ -64,7 +64,7 @@ export const ParentEditInput = z.object({
 })
 
 export const ModelCreateInput = z.object({
-  name: z.string().min(1, "Please provide model name"),
+  name: z.string().optional(),
   brand: z.string().optional(),
   number: z.string().optional(),
 
@@ -78,7 +78,7 @@ export const ModelCreateInput = z.object({
 
 export const ModelEditInput = z.object({
   id: z.number().optional(),
-  name: z.string().min(1, "Please provide model name"),
+  name: z.string().min(1),
   brand: z.string(),
   number: z.string(),
 
@@ -96,7 +96,7 @@ export const ManagementCreateInput = z.object({
   original_cost: z.number().optional().nullish(),
   current_cost: z.number().optional().nullish(),
   residual_value: z.number().nullish().nullish(),
-  residual_percentage: z.number().nullish().nullish(),
+  residual_percentage: z.number({required_error: "Cost"}),
   purchase_date: z.date().nullish(),
 
   depreciation_start: z.date().nullish(),

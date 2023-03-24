@@ -45,6 +45,10 @@ import { clearAndGoBack } from "../../../lib/functions"
 
 
 const CreateAssetAccordion = () => {
+
+
+
+
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
 
   const {
@@ -102,6 +106,7 @@ const CreateAssetAccordion = () => {
   const [classId, setClassId] = useState<string | null>(null)
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [typeId, setTypeId] = useState<string | null>(null)
+  const [serialId, setSerialId] = useState<string | null>(null)
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [departmentId, setDepartmentId] = useState<string | null>(null)
 
@@ -152,6 +157,7 @@ const CreateAssetAccordion = () => {
         }),
     [companyData]
   ) as SelectValueType[] | undefined
+
 
   //gets and sets all class, categories, and types
   const { data: classData } = trpc.assetClass.findAll.useQuery()
@@ -268,6 +274,7 @@ const CreateAssetAccordion = () => {
     return null
   }, [categoryId, selectedClass])
 
+  //filters data for company
   const company_address = useMemo(() => {
     if (companyId) {
       const address = companyData?.companies.filter(
@@ -356,6 +363,8 @@ const CreateAssetAccordion = () => {
     setFormError(Object.keys(errors).length > 0 ? true : false)
   }, [errors])
 
+
+
   return (
     <div id="contents">
       {formError && <FormErrorMessage setFormError={setFormError} />}
@@ -402,20 +411,11 @@ const CreateAssetAccordion = () => {
                     <InputField
                       register={register}
                       label="Alternate Asset Number"
-                      placeholder="Alternate Asset Number"
+                      placeholder="(Optional)"
                       name="alt_number"
                     />
                     <AlertInput>{errors?.alt_number?.message}</AlertInput>
                   </div>
-                  {/* <div className="col-span-2">
-                    <InputField
-                      register={register}
-                      required
-                      name={"model.typeId"}
-                      label="Type"
-                      placeholder="Enter Asset Type"
-                    />
-                  </div> */}
                 </div>
                 <div className="col-span-3">
                   <InputField
@@ -429,12 +429,11 @@ const CreateAssetAccordion = () => {
                 <div className="col-span-6 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
                     <TypeSelect
-
                       name={"parentId"}
                       setValue={setValue}
                       value={getValues("parentId")?.toString()}
                       title={"Parent Asset"}
-                      placeholder={"Select parent asset"}
+                      placeholder={"Select Parent Asset"}
 
                       data={assetsList ?? []}
                     />
@@ -454,7 +453,6 @@ const CreateAssetAccordion = () => {
                   </div>
                   <div className="col-span-3">
                     <TypeSelect
-                      required
                       name={"vendorId"}
                       setValue={setValue}
                       value={getValues("vendorId")?.toString()}
@@ -467,23 +465,22 @@ const CreateAssetAccordion = () => {
                 </div>
                 <div className="col-span-3">
                   <InputField
-                    required
                     register={register}
-                    label="Model Name"
-                    placeholder="Model Name"
-                    name="model.name"
+                    label="Model Brand"
+                    placeholder="Model Brand"
+                    name="model.brand"
                   />
-                  <AlertInput>{errors?.model?.name?.message}</AlertInput>
+                  <AlertInput>{errors?.model?.brand?.message}</AlertInput>
                 </div>
                 <div className="col-span-6 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
                     <InputField
                       register={register}
-                      label="Model Brand"
-                      placeholder="Model Brand"
-                      name="model.brand"
+                      label="Model Name"
+                      placeholder="Model Name"
+                      name="model.name"
                     />
-                    <AlertInput>{errors?.model?.brand?.message}</AlertInput>
+                    <AlertInput>{errors?.model?.name?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
                     <InputField

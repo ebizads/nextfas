@@ -384,7 +384,6 @@ model Vendor {
   remarks   String?
   image     String?
   fax_no    String?
-  landline_no    String?
   type      String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

@@ -6,8 +6,22 @@ import {
   ModelEditInput,
 } from "./model"
 
+
+//only creates Assets
+// export const AssetOnlyInput = z.object({
+//   name: z.string().min(1, "Please Provide Asset Name"),
+//   number: z.string(),
+//   alt_number: z.string().nullish(),
+//   serial_no: z.string().nullish(),
+//   barcode: z.string().nullish(),
+//   description: z.string().nullish(),
+//   remarks: z.string().nullish(),
+// })
+
+
+
 export const AssetCreateInput = z.object({
-  name: z.string().min(1, "Please provide name"),
+  name: z.string().min(1, "Please Provide Asset Name"),
   number: z.string(),
   alt_number: z.string().nullish(),
   serial_no: z.string().nullish(),
@@ -18,9 +32,9 @@ export const AssetCreateInput = z.object({
   model: ModelCreateInput,
   custodianId: z.number().optional(),
   departmentId: z.number({ required_error: "Please provide a department" }),
-  vendorId: z.number({ required_error: "Please provide a vendor" }),
+  vendorId: z.number().optional(),
   subsidiaryId: z.number({
-    required_error: "Please provide a company/subsidiary",
+  required_error: "Please provide a company/subsidiary",
   }),
   assetProjectId: z.number().optional(),
   parentId: z.number().optional(),
@@ -30,7 +44,7 @@ export const AssetCreateInput = z.object({
 
 export const AssetEditInput = z.object({
   id: z.number(),
-  name: z.string().min(1, "Please provide name").optional(),
+  name: z.string().min(1, "Please Provide Asset Name").optional(),
   number: z.string().optional(),
   alt_number: z.string().optional().nullish(),
   serial_no: z.string().optional().nullish(),

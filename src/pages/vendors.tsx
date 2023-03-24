@@ -268,7 +268,7 @@ const Vendors = () => {
                 <div className="col-span-5">
 
 
-                  <label className="sm:text-sm">Phone Number: {`(use " , " for multiple phone numbers)`}</label>
+                  <label className="sm:text-sm">Mobile Number: {`(use " , " for multiple Mobile numbers)`}</label>
                   <input
                     type="text"
                     className="w-full rounded-md border-2 curs border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
@@ -280,8 +280,6 @@ const Vendors = () => {
                     }}
                     onChange={(event) => {
                       const convertToArray = event.currentTarget.value;
-
-
                       const phonenumString = convertToArray.replace(/[^0-9, ]/gi, "").split(",")
                       setValue("phone_no", phonenumString);
                     }}
@@ -298,7 +296,7 @@ const Vendors = () => {
                     name="fax_no"
                     type="text"
                   /> */}
-                  <label className="sm:text-sm mb-2">Fax Number/LandLine Number</label>
+                  <label className="sm:text-sm mb-2">Fax/Phone Number</label>
                   <input
                     // disabled={!isEditable}
 

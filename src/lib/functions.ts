@@ -104,6 +104,8 @@ export const getAddress = (
   return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
 }
 
+
+
 export const formatBytes = (bytes: number) => {
   if (!+bytes) return "0 Bytes"
 

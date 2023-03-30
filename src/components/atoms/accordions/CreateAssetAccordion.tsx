@@ -12,6 +12,7 @@ import {
   Disabled,
   Search,
 } from "tabler-icons-react"
+import { renderToString } from 'react-dom/server';
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
@@ -570,6 +571,8 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
+
+                    {/* General Information */}
           <Accordion.Item value={"2"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
@@ -800,8 +803,11 @@ const CreateAssetAccordion = () => {
 
                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">Purchase Date</p>
+                    
                     <DatePicker
-                      placeholder="Month, Day, Year"
+                      placeholder={
+                         "Month, Day, Year                                                    📅"
+                        }
                       allowFreeInput
                       size="sm"
                       onChange={(value) => {
@@ -810,8 +816,8 @@ const CreateAssetAccordion = () => {
                       classNames={{
                         input:
                           "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                      }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                    />
+                      }}
+                     />
                   </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-6 gap-7">
@@ -834,7 +840,7 @@ const CreateAssetAccordion = () => {
                       Depreciation Start Date
                     </p>
                     <DatePicker
-                      placeholder="Month, Day, Year"
+                      placeholder={"Month, Day, Year                                                    📅"}
                       allowFreeInput
                       size="sm"
                       value={dep_start}
@@ -890,7 +896,7 @@ const CreateAssetAccordion = () => {
                 <div className="col-span-3 space-y-2">
                   <p className="text-sm text-gray-700">Date of Usage</p>
                   <DatePicker
-                    placeholder="Month, Day, Year"
+                    placeholder={"Month, Day, Year                                                 📅"}
                     // allowFreeInput
                     size="sm"
                     classNames={{

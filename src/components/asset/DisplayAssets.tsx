@@ -49,19 +49,8 @@ const DisplayAssets = (props: {
           <div className="flex items-center gap-2">
             <div className="flex w-fit items-center gap-2">
               <div className="flex-1">
-                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset No" onChange={(e) => setSearch(e.currentTarget.value)}>
+                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset Name" onChange={(e) => setSearch(e.currentTarget.value)}>
                 </input>
-                {/* <Search
-                  data={[
-                    ...props.assets?.map((obj) => {
-                      return {
-                        value: obj ? obj.id.toString() : "",
-                        label: obj ? obj.name.toString() : "",
-                      }
-                    }),
-                  ]}
-
-                /> */}
               </div>
               <FilterPopOver
                 openPopover={openPopover}

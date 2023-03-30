@@ -15,12 +15,12 @@ import AddEmployeePopOver from "../atoms/popover/AddEmployeePopOver"
 import DropZone from "../dropzone/DropZone"
 import { trpc } from "../../utils/trpc"
 import { useSearchStore } from "../../store/useStore"
+import { filter } from "lodash"
 
 // type SearchType = {
 //   value: string
 //   label: string
 // }
-
 // const Search = (props: { data: SearchType[] }) => {
 //   const [value, setValue] = useState<string | null>(null)
 //   return (
@@ -63,11 +63,14 @@ const DisplayEmployees = (props: {
   const utils = trpc.useContext();
   const { search, setSearch } = useSearchStore()
 
+
+  console.log("asdasd", filterBy);
+
   console.log(search)
   useEffect(
     () => {
       setSearch("");
-  
+
     },
     [setSearch]
   
@@ -85,18 +88,8 @@ const DisplayEmployees = (props: {
           <div className="flex items-center gap-2">
             <div className="flex w-fit items-center gap-2">
               <div className="flex-1">
-              <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Employee." onChange={(e) => setSearch(e.currentTarget.value)}>
+              <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Employee" onChange={(e) => setSearch(e.currentTarget.value)}>
                 </input>
-                {/* <Search
-                  data={[
-                    ...props.employees?.map((obj) => {
-                      return {
-                        value: obj?.id.toString() ?? "",
-                        label: obj?.name ?? "",
-                      }
-                    }),
-                  ]}
-                /> */}
               </div>
               <FilterPopOver
                 openPopover={openPopover}
@@ -138,7 +131,7 @@ const DisplayEmployees = (props: {
               className="-md flex gap-2 bg-tangerine-500 py-2 px-4 text-xs rounded-md text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
             >
               <i className="fa-solid fa-print text-xs" />
-              Generate Excel
+              Generate Table
             </button>
             <AddEmployeePopOver openPopover={openAddPopover} setOpenPopover={setOpenAddPopover} setAddSingleRecord={setAddSingleRecord} setAddBulkRecord={setAddBulkRecord} />
           </div>
@@ -151,6 +144,7 @@ const DisplayEmployees = (props: {
           filterBy={filterBy}
           columns={columns.filter((col) => filterBy.includes(col.value))}
         />
+        
       </section>
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">

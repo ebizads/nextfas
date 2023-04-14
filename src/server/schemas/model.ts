@@ -64,7 +64,7 @@ export const ParentEditInput = z.object({
 })
 
 export const ModelCreateInput = z.object({
-  name: z.string().optional(),
+  name: z.string(),
   brand: z.string().optional(),
   number: z.string().optional(),
 

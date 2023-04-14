@@ -43,6 +43,7 @@ import { useSession } from "next-auth/react"
 import { FormErrorMessage } from "./UpdateAssetAccordion"
 import InputNumberField from "../forms/InputNumberField"
 import { clearAndGoBack } from "../../../lib/functions"
+ 
 
 
 const CreateAssetAccordion = () => {
@@ -970,7 +971,7 @@ const CreateAssetAccordion = () => {
                     className="flex h-[10rem] w-[25rem] items-center justify-center rounded-md border-2 border-dashed border-neutral-400"
                   >
                     <p className="text-center italic text-neutral-400">
-                      Barcode will appear here, please select `company a`nd
+                      Barcode will appear here, please select company and
                       department
                     </p>
                   </div>

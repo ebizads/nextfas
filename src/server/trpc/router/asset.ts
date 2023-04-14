@@ -3,6 +3,7 @@ import {
   AssetCreateInput,
   AssetEditInput,
   AssetUpdateInput,
+  AssetOnlyInput,
 } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
@@ -124,6 +125,7 @@ export const assetRouter = t.router({
     }),
   create: authedProcedure
     .input(AssetCreateInput)
+    // .input(AssetOnlyInput)
     .mutation(async ({ ctx, input }) => {
       const {
         management,
@@ -135,6 +137,21 @@ export const assetRouter = t.router({
         assetProjectId,
         parentId,
         addedById,
+        // name,
+        // number,
+        // alt_number,
+        // serial_no,
+        // description,
+        // name,
+        // number,
+        // alt_numberz,
+        // serial_no,
+        // barcode,
+        // description,
+        // remarks,
+        // addedById,
+        // departmentId,
+        // subsidiaryId,
         ...rest
       } = input
 

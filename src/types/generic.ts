@@ -5,6 +5,7 @@ import {
   AssetCreateInput,
   AssetEditInput,
   AssetUpdateInput,
+  AssetOnlyInput
 } from "../server/schemas/asset"
 import { EmployeeCreateInput } from "../server/schemas/employee"
 import { AppRouter } from "../server/trpc/router"
@@ -35,6 +36,7 @@ export type EmployeeFieldValues = z.infer<typeof EmployeeCreateInput>
 
 //asset field types
 export type AssetFieldValues = z.infer<typeof AssetCreateInput>
+export type AssetFieldnPurchase = z.infer<typeof AssetOnlyInput>
 export type AssetEditFieldValues = z.infer<typeof AssetUpdateInput>
 export type TicketHandlerValues = z.infer<typeof ticketTableCreate>
 

@@ -7,16 +7,30 @@ import {
 } from "./model"
 
 
-//only creates Assets
-// export const AssetOnlyInput = z.object({
-//   name: z.string().min(1, "Please Provide Asset Name"),
-//   number: z.string(),
-//   alt_number: z.string().nullish(),
-//   serial_no: z.string().nullish(),
-//   barcode: z.string().nullish(),
-//   description: z.string().nullish(),
-//   remarks: z.string().nullish(),
-// })
+//only creates Assets & purchase info
+export const AssetOnlyInput = z.object({
+  name: z.string().min(1, "Please Provide Asset Name"),
+  number: z.string(),
+  alt_numberz: z.string().nullish(),
+  category: z.string().nullish(),
+  serial_no: z.string().nullish(),
+  barcode: z.string().nullish(),
+  description: z.string().nullish(),
+  remarks: z.string().nullish(),
+  addedById: z.number().optional(),
+  departmentId: z.number({ required_error: "Please provide a department" }),
+  subsidiaryId: z.number({required_error: "Please provide a company/subsidiary",}),
+ })
+
+
+//for GeneralInfo
+export const GeneralInfo = z.object({
+  originalCost: z.string().nullish(),
+  assetLifetime: z.string({required_error: "Please provide a department"}).nullish(),
+  residualValue: z.string().nullish(),
+  currentCost: z.string().nullish(),
+  residual: z.string().nullish(),
+})
 
 
 
@@ -33,9 +47,7 @@ export const AssetCreateInput = z.object({
   custodianId: z.number().optional(),
   departmentId: z.number({ required_error: "Please provide a department" }),
   vendorId: z.number().optional(),
-  subsidiaryId: z.number({
-  required_error: "Please provide a company/subsidiary",
-  }),
+  subsidiaryId: z.number({required_error: "Please provide a company/subsidiary",}),
   assetProjectId: z.number().optional(),
   parentId: z.number().optional(),
   addedById: z.number().optional(),

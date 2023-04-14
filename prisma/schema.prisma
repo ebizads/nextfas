@@ -402,6 +402,7 @@ model Asset {
   barcode        String?
   description    String?
   remarks        String?
+  category       Int?
   parentId       Int?
   modelId        Int?             @unique
   custodianId    Int?

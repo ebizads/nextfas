@@ -3,6 +3,7 @@
 import { UserType } from "../types/generic"
 import { ColumnType, DetailType, NavType } from "../types/table"
 
+
 export const columns = [
   { value: "number", name: "Asset No." },
   { value: "serial_no", name: "Serial No." },

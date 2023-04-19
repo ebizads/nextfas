@@ -14,6 +14,7 @@ import { teamRouter } from "./team"
 import { ticketRouter } from "./ticket"
 import { userRouter } from "./user"
 import { vendorRouter } from "./vendor"
+import { maintenanceRouter } from "./maintenance"
 
 export const appRouter = t.router({
   user: userRouter,
@@ -31,6 +32,7 @@ export const appRouter = t.router({
   disposalType: disposalTypeRouter,
   assetRepair: assetRepairRouter,
   ticketTable: ticketRouter,
+  maintenance: maintenanceRouter,
 })
 
 // export type definition of API

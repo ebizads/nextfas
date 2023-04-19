@@ -22,6 +22,12 @@ export const columnsuser = [
   { value: "email", name: "Email" },
 ] as ColumnType[]
 
+export const locationColumn = [
+  { value: "assetLocation", name: "Asset Location" },
+  { value: "floor", name: "Floor" },
+  { value: "room", name: "Room" },
+] as ColumnType[]
+
 // export const asset_info = [
 //   { type: "name", label: "Name" },
 //   { type: "description", label: "Description" },

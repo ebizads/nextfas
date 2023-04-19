@@ -180,6 +180,7 @@ model Location {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
   deleted     Boolean      @default(false)
+  building    String?
   departments Department[]
 }
 
@@ -402,7 +403,6 @@ model Asset {
   barcode        String?
   description    String?
   remarks        String?
-  category       Int?
   parentId       Int?
   modelId        Int?             @unique
   custodianId    Int?
@@ -417,6 +417,7 @@ model Asset {
   addedById      Int?
   status         String?
   userArchiveId  Int?
+  category       Int?
   addedBy        User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
   custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)

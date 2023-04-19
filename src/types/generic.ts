@@ -27,6 +27,9 @@ export type EmployeeType = inferProcedureOutput<
   AppRouter["employee"]["findOne"]
 >
 
+export type LocationType = inferProcedureOutput<
+  AppRouter["maintenance"]["findOne"]
+>
 export type DisposeType = inferProcedureOutput<
   AppRouter["assetDisposal"]["findOne"]
 >

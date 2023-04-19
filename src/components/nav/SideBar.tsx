@@ -5,6 +5,7 @@ import React, { useMemo } from "react"
 import { navigations } from "../../lib/table"
 import { useMinimizeStore } from "../../store/useStore"
 import NavAccordion from "../atoms/accordions/NavAccordion"
+import MaintenanceNavAccordion from "../atoms/accordions/MaintenanceAccordion"
 import UserNavAccordion from "../atoms/accordions/UserNavAccordion"
 import { trpc } from "../../utils/trpc"
 import { useSession } from "next-auth/react"
@@ -103,6 +104,13 @@ const SideBar = () => {
           minimize={minimize}
           setMinimize={setMinimize}
         />
+        
+        <MaintenanceNavAccordion
+          paths={paths}
+          minimize={minimize}
+          setMinimize={setMinimize}
+        />
+
         {navigations.map((page, idx) => (
           <div
             key={idx}
@@ -133,11 +141,13 @@ const SideBar = () => {
             </Link>
           </div>
         ))}
-        {(user?.user_type ?? "") === "admin" && <UserNavAccordion
-          paths={paths}
-          minimize={minimize}
-          setMinimize={setMinimize}
-        />}
+        {(user?.user_type ?? "") === "admin" && (
+          <UserNavAccordion
+            paths={paths}
+            minimize={minimize}
+            setMinimize={setMinimize}
+          />
+        )}
       </div>
     </div>
   )

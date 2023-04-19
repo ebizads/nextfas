@@ -53,6 +53,7 @@ export const CreateArchiveUser = z.object({
   old_id: z.number().optional(),
   teamId: z.number().nullish(),
 })
+
 export const ChangeUserPass = z.object({
   id: z.number(),
   password: z

@@ -45,6 +45,7 @@ export const employeeColumns = [
   { value: "email", name: "Email" },
 ] as ColumnType[]
 
+
 export const disposalColumn = [
   { value: "asset.number", name: "Asset No." },
   { value: "asset.name", name: "Asset Name" },
@@ -122,6 +123,13 @@ export const navigations = [
     icon: "fa-store",
     link: "/vendors",
   },
+  
+  // {
+  //   name: "Maintenance",
+  //   icon: "fa-gears",
+  //   link: "/maintenance"
+  // },
+
   // {
   //   name: "User Management",
   //   icon: "fa-user-pen",

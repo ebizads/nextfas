@@ -103,7 +103,7 @@ export const UpdateEmployeeModal = (props: {
     }
   };
 
-  // useEffect(() => { console.log("department: " + props.employee?.team?.department?.name) })
+  useEffect(() => { console.log("department: " + props.employee?.team?.department?.name) })
 
 
 

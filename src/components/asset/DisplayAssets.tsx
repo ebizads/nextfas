@@ -9,8 +9,9 @@ import FilterPopOver from "../atoms/popover/FilterPopOver"
 import Search from "../atoms/search/Search"
 import { useSearchStore } from "../../store/useStore"
 import InputField from "../atoms/forms/InputField"
-import { currentValue } from "../../lib/functions"
+import { currentValue, downloadExcel } from "../../lib/functions"
 import { UserType } from "../../types/generic"
+import { ExcelExportType } from "../../types/employee"
 
 const DisplayAssets = (props: {
   user: UserType
@@ -72,7 +73,21 @@ const DisplayAssets = (props: {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
+            <button onClick={()=>{
+              const downloadableAssets = props.assets.map((asset)=>{
+                if (asset?.['project'] && asset?.['name']){
+                  const {project, department, ...rest} = asset 
+                  return {
+                    ...rest,
+                    project_id: project.id,
+                    ...project,
+                    depatment_id: department?.id,
+                    ...department,
+                    id: rest.id
+                  }
+                }}) as ExcelExportType[]
+              downloadExcel(downloadableAssets)
+            }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
               <i className="fa-solid fa-print text-xs" />
               Print Asset
             </button>

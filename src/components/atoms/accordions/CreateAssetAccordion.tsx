@@ -742,11 +742,11 @@ const CreateAssetAccordion = () => {
                         name={"model.typeId"}
                         setValue={setValue}
                         value={getValues("model.typeId")?.toString()}
-                        title={"Type"}
+                        title={"Device type"}
                         placeholder={
                           !Boolean(categoryId)
                             ? "Select asset category first"
-                            : "Select asset type"
+                            : "Select device type"
                         }
                         data={types ?? []}
                       />
@@ -764,7 +764,22 @@ const CreateAssetAccordion = () => {
                   </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-9 gap-7">
-                  <div className="col-span-3">
+                <div className="col-span-2">
+                      <InputField
+                        register={register}
+                        label="Purchase Order"
+                        placeholder="PO number"
+                        name="management.purchaseOrder"
+                      />
+                    </div>
+                <div className="col-span-2">
+                      <InputField
+                        register={register}
+                        label="Invoice Number"
+                        placeholder="Invoice Number"
+                        name="management.invoiceNumber"/>
+                    </div>
+                  <div className="col-span-2">
                     <TypeSelect
                       isString
                       name={"management.currency"}
@@ -782,7 +797,7 @@ const CreateAssetAccordion = () => {
                     </AlertInput>
                   </div>
 
-                  <div className="col-span-3">
+                  <div className="col-span-2">
                     <TypeSelect
                       isString
                       name={"management.accounting_method"}
@@ -800,27 +815,8 @@ const CreateAssetAccordion = () => {
                       {errors?.management?.accounting_method?.message}
                     </AlertInput>
                   </div>
-
-                  <div className="col-span-3 space-y-2">
-                    <p className="text-sm text-gray-700">Purchase Date</p>
-                    
-                    <DatePicker
-                      placeholder={
-                         "Month, Day, Year                                                    📅"
-                        }
-                      allowFreeInput
-                      size="sm"
-                      onChange={(value) => {
-                        setValue("management.purchase_date", value)
-                      }}
-                      classNames={{
-                        input:
-                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                      }}
-                     />
-                  </div>
                 </div>
-                <div className="col-span-9 grid grid-cols-6 gap-7">
+                <div className="col-span-9 grid grid-cols-9 gap-7">
                   <div className="col-span-2">
                     <TypeSelect
                       isString
@@ -836,11 +832,29 @@ const CreateAssetAccordion = () => {
                     </AlertInput>
                   </div>
                   <div className="col-span-2 space-y-2">
+                    <p className="text-sm text-gray-700">Purchase Date</p>
+                    
+                    <DatePicker
+                      placeholder={
+                         "Month, Day, Year                            📅"
+                        }
+                      allowFreeInput
+                      size="sm"
+                      onChange={(value) => {
+                        setValue("management.purchase_date", value)
+                      }}
+                      classNames={{
+                        input:
+                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                      }}
+                     />
+                  </div>
+                  <div className="col-span-2 space-y-2">
                     <p className="text-sm text-gray-700">
                       Depreciation Start Date
                     </p>
                     <DatePicker
-                      placeholder={"Month, Day, Year                                                    📅"}
+                      placeholder={"Month, Day, Year                            📅"}
                       allowFreeInput
                       size="sm"
                       value={dep_start}
@@ -860,7 +874,7 @@ const CreateAssetAccordion = () => {
                     </p>
                     <DatePicker
                       placeholder={
-                        dep_start ? "Month, Day, Year" : "Select start date first"
+                        dep_start ? "Month, Day, Year                            📅" : "Select start date first"
                       }
                       allowFreeInput
                       size="sm"
@@ -896,7 +910,7 @@ const CreateAssetAccordion = () => {
                 <div className="col-span-3 space-y-2">
                   <p className="text-sm text-gray-700">Date of Usage</p>
                   <DatePicker
-                    placeholder={"Month, Day, Year                                                 📅"}
+                    placeholder={"Month, Day, Year                                                             📅"}
                     // allowFreeInput
                     size="sm"
                     classNames={{

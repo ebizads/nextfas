@@ -365,7 +365,7 @@ const Register2 = () => {
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[18.94%] flex-col">
+            <div className="flex w-[25%] flex-col">
               <label className="sm:text-sm">Street</label>
               <InputField
                 type={"text"}
@@ -374,9 +374,7 @@ const Register2 = () => {
                 register={register}
               />
               <AlertInput>{errors?.address?.street?.message}</AlertInput>
-            </div>
-
-            <div className="flex w-[18.94%] flex-col">
+            </div>{/* <div className="flex w-[18.94%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
@@ -385,9 +383,7 @@ const Register2 = () => {
                 register={register}
               />
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
-            </div>
-
-            <div className="flex w-[18.94%] flex-col">
+            </div> */} <div className="flex w-[20%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
                 type={"text"}
@@ -398,7 +394,7 @@ const Register2 = () => {
 
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.94%] flex-col">
+            <div className="flex w-[20%] flex-col">
               <label className="sm:text-sm">Zip Code</label>
               <InputField
                 type={"text"}
@@ -408,7 +404,7 @@ const Register2 = () => {
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.94%] flex-col">
+            <div className="flex w-[20%] flex-col">
               <label className="sm:text-sm">Country</label>
               <InputField
                 type={"text"}

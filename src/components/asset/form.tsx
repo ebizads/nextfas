@@ -40,13 +40,10 @@ const form = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col space-y-4 p-4"
-        noValidate>
-            
-          
-        </form>
-      );
+       <div>
+        
+       </div>
+      )
   };
 
 

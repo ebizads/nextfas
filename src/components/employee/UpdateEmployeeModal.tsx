@@ -258,7 +258,7 @@ export const UpdateEmployeeModal = (props: {
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex flex-col sm:w-1/3 md:w-[49%]">
+          <div className="flex flex-col sm:w-1/3 md:w-[25%]">
             <label className="sm:text-sm ">Hired Date</label>
             {/* <InputField
             className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
@@ -280,7 +280,7 @@ export const UpdateEmployeeModal = (props: {
           </div>
 
 
-          <div className="flex w-[49%] flex-col">
+          <div className="flex w-[23%] flex-col">
             <label className="sm:text-sm mb-2">Mobile Number</label>
             <input
               disabled={!isEditable}
@@ -309,8 +309,62 @@ export const UpdateEmployeeModal = (props: {
 
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
+          <div className="flex w-[23%] flex-col">
+            <label className="sm:text-sm">Work Station</label>
+          <Select
+            disabled={!isEditable}
+            placeholder="Select Work Location"
+            data={["Desktop", "Latop", ]}
+            styles={(theme) => ({
+              item: {
+                "&[data-selected]": {
+                  "&, &:hover": {
+                    backgroundColor:
+                      theme.colorScheme === "light"
+                        ? theme.colors.orange[3]
+                        : theme.colors.orange[1],
+                    color:
+                      theme.colorScheme === "dark" ? theme.white : theme.black,
+                  },
+                },
+                // applies styles to hovered item (with mouse or keyboard)
+                "&[data-hovered]": {},
+              },
+            })}
+            variant="unstyled"
+            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+          />
+          </div>
+          <div className="flex w-[23%] flex-col">
+            <label className="sm:text-sm">Work Mode</label>
+          <Select
+          disabled={!isEditable}
+            placeholder="Select your Work mode"
+            data={["Work From Home", "Hybrid", "On Site"]}
+            styles={(theme) => ({
+              item: {
+                // applies styles to selected item
+                "&[data-selected]": {
+                  "&, &:hover": {
+                    backgroundColor:
+                      theme.colorScheme === "light"
+                        ? theme.colors.orange[3]
+                        : theme.colors.orange[1],
+                    color:
+                      theme.colorScheme === "dark" ? theme.white : theme.black,
+                  },
+                },
+
+                // applies styles to hovered item (with mouse or keyboard)
+                "&[data-hovered]": {},
+              },
+            })}
+            variant="unstyled"
+            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+          />
+          </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[20%] flex-col">
+            <div className="flex w-[25%] flex-col">
               <label className="sm:text-sm">Street</label>
               <InputField
                 type={"text"}
@@ -333,7 +387,7 @@ export const UpdateEmployeeModal = (props: {
 
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
             </div> */}
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[25%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
                 type={"text"}
@@ -357,7 +411,7 @@ export const UpdateEmployeeModal = (props: {
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[25%] flex-col">
               <label className="sm:text-sm">Country</label>
               <InputField
                 type={"text"}

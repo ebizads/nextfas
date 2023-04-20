@@ -128,6 +128,8 @@ model Employee {
   updatedAt    DateTime  @updatedAt
   deleted      Boolean   @default(false)
   deletedAt    DateTime?
+  workMode     String?
+  workStation  String?
   address      Address?
   owned_assets Asset[]
   supervisee   Team?     @relation("supervisors", fields: [superviseeId], references: [id])
@@ -180,6 +182,7 @@ model Location {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
   deleted     Boolean      @default(false)
+  building    String?
   departments Department[]
 }
 
@@ -394,40 +397,44 @@ model Vendor {
 }
 
 model Asset {
-  id             Int              @id @default(autoincrement())
-  name           String
-  number         String           @unique
-  alt_number     String?
-  serial_no      String?
-  barcode        String?
-  description    String?
-  remarks        String?
-  parentId       Int?
-  modelId        Int?             @unique
-  custodianId    Int?
-  vendorId       Int?
-  assetProjectId Int?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  deletedAt      DateTime?
-  deleted        Boolean          @default(false)
-  departmentId   Int?
-  subsidiaryId   Int?
-  addedById      Int?
-  status         String?
-  userArchiveId  Int?
-  addedBy        User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
-  project        AssetProject?    @relation(fields: [assetProjectId], references: [id])
-  custodian      Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
-  department     Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  model          Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
-  parent         Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
-  children       Asset[]          @relation("children")
-  subsidiary     Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
-  vendor         Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  AssetDisposal  AssetDisposal?
-  management     AssetManagement?
-  AssetRepair    AssetRepair?
+  id                Int              @id @default(autoincrement())
+  name              String
+  number            String           @unique
+  alt_number        String?
+  serial_no         String?
+  barcode           String?
+  description       String?
+  remarks           String?
+  parentId          Int?
+  modelId           Int?             @unique
+  custodianId       Int?
+  vendorId          Int?
+  assetProjectId    Int?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  deletedAt         DateTime?
+  deleted           Boolean          @default(false)
+  departmentId      Int?
+  subsidiaryId      Int?
+  addedById         Int?
+  status            String?
+  userArchiveId     Int?
+  category          Int?
+  invoiceNum        String?
+  purchaseOrder     String?
+  deployment_status String?
+  addedBy           User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
+  project           AssetProject?    @relation(fields: [assetProjectId], references: [id])
+  custodian         Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
+  department        Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  model             Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  parent            Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
+  children          Asset[]          @relation("children")
+  subsidiary        Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
+  vendor            Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  AssetDisposal     AssetDisposal?
+  management        AssetManagement?
+  AssetRepair       AssetRepair?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }

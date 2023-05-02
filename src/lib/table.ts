@@ -7,10 +7,11 @@ export const columns = [
   { value: "number", name: "Asset No." },
   { value: "serial_no", name: "Serial No." },
   // { value: "type", name: "Type" },
-  { value: "name", name: "Name" },
+  { value: "name", name: "Asset Name" },
   // { value: "description", name: "Description" },
   { value: "custodian", name: "Custodian" },
   // { value: "createdAt", name: "Added Date" },
+  { value: "deployment_status", name: "Status"},
 ] as ColumnType[]
 
 export const vendorColumns = [
@@ -42,6 +43,7 @@ export const employeeColumns = [
   { value: "hired_date", name: "Hire Date" },
   { value: "team", name: "Team" },
   { value: "email", name: "Email" },
+  // { valie: "workMode", name: "Work Mode"},
 ] as ColumnType[]
 
 export const disposalColumn = [
@@ -115,6 +117,11 @@ export const navigations = [
     name: "Employees",
     icon: "fa-users",
     link: "/employees",
+  },
+  {
+    name: "Asset Issuance",
+    icon: "fa-users",
+    link: "/issuance",
   },
   {
     name: "Vendors",

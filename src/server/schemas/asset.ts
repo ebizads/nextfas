@@ -28,6 +28,9 @@ export const AssetCreateInput = z.object({
   barcode: z.string().nullish(),
   description: z.string().nullish(),
   remarks: z.string().nullish(),
+  invoiceNum:z.string().nullish(),
+  purchaseOrder:z.string().nullish(),
+  deployment_status:z.string().nullish(),
 
   model: ModelCreateInput,
   custodianId: z.number().optional(),
@@ -52,6 +55,9 @@ export const AssetEditInput = z.object({
   description: z.string().optional().nullish(),
   remarks: z.string().nullish().optional(),
   status: z.string().nullish().optional(),
+  invoiceNum:z.string().nullish(),
+  purchaseOrder:z.string().nullish(),
+  deployment_status:z.string().nullish(),
 
   modelId: z.number().optional().nullish(),
   custodianId: z.number().optional().nullish(),
@@ -74,6 +80,9 @@ export const AssetUpdateInput = z.object({
   description: z.string().nullish(),
   remarks: z.string().nullish(),
   status: z.string().nullish(),
+  invoiceNum:z.string().nullish(),
+  purchaseOrder:z.string().nullish(),
+  deployment_status:z.string().nullish(),
 
   // modelId: z.number(),
   custodianId: z.number().nullish(),

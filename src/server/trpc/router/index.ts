@@ -18,6 +18,7 @@ import { vendorRouter } from "./vendor"
 export const appRouter = t.router({
   user: userRouter,
   asset: assetRouter,
+  assetproject: assetProjectRouter,
   company: companyRouter,
   department: departmentRouter,
   team: teamRouter,

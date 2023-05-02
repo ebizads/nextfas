@@ -14,6 +14,8 @@ export type AssetType = inferProcedureOutput<AppRouter["asset"]["findOne"]>
 export type AssetRepairType = inferProcedureOutput<
   AppRouter["assetRepair"]["findOne"]
 >
+
+export type AssetProject =  inferProcedureOutput<AppRouter["assetproject"]["findOne"]>
 export type AssetClassType = inferProcedureOutput<
   AppRouter["assetClass"]["findOne"]
 >

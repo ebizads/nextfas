@@ -43,12 +43,11 @@ import { useSession } from "next-auth/react"
 import { FormErrorMessage } from "./UpdateAssetAccordion"
 import InputNumberField from "../forms/InputNumberField"
 import { clearAndGoBack } from "../../../lib/functions"
+import { Select } from "@mantine/core";
+import Assets from "../../../pages/assets";
 
 
 const CreateAssetAccordion = () => {
-
-
-
 
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
 
@@ -122,6 +121,8 @@ const CreateAssetAccordion = () => {
         }),
     [assetsData]
   ) as SelectValueType[] | undefined
+
+
 
   //gets and sets all projects
   const { data: projectsData } = trpc.assetProject.findAll.useQuery()
@@ -578,7 +579,7 @@ const CreateAssetAccordion = () => {
               <div className="flex items-center gap-2 text-gray-700">
                 <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
-                  General Information
+                  General Information   
                 </p>
               </div>
             </Accordion.Control>
@@ -764,20 +765,21 @@ const CreateAssetAccordion = () => {
                   </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-9 gap-7">
-                <div className="col-span-2">
+                <div className="col-span-4">
                       <InputField
                         register={register}
-                        label="Purchase Order"
+                        label="PO number"
                         placeholder="PO number"
-                        name="management.purchaseOrder"
+                        name="purchaseOrder"
                       />
                     </div>
-                <div className="col-span-2">
+                <div className="col-span-3">
                       <InputField
                         register={register}
                         label="Invoice Number"
                         placeholder="Invoice Number"
-                        name="management.invoiceNumber"/>
+                        name="invoiceNum"
+                        />
                     </div>
                   <div className="col-span-2">
                     <TypeSelect
@@ -797,7 +799,7 @@ const CreateAssetAccordion = () => {
                     </AlertInput>
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-3">
                     <TypeSelect
                       isString
                       name={"management.accounting_method"}
@@ -815,9 +817,7 @@ const CreateAssetAccordion = () => {
                       {errors?.management?.accounting_method?.message}
                     </AlertInput>
                   </div>
-                </div>
-                <div className="col-span-9 grid grid-cols-9 gap-7">
-                  <div className="col-span-2">
+                  <div className="col-span-3">
                     <TypeSelect
                       isString
                       name={"management.depreciation_rule"}
@@ -831,12 +831,24 @@ const CreateAssetAccordion = () => {
                       {errors?.management?.depreciation_rule?.message}
                     </AlertInput>
                   </div>
-                  <div className="col-span-2 space-y-2">
+                  <div className="col-span-2 space-y-1">
+                  <TypeSelect
+                      isString
+                      name={"deployment_status"}
+                      setValue={setValue}
+                      title={"Status"}
+                      placeholder={"Select Status"}
+                      data={["Deployed", "In-Stock"]}
+                    />
+                   </div>
+                </div>
+                <div className="col-span-9 grid grid-cols-9 gap-7">
+                  <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">Purchase Date</p>
                     
                     <DatePicker
                       placeholder={
-                         "Month, Day, Year                            📅"
+                         "Month, Day, Year                                                                📅"
                         }
                       allowFreeInput
                       size="sm"
@@ -849,12 +861,12 @@ const CreateAssetAccordion = () => {
                       }}
                      />
                   </div>
-                  <div className="col-span-2 space-y-2">
+                  <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">
                       Depreciation Start Date
                     </p>
                     <DatePicker
-                      placeholder={"Month, Day, Year                            📅"}
+                      placeholder={"Month, Day, Year                                                                📅"}
                       allowFreeInput
                       size="sm"
                       value={dep_start}
@@ -937,7 +949,7 @@ const CreateAssetAccordion = () => {
                     register={register}
                     label="Asset Quantity"
                     placeholder="Asset Quantity"
-                    value="1"
+                    value="0"
                     name="management.asset_quantity"
                   />
                 </div>

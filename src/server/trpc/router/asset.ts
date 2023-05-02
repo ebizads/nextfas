@@ -43,16 +43,19 @@ export const assetRouter = t.router({
     .input(
       z
         .object({
-          page: z.number().optional(),
+           page: z.number().optional(),
           limit: z.number().optional(),
           search: z
             .object({
-              name: z.string(),
+              name: z.string().optional(),
               number: z.string().optional(),
               serial_no: z.string().optional(),
               barcode: z.string().optional(),
               description: z.string().optional(),
               remarks: z.string().optional(),
+              invoiceNum:z.string().optional(),
+              purchaseOrder:z.string().optional(),
+              deployment_status:z.string().optional(),
               custodianId: z.number().optional(),
               departmentId: z.number().optional(),
               vendorId: z.number().optional(),
@@ -205,6 +208,7 @@ export const assetRouter = t.router({
           addedBy: true,
         },
       })
+      console.log(asset)
       return asset
     }),
   createMany: authedProcedure
@@ -221,6 +225,7 @@ export const assetRouter = t.router({
             subsidiaryId,
             assetProjectId,
             parentId,
+            addedById,
             ...rest
           } = asset
           return {
@@ -312,6 +317,9 @@ export const assetRouter = t.router({
         subsidiaryId,
         assetProjectId,
         parentId,
+        purchaseOrder,
+        invoiceNum,
+        deployment_status,
         ...rest
       } = input
       try {

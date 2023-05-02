@@ -10,6 +10,7 @@ export const columns = [
   { value: "hired_date", name: "Hire Date" },
   { value: "team", name: "Team" },
   { value: "email", name: "Email" },
+  // { valie: "workMode", name: "Work Mode"},
 ] as ColumnType[]
 
 export const columnsuser = [
@@ -20,6 +21,7 @@ export const columnsuser = [
   { value: "hired_date", name: "Hire Date" },
   { value: "team", name: "Team" },
   { value: "email", name: "Email" },
+  // { valie: "workMode", name: "Work Mode"},
 ] as ColumnType[]
 
 // export const asset_info = [

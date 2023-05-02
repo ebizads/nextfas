@@ -51,6 +51,7 @@ const AssetDetailsModal = (props: {
     })
   }
 
+ 
 
   // const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
   // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
@@ -152,10 +153,13 @@ const AssetDetailsModal = (props: {
                     </div>
                   </section>
                   <section className="grid grid-cols-4">
-
                     <div className="col-span-1">
                       <p className="font-light">Asset Lifetime</p>
                       <p className="font-medium">{props.asset?.management?.asset_lifetime ? props.asset?.management?.asset_lifetime : "--"} Months</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="font-light">Project</p>
+                      <p className="font-medium">{props.asset?.project?.name ?? "--"}</p>
                     </div>
                   </section>
                   <section>
@@ -164,7 +168,7 @@ const AssetDetailsModal = (props: {
                   </section>
                 </div>
               </section>
-
+                {/* General information */}
               <section className="border-b pb-4">
                 <p className="font-medium text-neutral-600 text-base">General Information</p>
                 <div className="text-sm mt-4 flex flex-col gap-4">
@@ -223,25 +227,36 @@ const AssetDetailsModal = (props: {
                                         </div>
                                     </section> */}
                   <section className="grid grid-cols-4 gap-4">
+                  <div className="col-span-1">
+                      <p className="font-light">Purchase Order </p>
+                      <p className="font-medium">{props.asset?.purchaseOrder ?? "--"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Invoice Number</p>
+                      <p className="font-medium">{props.asset?.invoiceNum ?? "--"}</p>
+                    </div>
                     <div className="col-span-1">
                       <p className="font-light">Currency</p>
-                      <p className="font-medium">{props.asset?.management?.currency}</p>
+                      <p className="font-medium">{props.asset?.management?.currency ?? "--"}</p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Accounting Method</p>
                       <p className="font-medium">{props.asset?.management?.accounting_method ?? "--"}</p>
                     </div>
-
                     <div className="col-span-1">
                       <p className="font-light">Purchase Date</p>
                       <p className="font-medium">{props.asset?.management?.purchase_date ? (props.asset?.management?.purchase_date?.toLocaleDateString()) : "--"}</p>
                     </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Status</p>
+                      <p className="font-medium">{props.asset?.deployment_status ?? "--"}</p>
+                      </div>
+                      <div className="col-span-1">
+                      <p className="font-light">Depreciation Method</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_rule ?? "--"}</p>
+                    </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">
-                    <div className="col-span-1">
-                      <p className="font-light">Depreciation Method</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_rule}</p>
-                    </div>
                     <div className="col-span-1">
                       <p className="font-light">Depreciation Start Date</p>
                       <p className="font-medium">{props.asset?.management?.depreciation_start ? (props.asset?.management?.depreciation_start?.toLocaleDateString()) : "--"}</p>

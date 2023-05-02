@@ -12,7 +12,7 @@ import { Select } from "@mantine/core"
 import DropZoneComponent from "../dropzone/DropZoneComponent"
 import { env } from "../../env/client.mjs"
 import moment from "moment"
-import { SelectValueType } from "../atoms/select/TypeSelect"
+import TypeSelect, { SelectValueType } from "../atoms/select/TypeSelect"
 
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
@@ -371,10 +371,7 @@ export const CreateEmployeeModal = (props: {
                 label={""}
                 name={"address.state"}
                 register={register}
-              />
-
-
-              <AlertInput>{errors?.address?.state?.message}</AlertInput>
+              /><AlertInput>{errors?.address?.state?.message}</AlertInput>
             </div> */}
             <div className="flex w-[25%] flex-col">
               <label className="sm:text-sm">City</label>

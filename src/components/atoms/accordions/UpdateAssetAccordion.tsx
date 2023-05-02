@@ -127,6 +127,17 @@ const UpdateAssetAccordion = () => {
       console.log(selectedAsset.assetProjectId)
 
       setValue(
+        "purchaseOrder",
+        selectedAsset.purchaseOrder)
+      setValue(
+        "invoiceNum",
+        selectedAsset.invoiceNum
+      )
+      setValue(
+        "deployment_status",
+        selectedAsset.deployment_status
+      )
+      setValue(
         "management.original_cost",
         selectedAsset.management?.original_cost
       )
@@ -155,6 +166,7 @@ const UpdateAssetAccordion = () => {
         selectedAsset.management?.depreciation_period
       )
       setValue("management.remarks", selectedAsset.management?.remarks)
+
     }
   }, [selectedAsset, reset, setValue])
 
@@ -487,9 +499,9 @@ const UpdateAssetAccordion = () => {
                   <div className="col-span-4">
                     <InputField
                       register={register}
-                      label="Name"
+                      label="Asset Name"
                       name="name"
-                      placeholder="Name"
+                      placeholder="Asset Name"
                       required
                     />
                     <AlertInput>{errors?.name?.message}</AlertInput>
@@ -498,20 +510,11 @@ const UpdateAssetAccordion = () => {
                     <InputField
                       register={register}
                       label="Alternate Asset Number"
-                      placeholder="Alternate Asset Number"
+                      placeholder="(Optional)"
                       name="alt_number"
                     />
                     <AlertInput>{errors?.alt_number?.message}</AlertInput>
                   </div>
-                  {/* <div className="col-span-2">
-                    <InputField
-                      register={register}
-                      required
-                      name={"model.typeId"}
-                      label="Type"
-                      placeholder="Enter Asset Type"
-                    />
-                  </div> */}
                 </div>
                 <div className="col-span-3">
                   <InputField
@@ -561,21 +564,21 @@ const UpdateAssetAccordion = () => {
                   <InputField
                     required
                     register={register}
-                    label="Model Name"
-                    placeholder="Model Name"
-                    name="model.name"
+                    label="Model Brand"
+                    placeholder="Model Brand"
+                    name="model.brand"
                   />
-                  <AlertInput>{errors?.model?.name?.message}</AlertInput>
+                  <AlertInput>{errors?.model?.brand?.message}</AlertInput>
                 </div>
                 <div className="col-span-6 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
                     <InputField
                       register={register}
-                      label="Model Brand"
-                      placeholder="Model Brand"
-                      name="model.brand"
+                      label="Model Name"
+                      placeholder="Model Name"
+                      name="model.name"
                     />
-                    <AlertInput>{errors?.model?.brand?.message}</AlertInput>
+                    <AlertInput>{errors?.model?.name?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
                     <InputField
@@ -639,14 +642,8 @@ const UpdateAssetAccordion = () => {
                       name={"management.residual_percentage"}
                     />
                   </div>
-
-                </div>
-
-
-
-
-
-                <div className="col-span-9">
+                 </div>
+                 <div className="col-span-9">
                   <Textarea
                     value={description ?? ""}
                     onChange={(event) => {
@@ -669,6 +666,8 @@ const UpdateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
+
+                    {/* General Information */}
           <Accordion.Item value={"2"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
@@ -849,11 +848,11 @@ const UpdateAssetAccordion = () => {
                         name={"model.typeId"}
                         setValue={setValue}
                         value={getValues("model.typeId")?.toString()}
-                        title={"Type"}
+                        title={"Device Type"}
                         placeholder={
                           !Boolean(categoryId)
                             ? "Select asset category first"
-                            : "Select asset type"
+                            : "Select Device type"
                         }
                         data={types ?? []}
                       />
@@ -872,7 +871,23 @@ const UpdateAssetAccordion = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-9 col-span-9 gap-7">
-                  <div className="col-span-3">
+                <div className="col-span-4">
+                      <InputField
+                        register={register}
+                        label="PO number"
+                        placeholder="PO number"
+                        name="purchaseOrder"
+                      />
+                    </div>
+                <div className="col-span-3">
+                      <InputField
+                        register={register}
+                        label="Invoice Number"
+                        placeholder="Invoice Number"
+                        name="invoiceNum"
+                        />
+                    </div>
+                  <div className="col-span-2">
                     <TypeSelect
                       isString
                       name={"management.currency"}
@@ -908,8 +923,33 @@ const UpdateAssetAccordion = () => {
                       {errors?.management?.accounting_method?.message}
                     </AlertInput>
                   </div>
-
-                  <div className="col-span-3 space-y-2">
+                  <div className="col-span-3">
+                    <TypeSelect
+                      isString
+                      name={"management.depreciation_rule"}
+                      setValue={setValue}
+                      value={getValues("management.depreciation_rule")}
+                      title={"Depreciation Method"}
+                      placeholder={"Select method"}
+                      data={["Straight Line", "Others"]}
+                    />
+                    <AlertInput>
+                      {errors?.management?.depreciation_rule?.message}
+                    </AlertInput>
+                  </div>
+                  <div className="col-span-2 space-y-1">
+                      <TypeSelect 
+                          isString
+                          name={"deployment_status"}
+                          setValue={setValue}
+                          title={"Status"}
+                          placeholder={"Select Status"}
+                          data={["Deployed", "In-Stock"]}
+                          />
+                  </div>
+                </div>
+                <div className="col-span-9 grid grid-cols-9 gap-7">
+                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">Purchase Date</p>
                     <DatePicker
                       placeholder="Month Day, Year"
@@ -924,29 +964,12 @@ const UpdateAssetAccordion = () => {
                       }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                     />
                   </div>
-
-                </div>
-                <div className="col-span-9 grid grid-cols-6 gap-7">
-                  <div className="col-span-2">
-                    <TypeSelect
-                      isString
-                      name={"management.depreciation_rule"}
-                      setValue={setValue}
-                      value={getValues("management.depreciation_rule")}
-                      title={"Depreciation Method"}
-                      placeholder={"Select method"}
-                      data={["Straight Line", "Others"]}
-                    />
-                    <AlertInput>
-                      {errors?.management?.depreciation_rule?.message}
-                    </AlertInput>
-                  </div>
-                  <div className="col-span-2 space-y-2">
+                  <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">
                       Depreciation Start Date
                     </p>
                     <DatePicker
-                      placeholder="Month, Day, Year"
+                      placeholder={"Month, Day, Year                                                                📅"}
                       allowFreeInput
                       size="sm"
                       value={dep_start}
@@ -985,9 +1008,7 @@ const UpdateAssetAccordion = () => {
                       }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                     />
                   </div>
-
                 </div>
-
               </div>
             </Accordion.Panel>
           </Accordion.Item>
@@ -1005,7 +1026,7 @@ const UpdateAssetAccordion = () => {
                     Date of Usage
                   </p>
                   <DatePicker
-                    placeholder="Month, Day, Year"
+                    placeholder={"Month, Day, Year                                                             📅"}
                     // allowFreeInput
                     size="sm"
                     value={

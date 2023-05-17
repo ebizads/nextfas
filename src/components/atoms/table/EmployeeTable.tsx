@@ -94,9 +94,7 @@ const EmployeeTable = (props: {
                 </th>
               ))}
 
-            <th scope="col" className="p-4 text-center">
-              {/* Action */}
-            </th>
+
           </tr>
         </thead>
         <tbody>

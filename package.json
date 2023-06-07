@@ -46,6 +46,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.37.0",
     "react-qr-code": "^2.0.11",
+    "react-select": "^5.7.3",
     "react-to-print": "^2.14.10",
     "request-ip": "^3.3.0",
     "superjson": "1.9.1",

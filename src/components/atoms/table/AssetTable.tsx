@@ -181,6 +181,8 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Name</p>
                       <p className="font-medium">{props.asset?.custodian?.name ?? "--"}</p>
                     </div>
+                    
+                    
                     <div className="col-span-1">
                       <p className="font-light">Position</p>
                       <p className="font-medium">{props.asset?.custodian?.position ?? "--"}</p>
@@ -252,8 +254,8 @@ const AssetDetailsModal = (props: {
                       <p className="font-medium">{props.asset?.deployment_status ?? "--"}</p>
                       </div>
                       <div className="col-span-1">
-                      <p className="font-light">Depreciation Method</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_rule ?? "--"}</p>
+                      <p className="font-light">WFH Status</p>
+                      <p className="font-medium">{props.asset?.wfh_status ?? "--"}</p>
                     </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">
@@ -264,6 +266,10 @@ const AssetDetailsModal = (props: {
                     <div className="col-span-1">
                       <p className="font-light">Depreciation End Date</p>
                       <p className="font-medium">{props.asset?.management?.depreciation_end ? (props.asset?.management?.depreciation_end?.toLocaleDateString()) : "--"}</p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Depreciation Method</p>
+                      <p className="font-medium">{props.asset?.management?.depreciation_rule ?? "--"}</p>
                     </div>
                   </section>
                 </div>

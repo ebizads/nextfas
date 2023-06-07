@@ -5,14 +5,14 @@ import {
   ArrowsExchange,
   Check,
   Checks,
-  Circle1,
-  Circle2,
-  Circle3,
-  Circle4,
+  CircleNumber1,
+  CircleNumber2,
+  CircleNumber3,
+  CircleNumber4,
   Disabled,
   Search,
 } from "tabler-icons-react"
-import { renderToString } from 'react-dom/server';
+import { renderToString } from "react-dom/server"
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
@@ -43,12 +43,10 @@ import { useSession } from "next-auth/react"
 import { FormErrorMessage } from "./UpdateAssetAccordion"
 import InputNumberField from "../forms/InputNumberField"
 import { clearAndGoBack } from "../../../lib/functions"
-import { Select } from "@mantine/core";
-import Assets from "../../../pages/assets";
-
+import Select from "react-select"
+import Assets from "../../../pages/assets"
 
 const CreateAssetAccordion = () => {
-
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
 
   const {
@@ -122,8 +120,6 @@ const CreateAssetAccordion = () => {
     [assetsData]
   ) as SelectValueType[] | undefined
 
-
-
   //gets and sets all projects
   const { data: projectsData } = trpc.assetProject.findAll.useQuery()
   const projectsList = useMemo(
@@ -159,7 +155,6 @@ const CreateAssetAccordion = () => {
         }),
     [companyData]
   ) as SelectValueType[] | undefined
-
 
   //gets and sets all class, categories, and types
   const { data: classData } = trpc.assetClass.findAll.useQuery()
@@ -365,8 +360,6 @@ const CreateAssetAccordion = () => {
     setFormError(Object.keys(errors).length > 0 ? true : false)
   }, [errors])
 
-
-
   return (
     <div id="contents">
       {formError && <FormErrorMessage setFormError={setFormError} />}
@@ -390,7 +383,7 @@ const CreateAssetAccordion = () => {
                 {/* <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-yellow-400 p-1 text-sm text-yellow-400">
                   1
                 </div> */}
-                <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
+                <CircleNumber1 className="h-7 w-7" color="gold"></CircleNumber1>{" "}
                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                   Asset Information
                 </p>
@@ -436,7 +429,6 @@ const CreateAssetAccordion = () => {
                       value={getValues("parentId")?.toString()}
                       title={"Parent Asset"}
                       placeholder={"Select Parent Asset"}
-
                       data={assetsList ?? []}
                     />
                     <AlertInput>{errors?.parentId?.message}</AlertInput>
@@ -573,13 +565,13 @@ const CreateAssetAccordion = () => {
             </Accordion.Panel>
           </Accordion.Item>
 
-                    {/* General Information */}
+          {/* General Information */}
           <Accordion.Item value={"2"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
-                <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
+                <CircleNumber2 className="h-7 w-7" color="gold"></CircleNumber2>{" "}
                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
-                  General Information   
+                  General Information
                 </p>
               </div>
             </Accordion.Control>
@@ -623,8 +615,8 @@ const CreateAssetAccordion = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-12 grid grid-cols-12 gap-7">
-                    <div className="col-span-3">
+                  <div className="col-span-10 grid grid-cols-10 gap-5">
+                    <div className="col-span-2">
                       <ClassTypeSelect
                         query={departmentId}
                         setQuery={setDepartmentId}
@@ -643,7 +635,7 @@ const CreateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.departmentId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-2">
                       <div className="text-gray-700">
                         <div className=" gap-2">
                           <label htmlFor="floor" className="text-sm">
@@ -662,7 +654,7 @@ const CreateAssetAccordion = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-2">
                       <div className="text-gray-700">
                         <div className=" gap-2">
                           <label htmlFor="address" className="text-sm">
@@ -681,7 +673,7 @@ const CreateAssetAccordion = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-2">
                       <TypeSelect
                         name={"custodianId"}
                         setValue={setValue}
@@ -696,6 +688,16 @@ const CreateAssetAccordion = () => {
                         data={employeeList ?? []}
                       />
                       <AlertInput>{errors?.custodianId?.message}</AlertInput>
+                    </div>
+                    <div className="col-span-2">
+                      <TypeSelect
+                        isString
+                        name={"wfh_status"}
+                        setValue={setValue}
+                        title={"Work From Home Status"}
+                        placeholder={"Deployed for WFH Employee?"}
+                        data={["YES", "NO"]}
+                      />
                     </div>
                   </div>
                   <div className="col-span-12 grid grid-cols-12 gap-7 ">
@@ -765,22 +767,22 @@ const CreateAssetAccordion = () => {
                   </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-9 gap-7">
-                <div className="col-span-4">
-                      <InputField
-                        register={register}
-                        label="PO number"
-                        placeholder="PO number"
-                        name="purchaseOrder"
-                      />
-                    </div>
-                <div className="col-span-3">
-                      <InputField
-                        register={register}
-                        label="Invoice Number"
-                        placeholder="Invoice Number"
-                        name="invoiceNum"
-                        />
-                    </div>
+                  <div className="col-span-4">
+                    <InputField
+                      register={register}
+                      label="PO number"
+                      placeholder="PO number"
+                      name="purchaseOrder"
+                    />
+                  </div>
+                  <div className="col-span-3">
+                    <InputField
+                      register={register}
+                      label="Invoice Number"
+                      placeholder="Invoice Number"
+                      name="invoiceNum"
+                    />
+                  </div>
                   <div className="col-span-2">
                     <TypeSelect
                       isString
@@ -832,7 +834,7 @@ const CreateAssetAccordion = () => {
                     </AlertInput>
                   </div>
                   <div className="col-span-2 space-y-1">
-                  <TypeSelect
+                    <TypeSelect
                       isString
                       name={"deployment_status"}
                       setValue={setValue}
@@ -840,16 +842,16 @@ const CreateAssetAccordion = () => {
                       placeholder={"Select Status"}
                       data={["Deployed", "In-Stock"]}
                     />
-                   </div>
+                  </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-9 gap-7">
                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">Purchase Date</p>
-                    
+
                     <DatePicker
                       placeholder={
-                         "Month, Day, Year                                                                📅"
-                        }
+                        "Month, Day, Year                                                                📅"
+                      }
                       allowFreeInput
                       size="sm"
                       onChange={(value) => {
@@ -859,14 +861,16 @@ const CreateAssetAccordion = () => {
                         input:
                           "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
                       }}
-                     />
+                    />
                   </div>
                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">
                       Depreciation Start Date
                     </p>
                     <DatePicker
-                      placeholder={"Month, Day, Year                                                                📅"}
+                      placeholder={
+                        "Month, Day, Year                                                                📅"
+                      }
                       allowFreeInput
                       size="sm"
                       value={dep_start}
@@ -886,7 +890,9 @@ const CreateAssetAccordion = () => {
                     </p>
                     <DatePicker
                       placeholder={
-                        dep_start ? "Month, Day, Year                            📅" : "Select start date first"
+                        dep_start
+                          ? "Month, Day, Year                            📅"
+                          : "Select start date first"
                       }
                       allowFreeInput
                       size="sm"
@@ -911,7 +917,7 @@ const CreateAssetAccordion = () => {
           <Accordion.Item value={"3"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
-                <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
+                <CircleNumber3 className="h-7 w-7" color="gold"></CircleNumber3>{" "}
                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                   Asset Usage
                 </p>
@@ -922,7 +928,9 @@ const CreateAssetAccordion = () => {
                 <div className="col-span-3 space-y-2">
                   <p className="text-sm text-gray-700">Date of Usage</p>
                   <DatePicker
-                    placeholder={"Month, Day, Year                                                             📅"}
+                    placeholder={
+                      "Month, Day, Year                                                             📅"
+                    }
                     // allowFreeInput
                     size="sm"
                     classNames={{
@@ -930,7 +938,7 @@ const CreateAssetAccordion = () => {
                         "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400",
                     }}
 
-                  // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                    // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                   />
                 </div>
                 <div className="col-span-3">
@@ -982,7 +990,7 @@ const CreateAssetAccordion = () => {
               className="uppercase outline-none focus:outline-none active:outline-none"
             >
               <div className="flex items-center gap-2 text-gray-700">
-                <Circle4 className="h-7 w-7" color="gold"></Circle4>{" "}
+                <CircleNumber4 className="h-7 w-7" color="gold"></CircleNumber4>{" "}
                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                   Print Bar Code
                 </p>
@@ -1060,8 +1068,6 @@ const CreateAssetAccordion = () => {
             </div>
           </div>
         </Modal> */}
-
-
 
         {/* */}
       </form>

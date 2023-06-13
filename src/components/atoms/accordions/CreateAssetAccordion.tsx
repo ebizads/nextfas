@@ -32,7 +32,7 @@ import {
   AssetFieldValues,
 } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { getAddress } from "../../../lib/functions"
+import { getAddress, getWorkMode } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import moment from "moment"
 import JsBarcode from "jsbarcode"
@@ -45,6 +45,7 @@ import InputNumberField from "../forms/InputNumberField"
 import { clearAndGoBack } from "../../../lib/functions"
 import Select from "react-select"
 import Assets from "../../../pages/assets"
+import Employee from "../../../pages/employees"
 
 const CreateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.create.useMutation()
@@ -107,6 +108,7 @@ const CreateAssetAccordion = () => {
   const [serialId, setSerialId] = useState<string | null>(null)
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [departmentId, setDepartmentId] = useState<string | null>(null)
+  const [employeeId, setEmployeeId] = useState<string | null>(null)
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAll.useQuery()
@@ -179,6 +181,15 @@ const CreateAssetAccordion = () => {
         }),
     [employeeData]
   ) as SelectValueType[] | undefined
+
+  const employee_workMode = useMemo(() => {
+    if (employeeId) {
+      const workMode = employeeData?.employees.filter(
+        (employee) => employee.id === Number(employeeId)
+      )[0]
+      return workMode ?? null
+    }
+  }, [employeeId, employeeData])
 
   //gets and sets all class, categories, and types
   const { data: departmentData } = trpc.department.findAll.useQuery()
@@ -674,8 +685,11 @@ const CreateAssetAccordion = () => {
                       </div>
                     </div>
                     <div className="col-span-2">
-                      <TypeSelect
+                      <ClassTypeSelect
                         name={"custodianId"}
+                        query={employeeId}
+                        setQuery={setEmployeeId}
+                        required
                         setValue={setValue}
                         value={getValues("custodianId")?.toString()}
                         title={"Custodian"}
@@ -690,13 +704,22 @@ const CreateAssetAccordion = () => {
                       <AlertInput>{errors?.custodianId?.message}</AlertInput>
                     </div>
                     <div className="col-span-2">
-                      <TypeSelect
-                        isString
-                        name={"wfh_status"}
-                        setValue={setValue}
-                        title={"Work From Home Status"}
-                        placeholder={"Deployed for WFH Employee?"}
-                        data={["YES", "NO"]}
+                      <label htmlFor="workMode" className="text-sm">
+                        Work Mode
+                      </label>
+                      <input
+                        type="text"
+                        id={"workMode"}
+                        className={
+                          "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                        }
+                        placeholder="Employee Work Mode"
+                        value={
+                          employee_workMode?.workMode
+                            ? getWorkMode(employee_workMode)
+                            : ""
+                        }
+                        disabled
                       />
                     </div>
                   </div>

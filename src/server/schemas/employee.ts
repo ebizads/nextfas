@@ -22,6 +22,8 @@ export const EmployeeCreateInput = z.object({
     image: z.string().nullish(),
   }),
   address: AddressCreateInput,
+  workStation: z.string().nullish(),
+  workMode: z.string().nullish(),
   teamId: z.number().optional(),
 })
 
@@ -49,5 +51,7 @@ export const EmployeeEditInput = z.object({
     })
     .optional(),
   address: AddressEditInput,
+  workStation: z.string().nullish(),
+  workMode: z.string().nullish(),
   teamId: z.number().optional(),
 })

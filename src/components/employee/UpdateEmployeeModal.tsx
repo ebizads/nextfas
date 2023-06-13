@@ -17,9 +17,7 @@ import { EmployeeType } from "../../types/generic"
 import { useEditableStore } from "../../store/useStore"
 // import { useEditableStore } from "../../store/useStore"
 
-
 export type Employee = z.infer<typeof EmployeeEditInput>
-
 
 export const UpdateEmployeeModal = (props: {
   employee: EmployeeType
@@ -33,6 +31,12 @@ export const UpdateEmployeeModal = (props: {
   const [searchValue, onSearchChange] = useState<string>(
     props.employee?.teamId?.toString() ?? "0"
   )
+  const [workModeValue, onSearchWorkMode] = useState<string>(
+    props.employee?.workMode?.toString() ?? " "
+  )
+  const [workStationValue, onSearchWorkStation] = useState<string>(
+    props.employee?.workStation?.toString() ?? " "
+  )
   const [date, setDate] = useState(props.employee?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
@@ -40,15 +44,14 @@ export const UpdateEmployeeModal = (props: {
   const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
 
-
-
   const teamList = useMemo(() => {
-    const list = teams?.teams.map((team: { id: { toString: () => any }; name: any }) => {
-      return { value: team.id.toString(), label: team.name }
-    }) as SelectValueType[]
+    const list = teams?.teams.map(
+      (team: { id: { toString: () => any }; name: any }) => {
+        return { value: team.id.toString(), label: team.name }
+      }
+    ) as SelectValueType[]
     return list ?? []
   }, [teams]) as SelectValueType[]
-
 
   const {
     mutate,
@@ -73,9 +76,7 @@ export const UpdateEmployeeModal = (props: {
     resolver: zodResolver(EmployeeEditInput),
   })
 
-
   useEffect(() => reset(props.employee as Employee), [props.employee, reset])
-
 
   const onSubmit = async (employee: Employee) => {
     // Register function
@@ -86,32 +87,27 @@ export const UpdateEmployeeModal = (props: {
     reset()
   }
 
-  const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [updated, setUpdated] = useState(false);
-
-
+  const [isEditable, setIsEditable] = useState<boolean>(false)
+  const [updated, setUpdated] = useState(false)
 
   const handleEditable = () => {
-
-    setIsEditable(true);
+    setIsEditable(true)
   }
 
   const handleIsEditable = () => {
     if (!updated) {
-      setEditable(!editable);
-      setUpdated(true);
+      setEditable(!editable)
+      setUpdated(true)
     }
-  };
+  }
 
   // useEffect(() => { console.log("department: " + props.employee?.team?.department?.name) })
 
-
-
   return (
     <div>
-      <div className="flex flex-row-reverse w-full">
-        <div className="flex space-x-1 align-middle items-center ">
-          <p className="text-gray-500 uppercase text-xs">edit form </p>
+      <div className="flex w-full flex-row-reverse">
+        <div className="flex items-center space-x-1 align-middle ">
+          <p className="text-xs uppercase text-gray-500">edit form </p>
           <i
             className="fa-light fa-pen-to-square cursor-pointer"
             onClick={() => {
@@ -162,7 +158,6 @@ export const UpdateEmployeeModal = (props: {
           </div>
         </div>
 
-
         <div className="flex w-full flex-wrap gap-4 py-2.5">
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Team</label>
@@ -191,13 +186,16 @@ export const UpdateEmployeeModal = (props: {
                     },
                   },
 
-
                   // applies styles to hovered item (with mouse or keyboard)
                   "&[data-hovered]": {},
                 },
               })}
               variant="unstyled"
-              className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
             {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
           </div>
@@ -210,7 +208,10 @@ export const UpdateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className={'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             >{`${props.employee?.employee_id}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
@@ -223,7 +224,6 @@ export const UpdateEmployeeModal = (props: {
               name={"position"}
               register={register}
             />
-
 
             <AlertInput>{errors?.position?.message}</AlertInput>
           </div>
@@ -252,8 +252,11 @@ export const UpdateEmployeeModal = (props: {
               name={"department"}
               register={register}
             /> */}
-            <p className={'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}>{`${props.employee?.team?.department?.name}`}</p>
-
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{`${props.employee?.team?.department?.name}`}</p>
           </div>
         </div>
 
@@ -275,29 +278,35 @@ export const UpdateEmployeeModal = (props: {
                 setValue("hired_date", value)
                 value === null ? setDate(new Date()) : setDate(value)
               }}
-              className={isEditable ? 'my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              className={
+                isEditable
+                  ? "my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
           </div>
 
-
           <div className="flex w-[23%] flex-col">
-            <label className="sm:text-sm mb-2">Mobile Number</label>
+            <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
               disabled={!isEditable}
               type="number"
               pattern="[0-9]*"
               defaultValue={props.employee?.profile?.phone_no ?? "--"}
-              className={isEditable ? 'mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 ' : 'my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
               onKeyDown={(e) => {
                 if (e.key === "e") {
                   e.preventDefault()
                 }
               }}
               onChange={(event) => {
-
                 if (event.target.value.length > 11) {
                   console.log("more than 11")
-                  event.target.value = event.target.value.slice(0, 11);
+                  event.target.value = event.target.value.slice(0, 11)
                 }
                 setValue(
                   "profile.phone_no",
@@ -306,62 +315,85 @@ export const UpdateEmployeeModal = (props: {
               }}
             />
 
-
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-[23%] flex-col">
-            <label className="sm:text-sm">Work Station</label>
-          <Select
-            disabled={!isEditable}
-            placeholder="Select Work Location"
-            data={["Desktop", "Latop", ]}
-            styles={(theme) => ({
-              item: {
-                "&[data-selected]": {
-                  "&, &:hover": {
-                    backgroundColor:
-                      theme.colorScheme === "light"
-                        ? theme.colors.orange[3]
-                        : theme.colors.orange[1],
-                    color:
-                      theme.colorScheme === "dark" ? theme.white : theme.black,
+            <label className="sm:text-sm">Device</label>
+            <Select
+              disabled={!isEditable}
+              onChange={(value) => {
+                setValue("workStation", String(value) ?? " ")
+                onSearchWorkStation(value ?? "")
+              }}
+              placeholder="--"
+              value={workStationValue}
+              defaultValue={props.employee?.workStation ?? "--"}
+              data={["Desktop", "Latop"]}
+              styles={(theme) => ({
+                item: {
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
                   },
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
                 },
-                // applies styles to hovered item (with mouse or keyboard)
-                "&[data-hovered]": {},
-              },
-            })}
-            variant="unstyled"
-            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-          />
+              })}
+              variant="unstyled"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            />
           </div>
           <div className="flex w-[23%] flex-col">
             <label className="sm:text-sm">Work Mode</label>
-          <Select
-          disabled={!isEditable}
-            placeholder="Select your Work mode"
-            data={["Work From Home", "Hybrid", "On Site"]}
-            styles={(theme) => ({
-              item: {
-                // applies styles to selected item
-                "&[data-selected]": {
-                  "&, &:hover": {
-                    backgroundColor:
-                      theme.colorScheme === "light"
-                        ? theme.colors.orange[3]
-                        : theme.colors.orange[1],
-                    color:
-                      theme.colorScheme === "dark" ? theme.white : theme.black,
+            <Select
+              disabled={!isEditable}
+              onChange={(value) => {
+                setValue("workMode", String(value) ?? "")
+                onSearchWorkMode(value ?? "")
+              }}
+              value={workModeValue}
+              placeholder="--"
+              data={["Work From Home", "Hybrid", "On Site"]}
+              defaultValue={props.employee?.workMode ?? "--"}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
                   },
-                },
 
-                // applies styles to hovered item (with mouse or keyboard)
-                "&[data-hovered]": {},
-              },
-            })}
-            variant="unstyled"
-            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-          />
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            />
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
             <div className="flex w-[25%] flex-col">
@@ -397,7 +429,6 @@ export const UpdateEmployeeModal = (props: {
                 register={register}
               />
 
-
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
             <div className="flex w-[18.4%] flex-col">
@@ -421,22 +452,20 @@ export const UpdateEmployeeModal = (props: {
                 register={register}
               />
 
-
               <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
           </div>
         </div>
 
-
-        {isEditable && <DropZoneComponent
-
-
-          setImage={setImage}
-          setIsLoading={setIsLoading}
-          images={images}
-          isLoading={isLoading}
-          acceptingMany={false}
-        />}
+        {isEditable && (
+          <DropZoneComponent
+            setImage={setImage}
+            setIsLoading={setIsLoading}
+            images={images}
+            isLoading={isLoading}
+            acceptingMany={false}
+          />
+        )}
         <hr className="w-full"></hr>
         {/* <div className="flex w-full justify-end">
           {isEditable && <button
@@ -448,23 +477,32 @@ export const UpdateEmployeeModal = (props: {
           </button>}
         </div> */}
         <div className="flex w-full justify-between">
-          {!(error && errors && (
-            <pre className="mt-2 text-sm italic text-red-500">
-              Something went wrong!
-            </pre>
-          )) ? <div></div> : (error && errors && (
-            <pre className="mt-2 text-sm italic text-red-500">
-              Something went wrong!
-            </pre>
-          ))}
-          {isEditable && <button
-            type="submit"
-            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={employeeLoading}
-          >
-            {employeeLoading ? "Loading..." : "Save"}
-          </button>}
-
+          {!(
+            error &&
+            errors && (
+              <pre className="mt-2 text-sm italic text-red-500">
+                Something went wrong!
+              </pre>
+            )
+          ) ? (
+            <div></div>
+          ) : (
+            error &&
+            errors && (
+              <pre className="mt-2 text-sm italic text-red-500">
+                Something went wrong!
+              </pre>
+            )
+          )}
+          {isEditable && (
+            <button
+              type="submit"
+              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+              disabled={employeeLoading}
+            >
+              {employeeLoading ? "Loading..." : "Save"}
+            </button>
+          )}
         </div>
       </form>
       {/* {error && errors && (
@@ -475,4 +513,3 @@ export const UpdateEmployeeModal = (props: {
     </div>
   )
 }
-

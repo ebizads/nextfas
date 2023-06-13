@@ -14,11 +14,16 @@ import { object } from "zod"
 import { trpc } from "../utils/trpc"
 import { useState } from "react"
 
-
 const router = Router
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | VendorType | DisposeType | AssetRepairType | UserType
+  type:
+    | AssetType
+    | EmployeeType
+    | VendorType
+    | DisposeType
+    | AssetRepairType
+    | UserType
 
   //subfilter?: string
 ) => {
@@ -78,10 +83,11 @@ export const getName = (filter: string, type: EmployeeType) => {
 
 export const getNameUser = (filter: string, type: UserType) => {
   return filter === "first_name"
-    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value 
+    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
-    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value 
+    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
+        ?.value
+    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getAddressUser = (
@@ -91,7 +97,7 @@ export const getAddressUser = (
         address: Address | null
       })
 ) => {
-  return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
+  return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country}, ${type?.name} `
 }
 
 export const getAddress = (
@@ -104,7 +110,9 @@ export const getAddress = (
   return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
 }
 
-
+export const getWorkMode = (type: EmployeeType) => {
+  return `${type?.workMode}`
+}
 
 export const formatBytes = (bytes: number) => {
   if (!+bytes) return "0 Bytes"
@@ -122,7 +130,9 @@ export const downloadExcel = (data: ExcelExportType[]) => {
   // if (!data) {
   // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])
-  const worksheet = XLSX.utils.json_to_sheet(data !== null && data !== undefined ? data : [])
+  const worksheet = XLSX.utils.json_to_sheet(
+    data !== null && data !== undefined ? data : []
+  )
   const workbook = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
@@ -196,7 +206,7 @@ export const clearAndGoBack = () => {
 //       return true
 //     }
 //   }
-//   return false    
+//   return false
 // }
 
 export const generateRandomPass = () => {
@@ -224,4 +234,3 @@ export const generateCertificate = () => {
 export const passConfirmCheck = (password: string, confirmPassword: string) => {
   return password === confirmPassword ? true : false
 }
-

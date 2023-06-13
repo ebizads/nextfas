@@ -36,10 +36,12 @@ export const employeeRouter = t.router({
         .object({
           page: z.number().optional(),
           limit: z.number().optional(),
+
           search: z
             .object({
               name: z.string().optional(),
               employee_id: z.string().optional(),
+
               email: z.string().optional(),
               team: z
                 .object({
@@ -152,8 +154,7 @@ export const employeeRouter = t.router({
           data: {
             ...rest,
             profile: {
-              
-                create: profile ?? undefined
+              create: profile ?? undefined,
             },
             address: {
               connectOrCreate: {

@@ -29,6 +29,7 @@ export const assetRouter = t.router({
             teams: true,
           },
         },
+
         parent: true,
         project: true,
         vendor: true,
@@ -43,7 +44,7 @@ export const assetRouter = t.router({
     .input(
       z
         .object({
-           page: z.number().optional(),
+          page: z.number().optional(),
           limit: z.number().optional(),
           search: z
             .object({
@@ -53,9 +54,9 @@ export const assetRouter = t.router({
               barcode: z.string().optional(),
               description: z.string().optional(),
               remarks: z.string().optional(),
-              invoiceNum:z.string().optional(),
-              purchaseOrder:z.string().optional(),
-              deployment_status:z.string().optional(),
+              invoiceNum: z.string().optional(),
+              purchaseOrder: z.string().optional(),
+              deployment_status: z.string().optional(),
               custodianId: z.number().optional(),
               departmentId: z.number().optional(),
               vendorId: z.number().optional(),

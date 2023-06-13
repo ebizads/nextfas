@@ -14,9 +14,7 @@ import { env } from "../../env/client.mjs"
 import moment from "moment"
 import TypeSelect, { SelectValueType } from "../atoms/select/TypeSelect"
 
-
 export type Employee = z.infer<typeof EmployeeCreateInput>
-
 
 export const CreateEmployeeModal = (props: {
   date: Date
@@ -28,6 +26,9 @@ export const CreateEmployeeModal = (props: {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [searchValue, onSearchChange] = useState("")
+  const [workModeValue, onSearchWorkMode] = useState("")
+  const [workStationValue, onSearchWorkStation] = useState("")
+
   const [empId] = useState<string>(moment().format("YY-MDhms"))
   const { data: teams } = trpc.team.findAll.useQuery()
   const utils = trpc.useContext()
@@ -43,14 +44,12 @@ export const CreateEmployeeModal = (props: {
     },
   })
 
-
   const teamList = useMemo(() => {
     const list = teams?.teams.map((team) => {
       return { value: team.id.toString(), label: team.name }
     }) as SelectValueType[]
     return list ?? []
   }, [teams]) as SelectValueType[]
-
 
   const {
     register,
@@ -86,10 +85,8 @@ export const CreateEmployeeModal = (props: {
     },
   })
 
-
   const onSubmit = async (employee: Employee) => {
     // Register function
-
 
     mutate({
       name: `${employee.profile.first_name} ${employee.profile.last_name}`,
@@ -120,10 +117,11 @@ export const CreateEmployeeModal = (props: {
         phone_no: employee.profile.phone_no,
         image: props.images[0]?.file ?? "",
       },
+      workMode: employee.workMode,
+      workStation: employee.workStation,
     })
     reset()
   }
-
 
   return (
     <div>
@@ -164,7 +162,6 @@ export const CreateEmployeeModal = (props: {
           </div>
         </div>
 
-
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Team</label>
@@ -191,7 +188,6 @@ export const CreateEmployeeModal = (props: {
                           : theme.black,
                     },
                   },
-
 
                   // applies styles to hovered item (with mouse or keyboard)
                   "&[data-hovered]": {},
@@ -221,7 +217,6 @@ export const CreateEmployeeModal = (props: {
               register={register}
             />
 
-
             <AlertInput>{errors?.position?.message}</AlertInput>
           </div>
         </div>
@@ -250,9 +245,11 @@ export const CreateEmployeeModal = (props: {
               name={"department"}
               register={register}
             /> */}
-            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{"--"}</p>
-            </div>
-            </div>
+            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
+              {"--"}
+            </p>
+          </div>
+        </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex flex-col sm:w-1/3 md:w-[25%]">
@@ -277,7 +274,7 @@ export const CreateEmployeeModal = (props: {
             />
           </div>
           <div className="flex w-[23%] flex-col">
-            <label className="sm:text-sm mb-2">Mobile Number</label>
+            <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
               type="number"
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
@@ -289,70 +286,83 @@ export const CreateEmployeeModal = (props: {
               onChange={(event) => {
                 if (event.target.value.length > 11) {
                   console.log("more than 11")
-                  event.target.value = event.target.value.slice(0, 11);
+                  event.target.value = event.target.value.slice(0, 11)
                 }
                 setValue(
                   "profile.phone_no",
                   event.currentTarget.value.toString()
                 )
-              }
-              }
+              }}
             />
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-[23%] flex-col">
-            <label className="sm:text-sm">Work Station</label>
-          <Select
-            placeholder="Select Work Location"
-            data={["Desktop", "Latop", ]}
-            styles={(theme) => ({
-              item: {
-                // applies styles to selected item
-                "&[data-selected]": {
-                  "&, &:hover": {
-                    backgroundColor:
-                      theme.colorScheme === "light"
-                        ? theme.colors.orange[3]
-                        : theme.colors.orange[1],
-                    color:
-                      theme.colorScheme === "dark" ? theme.white : theme.black,
+            <label className="sm:text-sm">Device</label>
+            <Select
+              placeholder="Select Work Location"
+              onChange={(value) => {
+                setValue("workStation", String(value) ?? " ")
+                onSearchWorkStation(value ?? " ")
+              }}
+              value={workStationValue}
+              data={["Desktop", "Latop"]}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
                   },
-                },
 
-                // applies styles to hovered item (with mouse or keyboard)
-                "&[data-hovered]": {},
-              },
-            })}
-            variant="unstyled"
-            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-          />
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+            />
           </div>
           <div className="flex w-[23%] flex-col">
             <label className="sm:text-sm">Work Mode</label>
-          <Select
-            placeholder="Select your Work mode"
-            data={["Work From Home", "Hybrid", "On Site"]}
-            styles={(theme) => ({
-              item: {
-                // applies styles to selected item
-                "&[data-selected]": {
-                  "&, &:hover": {
-                    backgroundColor:
-                      theme.colorScheme === "light"
-                        ? theme.colors.orange[3]
-                        : theme.colors.orange[1],
-                    color:
-                      theme.colorScheme === "dark" ? theme.white : theme.black,
+            <Select
+              placeholder="Select your Work mode"
+              onChange={(value) => {
+                setValue("workMode", String(value) ?? " ")
+                onSearchWorkMode(value ?? " ")
+              }}
+              value={workModeValue}
+              data={["Work From Home", "Hybrid", "On Site"]}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
                   },
-                },
 
-                // applies styles to hovered item (with mouse or keyboard)
-                "&[data-hovered]": {},
-              },
-            })}
-            variant="unstyled"
-            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-          />
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+            />
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
             <div className="flex w-[25%] flex-col">
@@ -382,7 +392,6 @@ export const CreateEmployeeModal = (props: {
                 register={register}
               />
 
-
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
             <div className="flex w-[18.4%] flex-col">
@@ -404,12 +413,10 @@ export const CreateEmployeeModal = (props: {
                 register={register}
               />
 
-
               <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
           </div>
         </div>
-
 
         <DropZoneComponent
           setImage={props.setImage}
@@ -438,5 +445,3 @@ export const CreateEmployeeModal = (props: {
     </div>
   )
 }
-
-

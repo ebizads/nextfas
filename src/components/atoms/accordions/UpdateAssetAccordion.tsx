@@ -5,10 +5,10 @@ import {
   ArrowsExchange,
   Check,
   Checks,
-  Circle1,
-  Circle2,
-  Circle3,
-  Circle4,
+  CircleNumber1,
+  CircleNumber2,
+  CircleNumber3,
+  CircleNumber4,
   Disabled,
   Search,
 } from "tabler-icons-react"
@@ -38,7 +38,7 @@ import { useUpdateAssetStore } from "../../../store/useStore"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import InputNumberField from "../forms/InputNumberField"
-import { getAddress } from "../../../lib/functions"
+import { getAddress, getWorkMode } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import { ticketTableCreate } from "../../../server/schemas/ticket"
 import { clearAndGoBack } from "../../../lib/functions"
@@ -63,7 +63,6 @@ const UpdateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.update.useMutation()
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
-
 
   const ticketTable = trpc.ticketTable.create.useMutation()
 
@@ -126,17 +125,9 @@ const UpdateAssetAccordion = () => {
 
       console.log(selectedAsset.assetProjectId)
 
-      setValue(
-        "purchaseOrder",
-        selectedAsset.purchaseOrder)
-      setValue(
-        "invoiceNum",
-        selectedAsset.invoiceNum
-      )
-      setValue(
-        "deployment_status",
-        selectedAsset.deployment_status
-      )
+      setValue("purchaseOrder", selectedAsset.purchaseOrder)
+      setValue("invoiceNum", selectedAsset.invoiceNum)
+      setValue("deployment_status", selectedAsset.deployment_status)
       setValue(
         "management.original_cost",
         selectedAsset.management?.original_cost
@@ -166,7 +157,6 @@ const UpdateAssetAccordion = () => {
         selectedAsset.management?.depreciation_period
       )
       setValue("management.remarks", selectedAsset.management?.remarks)
-
     }
   }, [selectedAsset, reset, setValue])
 
@@ -175,7 +165,7 @@ const UpdateAssetAccordion = () => {
   const [typeId, setTypeId] = useState<string | null>(null)
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [departmentId, setDepartmentId] = useState<string | null>(null)
-
+  const [employeeId, setEmployeeId] = useState<string | null>(null)
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAll.useQuery()
@@ -237,6 +227,14 @@ const UpdateAssetAccordion = () => {
         }),
     [employeeData]
   ) as SelectValueType[] | undefined
+  const employee_workMode = useMemo(() => {
+    if (employeeId) {
+      const workMode = employeeData?.employees.filter(
+        (employee) => employee.id === Number(employeeId)
+      )[0]
+      return workMode ?? null
+    }
+  }, [employeeId, employeeData])
 
   //gets and sets all class, categories, and types
   const { data: departmentData } = trpc.department.findAll.useQuery()
@@ -257,9 +255,11 @@ const UpdateAssetAccordion = () => {
         (department) => department.companyId === Number(companyId)
       )
       if (dept) {
-        const departments = dept?.map((department: { id: { toString: () => any }; name: any }) => {
-          return { value: department.id.toString(), label: department.name }
-        }) as SelectValueType[]
+        const departments = dept?.map(
+          (department: { id: { toString: () => any }; name: any }) => {
+            return { value: department.id.toString(), label: department.name }
+          }
+        ) as SelectValueType[]
         return departments ?? null
       }
     }
@@ -299,9 +299,11 @@ const UpdateAssetAccordion = () => {
         setSelectedClass(selectedClass)
 
         //filters all the categories based on the selected class
-        const categories = selectedClass.categories.map((category: { id: { toString: () => any }; name: any }) => {
-          return { value: category.id.toString(), label: category.name }
-        }) as SelectValueType[]
+        const categories = selectedClass.categories.map(
+          (category: { id: { toString: () => any }; name: any }) => {
+            return { value: category.id.toString(), label: category.name }
+          }
+        ) as SelectValueType[]
         return categories ?? null
       }
     } else {
@@ -321,9 +323,11 @@ const UpdateAssetAccordion = () => {
       )[0]
       if (selectedCategory) {
         //filters all types in the selected category based on the selected class
-        const types = selectedCategory?.types.map((type: { id: { toString: () => any }; name: any }) => {
-          return { value: type.id.toString(), label: type.name }
-        }) as SelectValueType[]
+        const types = selectedCategory?.types.map(
+          (type: { id: { toString: () => any }; name: any }) => {
+            return { value: type.id.toString(), label: type.name }
+          }
+        ) as SelectValueType[]
         return types ?? null
       }
     } else {
@@ -355,8 +359,7 @@ const UpdateAssetAccordion = () => {
     [companyData]
   ) as SelectValueType[] | undefined
 
-  console.log(company_address);
-
+  console.log(company_address)
 
   const [loading, setIsLoading] = useState<boolean>(false)
   // const [assetId, setAssetId] = useState<string>(
@@ -465,7 +468,6 @@ const UpdateAssetAccordion = () => {
     content: () => componentRef.current,
   })
 
-
   const [formError, setFormError] = useState<boolean>(false)
   useEffect(() => {
     setFormError(Object.keys(errors).length > 0 ? true : false)
@@ -482,15 +484,22 @@ const UpdateAssetAccordion = () => {
         {/* <InputField register={register} label="Name" name="name" />
       <AlertInput>{errors?.name?.message}</AlertInput> */}
 
-        <Accordion transitionDuration={300} multiple={true} defaultValue={['1', '2', '3']} classNames={{}}>
+        <Accordion
+          transitionDuration={300}
+          multiple={true}
+          defaultValue={["1", "2", "3"]}
+          classNames={{}}
+        >
           <Accordion.Item value={"1"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className=" flex items-center gap-2 text-gray-700">
                 {/* <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-yellow-400 p-1 text-sm text-yellow-400">
                   1
                 </div> */}
-                <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Information</p>
+                <CircleNumber1 className="h-7 w-7" color="gold"></CircleNumber1>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  Asset Information
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
@@ -590,7 +599,8 @@ const UpdateAssetAccordion = () => {
                     <AlertInput>{errors?.model?.number?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
-                    <InputNumberField
+                    <InputField
+                      type="number"
                       register={register}
                       label="Asset Lifetime"
                       placeholder="Months"
@@ -600,7 +610,8 @@ const UpdateAssetAccordion = () => {
                 </div>
                 <div className="col-span-9 grid grid-cols-12 gap-7">
                   <div className="col-span-3">
-                    <InputNumberField
+                    <InputField
+                      type="number"
                       register={register}
                       label="Original Cost"
                       placeholder="Original Cost"
@@ -611,7 +622,8 @@ const UpdateAssetAccordion = () => {
                     </AlertInput>
                   </div>
                   <div className="col-span-3">
-                    <InputNumberField
+                    <InputField
+                      type="number"
                       register={register}
                       label="Current Cost"
                       placeholder="Current Cost"
@@ -623,7 +635,8 @@ const UpdateAssetAccordion = () => {
                   </div>
 
                   <div className="col-span-3">
-                    <InputNumberField
+                    <InputField
+                      type="number"
                       register={register}
                       label="Residual Value"
                       placeholder="Residual Value"
@@ -642,8 +655,8 @@ const UpdateAssetAccordion = () => {
                       name={"management.residual_percentage"}
                     />
                   </div>
-                 </div>
-                 <div className="col-span-9">
+                </div>
+                <div className="col-span-9">
                   <Textarea
                     value={description ?? ""}
                     onChange={(event) => {
@@ -667,11 +680,11 @@ const UpdateAssetAccordion = () => {
             </Accordion.Panel>
           </Accordion.Item>
 
-                    {/* General Information */}
+          {/* General Information */}
           <Accordion.Item value={"2"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
-                <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
+                <CircleNumber2 className="h-7 w-7" color="gold"></CircleNumber2>{" "}
                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                   General Information
                 </p>
@@ -679,7 +692,7 @@ const UpdateAssetAccordion = () => {
             </Accordion.Control>
             <Accordion.Panel>
               <div className="grid gap-7">
-                <div className="grid grid-cols-9 col-span-9 gap-7">
+                <div className="col-span-9 grid grid-cols-9 gap-7">
                   <div className="col-span-4">
                     <ClassTypeSelect
                       query={companyId}
@@ -687,6 +700,7 @@ const UpdateAssetAccordion = () => {
                       required
                       name={"subsidiaryId"}
                       setValue={setValue}
+                      defaultValue={company_address?.name}
                       value={getValues("subsidiaryId")?.toString()}
                       title={"Company"}
                       placeholder={"Select company or subsidiary"}
@@ -755,9 +769,9 @@ const UpdateAssetAccordion = () => {
                                 ? "Select company first"
                                 : "Select Floor type"
                             }
-                          // placeholder="Floor no."
-                          // value={selectedDepartment?.floor ?? ""}
-                          // disabled
+                            // placeholder="Floor no."
+                            // value={selectedDepartment?.floor ?? ""}
+                            // disabled
                           />
                         </div>
                       </div>
@@ -780,17 +794,20 @@ const UpdateAssetAccordion = () => {
                                 ? "Select company first"
                                 : "Select Floor type"
                             }
-                          // placeholder="Room no."
-                          // value={selectedDepartment?.room ?? ""}
-                          // disabled
+                            // placeholder="Room no."
+                            // value={selectedDepartment?.room ?? ""}
+                            // disabled
                           />
                         </div>
                       </div>
                     </div>
                     <div className="col-span-3">
-                      <TypeSelect
+                      <ClassTypeSelect
                         name={"custodianId"}
                         setValue={setValue}
+                        query={employeeId}
+                        setQuery={setEmployeeId}
+                        required
                         value={getValues("custodianId")?.toString()}
                         title={"Custodian"}
                         disabled={!Boolean(departmentId)}
@@ -803,7 +820,6 @@ const UpdateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.custodianId?.message}</AlertInput>
                     </div>
-
                   </div>
                   <div className="col-span-12 grid grid-cols-12 gap-7 ">
                     <div className="col-span-2">
@@ -837,7 +853,9 @@ const UpdateAssetAccordion = () => {
                         }
                         data={categories ?? []}
                       />
-                      <AlertInput>{errors?.model?.categoryId?.message}</AlertInput>
+                      <AlertInput>
+                        {errors?.model?.categoryId?.message}
+                      </AlertInput>
                     </div>
                     <div className="col-span-2">
                       <ClassTypeSelect
@@ -867,26 +885,25 @@ const UpdateAssetAccordion = () => {
                         required
                       />
                     </div>
-
                   </div>
                 </div>
-                <div className="grid grid-cols-9 col-span-9 gap-7">
-                <div className="col-span-4">
-                      <InputField
-                        register={register}
-                        label="PO number"
-                        placeholder="PO number"
-                        name="purchaseOrder"
-                      />
-                    </div>
-                <div className="col-span-3">
-                      <InputField
-                        register={register}
-                        label="Invoice Number"
-                        placeholder="Invoice Number"
-                        name="invoiceNum"
-                        />
-                    </div>
+                <div className="col-span-9 grid grid-cols-9 gap-7">
+                  <div className="col-span-4">
+                    <InputField
+                      register={register}
+                      label="PO number"
+                      placeholder="PO number"
+                      name="purchaseOrder"
+                    />
+                  </div>
+                  <div className="col-span-3">
+                    <InputField
+                      register={register}
+                      label="Invoice Number"
+                      placeholder="Invoice Number"
+                      name="invoiceNum"
+                    />
+                  </div>
                   <div className="col-span-2">
                     <TypeSelect
                       isString
@@ -938,18 +955,34 @@ const UpdateAssetAccordion = () => {
                     </AlertInput>
                   </div>
                   <div className="col-span-2 space-y-1">
-                      <TypeSelect 
-                          isString
-                          name={"deployment_status"}
-                          setValue={setValue}
-                          title={"Status"}
-                          placeholder={"Select Status"}
-                          data={["Deployed", "In-Stock"]}
-                          />
+                    <TypeSelect
+                      isString
+                      name={"deployment_status"}
+                      setValue={setValue}
+                      title={"Status"}
+                      placeholder={"Select Status"}
+                      data={["Deployed", "In-Stock"]}
+                    />
+                  </div>
+                  <div className="col-span-2 space-y-1">
+                    <TypeSelect
+                      isString
+                      name={"workMode"}
+                      setValue={setValue}
+                      title={"Status"}
+                      placeholder={"Select Status"}
+                      data={["Deployed", "In-Stock"]}
+                      value={
+                        employee_workMode?.workMode
+                          ? getWorkMode(employee_workMode)
+                          : ""
+                      }
+                      disabled
+                    />
                   </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-9 gap-7">
-                   <div className="col-span-3 space-y-2">
+                  <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">Purchase Date</p>
                     <DatePicker
                       placeholder="Month Day, Year"
@@ -969,7 +1002,9 @@ const UpdateAssetAccordion = () => {
                       Depreciation Start Date
                     </p>
                     <DatePicker
-                      placeholder={"Month, Day, Year                                                                📅"}
+                      placeholder={
+                        "Month, Day, Year                                                                📅"
+                      }
                       allowFreeInput
                       size="sm"
                       value={dep_start}
@@ -989,9 +1024,7 @@ const UpdateAssetAccordion = () => {
                     </p>
                     <DatePicker
                       placeholder={
-                        dep_start
-                          ? "Month, Day, Year"
-                          : "Select start ffirst"
+                        dep_start ? "Month, Day, Year" : "Select start ffirst"
                       }
                       allowFreeInput
                       size="sm"
@@ -1015,30 +1048,30 @@ const UpdateAssetAccordion = () => {
           <Accordion.Item value={"3"} className="">
             <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
               <div className="flex items-center gap-2 text-gray-700">
-                <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Usage</p>
+                <CircleNumber3 className="h-7 w-7" color="gold"></CircleNumber3>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  Asset Usage
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="grid grid-cols-9 col-span-9 gap-7">
+              <div className="col-span-9 grid grid-cols-9 gap-7">
                 <div className="col-span-3 space-y-2">
-                  <p className="text-sm text-gray-700">
-                    Date of Usage
-                  </p>
+                  <p className="text-sm text-gray-700">Date of Usage</p>
                   <DatePicker
-                    placeholder={"Month, Day, Year                                                             📅"}
+                    placeholder={
+                      "Month, Day, Year                                                             📅"
+                    }
                     // allowFreeInput
                     size="sm"
-                    value={
-                      dep_start
-                    }
+                    value={dep_start}
                     disabled
                     classNames={{
                       input:
-                        "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400"
+                        "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400",
                     }}
 
-                  // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                    // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                   />
                 </div>
                 <div className="col-span-3">
@@ -1089,8 +1122,10 @@ const UpdateAssetAccordion = () => {
               className="uppercase outline-none focus:outline-none active:outline-none"
             >
               <div className="flex items-center gap-2 text-gray-700">
-                <Circle4 className="h-7 w-7" color="gold"></Circle4>{" "}
-                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Print Bar Code</p>
+                <CircleNumber4 className="h-7 w-7" color="gold"></CircleNumber4>{" "}
+                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                  Print Bar Code
+                </p>
               </div>
             </Accordion.Control>
             <Accordion.Panel>
@@ -1142,7 +1177,6 @@ const UpdateAssetAccordion = () => {
             type="submit"
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             onClick={() => console.log(errors)}
-            
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

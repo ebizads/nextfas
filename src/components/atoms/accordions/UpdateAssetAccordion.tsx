@@ -42,6 +42,7 @@ import { getAddress, getWorkMode } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import { ticketTableCreate } from "../../../server/schemas/ticket"
 import { clearAndGoBack } from "../../../lib/functions"
+import { get } from "lodash"
 
 export const FormErrorMessage = (props: {
   setFormError: React.Dispatch<React.SetStateAction<boolean>>
@@ -122,7 +123,7 @@ const UpdateAssetAccordion = () => {
       reset(selectedAsset as AssetEditFieldValues)
       setValue("assetProjectId", selectedAsset.assetProjectId ?? 1)
       setValue("description", selectedAsset.description ?? "")
-
+      setWorkMode(selectedAsset.custodian?.workMode ?? "")
       console.log(selectedAsset.assetProjectId)
 
       setValue("purchaseOrder", selectedAsset.purchaseOrder)
@@ -165,6 +166,7 @@ const UpdateAssetAccordion = () => {
   const [typeId, setTypeId] = useState<string | null>(null)
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [departmentId, setDepartmentId] = useState<string | null>(null)
+  const [workMode, setWorkMode] = useState<string | null>(null)
   const [employeeId, setEmployeeId] = useState<string | null>(null)
 
   //gets and sets all assets
@@ -227,14 +229,6 @@ const UpdateAssetAccordion = () => {
         }),
     [employeeData]
   ) as SelectValueType[] | undefined
-  const employee_workMode = useMemo(() => {
-    if (employeeId) {
-      const workMode = employeeData?.employees.filter(
-        (employee) => employee.id === Number(employeeId)
-      )[0]
-      return workMode ?? null
-    }
-  }, [employeeId, employeeData])
 
   //gets and sets all class, categories, and types
   const { data: departmentData } = trpc.department.findAll.useQuery()
@@ -272,8 +266,20 @@ const UpdateAssetAccordion = () => {
   const [description, setDescription] = useState<string | null>(
     selectedAsset?.description ?? null
   )
+
   const [remarks, setRemarks] = useState<string | null>(
     selectedAsset?.management?.remarks ?? null
+  )
+
+  const [period, setPeriod] = useState<number | null>(
+    selectedAsset?.management?.depreciation_period ?? null
+  )
+  const [quantity, setQuantity] = useState<number | null>(
+    selectedAsset?.management?.asset_quantity ?? null
+  )
+
+  const [dep_purchase, setPurchase] = useState<Date | null>(
+    selectedAsset?.management?.purchase_date ?? null
   )
 
   //depreciation start and end period
@@ -287,6 +293,7 @@ const UpdateAssetAccordion = () => {
   const [selectedClass, setSelectedClass] = useState<
     AssetClassType | undefined
   >(undefined)
+
   // const [types, setTypes] = useState<SelectValueType[] | null>(null)
 
   const categories = useMemo(() => {
@@ -359,7 +366,9 @@ const UpdateAssetAccordion = () => {
     [companyData]
   ) as SelectValueType[] | undefined
 
-  console.log(company_address)
+  const [companyName, setCompanyName] = useState<string>(
+    company_address?.name ?? " "
+  )
 
   const [loading, setIsLoading] = useState<boolean>(false)
   // const [assetId, setAssetId] = useState<string>(
@@ -391,6 +400,13 @@ const UpdateAssetAccordion = () => {
   }, [typeId, departmentId]) as string | null
 
   useEffect(() => {
+    setCompanyId(getValues("subsidiaryId")?.toString() ?? "")
+    setDepartmentId(getValues("departmentId")?.toString() ?? "")
+    setEmployeeId(getValues("custodianId")?.toString() ?? " ")
+    setCategoryId(getValues("model.categoryId")?.toString() ?? " ")
+    setTypeId(getValues("model.typeId")?.toString() ?? " ")
+    setClassId(getValues("model.classId")?.toString() ?? " ")
+
     if (asset_number) {
       const id = `${asset_number}${assetId}`
       setValue("number", id)
@@ -404,7 +420,15 @@ const UpdateAssetAccordion = () => {
         width: 1,
       })
     }
-  }, [assetId, asset_number, setValue])
+  }, [assetId, asset_number, companyId, getValues, selectedAsset, setValue])
+  const employee_workMode = useMemo(() => {
+    if (employeeId) {
+      const workMode = employeeData?.employees.filter(
+        (employee) => employee.id === Number(employeeId)
+      )[0]
+      return workMode ?? null
+    }
+  }, [employeeId, employeeData])
 
   const router = useRouter()
 
@@ -700,7 +724,6 @@ const UpdateAssetAccordion = () => {
                       required
                       name={"subsidiaryId"}
                       setValue={setValue}
-                      defaultValue={company_address?.name}
                       value={getValues("subsidiaryId")?.toString()}
                       title={"Company"}
                       placeholder={"Select company or subsidiary"}
@@ -770,7 +793,7 @@ const UpdateAssetAccordion = () => {
                                 : "Select Floor type"
                             }
                             // placeholder="Floor no."
-                            // value={selectedDepartment?.floor ?? ""}
+                            value={selectedDepartment?.floor ?? ""}
                             // disabled
                           />
                         </div>
@@ -795,7 +818,7 @@ const UpdateAssetAccordion = () => {
                                 : "Select Floor type"
                             }
                             // placeholder="Room no."
-                            // value={selectedDepartment?.room ?? ""}
+                            value={selectedDepartment?.room ?? ""}
                             // disabled
                           />
                         </div>
@@ -959,19 +982,23 @@ const UpdateAssetAccordion = () => {
                       isString
                       name={"deployment_status"}
                       setValue={setValue}
+                      value={getValues("deployment_status")?.toString() ?? "--"}
                       title={"Status"}
                       placeholder={"Select Status"}
                       data={["Deployed", "In-Stock"]}
                     />
                   </div>
                   <div className="col-span-2 space-y-1">
-                    <TypeSelect
-                      isString
-                      name={"workMode"}
-                      setValue={setValue}
-                      title={"Status"}
-                      placeholder={"Select Status"}
-                      data={["Deployed", "In-Stock"]}
+                    <label htmlFor="workMode" className="text-sm">
+                      Work Mode
+                    </label>
+                    <input
+                      type="text"
+                      id={"workMode"}
+                      className={
+                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                      }
+                      placeholder={"--"}
                       value={
                         employee_workMode?.workMode
                           ? getWorkMode(employee_workMode)
@@ -988,7 +1015,9 @@ const UpdateAssetAccordion = () => {
                       placeholder="Month Day, Year"
                       allowFreeInput
                       size="sm"
+                      value={dep_purchase}
                       onChange={(value) => {
+                        setPurchase(value)
                         setValue("management.purchase_date", value)
                       }}
                       classNames={{
@@ -1079,6 +1108,7 @@ const UpdateAssetAccordion = () => {
                     placeholder="Month/s"
                     register={register}
                     label="Period (month/s)"
+                    value={period?.toString() ?? "--"}
                     name="management.depreciation_period"
                   />
                   <AlertInput>
@@ -1088,6 +1118,7 @@ const UpdateAssetAccordion = () => {
                 <div className="col-span-3">
                   <InputNumberField
                     register={register}
+                    value={quantity?.toString() ?? "--"}
                     label="Asset Quantity"
                     placeholder="Asset Quantity"
                     name="management.asset_quantity"

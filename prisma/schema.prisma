@@ -292,6 +292,28 @@ model AssetDisposal {
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }
 
+model AssetTransfer {
+  id               Int           @id @default(autoincrement())
+  transferDate     DateTime?
+  transferLocation String?
+  transferStatus   String?
+  description      String?
+  departmentCode   String?
+  salesInvoice     String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+  deleted          Boolean       @default(false)
+  transferTypeId   Int?
+  remarks          String?
+  telephoneNo      String?
+  apInvoice        String?
+  custodianId      Int?
+  assetId          Int?          @unique
+  asset            Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  transferType     TransferType? @relation(fields: [transferTypeId], references: [id])
+}
+
 model AssetRepair {
   id           Int       @id @default(autoincrement())
   description  String?
@@ -317,6 +339,16 @@ model DisposalType {
   deletedAt DateTime?
   deleted   Boolean         @default(false)
   disposal  AssetDisposal[]
+}
+
+model TransferType {
+  id        Int             @id @default(autoincrement())
+  name      String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean         @default(false)
+  disposal  AssetTransfer[]
 }
 
 model Company {
@@ -435,6 +467,7 @@ model Asset {
   AssetDisposal     AssetDisposal?
   management        AssetManagement?
   AssetRepair       AssetRepair?
+  AssetTransfer     AssetTransfer?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }

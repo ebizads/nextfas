@@ -1,5 +1,6 @@
 import { z } from "zod"
 import {
+  CustodianEditInput,
   ManagementCreateInput,
   ManagementEditInput,
   ModelCreateInput,
@@ -55,7 +56,6 @@ export const AssetEditInput = z.object({
   invoiceNum: z.string().nullish(),
   purchaseOrder: z.string().nullish(),
   deployment_status: z.string().nullish(),
-  wfh_status: z.string().nullish(),
 
   modelId: z.number().optional().nullish(),
   custodianId: z.number().optional().nullish(),
@@ -81,7 +81,6 @@ export const AssetUpdateInput = z.object({
   invoiceNum: z.string().nullish(),
   purchaseOrder: z.string().nullish(),
   deployment_status: z.string().nullish(),
-  wfh_status: z.string().nullish(),
 
   // modelId: z.number(),
   custodianId: z.number().nullish(),

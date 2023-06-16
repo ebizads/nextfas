@@ -14,7 +14,7 @@ export const InputNumberField = ({
   const [input, setInput] = useState<number | null>(null)
 
   const [defvalue, setdefValue] = useState<string>(
-    value ? value?.toString() : "0"
+    value ? value?.toString() : ""
   )
 
   return (

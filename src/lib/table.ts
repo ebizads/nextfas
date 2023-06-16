@@ -11,7 +11,7 @@ export const columns = [
   // { value: "description", name: "Description" },
   { value: "custodian", name: "Custodian" },
   // { value: "createdAt", name: "Added Date" },
-  { value: "deployment_status", name: "Status"},
+  { value: "deployment_status", name: "Status" },
 ] as ColumnType[]
 
 export const vendorColumns = [
@@ -118,11 +118,11 @@ export const navigations = [
     icon: "fa-users",
     link: "/employees",
   },
-  {
-    name: "Asset Issuance",
-    icon: "fa-users",
-    link: "/issuance",
-  },
+  // {
+  //   name: "Asset Issuance",
+  //   icon: "fa-users",
+  //   link: "/issuance",
+  // },
   {
     name: "Vendors",
     icon: "fa-store",

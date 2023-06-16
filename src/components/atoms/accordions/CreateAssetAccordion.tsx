@@ -227,6 +227,7 @@ const CreateAssetAccordion = () => {
   const [remarks, setRemarks] = useState<string | null>(null)
 
   //depreciation start and end period
+  const [purchase_date, setPurchase_date] = useState<Date | null>(null)
   const [dep_start, setDepStart] = useState<Date | null>(null)
   const [dep_end, setDepEnd] = useState<Date | null>(null)
 
@@ -471,11 +472,11 @@ const CreateAssetAccordion = () => {
                 <div className="col-span-3">
                   <InputField
                     register={register}
-                    label="Model Brand"
-                    placeholder="Model Brand"
-                    name="model.brand"
+                    label="Model Number"
+                    placeholder="Model Number"
+                    name="model.number"
                   />
-                  <AlertInput>{errors?.model?.brand?.message}</AlertInput>
+                  <AlertInput>{errors?.model?.number?.message}</AlertInput>
                 </div>
                 <div className="col-span-6 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
@@ -490,11 +491,11 @@ const CreateAssetAccordion = () => {
                   <div className="col-span-3">
                     <InputField
                       register={register}
-                      label="Model Number"
-                      placeholder="Model Number"
-                      name="model.number"
+                      label="Model Brand"
+                      placeholder="Model Brand"
+                      name="model.brand"
                     />
-                    <AlertInput>{errors?.model?.number?.message}</AlertInput>
+                    <AlertInput>{errors?.model?.brand?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
                     <InputNumberField
@@ -512,6 +513,7 @@ const CreateAssetAccordion = () => {
                       label="Original Cost"
                       placeholder="Original Cost"
                       name="management.original_cost"
+                      required
                     />
                     <AlertInput>
                       {errors?.management?.original_cost?.message}
@@ -523,6 +525,7 @@ const CreateAssetAccordion = () => {
                       label="Current Cost"
                       placeholder="Current Cost"
                       name="management.current_cost"
+                      required
                     />
                     <AlertInput>
                       {errors?.management?.current_cost?.message}
@@ -535,6 +538,7 @@ const CreateAssetAccordion = () => {
                       label="Residual Value"
                       placeholder="Residual Value"
                       name={"management.residual_value"}
+                      required
                     />
                     <AlertInput>
                       {errors?.management?.residual_value?.message}
@@ -626,7 +630,7 @@ const CreateAssetAccordion = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-10 grid grid-cols-10 gap-5">
+                  <div className="col-span-12 grid grid-cols-10 gap-7">
                     <div className="col-span-2">
                       <ClassTypeSelect
                         query={departmentId}
@@ -648,7 +652,7 @@ const CreateAssetAccordion = () => {
                     </div>
                     <div className="col-span-2">
                       <div className="text-gray-700">
-                        <div className=" gap-2">
+                        <div className="flex flex-col gap-2">
                           <label htmlFor="floor" className="text-sm">
                             Floor
                           </label>
@@ -667,7 +671,7 @@ const CreateAssetAccordion = () => {
                     </div>
                     <div className="col-span-2">
                       <div className="text-gray-700">
-                        <div className=" gap-2">
+                        <div className="flex flex-col gap-2">
                           <label htmlFor="address" className="text-sm">
                             Room
                           </label>
@@ -684,7 +688,7 @@ const CreateAssetAccordion = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-3">
                       <ClassTypeSelect
                         name={"custodianId"}
                         query={employeeId}
@@ -703,7 +707,7 @@ const CreateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.custodianId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-1 flex flex-col gap-2">
                       <label htmlFor="workMode" className="text-sm">
                         Work Mode
                       </label>
@@ -713,7 +717,11 @@ const CreateAssetAccordion = () => {
                         className={
                           "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                         }
-                        placeholder="Employee Work Mode"
+                        placeholder={
+                          employee_workMode?.workMode
+                            ? getWorkMode(employee_workMode)
+                            : "N/A"
+                        }
                         value={
                           employee_workMode?.workMode
                             ? getWorkMode(employee_workMode)
@@ -723,7 +731,7 @@ const CreateAssetAccordion = () => {
                       />
                     </div>
                   </div>
-                  <div className="col-span-12 grid grid-cols-12 gap-7 ">
+                  <div className="col-span-12 grid grid-cols-10 gap-7 ">
                     <div className="col-span-2">
                       <ClassTypeSelect
                         query={classId}
@@ -778,7 +786,7 @@ const CreateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-6">
+                    <div className="col-span-4">
                       <InputField
                         register={register}
                         label="Asset Location"
@@ -789,7 +797,7 @@ const CreateAssetAccordion = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-span-9 grid grid-cols-9 gap-7">
+                <div className="col-span-9 grid grid-cols-10 gap-7">
                   <div className="col-span-4">
                     <InputField
                       register={register}
@@ -798,7 +806,7 @@ const CreateAssetAccordion = () => {
                       name="purchaseOrder"
                     />
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <InputField
                       register={register}
                       label="Invoice Number"
@@ -824,7 +832,7 @@ const CreateAssetAccordion = () => {
                     </AlertInput>
                   </div>
 
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <TypeSelect
                       isString
                       name={"management.accounting_method"}
@@ -842,7 +850,7 @@ const CreateAssetAccordion = () => {
                       {errors?.management?.accounting_method?.message}
                     </AlertInput>
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <TypeSelect
                       isString
                       name={"management.depreciation_rule"}
@@ -871,67 +879,90 @@ const CreateAssetAccordion = () => {
                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">Purchase Date</p>
 
-                    <DatePicker
-                      placeholder={
-                        "Month, Day, Year                                                                📅"
-                      }
-                      allowFreeInput
-                      size="sm"
-                      onChange={(value) => {
-                        setValue("management.purchase_date", value)
-                      }}
-                      classNames={{
-                        input:
-                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                      }}
-                    />
+                    <div className="relative">
+                      <DatePicker
+                        placeholder={""}
+                        allowFreeInput
+                        size="sm"
+                        onChange={(value) => {
+                          setPurchase_date(value),
+                            setValue("management.purchase_date", value)
+                        }}
+                        classNames={{
+                          input:
+                            "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                        }}
+                      />
+                      <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                        <span className="opacity-50">
+                          {purchase_date ? "" : "Month, Day, Year"}
+                        </span>
+                        <span className="pointer-events-none pr-3">📅</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">
                       Depreciation Start Date
                     </p>
-                    <DatePicker
-                      placeholder={
-                        "Month, Day, Year                                                                📅"
-                      }
-                      allowFreeInput
-                      size="sm"
-                      value={dep_start}
-                      onChange={(value) => {
-                        setDepStart(value)
-                        setValue("management.depreciation_start", value)
-                      }}
-                      classNames={{
-                        input:
-                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                      }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                    />
+
+                    <div className="relative">
+                      <DatePicker
+                        placeholder={""}
+                        allowFreeInput
+                        size="sm"
+                        value={dep_start}
+                        onChange={(value) => {
+                          setDepStart(value)
+                          setValue("management.depreciation_start", value)
+                        }}
+                        classNames={{
+                          input:
+                            "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                        }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                      />
+                      <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                        <span className="opacity-50">
+                          {dep_start ? "" : "Month, Day, Year"}
+                        </span>
+                        <span className="pointer-events-none pr-3">📅</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="col-span-2 space-y-2">
+                  <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">
                       Depreciation End Date
                     </p>
-                    <DatePicker
-                      placeholder={
-                        dep_start
-                          ? "Month, Day, Year                            📅"
-                          : "Select start date first"
-                      }
-                      allowFreeInput
-                      size="sm"
-                      value={dep_end}
-                      disabled={!Boolean(dep_start)}
-                      //
-                      minDate={dep_start ? dep_start : new Date()}
-                      onChange={(value) => {
-                        setDepEnd(value)
-                        setValue("management.depreciation_end", value)
-                      }}
-                      classNames={{
-                        input:
-                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                      }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                    />
+
+                    <div className="relative">
+                      <DatePicker
+                        placeholder={""}
+                        allowFreeInput
+                        size="sm"
+                        value={dep_end}
+                        disabled={!Boolean(dep_start)}
+                        //
+                        minDate={dep_start ? dep_start : new Date()}
+                        onChange={(value) => {
+                          setDepEnd(value)
+                          setValue("management.depreciation_end", value)
+                        }}
+                        classNames={{
+                          input:
+                            "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                        }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                      />
+                      <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                        <span className="pointer-events-none opacity-50">
+                          {dep_start
+                            ? dep_end
+                              ? ""
+                              : "Month, Day, Year"
+                            : "Select start date first"}
+                        </span>
+                        <span className="pointer-events-none pr-3">📅</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -950,7 +981,7 @@ const CreateAssetAccordion = () => {
               <div className="col-span-9 grid grid-cols-9 gap-7">
                 <div className="col-span-3 space-y-2">
                   <p className="text-sm text-gray-700">Date of Usage</p>
-                  <DatePicker
+                  {/* <DatePicker
                     placeholder={
                       "Month, Day, Year                                                             📅"
                     }
@@ -962,7 +993,31 @@ const CreateAssetAccordion = () => {
                     }}
 
                     // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                  />
+                  /> */}
+
+                  <div className="relative">
+                    <DatePicker
+                      placeholder={""}
+                      allowFreeInput
+                      disabled
+                      size="sm"
+                      value={purchase_date} //TODO:usage date should not be the same as depreciation date (pwede mag depreciate ang item even before or after using it)
+                      onChange={(value) => {
+                        setPurchase_date(value),
+                          setValue("management.purchase_date", value)
+                      }}
+                      classNames={{
+                        input:
+                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                      }}
+                    />
+                    <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                      <span className="opacity-50">
+                        {purchase_date ? "" : "Month, Day, Year"}
+                      </span>
+                      <span className="pointer-events-none pr-3">📅</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="col-span-3">
                   <InputNumberField

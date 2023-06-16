@@ -339,7 +339,7 @@ export const CreateEmployeeModal = (props: {
                 onSearchWorkMode(value ?? " ")
               }}
               value={workModeValue}
-              data={["Work From Home", "Hybrid", "On Site"]}
+              data={["WFH", "Hybrid", "On-Site"]}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item

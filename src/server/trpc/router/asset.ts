@@ -77,7 +77,7 @@ export const assetRouter = t.router({
       const [assets, count] = await ctx.prisma.$transaction([
         ctx.prisma.asset.findMany({
           orderBy: {
-            createdAt: "asc",
+            createdAt: "desc",
           },
           include: {
             model: {

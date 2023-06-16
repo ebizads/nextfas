@@ -14,7 +14,7 @@ const Assets = () => {
   const { search } = useSearchStore()
   // Get asset by asset id
   const { data } = trpc.asset.findAll.useQuery({
-    search: {name: search},
+    search: { name: search },
     limit,
     page,
   })
@@ -43,7 +43,9 @@ const Assets = () => {
           page={page}
           setPage={setPage}
           limit={limit}
-          setLimit={setLimit} user={null}        />
+          setLimit={setLimit}
+          user={null}
+        />
       </div>
     </DashboardLayout>
   )

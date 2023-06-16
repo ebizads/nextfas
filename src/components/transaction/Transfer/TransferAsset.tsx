@@ -1810,7 +1810,7 @@ const Transfer = ({ }) => {
     )
 }
 
-export default Transfer
+export default Transfer;
 
 //{<i className={`fa-sharp fa-solid fa-arrow-right-arrow-left ${active == 1 ? "text-tangerine-600" : ""}`}
 //E0E0E0

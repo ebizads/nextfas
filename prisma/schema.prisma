@@ -117,11 +117,6 @@ model Employee {
   position     String?
   employee_id  String?   @unique
   email        String?   @unique
-  locked       Boolean   @default(false)
-  lockedAt     DateTime?
-  lockedReason String?
-  lockedUntil  DateTime?
-  attempts     Int       @default(0)
   teamId       Int?
   superviseeId Int?
   createdAt    DateTime  @default(now())

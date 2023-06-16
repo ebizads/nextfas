@@ -11,6 +11,7 @@ function DropZoneComponent(props: {
   isLoading: boolean
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   acceptingMany?: boolean
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const handleRemove = (idx: number) => {
     props.setImage((prev) => [...prev.filter((img, i) => idx !== i)])
@@ -29,6 +30,7 @@ function DropZoneComponent(props: {
           setIsLoading={props.setIsLoading}
           file_type="image"
           acceptingMany={props.acceptingMany}
+          setIsVisible={props.setIsVisible}
         />
       </div>
       <div

@@ -12,19 +12,25 @@ import * as XLSX from "xlsx"
 import { ExcelExportType } from "../../types/employee"
 import { trpc } from "../../utils/trpc"
 import DuplicateAccordion from "../atoms/accordions/DuplicateAccordion"
+import { update } from "lodash"
+import { EmployeeEditInput } from "../../server/schemas/employee"
+import { z } from "zod"
 
+export type Employee = z.infer<typeof EmployeeEditInput>
 export default function DropZone({
   setImage,
   loading,
   setIsLoading,
   file_type,
   acceptingMany,
+  setIsVisible,
 }: {
   setImage?: React.Dispatch<React.SetStateAction<ImageJSON[]>>
   loading: boolean
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   file_type: string
   acceptingMany?: boolean
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const [idList, setIdList] = useState<number[]>([])
 
@@ -33,7 +39,17 @@ export default function DropZone({
     ExcelExportType[]
   >([])
 
-  // const { mutate: updateAll } = trpc.employee.updateMany.useMutation()
+  const {
+    mutate,
+    isLoading: employeeLoading,
+    error,
+  } = trpc.employee.edit.useMutation({
+    onSuccess() {
+      console.log("omsiman")
+      // invalidate query of asset id when mutations is successful
+    },
+  })
+
   const parseEmployeesData = (data: unknown[]) => {
     //returns all id of parsed employees
     const id_list = data.map((employee) => {
@@ -43,6 +59,7 @@ export default function DropZone({
       setIdList(id_list)
     }
     //filters duplicated ID
+
     const dupEmployeeList = data.filter((employee) => {
       return id_list.includes(
         employee ? Number((employee as string[])[0] as string) : -1
@@ -116,7 +133,7 @@ export default function DropZone({
 
     setDuplicatedEmployees(
       final_dupList.sort((a, b) => {
-        console.log((a.id ?? 0) - (b.id ?? 0))
+        console.log("sort" + ((a.id ?? 0) - (b.id ?? 0)))
         return (a.id ?? 0) - (b.id ?? 0)
       })
     )
@@ -127,9 +144,68 @@ export default function DropZone({
   // const updateDate = duplicatedEmployees.map((row) => {
   //   const {id, name, hired_date, position, employee_id,}
   // })
-  const onSubmitUpdate = () => {
+
+  const onDiscard = async (
+    event: { preventDefault: () => void } | undefined
+  ) => {
+    setIsVisible(false)
+  }
+  const onSubmitUpdate = async (
+    event: { preventDefault: () => void } | undefined
+  ) => {
+    // Register function
     try {
-      console.log(duplicatedEmployees)
+      console.log(duplicatedEmployees[1])
+      for (let i = 0; i < duplicatedEmployees.length; i++) {
+        console.log("sorted: " + duplicatedEmployees[i]?.id)
+
+        mutate({
+          id: duplicatedEmployees[i]?.id ?? 0,
+          name: duplicatedEmployees[i]?.name ?? "",
+          hired_date: duplicatedEmployees[i]?.hired_date,
+          position: duplicatedEmployees[i]?.position,
+          employee_id: duplicatedEmployees[i]?.employee_id,
+          email: duplicatedEmployees[i]?.email,
+          teamId: duplicatedEmployees[i]?.teamId ?? 0,
+          superviseeId: duplicatedEmployees[i]?.superviseeId ?? 0,
+          // createdAt: duplicatedEmployees[i]?.createdAt,
+          // updatedAt: duplicatedEmployees[i]?.updatedAt,
+          // deleted: duplicatedEmployees[i]?.deleted,
+          // deletedAt: duplicatedEmployees[i]?.deletedAt,
+          workMode: duplicatedEmployees[i]?.workMode,
+          workStation: duplicatedEmployees[i]?.workStation,
+          address: {
+            // id: duplicatedEmployees[i]?.address?.id ?? 0,
+            street: duplicatedEmployees[i]?.address?.street,
+            city: duplicatedEmployees[i]?.address?.city,
+            state: duplicatedEmployees[i]?.address?.state,
+            zip: duplicatedEmployees[i]?.address?.state,
+            country: duplicatedEmployees[i]?.address?.country,
+            // createdAt: duplicatedEmployees[i]?.address?.createdAt,
+            // updatedAt: duplicatedEmployees[i]?.address?.updatedAt,
+            //may laktaw po ito
+            // deleted: duplicatedEmployees[i]?.address?.deleted,
+            // deletedAt: duplicatedEmployees[i]?.address?.deletedAt,
+            // userId: duplicatedEmployees[i]?.address?.userId ?? 0,
+            // companyId: duplicatedEmployees[i]?.address?.companyId,
+            // vendorId: duplicatedEmployees[i]?.address?.vendorId,
+            // employeeId: duplicatedEmployees[i]?.address?.employeeId,
+          },
+          profile: {
+            // id: duplicatedEmployees[i]?.profile?.id,
+            first_name: duplicatedEmployees[i]?.profile?.first_name,
+            middle_name: duplicatedEmployees[i]?.profile?.middle_name,
+            last_name: duplicatedEmployees[i]?.profile?.last_name,
+            suffix: duplicatedEmployees[i]?.profile?.suffix,
+            gender: duplicatedEmployees[i]?.profile?.gender,
+            image: duplicatedEmployees[i]?.profile?.image,
+            date_of_birth: duplicatedEmployees[i]?.profile?.date_of_birth,
+            // userId: duplicatedEmployees[i]?.profile?.userId,
+            // employeeId: duplicatedEmployees[i]?.profile?.employeeId,
+            phone_no: duplicatedEmployees[i]?.profile?.phone_no,
+          },
+        })
+      }
     } catch {}
   }
   return (
@@ -195,6 +271,7 @@ export default function DropZone({
                       const data = raw_data
                       // do something here
                       // const headers = data.shift()
+
                       parseEmployeesData(data)
                     }
                   } else {
@@ -272,20 +349,25 @@ export default function DropZone({
               </p>
             </div>
             <DuplicateAccordion
-              currentRecords={duplicates.sort((a, b) => a.id - b.id)}
+              currentRecords={duplicates.sort(
+                (a: { id: number }, b: { id: number }) => a.id - b.id
+              )}
               incomingChanges={duplicatedEmployees}
             />
             <div className="mt-4 flex items-center justify-end gap-2">
-              <button className="px-4 py-2 font-medium underline">
+              <button
+                className="px-4 py-2 font-medium underline"
+                onClick={onDiscard}
+              >
                 Discard Changes
               </button>
               <button
                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                 onClick={onSubmitUpdate}
-                // disabled={employeeLoading}
+                disabled={employeeLoading}
               >
-                {/* {employeeLoading ? "Loading..." : "Accept All Changes"} */}
-                Accept All Changes
+                {employeeLoading ? "Loading..." : "Accept All Changes"}
+                {/* Accept All Changes */}
               </button>
             </div>
 

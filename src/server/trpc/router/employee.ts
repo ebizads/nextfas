@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { authedProcedure, t } from "../trpc"
 import { EmployeeCreateInput, EmployeeEditInput } from "../../schemas/employee"
-import { map } from "lodash"
+import { create, map } from "lodash"
 
 export const employeeRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -225,62 +225,61 @@ export const employeeRouter = t.router({
     .input(EmployeeEditInput)
     .mutation(async ({ ctx, input }) => {
       const { address, profile, id, ...rest } = input
+      const duplicate = await ctx.prisma.employee.findMany({
+        where: {
+          id: id,
+        },
+        include: {
+          address: true,
+          profile: true,
+          team: {
+            include: {
+              department: {
+                include: {
+                  location: true,
+                },
+              },
+            },
+          },
+        },
+      })
 
       try {
-        await ctx.prisma.employee.update({
-          where: {
-            id,
-          },
-          data: {
-            ...rest,
-            profile: {
-              update: profile,
+        if (duplicate) {
+          await ctx.prisma.employee.update({
+            where: {
+              id,
             },
-            address: {
-              update: address,
-            },
-          },
-        })
-
-        return "User created successfully"
-      } catch (error) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: JSON.stringify(error),
-        })
-      }
-    }),
-  updateMany: authedProcedure
-    .input(z.array(EmployeeEditInput))
-    .mutation(async ({ ctx, input }) => {
-      try {
-        await ctx.prisma.employee.updateMany({
-          data: input.map((employee) => {
-            const { address, profile, ...rest } = employee
-
-            return {
+            data: {
               ...rest,
               profile: {
-                connectOrCreate: {
-                  where: {
-                    id: 0,
-                  },
-                  create: profile,
-                },
+                update: profile,
               },
               address: {
-                connectOrCreate: {
-                  where: {
-                    id: 0,
-                  },
-                  create: address,
-                },
+                update: address,
               },
-            }
-          }),
-        })
+            },
+          })
 
-        return "User created successfully"
+          return "User created successfully"
+        } else {
+          // await ctx.prisma.employee.create({
+          //   data: {
+          //     ...rest,
+          //     profile: {
+          //       create: profile ?? undefined,
+          //     },
+          //     address: {
+          //       connectOrCreate: {
+          //         where: {
+          //           id: 0,
+          //         },
+          //         create: address,
+          //       },
+          //     },
+          //   },
+          // })
+        }
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",

@@ -207,6 +207,7 @@ const DisplayEmployees = (props: {
           acceptingMany={false}
           loading={isLoading}
           setIsLoading={setIsLoading}
+          setIsVisible={setAddBulkRecord}
         />
       </Modal>
     </div>

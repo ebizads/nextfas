@@ -30,6 +30,7 @@ export const EmployeeCreateInput = z.object({
 export const EmployeeEditInput = z.object({
   id: z.number(),
   name: z.string().optional(),
+  superviseeId: z.number().nullish().optional(),
   employee_id: z.string().nullish().optional(),
   email: z
     .string()

@@ -41,6 +41,7 @@ export const UpdateEmployeeModal = (props: {
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
 
@@ -464,6 +465,7 @@ export const UpdateEmployeeModal = (props: {
             images={images}
             isLoading={isLoading}
             acceptingMany={false}
+            setIsVisible={props.setIsVisible}
           />
         )}
         <hr className="w-full"></hr>

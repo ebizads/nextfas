@@ -283,6 +283,7 @@ export const assetRouter = t.router({
       })
       return "Assets successfully created"
     }),
+
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {

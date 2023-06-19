@@ -89,7 +89,9 @@ export const CreateEmployeeModal = (props: {
     // Register function
 
     mutate({
-      name: `${employee.profile.first_name} ${employee.profile.last_name}`,
+      name: `${employee.profile?.first_name ?? ""} ${
+        employee.profile?.last_name ?? ""
+      }`,
       employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
@@ -111,10 +113,10 @@ export const CreateEmployeeModal = (props: {
         zip: employee.address?.zip,
       },
       profile: {
-        first_name: employee.profile.first_name,
-        middle_name: employee.profile.middle_name,
-        last_name: employee.profile.last_name,
-        phone_no: employee.profile.phone_no,
+        first_name: employee.profile?.first_name ?? "",
+        middle_name: employee.profile?.middle_name,
+        last_name: employee.profile?.last_name ?? "",
+        phone_no: employee.profile?.phone_no,
         image: props.images[0]?.file ?? "",
       },
       workMode: employee.workMode,

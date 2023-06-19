@@ -423,7 +423,8 @@ export const CreateEmployeeModal = (props: {
           setIsLoading={props.setIsLoading}
           images={props.images}
           isLoading={props.isLoading}
-          acceptingMany={false}
+          acceptingMany={true}
+          setIsVisible={props.setIsVisible}
         />
         <hr className="w-full"></hr>
         <div className="flex w-full justify-end">

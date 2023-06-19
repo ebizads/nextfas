@@ -41,6 +41,7 @@
     "moment": "^2.29.4",
     "next": "12.3.1",
     "next-auth": "^4.22.1",
+    "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-calendar": "^3.9.0",
     "react-datepicker": "^4.8.0",
@@ -54,6 +55,7 @@
     "tabler-icons-react": "^1.55.0",
     "trpc": "^0.8.2",
     "xlsx": "^0.18.5",
+    "yarn": "^1.22.19",
     "zod": "^3.19.1",
     "zustand": "^4.1.2"
   },
@@ -61,6 +63,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/lodash": "^4.14.186",
     "@types/node": "18.0.0",
+    "@types/papaparse": "^5.3.7",
     "@types/react": "^18.0.14",
     "@types/react-datepicker": "^4.4.2",
     "@types/react-datetime-picker": "^3.4.1",

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Group, Text } from "@mantine/core"
 import { IconUpload, IconX } from "@tabler/icons"
 import {
@@ -56,6 +56,8 @@ export default function DropZone({
       // invalidate query of asset id when mutations is successful
     },
   })
+
+
 
   const parseEmployeesData = (data: unknown[]) => {
     //returns all id of parsed employees
@@ -427,6 +429,7 @@ export default function DropZone({
                   (a: { id: number }, b: { id: number }) => a.id - b.id
                 )}
                 incomingChanges={duplicatedEmployees}
+              
               />
             ) : (
               <></>

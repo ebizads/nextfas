@@ -127,6 +127,8 @@ export const formatBytes = (bytes: number) => {
 }
 
 export const downloadExcel = (data: ExcelExportType[]) => {
+  console.log(data)
+
   // if (!data) {
   // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])

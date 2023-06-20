@@ -1,5 +1,6 @@
 import {
   AssetRepairType,
+  AssetTransferType,
   AssetType,
   DisposeType,
   EmployeeType,
@@ -23,7 +24,7 @@ export const getProperty = (
     | VendorType
     | DisposeType
     | AssetRepairType
-    | UserType
+    | UserType | AssetTransferType
 
   //subfilter?: string
 ) => {
@@ -44,7 +45,7 @@ export const getProperty = (
 
 export const getPropertyDisposal = (
   filter: string,
-  type: DisposeType | AssetRepairType | VendorType
+  type: DisposeType | AssetRepairType | VendorType | AssetTransferType
   //subfilter?: string
 ) => {
   //get object property
@@ -77,25 +78,25 @@ export const getName = (filter: string, type: EmployeeType) => {
   return filter === "first_name"
     ? Object.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
-    : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+      ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+      : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getNameUser = (filter: string, type: UserType) => {
   return filter === "first_name"
     ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
+      ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
         ?.value
-    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+      : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getAddressUser = (
   type:
     | UserType
     | (Company & {
-        address: Address | null
-      })
+      address: Address | null
+    })
 ) => {
   return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country}, ${type?.name} `
 }
@@ -104,8 +105,8 @@ export const getAddress = (
   type:
     | EmployeeType
     | (Company & {
-        address: Address | null
-      })
+      address: Address | null
+    })
 ) => {
   return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
 }
@@ -178,8 +179,8 @@ export const getLifetime = (start_date: Date, end_date: Date) => {
   return differenceInDay > 364
     ? `${convertDaysToYears(differenceInDay)} year/s`
     : differenceInDay > 30
-    ? `${convertDaysToMonths(differenceInDay)} month/s`
-    : `${differenceInDay} day/s`
+      ? `${convertDaysToMonths(differenceInDay)} month/s`
+      : `${differenceInDay} day/s`
 }
 
 export const convertDaysToYears = (days: number) => {

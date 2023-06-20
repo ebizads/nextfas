@@ -55,6 +55,10 @@ type RepairStatusState = {
   status: string
   setStatus: (newStatus: string) => void
 }
+type TransferStatusState = {
+  status: string
+  setStatus: (newStatus: string) => void
+}
 
 type SearchState = {
   search: string
@@ -116,6 +120,11 @@ export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
 }))
 
 export const useRepairStatusStore = create<RepairStatusState>((set) => ({
+  status: "pending",
+  setStatus: (newStatus: string) => set({ status: newStatus }),
+}))
+
+export const useTranferStatusStore = create<TransferStatusState>((set) => ({
   status: "pending",
   setStatus: (newStatus: string) => set({ status: newStatus }),
 }))

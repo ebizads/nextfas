@@ -14,7 +14,6 @@ export const assetTransferRouter = t.router({
       },
       include: {
         asset: true,
-        transferType: true,
       },
     })
     return assetTransfer
@@ -33,7 +32,6 @@ export const assetTransferRouter = t.router({
               description: z.string().nullish().optional(),
               departmentCode: z.string().nullish().optional(),
               salesInvoice: z.string().optional(),
-              transferTypeId: z.number().optional(),
               remarks: z.string().nullish().optional(),
               telephoneNo: z.string().optional(),
               apInvoice: z.string().nullish().optional(),
@@ -57,7 +55,6 @@ export const assetTransferRouter = t.router({
           },
           include: {
             asset: true,
-            transferType: true,
           },
           where: {
             transferStatus: input?.search?.transferStatus,
@@ -88,7 +85,7 @@ export const assetTransferRouter = t.router({
   create: authedProcedure
     .input(AssetTransferCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { assetId, transferTypeId, ...rest } = input
+      const { assetId, ...rest } = input
 
       const assetTransfer = await ctx.prisma.assetTransfer.create({
         data: {
@@ -97,16 +94,11 @@ export const assetTransferRouter = t.router({
               id: assetId,
             },
           },
-          transferType: {
-            connect: {
-              id: transferTypeId,
-            },
-          },
+
           ...rest,
         },
         include: {
           asset: true,
-          transferType: true,
         },
       })
       return assetTransfer

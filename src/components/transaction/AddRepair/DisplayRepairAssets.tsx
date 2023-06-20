@@ -22,7 +22,6 @@ const DisplayRepairAssets = (props: {
 	limit: number;
 	setLimit: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-	const [checkboxes, setCheckboxes] = useState<number[]>([]);
 	// const [ openPopover, setOpenPopover ] = useState<boolean>(false);
 	const [paginationPopover, setPaginationPopover] = useState<boolean>(false);
 	const [openModalDel, setOpenModalDel] = useState<boolean>(false);
@@ -63,6 +62,11 @@ const DisplayRepairAssets = (props: {
 				setAssetNumber("")
 			} else if (asset?.status === "repair") {
 				setValidateString("The asset is already in for repair.")
+				setValidateModal(true)
+				setAssetNumber("")
+			}
+			else if (asset?.status === "transfer") {
+				setValidateString("The asset is currently being transferred.")
 				setValidateModal(true)
 				setAssetNumber("")
 			}

@@ -187,7 +187,9 @@ const TransferAssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Team</p>
-                      <p className="font-medium">{props.asset?.department?.teams?.name}</p>
+                      <p className="font-medium">{props.asset?.department?.teams[
+                        props.asset?.custodian?.teamId ?? 0
+                      ]?.name ?? "--"}</p>
                     </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">
@@ -457,7 +459,7 @@ const TransferAssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
         } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}

@@ -4,8 +4,9 @@ import DisplayTransferAssets from '../../../components/transaction/Transfer/Disp
 import Transfer from '../../../components/transaction/Transfer/TransferAsset';
 import DashboardLayout from '../../../layouts/DashboardLayout';
 import { useSearchStore, useTransferAssetStore, useUpdateAssetStore } from '../../../store/useStore';
-import { AssetType } from '../../../types/generic';
+import { AssetTransferType, AssetType } from '../../../types/generic';
 import { trpc } from '../../../utils/trpc';
+import DisplayTransferAsset_new from '../../../components/transaction/Transfer/DisplayTransferAsset_new';
 
 
 const AssetTransfer = () => {
@@ -14,13 +15,12 @@ const AssetTransfer = () => {
 	const router = useRouter();
 	const { search } = useSearchStore()
 
-	const { data } = trpc.asset.findAll.useQuery({
-		search: { number: search },
+	const { data } = trpc.assetTransfer.findAll.useQuery({
 		limit,
 		page
 	});
 
-	const [assets, setAssets] = useState<AssetType[]>([]);
+	const [assets, setAssets] = useState<AssetTransferType[]>([]);
 	const [accessiblePage, setAccessiblePage] = useState<number>(0);
 
 	const { transferAsset, setTransferAsset } = useTransferAssetStore()
@@ -41,8 +41,8 @@ const AssetTransfer = () => {
 		() => {
 			//get and parse all data
 			if (data) {
-				setAssets(data.assets as AssetType[]);
-				setAccessiblePage(Math.ceil(data.count / limit));
+				setAssets(data.assetTransfers as unknown as AssetTransferType[]);
+				setAccessiblePage(Math.ceil(data.total / limit));
 			}
 		},
 		[data, limit, router]
@@ -52,14 +52,16 @@ const AssetTransfer = () => {
 		<DashboardLayout>
 			<div>
 				{/* <button onClick={() => { console.log(transferAsset?.number); }}>button</button> */}
-				{(transferAsset?.number === "" || transferAsset?.number === null || transferAsset?.number === undefined) ? <DisplayTransferAssets
-					total={data?.count ?? 0}
-					assets={assets}
-					accessiblePage={accessiblePage}
-					page={page}
-					setPage={setPage}
-					limit={limit}
-					setLimit={setLimit} /> : <Transfer />}
+				{(transferAsset?.number === "" || transferAsset?.number === null || transferAsset?.number === undefined)
+					? <DisplayTransferAsset_new
+						total={data?.total ?? 0}
+						assets={assets}
+						accessiblePage={accessiblePage}
+						page={page}
+						setPage={setPage}
+						limit={limit}
+						setLimit={setLimit} />
+					: <Transfer />}
 			</div>
 		</DashboardLayout>
 	);

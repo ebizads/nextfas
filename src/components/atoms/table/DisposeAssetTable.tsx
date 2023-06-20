@@ -632,7 +632,7 @@ const DisposeAssetTable = (props: {
 
     return (
         <div
-            className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+            className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
                 } relative border shadow-md sm:rounded-lg`}
         >
             {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}

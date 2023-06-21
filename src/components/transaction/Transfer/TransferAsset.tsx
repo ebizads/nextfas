@@ -7,7 +7,6 @@ import {
     CircleNumber1,
     CircleNumber2,
     CircleNumber3,
-    Search,
 } from "tabler-icons-react"
 import { Accordion, Checkbox, Select, Textarea } from "@mantine/core"
 import { trpc } from "../../../utils/trpc"
@@ -16,15 +15,12 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssetEditInput } from "../../../server/schemas/asset"
 import { z } from "zod"
-import { ClassTypeSelect, SelectValueType } from "../../atoms/select/TypeSelect"
+import { SelectValueType } from "../../atoms/select/TypeSelect"
 import { getAddress, getLifetime } from "../../../lib/functions"
 import Modal from "../../headless/modal/modal"
 import Link from "next/link"
 import { useTransferAssetStore } from "../../../store/useStore"
-import { Asset, AssetType } from "@prisma/client"
 import { DatePicker } from "@mantine/dates"
-import AlertInput from "../../atoms/forms/AlertInput"
-import InputNumberField from "../../atoms/forms/InputNumberField"
 
 export type Assets = z.infer<typeof AssetEditInput>
 
@@ -259,142 +255,6 @@ const Transfer = ({ }) => {
                         <div className="rounded-md bg-white drop-shadow-lg">
                             <div className="p-5">
                                 <Accordion multiple={true} defaultValue={['1', '2', '3']}>
-                                    {/* <Accordion.Item value="asset_details">
-                                        <Accordion.Control>
-                                            <div className="flex flex-row">
-                                                <CircleNumber1 className="h-7 w-7" color="gold"></CircleNumber1>{" "}
-                                                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
-                                                    Asset Details
-                                                </p>
-                                            </div>
-                                        </Accordion.Control>
-                                        <Accordion.Panel>
-                                            <div className="flex flex-wrap py-2">
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Asset Number
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="number"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">Asset Name</label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="name"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Alternate Asset Number
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="alt_number"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Parent Asset
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="parent.name"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-[60%] flex-col py-2">
-                                                        <label className="font-semibold">Project</label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="project.name"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-[60%] flex-col py-2">
-                                                        <label className="font-semibold">Asset Type</label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="model.type.name"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-[60%] flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Asset Description
-                                                        </label>
-                                                        <textarea
-                                                            value={asset?.description ?? ""}
-                                                            readOnly
-                                                            className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                                                        ></textarea>
-                                                    </div>
-                                                </div>
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Accounting Method
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="management.depreciation_rule"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Asset Lifetime
-                                                        </label>
-                                                        <p className="my-2 w-full rounded-md border-2 border-gray-400  px-4 py-2  outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 bg-gray-200 text-gray-400">
-                                                            {getLifetime(
-                                                                asset?.management?.depreciation_start ??
-                                                                new Date(),
-                                                                asset?.management?.depreciation_end ??
-                                                                new Date()
-                                                            )}
-                                                        </p>
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Asset Serial Number
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="serial_no"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Accordion.Panel>
-                                    </Accordion.Item> */}
 
                                     <Accordion.Item value={"1"} className="">
                                         <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
@@ -598,22 +458,10 @@ const Transfer = ({ }) => {
 
 
                                                 <div className="col-span-9">
-                                                    {/* <textarea
-                                                        value={asset?.description ?? ""}
-                                                        readOnly
-                                                        className="h-[100%] resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 w-[100%]"
-                                                    >
 
-                                                    </textarea> */}
 
                                                     <Textarea
                                                         value={asset?.description ?? ""}
-                                                        // onChange={(event) => {
-                                                        //     const text = event.currentTarget.value
-                                                        //     setDescription(text)
-                                                        //     setValue("description", text)
-                                                        // }}
-                                                        // placeholder="Asset Description"
                                                         label="Asset Description"
                                                         minRows={6}
                                                         maxRows={6}
@@ -630,80 +478,6 @@ const Transfer = ({ }) => {
                                         </Accordion.Panel>
                                     </Accordion.Item>
 
-                                    {/* <Accordion.Item value="general_information">
-                                        <Accordion.Control>
-                                            <div className="flex flex-row">
-                                                <CircleNumber2 className="h-7 w-7" color="gold"></CircleNumber2>{" "}
-                                                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
-                                                    General Information
-                                                </p>
-                                            </div>
-                                        </Accordion.Control>
-                                        <Accordion.Panel>
-                                            <div className="flex flex-wrap py-2">
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">Subsidiary</label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="subsidiary.name"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">Custodian</label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="custodian.name"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Purchase Date
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="management.purchase_date"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">Department</label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="department.name"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">Class</label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="model.class.name"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Accordion.Panel>
-                                    </Accordion.Item> */}
-
                                     <Accordion.Item value={"2"} className="">
                                         <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
                                             <div className="flex items-center gap-2 text-gray-700">
@@ -718,66 +492,16 @@ const Transfer = ({ }) => {
                                                 <div className="grid grid-cols-9 col-span-9 gap-7">
                                                     <div className="col-span-4">
                                                         <InputField
-                                                            // query={companyId}
-                                                            // setQuery={setCompanyId}
-                                                            // required
                                                             name={"subsidiary.name"}
                                                             register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("subsidiaryId")?.toString()}
                                                             label={"Company"}
                                                             placeholder={"Select company or subsidiary"}
                                                             disabled
-                                                        // data={companyList ?? []}
                                                         />
-                                                        {/* <ClassTypeSelect
-                                                            query={companyId}
-                                                            setQuery={setCompanyId}
-                                                            required
-                                                            defaultValue={asset?.subsidiary?.name}
-                                                            name={"subsidiary.name"}
-                                                            setValue={setValue}
-                                                            value={getValues("subsidiaryId")?.toString()}
-                                                            title={"Company"}
-                                                            placeholder={"Select company or subsidiary"}
-                                                            data={companyList ?? []}
-                                                        /> */}
-
-                                                        {/* <AlertInput>{errors?.subsidiaryId?.message}</AlertInput> */}
                                                     </div>
                                                     <div className="col-span-8">
                                                         <div className="text-gray-700">
                                                             <div className="flex flex-1 flex-col gap-2">
-                                                                {/* <label htmlFor="address" className="text-sm">
-                                                                    Company Address
-                                                                </label>
-                                                                <input
-                                                                    type="text"
-                                                                    id={"address"}
-                                                                    className={
-                                                                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                                                                    }
-                                                                    placeholder="Company Address will appear here"
-                                                                    value={
-                                                                        company_address?.address
-                                                                            ? getAddress(company_address)
-                                                                            : ""
-                                                                    }
-                                                                    disabled
-                                                                /> */}
-                                                                {/* <InputField
-                                                                    // query={companyId}
-                                                                    // setQuery={setCompanyId}
-                                                                    // required
-                                                                    name={"getAddress(company_address)"}
-                                                                    register={register}
-                                                                    // setValue={setValue}
-                                                                    // value={getValues("subsidiaryId")?.toString()}
-                                                                    label={"Company"}
-                                                                    // placeholder={"Select company or subsidiary"}
-                                                                    disabled
-                                                                // data={companyList ?? []}
-                                                                /> */}
                                                                 <label htmlFor="address" className="text-sm">
                                                                     Company Address
                                                                 </label>
@@ -803,34 +527,20 @@ const Transfer = ({ }) => {
                                                     <div className="col-span-12 grid grid-cols-12 gap-7">
                                                         <div className="col-span-3">
                                                             <InputField
-                                                                // query={companyId}
-                                                                // setQuery={setCompanyId}
-                                                                // required
                                                                 name={"department.name"}
                                                                 register={register}
-                                                                // setValue={setValue}
-                                                                // value={getValues("subsidiaryId")?.toString()}
                                                                 label={"Department"}
-                                                                // placeholder={"Select company or subsidiary"}
                                                                 disabled
-                                                            // data={companyList ?? []}
                                                             />
                                                         </div>
                                                         <div className="col-span-3">
                                                             <div className="text-gray-700">
                                                                 <div className=" gap-2">
                                                                     <InputField
-                                                                        // query={companyId}
-                                                                        // setQuery={setCompanyId}
-                                                                        // required
                                                                         name={"department.location.floor"}
                                                                         register={register}
-                                                                        // setValue={setValue}
-                                                                        // value={getValues("subsidiaryId")?.toString()}
                                                                         label={"Floor"}
-                                                                        // placeholder={"Select company or subsidiary"}
                                                                         disabled
-                                                                    // data={companyList ?? []}
                                                                     />
                                                                 </div>
                                                             </div>
@@ -839,132 +549,49 @@ const Transfer = ({ }) => {
                                                             <div className="text-gray-700">
                                                                 <div className=" gap-2">
                                                                     <InputField
-                                                                        // query={companyId}
-                                                                        // setQuery={setCompanyId}
-                                                                        // required
                                                                         name={"department.location.room"}
                                                                         register={register}
-                                                                        // setValue={setValue}
-                                                                        // value={getValues("subsidiaryId")?.toString()}
                                                                         label={"Room"}
-                                                                        // placeholder={"Select company or subsidiary"}
                                                                         disabled
-                                                                    // data={companyList ?? []}
                                                                     />
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div className="col-span-3">
                                                             <InputField
-                                                                // query={companyId}
-                                                                // setQuery={setCompanyId}
-                                                                // required
                                                                 name={"custodian.name"}
                                                                 register={register}
-                                                                // setValue={setValue}
-                                                                // value={getValues("subsidiaryId")?.toString()}
                                                                 label={"Custodian"}
-                                                                // placeholder={"Select company or subsidiary"}
                                                                 disabled
-                                                            // data={companyList ?? []}
                                                             />
                                                         </div>
 
                                                     </div>
                                                     <div className="col-span-12 grid grid-cols-12 gap-7 ">
                                                         <div className="col-span-2">
-                                                            {/* <ClassTypeSelect
-                                                                query={classId}
-                                                                setQuery={setClassId}
-                                                                required
-                                                                name={"model.classId"}
-                                                                setValue={setValue}
-                                                                value={getValues("model.classId")?.toString()}
-                                                                title={"Class"}
-                                                                placeholder={"Select asset class"}
-                                                                data={classList ?? []}
-                                                            /> */}
-
                                                             <InputField
-                                                                // query={companyId}
-                                                                // setQuery={setCompanyId}
-                                                                // required
                                                                 name={"model.class.name"}
                                                                 register={register}
-                                                                // setValue={setValue}
-                                                                // value={getValues("subsidiaryId")?.toString()}
                                                                 label={"Class"}
-                                                                // placeholder={"Select company or subsidiary"}
                                                                 disabled
-                                                            // data={companyList ?? []}
                                                             />
-                                                            {/* <AlertInput>{errors?.model?.classId?.message}</AlertInput> */}
                                                         </div>
                                                         <div className="col-span-2">
-                                                            {/* <ClassTypeSelect
-                                                                disabled={!Boolean(classId)}
-                                                                query={categoryId}
-                                                                setQuery={setCategoryId}
-                                                                required
-                                                                name={"model.categoryId"}
-                                                                setValue={setValue}
-                                                                value={getValues("model.categoryId")?.toString()}
-                                                                title={"Category"}
-                                                                placeholder={
-                                                                    !Boolean(classId)
-                                                                        ? "Select asset class first"
-                                                                        : "Select asset category"
-                                                                }
-                                                                data={categories ?? []}
-                                                            /> */}
 
                                                             <InputField
-                                                                // query={companyId}
-                                                                // setQuery={setCompanyId}
-                                                                // required
                                                                 name={"model.category.name"}
                                                                 register={register}
-                                                                // setValue={setValue}
-                                                                // value={getValues("subsidiaryId")?.toString()}
                                                                 label={"Category"}
-                                                                // placeholder={"Select company or subsidiary"}
                                                                 disabled
-                                                            // data={companyList ?? []}
                                                             />
-                                                            {/* <AlertInput>{errors?.model?.categoryId?.message}</AlertInput> */}
                                                         </div>
                                                         <div className="col-span-2">
-                                                            {/* <ClassTypeSelect
-                                                                disabled={!Boolean(categoryId)}
-                                                                query={typeId}
-                                                                setQuery={setTypeId}
-                                                                required
-                                                                name={"model.typeId"}
-                                                                setValue={setValue}
-                                                                value={getValues("model.typeId")?.toString()}
-                                                                title={"Type"}
-                                                                placeholder={
-                                                                    !Boolean(categoryId)
-                                                                        ? "Select asset category first"
-                                                                        : "Select asset type"
-                                                                }
-                                                                data={types ?? []}
-                                                            /> */}
-
                                                             <InputField
-                                                                // query={companyId}
-                                                                // setQuery={setCompanyId}
-                                                                // required
                                                                 name={"model.type.name"}
                                                                 register={register}
-                                                                // setValue={setValue}
-                                                                // value={getValues("subsidiaryId")?.toString()}
                                                                 label={"Type"}
-                                                                // placeholder={"Select company or subsidiary"}
                                                                 disabled
-                                                            // data={companyList ?? []}
                                                             />
-                                                            {/* <AlertInput>{errors?.model?.typeId?.message}</AlertInput> */}
                                                         </div>
                                                         <div className="col-span-6">
                                                             <InputField
@@ -981,96 +608,39 @@ const Transfer = ({ }) => {
                                                 </div>
                                                 <div className="grid grid-cols-9 col-span-9 gap-7">
                                                     <div className="col-span-3">
-                                                        {/* <TypeSelect
-                                                            isString
-                                                            name={"management.currency"}
-                                                            setValue={setValue}
-                                                            value={getValues("management.currency")}
-                                                            title={"Currency"}
-                                                            placeholder={"Select currency type"}
-                                                            data={[
-                                                                { value: "PHP", label: "Philippine Peso (Php)" },
-                                                                { value: "USD", label: "US Dollar (USD)" },
-                                                            ]}
-                                                        />
-                                                        <AlertInput>
-                                                            {errors?.management?.currency?.message}
-                                                        </AlertInput> */}
 
                                                         <InputField
-                                                            // query={companyId}
-                                                            // setQuery={setCompanyId}
-                                                            // required
+
                                                             name={"management.currency"}
                                                             register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("subsidiaryId")?.toString()}
+
                                                             label={"Currency"}
-                                                            // placeholder={"Select company or subsidiary"}
                                                             disabled
-                                                        // data={companyList ?? []}
                                                         />
                                                     </div>
 
                                                     <div className="col-span-3">
-                                                        {/* <TypeSelect
-                                                            isString
-                                                            name={"management.accounting_method"}
-                                                            setValue={setValue}
-                                                            value={getValues("management.accounting_method")}
-                                                            title={"Accounting Method"}
-                                                            placeholder={"Select accounting method"}
-                                                            data={[
-                                                                "Accrual Basis",
-                                                                "Cash Basis",
-                                                                "Modified Cash Basis",
-                                                            ]}
-                                                        /> */}
-                                                        {/* <AlertInput>
-                                                            {errors?.management?.accounting_method?.message}
-                                                        </AlertInput> */}
+
 
                                                         <InputField
-                                                            // query={companyId}
-                                                            // setQuery={setCompanyId}
-                                                            // required
+
                                                             name={"management.accounting_method"}
                                                             register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("subsidiaryId")?.toString()}
+
                                                             label={"Accounting Method"}
-                                                            // placeholder={"Select company or subsidiary"}
                                                             disabled
-                                                        // data={companyList ?? []}
                                                         />
                                                     </div>
 
                                                     <div className="col-span-3 space-y-2">
-                                                        {/* <p className="text-sm text-gray-700">Purchase Date</p> */}
-                                                        {/* <DatePicker
-                                                            placeholder="Month Day, Year"
-                                                            allowFreeInput
-                                                            size="sm"
-                                                            onChange={(value) => {
-                                                                setValue("management.purchase_date", value)
-                                                            }}
-                                                            classNames={{
-                                                                input:
-                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                                                        /> */}
+
                                                         <InputField
-                                                            // query={companyId}
-                                                            // setQuery={setCompanyId}
-                                                            // required
+
                                                             name={"management.purchase_date"}
                                                             register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("subsidiaryId")?.toString()}
+
                                                             label={"Purchase Date"}
-                                                            // placeholder={"Select company or subsidiary"}
                                                             disabled
-                                                        // data={companyList ?? []}
                                                         />
                                                     </div>
 
@@ -1079,100 +649,36 @@ const Transfer = ({ }) => {
 
                                                 <div className="col-span-9 grid grid-cols-6 gap-7">
                                                     <div className="col-span-2">
-                                                        {/* <TypeSelect
-                                                            isString
-                                                            name={"management.depreciation_rule"}
-                                                            setValue={setValue}
-                                                            value={getValues("management.depreciation_rule")}
-                                                            title={"Depreciation Method"}
-                                                            placeholder={"Select method"}
-                                                            data={["Straight Line", "Others"]}
-                                                        />
-                                                        <AlertInput>
-                                                            {errors?.management?.depreciation_rule?.message}
-                                                        </AlertInput> */}
+
                                                         <InputField
-                                                            // query={companyId}
-                                                            // setQuery={setCompanyId}
-                                                            // required
+
                                                             name={"management.depreciation_rule"}
                                                             register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("subsidiaryId")?.toString()}
+
                                                             label={"Depreciation Method"}
-                                                            // placeholder={"Select company or subsidiary"}
                                                             disabled
-                                                        // data={companyList ?? []}
                                                         />
                                                     </div>
                                                     <div className="col-span-2 space-y-2">
-                                                        {/* <p className="text-sm text-gray-700">
-                                                            Depreciation Start Date
-                                                        </p>
-                                                        <DatePicker
-                                                            placeholder="Month, Day, Year"
-                                                            allowFreeInput
-                                                            size="sm"
-                                                            value={dep_start}
-                                                            onChange={(value) => {
-                                                                setDepStart(value)
-                                                                setValue("management.depreciation_start", value)
-                                                            }}
-                                                            classNames={{
-                                                                input:
-                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                                                        /> */}
+
                                                         <InputField
-                                                            // query={companyId}
-                                                            // setQuery={setCompanyId}
-                                                            // required
+
                                                             name={"management.depreciation_start"}
                                                             register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("subsidiaryId")?.toString()}
+
                                                             label={"Depreciation Start Date"}
-                                                            // placeholder={"Select company or subsidiary"}
                                                             disabled
-                                                        // data={companyList ?? []}
                                                         />
                                                     </div>
                                                     <div className="col-span-2 space-y-2">
-                                                        {/* <p className="text-sm text-gray-700">
-                                                            Depreciation End Date
-                                                        </p>
-                                                        <DatePicker
-                                                            placeholder={
-                                                                dep_start
-                                                                    ? "Month, Day, Year"
-                                                                    : "Select start ffirst"
-                                                            }
-                                                            allowFreeInput
-                                                            size="sm"
-                                                            value={dep_end}
-                                                            disabled={!Boolean(dep_start)}
-                                                            minDate={dep_start ? dep_start : new Date()}
-                                                            onChange={(value) => {
-                                                                setDepEnd(value)
-                                                                setValue("management.depreciation_end", value)
-                                                            }}
-                                                            classNames={{
-                                                                input:
-                                                                    "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                                                            }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                                                        /> */}
+
                                                         <InputField
-                                                            // query={companyId}
-                                                            // setQuery={setCompanyId}
-                                                            // required
+
                                                             name={"management.depreciation_end"}
                                                             register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("subsidiaryId")?.toString()}
+
                                                             label={"Depreciation End Date"}
-                                                            // placeholder={"Select company or subsidiary"}
                                                             disabled
-                                                        // data={companyList ?? []}
                                                         />
                                                     </div>
 
@@ -1182,118 +688,6 @@ const Transfer = ({ }) => {
                                         </Accordion.Panel>
                                     </Accordion.Item>
 
-                                    {/* <Accordion.Item value="asset_usage_info">
-                                        <Accordion.Control>
-                                            <div className="flex flex-row">
-                                                <CircleNumber3 className="h-7 w-7" color="gold"></CircleNumber3>{" "}
-                                                <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
-                                                    Asset Usage Information
-                                                </p>
-                                            </div>
-                                        </Accordion.Control>
-                                        <Accordion.Panel>
-                                            <div className="flex flex-wrap py-2">
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Depreciation Start Date
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="management.depreciation_start"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Depreciation End Date
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="management.depreciation_end"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">Period</label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="management.depreciation_period"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Original Cost
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="management.original_cost"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Current Cost
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="management.current_cost"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                    <div className="flex w-full flex-col py-2">
-                                                        <label className="font-semibold">
-                                                            Depreciation Method
-                                                        </label>
-                                                        <InputField
-                                                            disabled={true}
-                                                            register={register}
-                                                            name="management.depreciation_rule"
-                                                            type={"text"}
-                                                            label={""}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                                <div className="flex w-full flex-col py-2">
-                                                    <label className="font-semibold">Currency</label>
-                                                    <InputField
-                                                        disabled={true}
-                                                        register={register}
-                                                        name="management.currency"
-                                                        type={"text"}
-                                                        label={""}
-                                                    />
-                                                </div>
-                                                <div className="flex w-full flex-col py-2">
-                                                    <label className="font-semibold">
-                                                        Residual Value
-                                                    </label>
-                                                    <InputField
-                                                        disabled={true}
-                                                        register={register}
-                                                        name="management.residual_value"
-                                                        type={"text"}
-                                                        label={""}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </Accordion.Panel>
-                                    </Accordion.Item> */}
                                     <Accordion.Item value={"3"} className="">
                                         <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
                                             <div className="flex items-center gap-2 text-gray-700">

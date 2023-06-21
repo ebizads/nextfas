@@ -2,7 +2,7 @@ import { Pagination, Tabs } from "@mantine/core"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
 import PaginationPopOver from "../../atoms/popover/PaginationPopOver"
-import TransferAssetTable_new from "../../atoms/table/TransferAssetTable_new"
+import TransferAssetTable_new from "../../atoms/table/TransferTable"
 import { transferColumn } from "../../../lib/table"
 import { AssetTransferType } from "../../../types/generic"
 import { useTranferStatusStore } from "../../../store/useStore"
@@ -75,7 +75,7 @@ const DisplayTransferAsset_new = (props: {
             )} */}
                     </div>
                     <div className="flex items-center gap-2">
-                        <Link href={"/transactions/repair/create"}>
+                        <Link href={"/transactions/transfer/create"}>
                             <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
                                 <i className="fa-regular fa-plus text-xs" />
                                 <p>Add New</p>

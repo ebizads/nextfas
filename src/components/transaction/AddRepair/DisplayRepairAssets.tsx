@@ -79,9 +79,6 @@ const DisplayRepairAssets = (props: {
 		// setGenerate(false);
 	}, [setRepairAsset, asset, assetNumber, assetId, setSearch])
 
-	useEffect(() => {
-		console.log("page: " + props.page, "limit: " + props.limit, "accessible page: " + props.accessiblePage)
-	})
 
 	return (
 		<div className="space-y-4">
@@ -204,7 +201,8 @@ const DisplayRepairAssets = (props: {
 						classNames={{
 							item: 'bg-transparent selected-page:bg-tangerine-500 border-none'
 						}}
-					/></div>
+					/>
+				</div>
 			</section>
 
 			{/* <AssetDeleteModal

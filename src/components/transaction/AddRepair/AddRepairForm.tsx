@@ -69,11 +69,15 @@ const AddRepairForm = () => {
     }
     else {
       if (asset?.status === "disposal") {
-        setValidateString("The asset is already in for disposal")
+        setValidateString("The asset is in for disposal")
         setValidateModal(true)
         setAssetNumber("")
       } else if (asset?.status === "repair") {
         setValidateString("The asset is in for repair.")
+        setValidateModal(true)
+        setAssetNumber("")
+      } else if (asset?.status === "transfer") {
+        setValidateString("The asset is being transferred.")
         setValidateModal(true)
         setAssetNumber("")
       }

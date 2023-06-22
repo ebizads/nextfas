@@ -11,9 +11,9 @@ import {
 import { Accordion, Checkbox, Select, Textarea } from "@mantine/core"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../atoms/forms/InputField"
-import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AssetEditInput } from "../../../server/schemas/asset"
+import { AssetEditInput, AssetTransferCreateInput } from "../../../server/schemas/asset"
+import { useForm, SubmitHandler } from "react-hook-form"
 import { z } from "zod"
 import { SelectValueType } from "../../atoms/select/TypeSelect"
 import { getAddress, getLifetime } from "../../../lib/functions"
@@ -21,8 +21,10 @@ import Modal from "../../headless/modal/modal"
 import Link from "next/link"
 import { useTransferAssetStore } from "../../../store/useStore"
 import { DatePicker } from "@mantine/dates"
+import { AssetTransfer } from "@prisma/client"
+import { AssetTransferValues } from "../../../types/generic"
 
-export type Assets = z.infer<typeof AssetEditInput>
+export type Transfer = z.infer<typeof AssetTransferCreateInput>
 
 const Transfer = ({ }) => {
     const [assetNumber, setAssetNumber] = useState<string>("")
@@ -38,6 +40,11 @@ const Transfer = ({ }) => {
 
     const [searchModal, setSearchModal] = useState<boolean>(false)
     const [completeModal, setCompleteModal] = useState<boolean>(false)
+    const [validateModal, setValidateModal] = useState<boolean>(false)
+
+    const [validateString, setValidateString] = useState<string>("")
+
+
 
     const { data: employeeData } = trpc.employee.findAll.useQuery({
         search: {
@@ -76,29 +83,75 @@ const Transfer = ({ }) => {
 
     const utils = trpc.useContext()
 
-    const { mutate } = trpc.asset.edit.useMutation({
+    const { mutate } = trpc.assetTransfer.edit.useMutation({
         onSuccess() {
             setCompleteModal(true)
             // invalidate query of asset id when mutations is successful
-            utils.asset.findAll.invalidate()
+            utils.assetTransfer.findAll.invalidate()
         },
     })
 
-    const { register, handleSubmit, reset, setValue, getValues } = useForm<Assets>({
-        resolver: zodResolver(AssetEditInput),
+    const { register, handleSubmit, reset, setValue, formState: { errors }, } = useForm<Transfer>({
+        resolver: zodResolver(AssetTransferCreateInput),
     })
 
-    useEffect(() => reset(asset as Assets), [asset, reset])
 
-    const onSubmit = (asset: Assets) => {
-        // Register function
-        console.log("oms")
-        mutate({
-            ...asset,
-            departmentId: asset.departmentId ?? 2,
-            custodianId: asset.custodianId ?? 2,
-        })
-        reset()
+
+    useEffect(() => reset(asset as unknown as Transfer), [asset, reset])
+
+    // const onSubmit = (asset: Transfer) => {
+    //     // Register function
+    //     console.log("oms")
+    //     mutate({
+    //         ...asset,
+    //         departmentId: asset.departmentId ?? 2,
+    //         custodianId: asset.custodianId ?? 2,
+    //     })
+    //     reset()
+    // }
+
+    const updateAsset = trpc.asset.edit.useMutation({
+        onSuccess() {
+            console.log("omsim")
+        },
+    })
+
+
+    const onSubmit: SubmitHandler<AssetTransferValues> = (
+        form_data: AssetTransferValues
+    ) => {
+        mutate(form_data)
+        console.log("shetttttttt dapat ng submit")
+        // if (asset?.status === null || asset?.status === undefined || asset?.status === "") {
+        //     mutate({
+        //         ...transfer,
+        //         transferStatus: "pending",
+        //         id: asset?.id ?? 0
+        //     })
+
+        //     updateAsset.mutate({
+        //         ...asset,
+        //         id: asset?.id ?? 0,
+        //         status: "transfer",
+        //     })
+
+        //     reset()
+        // }
+        // else {
+        //     if (asset?.status === "disposal") {
+        //         setValidateString("The asset is in for disposal")
+        //         setValidateModal(true)
+        //         setAssetNumber("")
+        //     } else if (asset?.status === "repair") {
+        //         setValidateString("The asset is in for repair.")
+        //         setValidateModal(true)
+        //         setAssetNumber("")
+        //     } else if (asset?.status === "transfer") {
+        //         setValidateString("The asset is being transferred.")
+        //         setValidateModal(true)
+        //         setAssetNumber("")
+        //     }
+        // }
     }
 
     const steps = useMemo(
@@ -176,12 +229,15 @@ const Transfer = ({ }) => {
     ) as SelectValueType[] | undefined
 
 
+    const [transfer_date, setTransfer_date] = useState<Date | null>(null)
+
     // console.log(company_address);
     return (
         <div className="px-4">
             <div>
                 <nav className="w-100 my-4 grid grid-cols-6" {...stepperProps}>
                     <ol className="z-1 col-span-full flex flex-row">
+
                         {stepsProps?.map((step, index) => (
                             <li
                                 className={`flex justify-center ${index !== 2 ? "w-full" : ""}`}
@@ -242,6 +298,17 @@ const Transfer = ({ }) => {
             >
                 <div className="py-2">
                     <p className="text-center text-lg font-semibold">No Data Found!</p>
+                </div>
+            </Modal>
+
+            <Modal
+                className="max-w-lg"
+                isVisible={validateModal}
+                setIsVisible={setValidateModal}
+                title="NOTICE!!"
+            >
+                <div className="py-2">
+                    <p className="text-center text-lg font-semibold">{validateString}</p>
                 </div>
             </Modal>
 
@@ -450,16 +517,8 @@ const Transfer = ({ }) => {
                                                             disabled
                                                         />
                                                     </div>
-
                                                 </div>
-
-
-
-
-
                                                 <div className="col-span-9">
-
-
                                                     <Textarea
                                                         value={asset?.description ?? ""}
                                                         label="Asset Description"
@@ -631,63 +690,44 @@ const Transfer = ({ }) => {
                                                             disabled
                                                         />
                                                     </div>
-
                                                     <div className="col-span-3 space-y-2">
-
                                                         <InputField
-
                                                             name={"management.purchase_date"}
                                                             register={register}
-
                                                             label={"Purchase Date"}
                                                             disabled
                                                         />
                                                     </div>
-
                                                 </div>
-
-
                                                 <div className="col-span-9 grid grid-cols-6 gap-7">
                                                     <div className="col-span-2">
-
                                                         <InputField
-
                                                             name={"management.depreciation_rule"}
                                                             register={register}
-
                                                             label={"Depreciation Method"}
                                                             disabled
                                                         />
                                                     </div>
                                                     <div className="col-span-2 space-y-2">
-
                                                         <InputField
-
                                                             name={"management.depreciation_start"}
                                                             register={register}
-
                                                             label={"Depreciation Start Date"}
                                                             disabled
                                                         />
                                                     </div>
                                                     <div className="col-span-2 space-y-2">
-
                                                         <InputField
-
                                                             name={"management.depreciation_end"}
                                                             register={register}
-
                                                             label={"Depreciation End Date"}
                                                             disabled
                                                         />
                                                     </div>
-
                                                 </div>
-
                                             </div>
                                         </Accordion.Panel>
                                     </Accordion.Item>
-
                                     <Accordion.Item value={"3"} className="">
                                         <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
                                             <div className="flex items-center gap-2 text-gray-700">
@@ -798,7 +838,7 @@ const Transfer = ({ }) => {
 
                         <div className="p-5">
                             <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text p-2 font-sans text-xl font-semibold uppercase text-transparent">
-                                Location
+                                Transfer Details
                             </p>
                             <div className="flex flex-wrap py-2">
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
@@ -810,8 +850,8 @@ const Transfer = ({ }) => {
                                             onChange={(value) => {
                                                 setSelectedDept(value ?? "")
                                                 setSelectedEMP("")
-                                                setValue("departmentId", Number(value))
-                                                console.log(value)
+                                                setValue("departmentCode", String(value))
+                                                console.log("TEST: " + employeeData)
                                             }}
                                             value={selectedDept ?? ""}
                                             data={departmentList}
@@ -908,20 +948,27 @@ const Transfer = ({ }) => {
                                     </div>
                                     <div className="flex w-full flex-col py-2">
                                         <label className="font-semibold">Transfer Date</label>
-                                        <DatePicker
-                                            dropdownType="popover"
-                                            placeholder="Pick Date"
-                                            size="sm"
-                                            variant="unstyled"
-                                            // value={props.date}
-                                            // onChange={(value) => {
-                                            //     setValue("hired_date", value)
-                                            //     value === null
-                                            //         ? props.setDate(new Date())
-                                            //         : props.setDate(value)
-                                            // }}
-                                            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                                        />
+                                        <div className="relative">
+                                            <DatePicker
+                                                placeholder={""}
+                                                allowFreeInput
+                                                size="sm"
+                                                onChange={(value) => {
+                                                    setTransfer_date(value),
+                                                        setValue("transferDate", value)
+                                                }}
+                                                classNames={{
+                                                    input:
+                                                        "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                                                }}
+                                            />
+                                            <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                                                <span className="opacity-50">
+                                                    {transfer_date ? "" : "Month, Day, Year"}
+                                                </span>
+                                                <span className="pointer-events-none pr-3">📅</span>
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -930,7 +977,7 @@ const Transfer = ({ }) => {
                                         checked={checked}
                                         onChange={(event) => {
                                             setChecked(event.currentTarget.checked)
-                                            setValue("departmentId", 0)
+                                            setValue("departmentCode", "0")
                                             setValue("custodianId", 0)
                                             setSelectedDept("")
                                             setSelectedEMP("")
@@ -956,15 +1003,15 @@ const Transfer = ({ }) => {
                                     >
                                         Back
                                     </button>
-                                    {((selectedEMP !== "") || checked) && ( //TODO: add transfer_date to schema and to this conditional statement
-                                        <button
-                                            type="button"
-                                            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                                            onClick={nextStep}
-                                        >
-                                            Next
-                                        </button>
-                                    )}
+                                    {/* {((selectedEMP !== "") || checked) && ( //TODO: add transfer_date to schema and to this conditional statement */}
+                                    <button
+                                        type="button"
+                                        className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                        onClick={nextStep}
+                                    >
+                                        Next
+                                    </button>
+                                    {/* )} */}
                                 </div>
                                 <div className="flex w-full justify-center">
                                     <button
@@ -990,12 +1037,12 @@ const Transfer = ({ }) => {
                                         <InputField
                                             disabled={true}
                                             register={register}
-                                            name="number"
+                                            name="custodianId"
                                             type={"text"}
                                             label={""}
                                         />
                                     </div>
-                                    <div className="flex w-full flex-col py-2">
+                                    {/* <div className="flex w-full flex-col py-2">
                                         <label className="font-semibold">Asset Name</label>
                                         <InputField
                                             disabled={true}
@@ -1048,10 +1095,10 @@ const Transfer = ({ }) => {
                                             type={"text"}
                                             label={""}
                                         />
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    <div className="flex w-full flex-col py-2">
+                                    {/* <div className="flex w-full flex-col py-2">
                                         <label className="font-semibold">Residual Value</label>
                                         <InputField
                                             disabled={true}
@@ -1072,7 +1119,7 @@ const Transfer = ({ }) => {
                                             type={"text"}
                                             label={""}
                                         />
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                                     <div className="flex w-[60%] flex-col py-2">
@@ -1085,7 +1132,7 @@ const Transfer = ({ }) => {
                                     </div>
                                 </div>
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    <div className="flex w-full flex-col py-2">
+                                    {/* <div className="flex w-full flex-col py-2">
                                         <label className="font-semibold">Deprciation Method</label>
                                         <InputField
                                             disabled={true}
@@ -1094,7 +1141,7 @@ const Transfer = ({ }) => {
                                             type={"text"}
                                             label={""}
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="flex w-full flex-col py-2">
                                         <label className="font-semibold">Asset Lifetime</label>
                                         <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
@@ -1104,7 +1151,7 @@ const Transfer = ({ }) => {
                                             )}
                                         </p>
                                     </div>
-                                    <div className="flex w-full flex-col py-2">
+                                    {/* <div className="flex w-full flex-col py-2">
                                         <label className="font-semibold">Asset Serial Number</label>
                                         <InputField
                                             disabled={true}
@@ -1113,7 +1160,7 @@ const Transfer = ({ }) => {
                                             type={"text"}
                                             label={""}
                                         />
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                                     <div className="flex w-full flex-col py-2">

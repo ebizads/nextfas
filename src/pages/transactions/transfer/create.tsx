@@ -6,7 +6,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout"
 import { useSearchStore, useTransferAssetStore } from "../../../store/useStore";
 import { AssetType } from '../../../types/generic';
 import { trpc } from '../../../utils/trpc';
-import TransferAssetTable from "../../../components/atoms/table/TransferAssetDetails";
+import TransferAssetTable from "../../../components/transaction/Transfer/TransferAssetDetails";
 import TransferAsset from "../../../components/transaction/Transfer/TransferAsset";
 import DisplayTransferAssets from "../../../components/transaction/Transfer/DisplayTransferAssets";
 import Transfer from "../../../components/transaction/Transfer/TransferAsset";

@@ -4,7 +4,7 @@ import { AssetType } from '../../../types/generic';
 import { columns } from '../../../lib/table';
 import PaginationPopOver from '../../atoms/popover/PaginationPopOver';
 // import FilterPopOver from '../../atoms/popover/FilterPopOver';
-import TransferAssetTable from '../../atoms/table/TransferAssetDetails';
+import TransferAssetTable from './TransferAssetDetails';
 import Modal from '../../headless/modal/modal';
 import { useGenerateStore, useSearchStore } from '../../../store/useStore';
 import { Pagination, Tooltip } from '@mantine/core';

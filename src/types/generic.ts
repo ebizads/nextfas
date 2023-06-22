@@ -4,6 +4,7 @@ import { z } from "zod"
 import {
   AssetCreateInput,
   AssetEditInput,
+  AssetTransferCreateInput,
   AssetUpdateInput,
 } from "../server/schemas/asset"
 import { EmployeeCreateInput } from "../server/schemas/employee"
@@ -38,6 +39,7 @@ export type EmployeeFieldValues = z.infer<typeof EmployeeCreateInput>
 
 //asset field types
 export type AssetFieldValues = z.infer<typeof AssetCreateInput>
+export type AssetTransferValues = z.infer<typeof AssetTransferCreateInput>
 export type AssetEditFieldValues = z.infer<typeof AssetUpdateInput>
 export type TicketHandlerValues = z.infer<typeof ticketTableCreate>
 

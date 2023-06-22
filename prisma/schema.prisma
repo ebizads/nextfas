@@ -153,7 +153,6 @@ model Address {
   street     String?
   city       String?
   state      String?
-  zip        String?
   country    String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -163,6 +162,7 @@ model Address {
   companyId  Int?      @unique
   vendorId   Int?      @unique
   employeeId Int?      @unique
+  zip        Int?
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)

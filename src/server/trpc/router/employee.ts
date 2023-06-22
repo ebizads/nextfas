@@ -248,7 +248,7 @@ export const employeeRouter = t.router({
             profile: { update: profile },
           },
         })
-      } catch (error) {}
+      } catch (error) { }
     }),
   edit: authedProcedure
     .input(EmployeeEditInput)

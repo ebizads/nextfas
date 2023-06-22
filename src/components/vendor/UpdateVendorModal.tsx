@@ -4,7 +4,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DatePicker } from "@mantine/dates"
-import { useEffect, useMemo, useState } from "react"
+import { SetStateAction, useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 //import { ImageJSON } from "../../types/table"
@@ -375,13 +375,15 @@ export const UpdateVendorModal = (props: {
 
         {isEditable && <DropZoneComponent
 
-
+          // setIsVisible={}
           setImage={setImage}
           setIsLoading={setIsLoading}
           images={images}
           isLoading={isLoading}
           acceptingMany={false}
-        />}
+          setIsVisible={function (value: SetStateAction<boolean>): void {
+            throw new Error("Function not implemented.")
+          }} />}
         <hr className="w-full"></hr>
         <div className="flex w-full justify-between">
           {!(error && errors && (

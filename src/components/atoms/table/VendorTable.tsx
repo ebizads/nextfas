@@ -73,7 +73,7 @@ const VendorTable = (props: {
     if (!updateRecord && editable) {
       setEditable(false)
     }
-  }, [setEditable, updateRecord])
+  }, [editable, setEditable, updateRecord])
 
   useEffect(() => {
     console.log("editable: " + editable, "updateRecord: " + updateRecord)

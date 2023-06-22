@@ -4,9 +4,9 @@ import {
     ArrowsExchange,
     Check,
     Checks,
-    Circle1,
-    Circle2,
-    Circle3,
+    CircleNumber1,
+    CircleNumber2,
+    CircleNumber3,
     Search,
 } from "tabler-icons-react"
 import { Accordion, Checkbox, Select, Textarea } from "@mantine/core"
@@ -262,7 +262,7 @@ const Transfer = ({ }) => {
                                     {/* <Accordion.Item value="asset_details">
                                         <Accordion.Control>
                                             <div className="flex flex-row">
-                                                <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
+                                                <CircleNumber1 className="h-7 w-7" color="gold"></CircleNumber1>{" "}
                                                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                                                     Asset Details
                                                 </p>
@@ -402,7 +402,7 @@ const Transfer = ({ }) => {
                                                 {/* <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-yellow-400 p-1 text-sm text-yellow-400">
                                                     1
                                                 </div> */}
-                                                <Circle1 className="h-7 w-7" color="gold"></Circle1>{" "}
+                                                <CircleNumber1 className="h-7 w-7" color="gold"></CircleNumber1>{" "}
                                                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Information</p>
                                             </div>
                                         </Accordion.Control>
@@ -633,7 +633,7 @@ const Transfer = ({ }) => {
                                     {/* <Accordion.Item value="general_information">
                                         <Accordion.Control>
                                             <div className="flex flex-row">
-                                                <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
+                                                <CircleNumber2 className="h-7 w-7" color="gold"></CircleNumber2>{" "}
                                                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                                                     General Information
                                                 </p>
@@ -707,7 +707,7 @@ const Transfer = ({ }) => {
                                     <Accordion.Item value={"2"} className="">
                                         <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
                                             <div className="flex items-center gap-2 text-gray-700">
-                                                <Circle2 className="h-7 w-7" color="gold"></Circle2>{" "}
+                                                <CircleNumber2 className="h-7 w-7" color="gold"></CircleNumber2>{" "}
                                                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                                                     General Information
                                                 </p>
@@ -1185,7 +1185,7 @@ const Transfer = ({ }) => {
                                     {/* <Accordion.Item value="asset_usage_info">
                                         <Accordion.Control>
                                             <div className="flex flex-row">
-                                                <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
+                                                <CircleNumber3 className="h-7 w-7" color="gold"></CircleNumber3>{" "}
                                                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                                                     Asset Usage Information
                                                 </p>
@@ -1297,7 +1297,7 @@ const Transfer = ({ }) => {
                                     <Accordion.Item value={"3"} className="">
                                         <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
                                             <div className="flex items-center gap-2 text-gray-700">
-                                                <Circle3 className="h-7 w-7" color="gold"></Circle3>{" "}
+                                                <CircleNumber3 className="h-7 w-7" color="gold"></CircleNumber3>{" "}
                                                 <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Usage</p>
                                             </div>
                                         </Accordion.Control>

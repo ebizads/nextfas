@@ -134,29 +134,35 @@ export const employeeRouter = t.router({
       }
     }),
   checkDuplicates: authedProcedure
-    .input(z.array(z.number()))
+    .input(z.array(z.string()))
     .query(async ({ ctx, input }) => {
-      const employees = await ctx.prisma.employee.findMany({
-        where: {
-          id: {
-            in: input,
-          },
-        },
-        include: {
-          address: true,
-          profile: true,
-          team: {
+      for (let i = 0; i < input.length; i++) {
+        if (input[i] !== null || input[i] !== undefined) {
+          const employees = await ctx.prisma.employee.findMany({
+            where: {
+              employee_id: {
+                in: input,
+              },
+            },
             include: {
-              department: {
+              address: true,
+              profile: true,
+              team: {
                 include: {
-                  location: true,
+                  department: {
+                    include: {
+                      location: true,
+                    },
+                  },
                 },
               },
             },
-          },
-        },
-      })
-      return employees
+          })
+          return employees
+        } else {
+          return null
+        }
+      }
     }),
   create: authedProcedure
     .input(EmployeeCreateInput)
@@ -220,6 +226,29 @@ export const employeeRouter = t.router({
         skipDuplicates: true,
       })
       return "Employees successfully created"
+    }),
+
+  createOrUpdate: authedProcedure
+    .input(EmployeeEditInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id, address, profile, ...rest } = input
+      try {
+        await ctx.prisma.employee.upsert({
+          where: {
+            id: id,
+          },
+          create: {
+            ...rest,
+            address: { create: address },
+            profile: { create: profile ?? undefined },
+          },
+          update: {
+            ...rest,
+            address: { update: address },
+            profile: { update: profile },
+          },
+        })
+      } catch (error) {}
     }),
   edit: authedProcedure
     .input(EmployeeEditInput)

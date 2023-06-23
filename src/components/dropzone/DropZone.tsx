@@ -68,9 +68,11 @@ export default function DropZone({
     if (id_list) {
       setIdList(id_list)
     }
+
     //filters duplicated ID
 
     const dupEmployeeList = data.filter((employee) => {
+
       return id_list.includes(
         employee ? String((employee as string[])[4] as string) : ""
       )
@@ -102,25 +104,26 @@ export default function DropZone({
           street: (emp as (string | number | null)[])[16] as string,
           city: (emp as (string | number | null)[])[17] as string,
           state: (emp as (string | number | null)[])[18] as string,
-          zip: (emp as (string | number | null)[])[19] as string,
-          country: (emp as (string | number | null)[])[20] as string,
+          country: (emp as (string | number | null)[])[19] as string,
           createdAt:
             new Date(
-              (emp as (string | number | null | boolean)[])[21] as string
+              (emp as (string | number | null | boolean)[])[20] as string
             ) ?? null,
           updatedAt:
             new Date(
-              (emp as (string | number | null | boolean)[])[22] as string
+              (emp as (string | number | null | boolean)[])[26] as string
             ) ?? null,
           //may laktaw po ito
           deleted: (emp as (string | number | null | boolean)[])[25] as boolean,
           deletedAt: new Date(
-            (emp as (string | number | null | boolean)[])[24] as string
+            (emp as (string | number | null | boolean)[])[26] as string
           ),
-          userId: (emp as (string | number | null)[])[21] as number,
-          companyId: (emp as (number | string | null)[])[22] as number,
-          vendorId: (emp as (string | number | null)[])[23] as number,
-          employeeId: (emp as (string | number | null)[])[24] as number,
+          userId: (emp as (string | number | null)[])[20] as number,
+          companyId: (emp as (number | string | null)[])[21] as number,
+          vendorId: (emp as (string | number | null)[])[22] as number,
+          employeeId: (emp as (string | number | null)[])[23] as number,
+          zip: (emp as (string | number | null)[])[24] as number,
+
         },
         profile: {
           id: (emp as (string | number | null)[])[27] as number,
@@ -143,6 +146,7 @@ export default function DropZone({
 
     setDuplicatedEmployees(
       final_dupList.sort((a, b) => {
+        // console.log(final_dupList)
         console.log("sort" + ((a.id ?? 0) - (b.id ?? 0)))
         return (a.id ?? 0) - (b.id ?? 0)
       })
@@ -168,14 +172,10 @@ export default function DropZone({
     }
   }
 
-  const onDiscard = async (
-    event: { preventDefault: () => void } | undefined
-  ) => {
+  const onDiscard = () => {
     setIsVisible(false)
   }
-  const onSubmitUpdate = async (
-    event: { preventDefault: () => void } | undefined
-  ) => {
+  const onSubmitUpdate = () => {
     // Register function
     try {
       for (let i = 0; i < duplicatedEmployees.length; i++) {
@@ -199,7 +199,7 @@ export default function DropZone({
             street: duplicatedEmployees[i]?.address?.street,
             city: duplicatedEmployees[i]?.address?.city,
             state: duplicatedEmployees[i]?.address?.state,
-            zip: duplicatedEmployees[i]?.address?.state,
+            zip: duplicatedEmployees[i]?.address?.zip,
             country: duplicatedEmployees[i]?.address?.country,
             // createdAt: duplicatedEmployees[i]?.address?.createdAt,
             // updatedAt: duplicatedEmployees[i]?.address?.updatedAt,
@@ -226,19 +226,19 @@ export default function DropZone({
           },
         })
       }
-    } catch {}
+    } catch { }
   }
   checkDuplicated()
   return (
     <div>
-      {"DUPLICATES: " + duplicates?.length}
+      {/* {"DUPLICATES: " + duplicates?.length} */}
       {importedData ? (
         duplicates?.length == 0 ||
-        duplicates == null ||
-        duplicates == undefined ? (
+          duplicates == null ||
+          duplicates == undefined ? (
           duplicatedEmployees.length == 0 ||
-          duplicatedEmployees == null ||
-          duplicatedEmployees == undefined ? (
+            duplicatedEmployees == null ||
+            duplicatedEmployees == undefined ? (
             <div className="flex flex-col gap-2 px-4 py-2">
               <div className="flex items-center gap-4 bg-yellow-100 p-4 text-light-secondary">
                 <i className="fa-regular fa-circle-exclamation" />
@@ -376,7 +376,7 @@ export default function DropZone({
               <div className="mt-4 flex items-center justify-end gap-2">
                 <button
                   className="px-4 py-2 font-medium underline"
-                  onClick={onDiscard}
+                  onClick={() => onDiscard()}
                 >
                   Cancel Import
                 </button>
@@ -397,13 +397,13 @@ export default function DropZone({
               <div className="mt-4 flex items-center justify-end gap-2">
                 <button
                   className="px-4 py-2 font-medium underline"
-                  onClick={onDiscard}
+                  onClick={() => onDiscard()}
                 >
                   Discard Changes
                 </button>
                 <button
                   className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                  onClick={onSubmitUpdate}
+                  onClick={() => onSubmitUpdate}
                   disabled={employeeLoading}
                 >
                   {employeeLoading ? "Loading..." : "Accept Import"}
@@ -429,7 +429,7 @@ export default function DropZone({
                   (a: { id: number }, b: { id: number }) => a.id - b.id
                 )}
                 incomingChanges={duplicatedEmployees}
-              
+
               />
             ) : (
               <></>
@@ -437,7 +437,7 @@ export default function DropZone({
             <div className="mt-4 flex items-center justify-end gap-2">
               <button
                 className="px-4 py-2 font-medium underline"
-                onClick={onDiscard}
+                onClick={() => onDiscard()}
               >
                 Discard Changes
               </button>
@@ -584,14 +584,7 @@ export default function DropZone({
               </div>
             </Group>
           </Dropzone>
-          <div className="mt-4 flex items-center justify-end gap-2">
-            <button
-              className="px-4 py-2 font-medium underline"
-              onClick={onDiscard}
-            >
-              Cancel Import
-            </button>
-          </div>
+
         </>
       )}
       <DropZoneModal

@@ -18,8 +18,11 @@ import AlertInput from "../components/atoms/forms/AlertInput"
 import { Textarea } from "@mantine/core"
 import { ImageJSON } from "../types/table"
 import DropZoneComponent from "../components/dropzone/DropZoneComponent"
+import { downloadExcel } from "../lib/functions"
+import { ExcelExportTypeVendor } from "../types/vendors"
 import TypeSelect from "../components/atoms/select/TypeSelect"
 import Modal from "../components/headless/modal/modal"
+import { clearAndGoBack } from "../lib/functions"
 
 const Vendors = () => {
   const [page, setPage] = useState(1)
@@ -31,6 +34,7 @@ const Vendors = () => {
     limit,
     page,
   })
+
 
 
   const [vendors, setVendors] = useState<VendorType[]>([])
@@ -158,6 +162,30 @@ const Vendors = () => {
                 <i className="fa-solid fa-print text-xs" />
                 Print CVs
               </button> */}
+              <button
+                onClick={() => {
+                  const downloadableVendors = vendors.map(
+                    (vendor) => {
+                      if (vendor?.["address"]) {
+                        const { address, ...rest } = vendor
+                        return {
+                          ...rest,
+                          address_id: address.id,
+                          ...address,
+                          address_deleted: address.deleted,
+                          address_deletedAt: address.deletedAt,
+                          id: rest.id,
+                        }
+                      }
+                    }
+                  ) as ExcelExportTypeVendor[]
+                  downloadExcel(downloadableVendors)
+                }}
+                className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
+              >
+                <i className="fa-solid fa-print text-xs" />
+                Generate Table
+              </button>
               <button
                 onClick={() => {
                   setOpenModalAdd(true)
@@ -407,7 +435,9 @@ const Vendors = () => {
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
                   acceptingMany={true}
-                />
+                  setIsVisible={function (value: React.SetStateAction<boolean>): void {
+                    throw new Error("Function not implemented.")
+                  }} />
               </div>
               <hr className="w-full"></hr>
               <div className="flex w-full justify-end gap-2 mt-4">
@@ -416,10 +446,10 @@ const Vendors = () => {
 
 
                   type="reset"
-                  // onClick={() => setOpenModalAdd(false)}
-
-
-                  onClick={() => { console.log(errors) }}
+                  onClick={() => {
+                    setOpenModalAdd(false), document.forms[0]?.reset()
+                  }}
+                  // onClick={() => { console.log(errors) }}
                   className="px-4 font-medium underline"
                 >
                   Discard

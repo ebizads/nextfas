@@ -5,6 +5,6 @@ export type ExcelExportType = Partial<EmployeeType> &
   Partial<Address> &
   Partial<Profile>
 
-  export type ExcelExportTypeUser = Partial<UserType> &
+export type ExcelExportTypeUser = Partial<UserType> &
   Partial<Address> &
   Partial<Profile>

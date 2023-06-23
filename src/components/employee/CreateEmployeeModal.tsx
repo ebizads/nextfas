@@ -74,7 +74,7 @@ export const CreateEmployeeModal = (props: {
         city: "",
         country: "",
         street: "",
-        zip: "",
+        zip: 0,
       },
       profile: {
         first_name: "",
@@ -89,9 +89,8 @@ export const CreateEmployeeModal = (props: {
     // Register function
 
     mutate({
-      name: `${employee.profile?.first_name ?? ""} ${
-        employee.profile?.last_name ?? ""
-      }`,
+      name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
+        }`,
       employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
@@ -123,6 +122,11 @@ export const CreateEmployeeModal = (props: {
       workStation: employee.workStation,
     })
     reset()
+  }
+  const onDiscard = () => {
+    document.forms[0]?.reset()
+    reset()
+    props.setIsVisible(false)
   }
 
   return (
@@ -399,7 +403,7 @@ export const CreateEmployeeModal = (props: {
             <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Zip Code</label>
               <InputField
-                type={"text"}
+                type={"number"}
                 label={""}
                 name={"address.zip"}
                 register={register}
@@ -420,16 +424,24 @@ export const CreateEmployeeModal = (props: {
           </div>
         </div>
 
-        <DropZoneComponent
+        {/* <DropZoneComponent
           setImage={props.setImage}
           setIsLoading={props.setIsLoading}
           images={props.images}
           isLoading={props.isLoading}
           acceptingMany={true}
           setIsVisible={props.setIsVisible}
-        />
+        /> */}
         <hr className="w-full"></hr>
         <div className="flex w-full justify-end">
+          <div className="flex items-center justify-end gap-2">
+            <button
+              className="px-4 py-2 font-medium underline"
+              onClick={() => onDiscard()}
+            >
+              Cancel
+            </button>
+          </div>
           <button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"

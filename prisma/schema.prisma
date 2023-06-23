@@ -299,14 +299,12 @@ model AssetTransfer {
   updatedAt        DateTime      @updatedAt
   deletedAt        DateTime?
   deleted          Boolean       @default(false)
-  transferTypeId   Int?
   remarks          String?
   telephoneNo      String?
   apInvoice        String?
   custodianId      Int?
   assetId          Int?          @unique
   asset            Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
-  TransferType     TransferType? @relation(fields: [transferTypeId], references: [id])
 }
 
 model AssetRepair {
@@ -473,12 +471,3 @@ model ticketTable {
   modifiedBy    User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
 }
 
-model TransferType {
-  id            Int             @id @default(autoincrement())
-  name          String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime
-  deletedAt     DateTime?
-  deleted       Boolean         @default(false)
-  AssetTransfer AssetTransfer[]
-}

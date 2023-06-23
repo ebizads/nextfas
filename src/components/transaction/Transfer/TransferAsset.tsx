@@ -23,6 +23,7 @@ import { useTransferAssetStore } from "../../../store/useStore"
 import { DatePicker } from "@mantine/dates"
 import { AssetTransfer } from "@prisma/client"
 import { AssetTransferValues } from "../../../types/generic"
+import { stringify } from "superjson"
 
 export type Transfer = z.infer<typeof AssetTransferCreateInput>
 
@@ -1203,6 +1204,7 @@ const Transfer = ({ }) => {
                                         <button
                                             type="submit"
                                             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                                            onClick={() => { console.log("jejeje" + stringify(errors)) }}
                                         >
                                             Submit
                                         </button>

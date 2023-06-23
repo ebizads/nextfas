@@ -147,13 +147,11 @@ export const AssetTransferCreateInput = z.object({
   description: z.string().nullish().optional(),
   departmentCode: z.string().nullish().optional(),
   salesInvoice: z.string().optional(),
-  // transferTypeId: z.number(),
   remarks: z.string().optional().nullish(),
   telephoneNo: z.string().optional(),
   apInvoice: z.string().nullish().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
-  TransferTypeId: z.number(),
 
 })
 
@@ -165,13 +163,11 @@ export const AssetTransferEditInput = z.object({
   description: z.string().nullish().optional(),
   departmentCode: z.string().nullish().optional(),
   salesInvoice: z.string().optional(),
-  // transferTypeId: z.number().optional(),
   remarks: z.string().nullish().optional(),
   telephoneNo: z.string().optional(),
   apInvoice: z.string().nullish().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
-  TransferTypeId: z.number().optional(),
 
 })
 

@@ -381,7 +381,7 @@ export const UpdateVendorModal = (props: {
           images={images}
           isLoading={isLoading}
           acceptingMany={false}
-          setIsVisible={function (value: SetStateAction<boolean>): void {
+          setIsVisible={function (): void {
             throw new Error("Function not implemented.")
           }} />}
         <hr className="w-full"></hr>

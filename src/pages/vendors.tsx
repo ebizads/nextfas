@@ -18,11 +18,13 @@ import AlertInput from "../components/atoms/forms/AlertInput"
 import { Textarea } from "@mantine/core"
 import { ImageJSON } from "../types/table"
 import DropZoneComponent from "../components/dropzone/DropZoneComponent"
-import { downloadExcel } from "../lib/functions"
+import { currentValue, downloadExcel, downloadExcelVendor } from "../lib/functions"
 import { ExcelExportTypeVendor } from "../types/vendors"
 import TypeSelect from "../components/atoms/select/TypeSelect"
 import Modal from "../components/headless/modal/modal"
 import { clearAndGoBack } from "../lib/functions"
+import AddVendorPopOver from "../components/atoms/popover/AddVendorPopOver"
+import DropzoneVendor from "../components/vendor/DropzoneVendor"
 
 const Vendors = () => {
   const [page, setPage] = useState(1)
@@ -30,20 +32,25 @@ const Vendors = () => {
 
 
   // Get asset by asset id
-  const { data } = trpc.vendor.findAll.useQuery({
-    limit,
-    page,
-  })
 
 
-
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [vendors, setVendors] = useState<VendorType[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
+  const [openAddPopover, setOpenAddPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-  const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
+  const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false)
+  const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
+  const [search, setSearch] = useState<string>("")
+
+  const { data } = trpc.vendor.findAll.useQuery({
+    search: { name: search },
+    limit,
+    page,
+  })
 
 
   const utils = trpc.useContext()
@@ -55,15 +62,16 @@ const Vendors = () => {
 
 
   const [images, setImage] = useState<ImageJSON[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoadingDropzone, setIsLoadingDropzone] = useState<boolean>(false)
 
 
   useEffect(() => {
     //get and parse all data
     if (data) {
-      setVendors(data.vendors)
+      setVendors(data.vendors as VendorType[])
       setAccessiblePage(Math.ceil(data?.count / limit))
     }
+
   }, [data, limit])
 
 
@@ -76,7 +84,7 @@ const Vendors = () => {
   } = trpc.vendor.create.useMutation({
     onSuccess: () => {
       utils.vendor.findAll.invalidate()
-      setOpenModalAdd(false);
+      setAddSingleRecord(false);
     },
   })
 
@@ -126,16 +134,8 @@ const Vendors = () => {
             <div className="flex items-center gap-2">
               <div className="flex w-fit items-center gap-2">
                 <div className="flex-1">
-                  <Search
-                    data={[
-                      ...vendors?.map((obj) => {
-                        return {
-                          value: obj ? obj.id.toString() : "",
-                          label: obj ? obj.name.toString() : "",
-                        }
-                      }),
-                    ]}
-                  />
+                  <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Vendor Name" onChange={(e) => setSearch(e.currentTarget.value)}>
+                  </input>
                 </div>
                 <FilterPopOver
                   openPopover={openPopover}
@@ -172,6 +172,8 @@ const Vendors = () => {
                           ...rest,
                           address_id: address.id,
                           ...address,
+                          address_createdAt: address.createdAt,
+                          address_updatedAt: address.updatedAt,
                           address_deleted: address.deleted,
                           address_deletedAt: address.deletedAt,
                           id: rest.id,
@@ -179,28 +181,25 @@ const Vendors = () => {
                       }
                     }
                   ) as ExcelExportTypeVendor[]
-                  downloadExcel(downloadableVendors)
+                  downloadExcelVendor(downloadableVendors)
                 }}
                 className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
               >
                 <i className="fa-solid fa-print text-xs" />
                 Generate Table
               </button>
-              <button
-                onClick={() => {
-                  setOpenModalAdd(true)
-                }}
-                className="flex gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none"
-              >
-                <i className="fa-regular fa-plus text-xs" />
-                <p>Add New</p>
-              </button>
+              <AddVendorPopOver
+                openPopover={openAddPopover}
+                setOpenPopover={setOpenAddPopover}
+                setAddSingleRecord={setAddSingleRecord}
+                setAddBulkRecord={setAddBulkRecord}
+              />
             </div>
           </div>
         </section>
         <VendorTable
           checkboxes={checkboxes}
-          columns={vendorColumns}
+          columns={vendorColumns.filter((col) => filterBy.includes(col.value))}
           filterBy={filterBy}
           rows={vendors}
           setCheckboxes={setCheckboxes}
@@ -227,7 +226,7 @@ const Vendors = () => {
             }}
           />
         </section>
-        <Modal title="Add New Vendor" isVisible={openModalAdd} setIsVisible={setOpenModalAdd} className="max-w-4xl" >
+        <Modal title="Add New Vendor" isVisible={addSingleRecord} setIsVisible={setAddSingleRecord} className="max-w-4xl" >
           <div className="w-full">
 
             <form
@@ -447,7 +446,7 @@ const Vendors = () => {
 
                   type="reset"
                   onClick={() => {
-                    setOpenModalAdd(false), document.forms[0]?.reset()
+                    setAddSingleRecord(false), document.forms[0]?.reset()
                   }}
                   // onClick={() => { console.log(errors) }}
                   className="px-4 font-medium underline"
@@ -455,8 +454,6 @@ const Vendors = () => {
                   Discard
                 </button>
                 <button
-
-
                   type="submit"
                   onClick={handleSubmit(onSubmit)}
                   disabled={isSubmitting}
@@ -468,6 +465,16 @@ const Vendors = () => {
               </div>
             </form>
           </div>
+        </Modal>
+
+        <Modal title="Add Bulk Vendor" isVisible={addBulkRecord} setIsVisible={setAddBulkRecord} className="max-w-6xl">
+          <DropzoneVendor
+            file_type="xlsx"
+            acceptingMany={false}
+            loading={isLoadingDropzone}
+            setIsLoading={setIsLoadingDropzone}
+            setIsVisible={setAddBulkRecord}
+          />
         </Modal>
       </div>
     </DashboardLayout>

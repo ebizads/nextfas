@@ -21,7 +21,7 @@ const userSchema = z.object({
     .string()
     .min(1, { message: "The password is invalid" })
     .max(20, { message: "The password is invalid" }),
-  firstLogin:  z.boolean().nullish(),
+  firstLogin: z.boolean().nullish(),
 })
 
 // Infer the TS type according to the zod schema.
@@ -47,7 +47,7 @@ export function Alert({
 }
 
 function LoginForm() {
-  
+
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
 
@@ -73,8 +73,8 @@ function LoginForm() {
       password: "",
     },
   })
-  
-  
+
+
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
@@ -86,9 +86,9 @@ function LoginForm() {
       callbackUrl: "/assets",
     })
 
-     setError(res?.error as string)
+    setError(res?.error as string)
     if (res?.error) {
-       console.log("May error ", res?.error)
+      console.log("May error ", res?.error)
     } else {
       router.push(res?.url as string)
     }
@@ -105,7 +105,7 @@ function LoginForm() {
         )}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col space-y-4" 
+          className="flex flex-col space-y-4"
         >
           <div>
             <InputField

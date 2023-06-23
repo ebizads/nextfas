@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Select, Pagination } from "@mantine/core"
 import UserTable from "../../components/user/UserTable"
 import { userColumns } from "../../lib/table"
@@ -20,21 +20,7 @@ type SearchType = {
   label: string
 }
 
-const Search = (props: { data: SearchType[] }) => {
-  const [value, setValue] = useState<string | null>(null)
-  return (
-    <Select
-      value={value}
-      placeholder="Search"
-      searchable
-      nothingFound={`Cannot find option`}
-      onChange={setValue}
-      clearable
-      data={[...props.data]}
-      icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
-    />
-  )
-}
+
 
 const DisplayUsers = (props: {
   total: number
@@ -52,14 +38,45 @@ const DisplayUsers = (props: {
   const [filterBy, setFilterBy] = useState<string[]>(
     employeeColumns.map((i) => i.value)
   )
-
+  const [users, setUsers] = useState<UserType[]>([])
+  const [page, setPage] = useState(props.page)
+  const [limit, setLimit] = useState(props.limit)
   const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
   const [date, setDate] = useState<Date>(new Date())
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [search, setSearch] = useState<string>("")
+  const { data } = trpc.user.findAll.useQuery({
+    search: { name: search },
+    limit,
+    page,
+  })
   const utils = trpc.useContext()
+
+  // const Search = (props: { data: SearchType[] }) => {
+  //   const [value, setValue] = useState<string | null>(null)
+
+  //   return (
+  //     <Select
+  //       value={value}
+  //       placeholder="Search"
+  //       searchable
+  //       nothingFound={`Cannot find option`}
+  //       onChange={setValue}
+  //       clearable
+  //       data={[...props.data]}
+  //       icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
+  //     />
+  //   )
+  // }
+
+  useEffect(() => {
+    if (data) {
+      setUsers(data.user as UserType[])
+    }
+  }, [data])
 
   const { mutate } = trpc.user.deleteMany.useMutation({
     onSuccess: () => {
@@ -74,16 +91,8 @@ const DisplayUsers = (props: {
           <div className="flex items-center gap-2">
             <div className="flex w-fit items-center gap-2">
               <div className="flex-1">
-                <Search
-                  data={[
-                    ...props.users?.map((obj) => {
-                      return {
-                        value: obj?.id.toString() ?? "",
-                        label: obj?.name ?? "",
-                      }
-                    }),
-                  ]}
-                />
+                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search User Name" onChange={(e) => setSearch(e.currentTarget.value)}>
+                </input>
               </div>
               <FilterPopOver
                 openPopover={openPopover}
@@ -133,7 +142,7 @@ const DisplayUsers = (props: {
               <i className="fa-solid fa-print text-xs" />
               Generate CVs
             </button> */}
-            <Link href={"/reports/register"}>
+            <Link href={"/auth/registerDashboard"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
                 <i className="fa-regular fa-plus text-xs" />
                 <p>Register</p>
@@ -145,7 +154,7 @@ const DisplayUsers = (props: {
         <UserTable
           checkboxes={checkboxes}
           setCheckboxes={setCheckboxes}
-          rows={props.users}
+          rows={users}
           filterBy={filterBy}
           columns={columnsuser.filter((col) => filterBy.includes(col.value))}
         />

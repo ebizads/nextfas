@@ -14,6 +14,47 @@ export const vendorRouter = t.router({
     })
     return vendor
   }),
+  createOrUpdate: authedProcedure
+    .input(VendorEditInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id, address, ...rest } = input
+      try {
+        await ctx.prisma.employee.upsert({
+          where: {
+            id: id,
+          },
+          create: {
+            ...rest,
+            address: { create: address },
+          },
+          update: {
+            ...rest,
+            address: { update: address },
+          },
+        })
+      } catch (error) { }
+    }),
+  checkDuplicates: authedProcedure
+    .input(z.array(z.number()))
+    .query(async ({ ctx, input }) => {
+      for (let i = 0; i < input.length; i++) {
+        if (input[i] !== null || input[i] !== undefined) {
+          const vendors = await ctx.prisma.vendor.findMany({
+            where: {
+              id: {
+                in: input,
+              },
+            },
+            include: {
+              address: true,
+            },
+          })
+          return vendors
+        } else {
+          return null
+        }
+      }
+    }),
   findAll: authedProcedure
     .input(
       z
@@ -46,6 +87,7 @@ export const vendorRouter = t.router({
               where: {
                 name: {
                   contains: input?.search?.name ? input.search.name : undefined,
+                  mode: 'insensitive'
                 },
                 NOT: {
                   deleted: true,

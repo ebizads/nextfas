@@ -73,10 +73,10 @@ const DisplayAssets = (props: {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={()=>{
-              const downloadableAssets = props.assets.map((asset)=>{
-                if (asset?.['project'] && asset?.['name']){
-                  const {project, department, ...rest} = asset 
+            <button onClick={() => {
+              const downloadableAssets = props.assets.map((asset) => {
+                if (asset?.['project'] && asset?.['name']) {
+                  const { project, department, ...rest } = asset
                   return {
                     ...rest,
                     project_id: project.id,
@@ -85,7 +85,8 @@ const DisplayAssets = (props: {
                     ...department,
                     id: rest.id
                   }
-                }}) as ExcelExportType[]
+                }
+              }) as ExcelExportType[]
               downloadExcel(downloadableAssets)
             }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
               <i className="fa-solid fa-print text-xs" />

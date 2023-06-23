@@ -96,6 +96,10 @@ export const userRouter = t.router({
                 },
               },
               where: {
+                name: {
+                  contains: input?.search?.name,
+                  mode: 'insensitive'
+                },
                 NOT: {
                   deleted: true,
                 },

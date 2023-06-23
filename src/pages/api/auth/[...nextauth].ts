@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
           if (Boolean(user?.inactivityDate)) {
             const dateBetween = Number(
               (dateNow.getTime() - (user?.inactivityDate?.getTime() ?? 0)) /
-                (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24)
             )
             console.log("Date: " + dateBetween)
             //throw new Error(dateBetween.toString())
@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
             } else if (dateBetween >= 90) {
               await prisma.userArchive.create({
                 data: {
-                  user_Id: user?.user_Id?? "",
+                  user_Id: user?.user_Id ?? "",
                   position: user?.position ?? "",
                   teamId: user?.teamId ?? 0,
                   old_id: user?.id ?? 0,
@@ -78,14 +78,14 @@ export const authOptions: NextAuthOptions = {
                   username: user?.username ?? "",
                   hired_date: user?.hired_date,
                   user_type: user?.user_type ?? ""
-                  
+
                 },
               }),
-              await prisma.user.delete({
-                where: {
-                  id: user?.id
-                }
-              })
+                await prisma.user.delete({
+                  where: {
+                    id: user?.id
+                  }
+                })
               throw new Error(
                 `This user is deleted in the database. Please contact administrator.`
               )

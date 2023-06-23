@@ -86,7 +86,7 @@ const Register2 = () => {
         city: "",
         country: "",
         street: "",
-        zip: "",
+        zip: 0,
       },
       profile: {
         first_name: "",
@@ -397,7 +397,7 @@ const Register2 = () => {
             <div className="flex w-[20%] flex-col">
               <label className="sm:text-sm">Zip Code</label>
               <InputField
-                type={"text"}
+                type={"number"}
                 label={""}
                 name={"address.zip"}
                 register={register}

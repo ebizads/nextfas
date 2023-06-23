@@ -1,6 +1,6 @@
 import React from "react"
 import DashboardLayout from "../../layouts/DashboardLayout"
-import Register2 from "../auth/register"
+import Register2 from "./register"
 
 const Register = () => {
   return (

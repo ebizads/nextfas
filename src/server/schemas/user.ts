@@ -39,9 +39,9 @@ export const CreateUserInput = z.object({
   inactivityDate: z.date().nullish(),
   passwordAge: z.date().nullish(),
   hired_date: z.date().nullish(),
-  position: z.string({required_error: "Position is required"}).min(1, {message: "Position is required"}),
+  position: z.string({ required_error: "Position is required" }).min(1, { message: "Position is required" }),
   address: AddressCreateInput,
-  teamId: z.number({required_error: "Team is required"}),
+  teamId: z.number({ required_error: "Team is required" }),
 })
 
 export const CreateArchiveUser = z.object({
@@ -96,6 +96,11 @@ export const EditUserInput = z.object({
   address: AddressEditInput,
   teamId: z.number().optional(),
   inactivityDate: z.date().nullish(),
+  lockedAt: z.date().nullish(),
+  lockedUntil: z.date().nullish(),
+  attemps: z.number().nullish(),
+  lockedReason: z.string().nullish(),
+
   user_Id: z.string().nullish().optional(),
 })
 

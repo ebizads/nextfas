@@ -104,8 +104,8 @@ export const assetRouter = t.router({
             NOT: {
               deleted: true,
             },
-            name: { contains: input?.search?.name },
-            number: { contains: input?.search?.number },
+            name: { contains: input?.search?.name, mode: 'insensitive' },
+            number: { contains: input?.search?.number, mode: 'insensitive' },
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)

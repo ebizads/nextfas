@@ -13,6 +13,7 @@ import Router from "next/router"
 import { object } from "zod"
 import { trpc } from "../utils/trpc"
 import { useState } from "react"
+import { ExcelExportTypeVendor } from "../types/vendors"
 
 const router = Router
 export const getProperty = (
@@ -77,25 +78,25 @@ export const getName = (filter: string, type: EmployeeType) => {
   return filter === "first_name"
     ? Object.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
-    : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+      ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+      : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getNameUser = (filter: string, type: UserType) => {
   return filter === "first_name"
     ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
+      ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
         ?.value
-    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+      : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getAddressUser = (
   type:
     | UserType
     | (Company & {
-        address: Address | null
-      })
+      address: Address | null
+    })
 ) => {
   return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country}, ${type?.name} `
 }
@@ -104,8 +105,8 @@ export const getAddress = (
   type:
     | EmployeeType
     | (Company & {
-        address: Address | null
-      })
+      address: Address | null
+    })
 ) => {
   return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
 }
@@ -140,6 +141,25 @@ export const downloadExcel = (data: ExcelExportType[]) => {
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
   XLSX.writeFile(workbook, "Employee_Sheet.xlsx")
+  // }
+
+  return
+}
+
+export const downloadExcelVendor = (data: ExcelExportTypeVendor[]) => {
+  console.log(data)
+
+  // if (!data) {
+  // csv null fall back
+  // const worksheet = XLSX.utils.json_to_sheet(data || [])
+  const worksheet = XLSX.utils.json_to_sheet(
+    data !== null && data !== undefined ? data : []
+  )
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  XLSX.writeFile(workbook, "Vendor_Sheet.xlsx")
   // }
 
   return
@@ -180,8 +200,8 @@ export const getLifetime = (start_date: Date, end_date: Date) => {
   return differenceInDay > 364
     ? `${convertDaysToYears(differenceInDay)} year/s`
     : differenceInDay > 30
-    ? `${convertDaysToMonths(differenceInDay)} month/s`
-    : `${differenceInDay} day/s`
+      ? `${convertDaysToMonths(differenceInDay)} month/s`
+      : `${differenceInDay} day/s`
 }
 
 export const convertDaysToYears = (days: number) => {

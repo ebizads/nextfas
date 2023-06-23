@@ -16,6 +16,7 @@ import { useUserEditableStore } from "../../store/useStore"
 import AlertInput from "../atoms/forms/AlertInput"
 import register from "../../pages/auth/register"
 import InputField from "../atoms/forms/InputField"
+import InputNumberField from "../atoms/forms/InputNumberField"
 
 export type User = z.infer<typeof EditUserInput>
 
@@ -87,7 +88,7 @@ const UserValidateModal = (props: {
     },
   })
 
- 
+
 
   const {
     handleSubmit,
@@ -477,17 +478,14 @@ const UserValidateModal = (props: {
                 />
               </div>
               <div className="flex w-[18.4%] flex-col">
-                <label className="sm:text-sm">Zip Code</label>
-                <input
-                  className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                  id="address.zip"
-                  type={"text"}
-                  placeholder={user?.address?.zip ?? "--"}
-                  onChange={(e) => {
-                    setValue("address.zip", e.currentTarget.value)
-                  }}
+                <InputNumberField
+                  placeholder="Zip Code"
+                  register={register}
+                  label="Zip Code"
+                  name="address.zip"
                   disabled={!isEditable}
                 />
+
               </div>
               <div className="flex w-[18.4%] flex-col">
                 <label className="sm:text-sm">Country</label>

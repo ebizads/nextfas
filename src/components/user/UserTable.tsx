@@ -57,12 +57,11 @@ const UserTable = (props: {
     // console.log("ewan: " + Boolean(props.rows))
   })
   const lockedChecker = futureDate < (details?.lockedUntil ?? "") ? true : false
-  
+
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -150,7 +149,7 @@ const UserTable = (props: {
                             ? getNameUser(col.value, row)
                             : col.value === "city"
                               ? ((getAddressUser(row).includes("undefined")) ? "--" : getAddressUser(row))
-                              : getProperty(col.value, row)                    }
+                              : getProperty(col.value, row)}
                   </td>
                 ))}
               {/* <td className="max-w-[10rem] space-x-2 text-center">
@@ -178,11 +177,11 @@ const UserTable = (props: {
           title={
             lockedChecker
               ? editable
-                ? "Update User Record \uD83D\uDD12"
+                ? "Update and Validate User Record \uD83D\uDD12"
                 : "User Record \uD83D\uDD12"
               : editable
-              ? "Update User Record"
-              : "User Record"
+                ? "Update and Validate User Record"
+                : "User Record"
           }
           isVisible={updateRecord}
           setIsVisible={setUpdateRecord}

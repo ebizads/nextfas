@@ -38,7 +38,6 @@ const UpdateUserModal = (props: {
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [certificateCheck, setCertificate] = useState<string>("")
-  const [check, setCheck] = useState<string>("")
   const [date, setDate] = useState(props.user?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
@@ -47,7 +46,7 @@ const UpdateUserModal = (props: {
   const { editable, setEditable } = useEditableStore()
 
   const { data: user } = trpc.user.findOne.useQuery(
-    Number(props.user?.user_Id) ?? 0
+    Number(props.user?.id) ?? 0
   )
   const { data: singleTeams } = trpc.team.findOne.useQuery(
     props.user?.teamId ?? 0
@@ -89,14 +88,15 @@ const UpdateUserModal = (props: {
   })
 
   useEffect(() => {
+    console.log(("test") + JSON.stringify(user))
     reset(props.user as User)
     setCertificate(generateCertificate)
-  }, [props.user, reset])
+  }, [props.user, reset, user])
 
   const onSubmit = async (userForm: User) => {
     // Register function
     console.log(userForm)
-  
+
     mutate({
       ...userForm,
       name: `${userForm.profile?.first_name
@@ -105,11 +105,16 @@ const UpdateUserModal = (props: {
         } ${userForm.profile?.last_name
           ? userForm.profile?.last_name
           : user?.profile?.last_name
-      }`,
+        }`,
+      inactivityDate: new Date(),
+      lockedAt: null,
+      lockedUntil: null,
+      attemps: null,
+      lockedReason: null,
       teamId: userForm.teamId,
       id: userForm.id,
       validateTable: {
-        certificate: check,
+        certificate: certificateCheck,
         validationDate: props.user?.validateTable?.validationDate ?? futureDate,
       },
     })
@@ -192,7 +197,7 @@ const UpdateUserModal = (props: {
         </div>
 
         <div className="flex w-full flex-wrap gap-4 py-2.5">
-          <div className="flex w-[32%] flex-col">
+          <div className="flex w-[24%] flex-col">
             <label className="sm:text-sm">Team</label>
             <Select
               disabled={!isEditable}
@@ -232,7 +237,7 @@ const UpdateUserModal = (props: {
             />
             {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
           </div>
-          <div className="flex w-[32%] flex-col">
+          <div className="flex w-[23%] flex-col">
             <label className="sm:text-sm">User Number</label>
             {/* <InputField
                
@@ -247,7 +252,7 @@ const UpdateUserModal = (props: {
               }
             >{`${props.user?.user_Id}`}</p>
           </div>
-          <div className="flex w-[32%] flex-col">
+          <div className="flex w-[23%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
             <InputField
               type={"text"}
@@ -259,6 +264,44 @@ const UpdateUserModal = (props: {
             />
 
             <AlertInput>{errors?.position?.message}</AlertInput>
+          </div>
+          <div className="flex w-[24%] flex-col">
+            <label className="sm:text-sm">User Type</label>
+            <Select
+              disabled={!isEditable}
+              placeholder={user?.user_type ? user?.user_type : "Pick One"}
+              onChange={(value) => {
+                setValue("user_type", String(value) ?? "")
+              }}
+              data={["user", "admin"]}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            />
+            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
           </div>
         </div>
 
@@ -436,31 +479,31 @@ const UpdateUserModal = (props: {
             )
           )}
           <Modal
-              isVisible={completeModal}
-              setIsVisible={setCompleteModal}
-              className="max-w-2xl"
-              title="Updated User Account"
-            >
-              <div className="flex w-full flex-col px-4 py-2">
-                <div>
-                  <p className="text-center text-lg font-semibold">
-                    User updated successfully.
-                  </p>
-                </div>
-                <div className="flex justify-end py-2">
-                  <button
-                    className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={() => {
-                      setCompleteModal(false)
-                      props.setIsVisible(false)
-                      setCertificate(generateCertificate())
-                    }}
-                  >
-                    Close
-                  </button>
-                </div>
+            isVisible={completeModal}
+            setIsVisible={setCompleteModal}
+            className="max-w-2xl"
+            title="Updated User Account"
+          >
+            <div className="flex w-full flex-col px-4 py-2">
+              <div>
+                <p className="text-center text-lg font-semibold">
+                  User updated successfully.
+                </p>
               </div>
-            </Modal>
+              <div className="flex justify-end py-2">
+                <button
+                  className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={() => {
+                    setCompleteModal(false)
+                    props.setIsVisible(false)
+                    setCertificate(generateCertificate())
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </Modal>
           {isEditable && (
             <div className="space-x-1">
               <button
@@ -482,8 +525,8 @@ const UpdateUserModal = (props: {
                 {userLoading
                   ? "Loading..."
                   : lockedChecker
-                  ? "Unlock and save "
-                  : "Save"}
+                    ? "Unlock and save "
+                    : "Save"}
               </button>
             </div>
           )}
@@ -516,7 +559,7 @@ export const UserDeleteModal = (props: {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   //trpc utils for delete
-  const { mutate} = trpc.user.createArchive.useMutation({
+  const { mutate } = trpc.user.createArchive.useMutation({
     onSuccess() {
       console.log()
       props.setOpenModalDel(false)
@@ -557,7 +600,7 @@ export const UserDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-              // disabled={isLoading}
+            // disabled={isLoading}
             >
               Yes, delete record
             </button>

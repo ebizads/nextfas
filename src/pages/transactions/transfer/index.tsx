@@ -6,7 +6,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout"
 import {
 	useSearchStore,
 	useTransferAssetStore,
-	useUpdateAssetStore,
+	useTranferStatusStore,
 } from "../../../store/useStore"
 import { AssetTransferType, AssetType } from "../../../types/generic"
 import { trpc } from "../../../utils/trpc"
@@ -15,25 +15,27 @@ import DisplayTransferAsset_new from "../../../components/transaction/Transfer/T
 const AssetTransfer = () => {
 	const [page, setPage] = useState(1)
 	const [limit, setLimit] = useState(10)
-	const router = useRouter()
-	const { search } = useSearchStore()
 
-	const { data } = trpc.assetTransfer.findAll.useQuery({
-		limit,
-		page,
-	})
+	const { status } = useTranferStatusStore();
 
 	const [assets, setAssets] = useState<AssetTransferType[]>([])
 	const [accessiblePage, setAccessiblePage] = useState<number>(0)
 
 	const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
-	const [flag, setFlag] = useState(false)
+
+	const { data } = trpc.assetTransfer.findAll.useQuery({
+		search: {
+			transferStatus: status
+		},
+		limit,
+		page,
+	})
 
 	useEffect(() => {
 		setTransferAsset(null)
 		console.log(transferAsset)
-	}, [flag, setTransferAsset])
+	}, [])
 
 	// console.log("transfer asset number: "+ transferAsset?.number);
 
@@ -42,10 +44,16 @@ const AssetTransfer = () => {
 
 		//get and parse all data
 		if (data) {
-			setAssets(data.assetTransfers as unknown as AssetTransferType[])
-			setAccessiblePage(Math.ceil(data.total / limit))
+			setAssets(data.assetTransfers as AssetTransferType[])
+			setAccessiblePage(Math.ceil(data.count / limit))
 		}
-	}, [data, limit, router])
+	}, [data, limit])
+
+
+	useEffect(() => {
+		console.log(status, limit, page);
+	}, [status, limit, page]);
+
 	// console.log(transferAsset)
 	return (
 		<DashboardLayout>

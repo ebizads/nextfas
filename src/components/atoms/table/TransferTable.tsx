@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
-import { Checkbox } from "@mantine/core"
-import { repairColumn, transferColumn } from "../../../lib/table"
+import { transferColumn } from "../../../lib/table"
 import { getPropertyDisposal } from "../../../lib/functions"
-import { AssetRepairType, AssetTransferType } from "../../../types/generic"
-import Modal from "../../headless/modal/modal"
-import { RepairDetailsModal } from "../../transaction/AddRepair/RepairModal"
+import { AssetTransferType } from "../../../types/generic"
 
 const TransferAssetTable_new = (props: {
   // checkboxes: number[]
@@ -23,6 +20,12 @@ const TransferAssetTable_new = (props: {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [details, setDetails] = useState<AssetTransferType>(null)
 
+  useEffect(() => {
+    console.log(
+
+      "filter   :::" + props.filterBy
+    )
+  })
 
   // const selectAllCheckboxes = () => {
   //   if (props.checkboxes.length === 0) {
@@ -88,21 +91,7 @@ const TransferAssetTable_new = (props: {
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
-                  {/* <Checkbox
-                    value={row?.id ?? idx}
-                    color={"orange"}
-                    onChange={(e) => {
-                      toggleCheckbox(Number(e.target.value))
-                    }}
-                    checked={
-                      props.checkboxes.includes(row?.id ?? idx) ||
-                      props.checkboxes.includes(-1)
-                    }
-                    classNames={{
-                      input:
-                        "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                    }}
-                  /> */}
+
                 </div>
               </td>
               {transferColumn

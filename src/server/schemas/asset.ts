@@ -141,18 +141,13 @@ export const AssetDisposalEditInput = z.object({
 })
 
 export const AssetTransferCreateInput = z.object({
-  transferDate: z.date().default(new Date()).nullish(),
+  transferDate: z.date().default(new Date()).nullish().optional(),
   transferStatus: z.string().default("pending"),
   transferLocation: z.string().optional(),
-  description: z.string().nullish().optional(),
-  departmentCode: z.string().nullish().optional(),
-  salesInvoice: z.string().optional(),
-  remarks: z.string().optional().nullish(),
-  telephoneNo: z.string().optional(),
-  apInvoice: z.string().nullish().optional(),
+  departmentCode: z.string().nullish(),
+  remarks: z.string().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
-
 })
 
 export const AssetTransferEditInput = z.object({
@@ -160,12 +155,8 @@ export const AssetTransferEditInput = z.object({
   transferDate: z.date().nullish(),
   transferStatus: z.string().optional(),
   transferLocation: z.string().optional(),
-  description: z.string().nullish().optional(),
   departmentCode: z.string().nullish().optional(),
-  salesInvoice: z.string().optional(),
   remarks: z.string().nullish().optional(),
-  telephoneNo: z.string().optional(),
-  apInvoice: z.string().nullish().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
 

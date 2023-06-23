@@ -14,6 +14,7 @@ import Router from "next/router"
 import { object } from "zod"
 import { trpc } from "../utils/trpc"
 import { useState } from "react"
+import { ExcelExportAssetType } from "../types/asset"
 
 const router = Router
 export const getProperty = (
@@ -128,10 +129,9 @@ export const formatBytes = (bytes: number) => {
 }
 
 export const downloadExcel = (data: ExcelExportType[]) => {
-  console.log(data)
+  console.log("tangina moooooo::::", data)
 
-  // if (!data) {
-  // csv null fall back
+  // if (!data) {  // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])
   const worksheet = XLSX.utils.json_to_sheet(
     data !== null && data !== undefined ? data : []
@@ -141,6 +141,25 @@ export const downloadExcel = (data: ExcelExportType[]) => {
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
   XLSX.writeFile(workbook, "Employee_Sheet.xlsx")
+  // }
+
+  return
+}
+
+
+export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
+  console.log("assetsss moooooo::::", data)
+
+  // if (!data) {  // csv null fall back
+  // const worksheet = XLSX.utils.json_to_sheet(data || [])
+  const worksheet = XLSX.utils.json_to_sheet(
+    data !== null && data !== undefined ? data : []
+  )
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  XLSX.writeFile(workbook, "Asset_Sheet.xlsx")
   // }
 
   return

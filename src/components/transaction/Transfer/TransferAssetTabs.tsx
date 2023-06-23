@@ -57,7 +57,8 @@ const DisplayTransferAsset_new = (props: {
         console.log(
             "page: " + props.page,
             "limit: " + props.limit,
-            "total: " + props.accessiblePage
+            "total: " + props.accessiblePage,
+
         )
     })
 

@@ -18,6 +18,14 @@ export const assetTransferRouter = t.router({
     })
     return assetTransfer
   }),
+  findAsset: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
+    const assetTransfer = await ctx.prisma.assetTransfer.findUnique({
+      where: {
+        assetId: input,
+      },
+    })
+    return assetTransfer
+  }),
   findAll: authedProcedure
     .input(
       z
@@ -29,12 +37,8 @@ export const assetTransferRouter = t.router({
               transferDate: z.date().optional(),
               transferStatus: z.string().optional(),
               transferLocation: z.string().optional(),
-              description: z.string().nullish().optional(),
               departmentCode: z.string().nullish().optional(),
-              salesInvoice: z.string().optional(),
               remarks: z.string().nullish().optional(),
-              telephoneNo: z.string().optional(),
-              apInvoice: z.string().nullish().optional(),
               custodianId: z.number().optional(),
               assetId: z.number().optional(),
             })
@@ -78,6 +82,7 @@ export const assetTransferRouter = t.router({
 
       return {
         assetTransfers,
+        count,
         pages: Math.ceil(count / (input?.limit ?? 0)),
         total: count,
       }

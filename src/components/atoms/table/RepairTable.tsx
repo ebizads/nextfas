@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
@@ -23,7 +23,12 @@ const RepairTable = (props: {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [details, setDetails] = useState<AssetRepairType>(null)
 
+  useEffect(() => {
+    console.log(
 
+      "filter ::::" + props.filterBy
+    )
+  })
   // const selectAllCheckboxes = () => {
   //   if (props.checkboxes.length === 0) {
   //     props.setCheckboxes([-1])
@@ -88,21 +93,7 @@ const RepairTable = (props: {
             >
               <td className="w-4 p-2">
                 <div className="flex items-center justify-center">
-                  {/* <Checkbox
-                    value={row?.id ?? idx}
-                    color={"orange"}
-                    onChange={(e) => {
-                      toggleCheckbox(Number(e.target.value))
-                    }}
-                    checked={
-                      props.checkboxes.includes(row?.id ?? idx) ||
-                      props.checkboxes.includes(-1)
-                    }
-                    classNames={{
-                      input:
-                        "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                    }}
-                  /> */}
+
                 </div>
               </td>
               {repairColumn

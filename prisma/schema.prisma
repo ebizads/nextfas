@@ -288,23 +288,19 @@ model AssetDisposal {
 }
 
 model AssetTransfer {
-  id               Int           @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   transferDate     DateTime?
   transferLocation String?
   transferStatus   String?
-  description      String?
   departmentCode   String?
-  salesInvoice     String?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   deletedAt        DateTime?
-  deleted          Boolean       @default(false)
+  deleted          Boolean   @default(false)
   remarks          String?
-  telephoneNo      String?
-  apInvoice        String?
   custodianId      Int?
-  assetId          Int?          @unique
-  asset            Asset?        @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  assetId          Int?      @unique
+  asset            Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
 model AssetRepair {
@@ -470,4 +466,3 @@ model ticketTable {
   userArchiveId Int?
   modifiedBy    User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
 }
-

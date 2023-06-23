@@ -82,13 +82,13 @@ const Transfer = ({ }) => {
         }
     }, [asset, assetNumber])
 
-    const utils = trpc.useContext()
+    // const utils = trpc.useContext()
 
-    const { mutate } = trpc.assetTransfer.edit.useMutation({
+    const { mutate } = trpc.assetTransfer.create.useMutation({
         onSuccess() {
             setCompleteModal(true)
             // invalidate query of asset id when mutations is successful
-            utils.assetTransfer.findAll.invalidate()
+            // utils.assetTransfer.findAll.invalidate()
         },
     })
 
@@ -98,7 +98,7 @@ const Transfer = ({ }) => {
 
 
 
-    useEffect(() => reset(asset as unknown as Transfer), [asset, reset])
+    // useEffect(() => reset(asset as unknown as Transfer), [asset, reset])
 
     // const onSubmit = (asset: Transfer) => {
     //     // Register function
@@ -116,43 +116,43 @@ const Transfer = ({ }) => {
             console.log("omsim")
         },
     })
+    const updateDept = trpc.employee.edit.useMutation({
+        onSuccess() {
+            console.log("omsim")
+        },
+    })
 
 
-    const onSubmit: SubmitHandler<AssetTransferValues> = (
-        form_data: AssetTransferValues
-    ) => {
-        mutate(form_data)
-        console.log("shetttttttt dapat ng submit")
-        // if (asset?.status === null || asset?.status === undefined || asset?.status === "") {
-        //     mutate({
-        //         ...transfer,
-        //         transferStatus: "pending",
-        //         id: asset?.id ?? 0
-        //     })
-
-        //     updateAsset.mutate({
-        //         ...asset,
-        //         id: asset?.id ?? 0,
-        //         status: "transfer",
-        //     })
-
-        //     reset()
-        // }
-        // else {
-        //     if (asset?.status === "disposal") {
-        //         setValidateString("The asset is in for disposal")
-        //         setValidateModal(true)
-        //         setAssetNumber("")
-        //     } else if (asset?.status === "repair") {
-        //         setValidateString("The asset is in for repair.")
-        //         setValidateModal(true)
-        //         setAssetNumber("")
-        //     } else if (asset?.status === "transfer") {
-        //         setValidateString("The asset is being transferred.")
-        //         setValidateModal(true)
-        //         setAssetNumber("")
-        //     }
-        // }
+    const onSubmit = (transfer: Transfer) => {
+        if (asset?.status === null || asset?.status === undefined || asset?.status === "") {
+            mutate({
+                ...transfer,
+                transferStatus: "pending",
+                assetId: asset?.id ?? 0
+            })
+            updateAsset.mutate({
+                ...asset,
+                id: asset?.id ?? 0,
+                status: "transfer",
+                custodianId: Number(selectedEMP)
+            })
+            reset()
+        }
+        else {
+            if (asset?.status === "disposal") {
+                setValidateString("The asset is in for disposal")
+                setValidateModal(true)
+                setAssetNumber("")
+            } else if (asset?.status === "repair") {
+                setValidateString("The asset is in for repair.")
+                setValidateModal(true)
+                setAssetNumber("")
+            } else if (asset?.status === "transfer") {
+                setValidateString("The asset is being transferred.")
+                setValidateModal(true)
+                setAssetNumber("")
+            }
+        }
     }
 
     const steps = useMemo(
@@ -335,206 +335,7 @@ const Transfer = ({ }) => {
                                             </div>
                                         </Accordion.Control>
                                         <Accordion.Panel>
-                                            <div className="grid grid-cols-9 gap-7">
-                                                <div className="col-span-9 grid grid-cols-8 gap-7">
-                                                    <div className="col-span-4">
-                                                        <InputField
-                                                            register={register}
-                                                            label="Name"
-                                                            name="name"
-                                                            placeholder="Name"
-                                                            // className="placeholder:font-semibold"
-                                                            disabled
-                                                        // required
-                                                        />
-                                                        {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
-                                                    </div>
-                                                    <div className="col-span-4">
-                                                        <InputField
-                                                            register={register}
-                                                            label="Alternate Asset Number"
-                                                            placeholder="Alternate Asset Number"
-                                                            name="alt_number"
-                                                            disabled
 
-                                                        />
-                                                        {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
-                                                    </div>
-                                                    {/* <div className="col-span-2">
-                                                        <InputField
-                                                            register={register}
-                                                            required
-                                                            name={"model.typeId"}
-                                                            label="Type"
-                                                            placeholder="Enter Asset Type"
-                                                        />
-                                                    </div> */}
-                                                </div>
-                                                <div className="col-span-3">
-                                                    <InputField
-                                                        register={register}
-                                                        label="Serial Number"
-                                                        placeholder="Serial Number"
-                                                        name="serial_no"
-                                                        disabled
-
-                                                    />
-                                                    {/* <AlertInput>{errors?.serial_no?.message}</AlertInput> */}
-                                                </div>
-                                                <div className="col-span-6 grid grid-cols-9 gap-7">
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            name={"parentId"}
-                                                            register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("parentId")?.toString()}
-                                                            label={"Parent Asset"}
-                                                            // placeholder={"Select parent asset"}
-                                                            // data={assetsList ?? []}
-                                                            disabled
-
-                                                        />
-                                                        {/* <AlertInput>{errors?.parentId?.message}</AlertInput> */}
-                                                    </div>
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            name={"assetProjectId"}
-                                                            register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("assetProjectId")?.toString()}
-                                                            label={"Project"}
-                                                            // placeholder={"Select project"}
-                                                            // data={projectsList ?? []}
-                                                            disabled
-
-                                                        />
-                                                        {/* <AlertInput>{errors?.assetProjectId?.message}</AlertInput> */}
-                                                    </div>
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            name={"vendorId"}
-                                                            register={register}
-                                                            // setValue={setValue}
-                                                            // value={getValues("vendorId")?.toString()}
-                                                            label={"Vendor"}
-                                                            // placeholder={"Select vendor"}
-                                                            // data={vendorsList ?? []}
-                                                            disabled
-
-                                                        />
-                                                        {/* <AlertInput>{errors?.vendorId?.message}</AlertInput> */}
-                                                    </div>
-                                                </div>
-                                                <div className="col-span-3">
-                                                    <InputField
-                                                        // required
-                                                        register={register}
-                                                        label="Model Name"
-                                                        placeholder="Model Name"
-                                                        name="model.name"
-                                                        disabled
-
-                                                    />
-                                                    {/* <AlertInput>{errors?.model?.name?.message}</AlertInput> */}
-                                                </div>
-                                                <div className="col-span-6 grid grid-cols-9 gap-7">
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            register={register}
-                                                            label="Model Brand"
-                                                            placeholder="Model Brand"
-                                                            name="model.brand"
-                                                            disabled
-                                                        />
-                                                        {/* <AlertInput>{errors?.model?.brand?.message}</AlertInput> */}
-                                                    </div>
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            register={register}
-                                                            label="Model Number"
-                                                            placeholder="Model Number"
-                                                            name="model.number"
-                                                            disabled
-                                                        />
-                                                        {/* <AlertInput>{errors?.model?.number?.message}</AlertInput> */}
-                                                    </div>
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            register={register}
-                                                            label="Asset Lifetime"
-                                                            placeholder="Months"
-                                                            name={"management.asset_lifetime"}
-                                                            disabled
-
-
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="col-span-9 grid grid-cols-12 gap-7">
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            register={register}
-                                                            label="Original Cost"
-                                                            placeholder="Original Cost"
-                                                            name="management.original_cost"
-                                                            disabled
-                                                        />
-                                                        {/* <AlertInput>
-                                                            {errors?.management?.original_cost?.message}
-                                                        </AlertInput> */}
-                                                    </div>
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            register={register}
-                                                            label="Current Cost"
-                                                            placeholder="Current Cost"
-                                                            name="management.current_cost"
-                                                            disabled
-                                                        />
-                                                        {/* <AlertInput>
-                                                            {errors?.management?.current_cost?.message}
-                                                        </AlertInput> */}
-                                                    </div>
-
-                                                    <div className="col-span-3">
-                                                        <InputField
-                                                            register={register}
-                                                            label="Residual Value"
-                                                            placeholder="Residual Value"
-                                                            name={"management.residual_value"}
-                                                            disabled
-                                                        />
-                                                        {/* <AlertInput>
-                                                            {errors?.management?.residual_value?.message}
-                                                        </AlertInput> */}
-                                                    </div>
-                                                    <div className=" col-span-3">
-                                                        <InputField
-                                                            type="number"
-                                                            register={register}
-                                                            label="Residual Value Percentage"
-                                                            placeholder="Residual Value Percentage"
-                                                            name={"management.residual_percentage"}
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="col-span-9">
-                                                    <Textarea
-                                                        value={asset?.description ?? ""}
-                                                        label="Asset Description"
-                                                        minRows={6}
-                                                        maxRows={6}
-                                                        readOnly
-                                                        classNames={{
-                                                            input:
-                                                                " w-full border-2 border-gray-400 outline-none focus:border-gray-400 cursor-default focus:outline-none focus:ring-0 mt-2 bg-gray-200 text-gray-400",
-                                                            label:
-                                                                "font-sans text-sm font-normal text-gray-600 text-light",
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
                                         </Accordion.Panel>
                                     </Accordion.Item>
 
@@ -548,185 +349,7 @@ const Transfer = ({ }) => {
                                             </div>
                                         </Accordion.Control>
                                         <Accordion.Panel>
-                                            <div className="grid gap-7">
-                                                <div className="grid grid-cols-9 col-span-9 gap-7">
-                                                    <div className="col-span-4">
-                                                        <InputField
-                                                            name={"subsidiary.name"}
-                                                            register={register}
-                                                            label={"Company"}
-                                                            placeholder={"Select company or subsidiary"}
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-8">
-                                                        <div className="text-gray-700">
-                                                            <div className="flex flex-1 flex-col gap-2">
-                                                                <label htmlFor="address" className="text-sm">
-                                                                    Company Address
-                                                                </label>
-                                                                <input
-                                                                    type="text"
-                                                                    id={"address"}
-                                                                    className={
-                                                                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                                                                    }
-                                                                    placeholder={company_address?.address
-                                                                        ? getAddress(company_address)
-                                                                        : ""}
-                                                                    value={
-                                                                        company_address?.address
-                                                                            ? getAddress(company_address)
-                                                                            : ""
-                                                                    }
-                                                                    disabled
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-span-12 grid grid-cols-12 gap-7">
-                                                        <div className="col-span-3">
-                                                            <InputField
-                                                                name={"department.name"}
-                                                                register={register}
-                                                                label={"Department"}
-                                                                disabled
-                                                            />
-                                                        </div>
-                                                        <div className="col-span-3">
-                                                            <div className="text-gray-700">
-                                                                <div className=" gap-2">
-                                                                    <InputField
-                                                                        name={"department.location.floor"}
-                                                                        register={register}
-                                                                        label={"Floor"}
-                                                                        disabled
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-span-3">
-                                                            <div className="text-gray-700">
-                                                                <div className=" gap-2">
-                                                                    <InputField
-                                                                        name={"department.location.room"}
-                                                                        register={register}
-                                                                        label={"Room"}
-                                                                        disabled
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-span-3">
-                                                            <InputField
-                                                                name={"custodian.name"}
-                                                                register={register}
-                                                                label={"Custodian"}
-                                                                disabled
-                                                            />
-                                                        </div>
 
-                                                    </div>
-                                                    <div className="col-span-12 grid grid-cols-12 gap-7 ">
-                                                        <div className="col-span-2">
-                                                            <InputField
-                                                                name={"model.class.name"}
-                                                                register={register}
-                                                                label={"Class"}
-                                                                disabled
-                                                            />
-                                                        </div>
-                                                        <div className="col-span-2">
-
-                                                            <InputField
-                                                                name={"model.category.name"}
-                                                                register={register}
-                                                                label={"Category"}
-                                                                disabled
-                                                            />
-                                                        </div>
-                                                        <div className="col-span-2">
-                                                            <InputField
-                                                                name={"model.type.name"}
-                                                                register={register}
-                                                                label={"Type"}
-                                                                disabled
-                                                            />
-                                                        </div>
-                                                        <div className="col-span-6">
-                                                            <InputField
-                                                                register={register}
-                                                                label="Asset Location"
-                                                                placeholder="Asset Location"
-                                                                name="management.asset_location"
-
-                                                                disabled
-                                                            />
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div className="grid grid-cols-9 col-span-9 gap-7">
-                                                    <div className="col-span-3">
-
-                                                        <InputField
-
-                                                            name={"management.currency"}
-                                                            register={register}
-
-                                                            label={"Currency"}
-                                                            disabled
-                                                        />
-                                                    </div>
-
-                                                    <div className="col-span-3">
-
-
-                                                        <InputField
-
-                                                            name={"management.accounting_method"}
-                                                            register={register}
-
-                                                            label={"Accounting Method"}
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-3 space-y-2">
-                                                        <InputField
-                                                            name={"management.purchase_date"}
-                                                            register={register}
-                                                            label={"Purchase Date"}
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="col-span-9 grid grid-cols-6 gap-7">
-                                                    <div className="col-span-2">
-                                                        <InputField
-                                                            name={"management.depreciation_rule"}
-                                                            register={register}
-                                                            label={"Depreciation Method"}
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-2 space-y-2">
-                                                        <InputField
-                                                            name={"management.depreciation_start"}
-                                                            register={register}
-                                                            label={"Depreciation Start Date"}
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-2 space-y-2">
-                                                        <InputField
-                                                            name={"management.depreciation_end"}
-                                                            register={register}
-                                                            label={"Depreciation End Date"}
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </Accordion.Panel>
                                     </Accordion.Item>
                                     <Accordion.Item value={"3"} className="">
@@ -737,74 +360,7 @@ const Transfer = ({ }) => {
                                             </div>
                                         </Accordion.Control>
                                         <Accordion.Panel>
-                                            <div className="grid grid-cols-9 col-span-9 gap-7">
-                                                <div className="col-span-3 space-y-2">
-                                                    <InputField
-                                                        // query={companyId}
-                                                        // setQuery={setCompanyId}
-                                                        // required
-                                                        name={"management.depreciation_start"}
-                                                        register={register}
-                                                        // setValue={setValue}
-                                                        // value={getValues("subsidiaryId")?.toString()}
-                                                        label={"Date of Usage"}
-                                                        // placeholder={"Select company or subsidiary"}
-                                                        disabled
-                                                    // data={companyList ?? []}
-                                                    />
-                                                </div>
-                                                <div className="col-span-3">
-                                                    <InputField
-                                                        // query={companyId}
-                                                        // setQuery={setCompanyId}
-                                                        // required
-                                                        name={"management.depreciation_period"}
-                                                        register={register}
-                                                        // setValue={setValue}
-                                                        // value={getValues("subsidiaryId")?.toString()}
-                                                        label={"Period (month/s)"}
-                                                        // placeholder={"Select company or subsidiary"}
-                                                        disabled
-                                                    // data={companyList ?? []}
-                                                    />
-                                                </div>
-                                                <div className="col-span-3">
-                                                    <InputField
-                                                        // query={companyId}
-                                                        // setQuery={setCompanyId}
-                                                        // required
-                                                        name={"management.asset_quantity"}
-                                                        register={register}
-                                                        // setValue={setValue}
-                                                        // value={getValues("subsidiaryId")?.toString()}
-                                                        label={"Asset Quantity"}
-                                                        // placeholder={"Select company or subsidiary"}
-                                                        disabled
-                                                    // data={companyList ?? []}
-                                                    />
-                                                </div>
-                                                <div className="col-span-9">
-                                                    <Textarea
-                                                        value={asset?.remarks ?? ""}
-                                                        // onChange={(event) => {
-                                                        //     const text = event.currentTarget.value
-                                                        //     setDescription(text)
-                                                        //     setValue("description", text)
-                                                        // }}
-                                                        // placeholder="Asset Description"
-                                                        label="Remarks"
-                                                        minRows={6}
-                                                        maxRows={6}
-                                                        readOnly
-                                                        classNames={{
-                                                            input:
-                                                                " w-full border-2 border-gray-400 outline-none focus:border-gray-400 cursor-default focus:outline-none focus:ring-0 mt-2 bg-gray-200 text-gray-400",
-                                                            label:
-                                                                "font-sans text-sm font-normal text-gray-600 text-light",
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
+
                                         </Accordion.Panel>
                                     </Accordion.Item>
                                 </Accordion>
@@ -1032,165 +588,6 @@ const Transfer = ({ }) => {
                     <div className="rounded-md bg-white drop-shadow-lg">
                         <div className="p-5">
                             <div className="flex flex-wrap py-2">
-                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Asset Number</label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="custodianId"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div>
-                                    {/* <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Asset Name</label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="name"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div>
-                                    <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">
-                                            Alternate Asset Number
-                                        </label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="alt_number"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Parent Asset</label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="parent.name"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div>
-                                    <div className="flex w-[60%] flex-col py-2">
-                                        <label className="font-semibold">Project</label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="project.name"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div>
-                                    <div className="flex w-[60%] flex-col py-2">
-                                        <label className="font-semibold">Asset Type</label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="model.type.name"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div> */}
-                                </div>
-                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    {/* <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Residual Value</label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="management.residual_value"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div>
-                                    <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">
-                                            Residual Value Percentage
-                                        </label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="management.residual_value"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div> */}
-                                </div>
-                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    <div className="flex w-[60%] flex-col py-2">
-                                        <label className="font-semibold">Asset Description</label>
-                                        <textarea
-                                            value={asset?.description ?? ""}
-                                            readOnly
-                                            className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                                        ></textarea>
-                                    </div>
-                                </div>
-                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    {/* <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Deprciation Method</label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="management.depreciation_rule"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div> */}
-                                    <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Asset Lifetime</label>
-                                        <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                                            {getLifetime(
-                                                asset?.management?.depreciation_start ?? new Date(),
-                                                asset?.management?.depreciation_end ?? new Date()
-                                            )}
-                                        </p>
-                                    </div>
-                                    {/* <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Asset Serial Number</label>
-                                        <InputField
-                                            disabled={true}
-                                            register={register}
-                                            name="serial_no"
-                                            type={"text"}
-                                            label={""}
-                                        />
-                                    </div> */}
-                                </div>
-                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Department</label>
-                                        <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                                            {department?.name ?? "To Return Asset"}
-                                        </p>
-                                    </div>
-                                    <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Employee</label>
-                                        <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
-                                            {employee?.name ?? "To Return Asset"}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                                    <div className="flex w-[60%] flex-col py-2">
-                                        <label className="font-semibold">Remarks</label>
-                                        <textarea
-                                            rows={6}
-                                            onChange={(e) =>
-                                                setValue("remarks", e.currentTarget.value)
-                                            }
-                                            className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                                        ></textarea>
-                                    </div>
-                                </div>
-
-                                <hr className="w-full"></hr>
 
                                 <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
                                     <div className="flex w-full justify-center gap-3">

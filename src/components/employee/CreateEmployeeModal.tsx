@@ -12,6 +12,7 @@ import { Select } from "@mantine/core"
 import DropZoneComponent from "../dropzone/DropZoneComponent"
 import { env } from "../../env/client.mjs"
 import moment from "moment"
+import Modal from "../headless/modal/modal"
 import TypeSelect, { SelectValueType } from "../atoms/select/TypeSelect"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
@@ -28,7 +29,7 @@ export const CreateEmployeeModal = (props: {
   const [searchValue, onSearchChange] = useState("")
   const [workModeValue, onSearchWorkMode] = useState("")
   const [workStationValue, onSearchWorkStation] = useState("")
-
+  const [isVisible, setIsVisible] = useState<boolean>(false)
   const [empId] = useState<string>(moment().format("YY-MDhms"))
   const { data: teams } = trpc.team.findAll.useQuery()
   const utils = trpc.useContext()
@@ -39,7 +40,6 @@ export const CreateEmployeeModal = (props: {
   } = trpc.employee.create.useMutation({
     onSuccess: () => {
       utils.employee.findAll.invalidate()
-      props.setIsVisible(false)
       props.setImage([])
     },
   })
@@ -89,8 +89,9 @@ export const CreateEmployeeModal = (props: {
     // Register function
 
     mutate({
-      name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
-        }`,
+      name: `${employee.profile?.first_name ?? ""} ${
+        employee.profile?.last_name ?? ""
+      }`,
       employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
@@ -108,7 +109,7 @@ export const CreateEmployeeModal = (props: {
         city: employee.address?.city,
         country: employee.address?.country,
         street: employee.address?.street,
-        // state: employee.address?.state,
+        state: employee.address?.state,
         zip: employee.address?.zip,
       },
       profile: {
@@ -380,7 +381,7 @@ export const CreateEmployeeModal = (props: {
                 register={register}
               />
             </div>
-            {/* <div className="flex w-[18.4%] flex-col">
+            <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
@@ -388,7 +389,7 @@ export const CreateEmployeeModal = (props: {
                 name={"address.state"}
                 register={register}
               /><AlertInput>{errors?.address?.state?.message}</AlertInput>
-            </div> */}
+            </div>
             <div className="flex w-[25%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
@@ -457,6 +458,29 @@ export const CreateEmployeeModal = (props: {
           {JSON.stringify({ error, errors }, null, 2)}
         </pre>
       )}
+      <Modal
+        className="max-w-lg"
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        title="NOTICE!"
+      >
+        <>
+          <div className="py-2 items-center flex flex-col gap-3 ">
+            <p className="text-center text-lg font-semibold ">
+                Employee Created Successfully
+            </p>
+            <button
+              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+              onClick={() => {
+                props.setIsVisible(false)
+                setIsVisible(false)
+              }}
+            >
+              Confirm
+            </button>
+          </div>
+        </>
+      </Modal>
     </div>
   )
 }

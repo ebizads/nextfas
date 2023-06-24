@@ -15,6 +15,7 @@ import DropZoneComponent from "../dropzone/DropZoneComponent"
 import { SelectValueType } from "../atoms/select/TypeSelect"
 import { EmployeeType } from "../../types/generic"
 import { useEditableStore } from "../../store/useStore"
+import Modal from "../headless/modal/modal"
 // import { useEditableStore } from "../../store/useStore"
 
 export type Employee = z.infer<typeof EmployeeEditInput>
@@ -28,6 +29,7 @@ export const UpdateEmployeeModal = (props: {
   // setEditable: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
+  const [isVisible, setIsVisible] = useState<boolean>(false)
   const [searchValue, onSearchChange] = useState<string>(
     props.employee?.teamId?.toString() ?? "0"
   )
@@ -62,8 +64,8 @@ export const UpdateEmployeeModal = (props: {
     onSuccess() {
       console.log("omsim")
       // invalidate query of asset id when mutations is successful
+      setIsVisible(true)
       utils.employee.findAll.invalidate()
-      props.setIsVisible(false)
       setImage([])
     },
   })
@@ -90,6 +92,7 @@ export const UpdateEmployeeModal = (props: {
 
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [updated, setUpdated] = useState(false)
+
 
   const handleEditable = () => {
     setIsEditable(true)
@@ -497,16 +500,48 @@ export const UpdateEmployeeModal = (props: {
             )
           )}
           {isEditable && (
-            <button
-              type="submit"
-              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-              disabled={employeeLoading}
-            >
-              {employeeLoading ? "Loading..." : "Save"}
-            </button>
+            <div>
+              <button
+                type="button"
+                className="px-4 py-2 font-medium underline"
+                onClick={() => props.setIsVisible(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                disabled={employeeLoading}
+              >
+                {employeeLoading ? "Loading..." : "Save"}
+              </button>
+            </div>
           )}
         </div>
       </form>
+      <Modal
+        className="max-w-lg"
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        title="NOTICE!"
+      >
+        <>
+          <div className="py-2 items-center flex flex-col gap-3 ">
+            <p className="text-center text-lg font-semibold ">
+                Employee Updated Successfully
+            </p>
+            <button
+              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+              onClick={() => {
+                props.setIsVisible(false)
+                setIsVisible(false)
+              }}
+            >
+              Confirm
+            </button>
+          </div>
+        </>
+      </Modal>
       {/* {error && errors && (
         <pre className="mt-2 text-sm italic text-red-500">
           Something went wrong!

@@ -20,6 +20,7 @@ import moment from "moment"
 import { ImageJSON } from "../../types/table"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import Employee from "../employees"
+import { clearAndGoBack } from "../../lib/functions"
 
 type User = z.infer<typeof CreateUserInput>
 
@@ -123,7 +124,7 @@ const Register2 = () => {
           middle_name: user.profile.middle_name,
           last_name: user.profile.last_name,
           image: images[0]?.file ?? "",
-          phone_no: user.profile.phone_no
+          phone_no: user.profile.phone_no,
         },
         email: user.email,
         address: {
@@ -173,7 +174,6 @@ const Register2 = () => {
               label={"Middle Name (Optional)"}
               name={"profile.middle_name"}
               register={register}
-
             />
           </div>
           <div className="flex w-[32.3%] flex-col">
@@ -201,14 +201,15 @@ const Register2 = () => {
           <PasswordChecker password={watch().password} /> */}
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex w-[32.3%] flex-col">
-            <label className="sm:text-sm">Team<span className="text-red-500">*</span></label>
+            <label className="sm:text-sm">
+              Team<span className="text-red-500">*</span>
+            </label>
             <Select
               placeholder="Pick one"
               onChange={(value) => {
                 setValue("teamId", Number(value))
                 onSearchChange(value ?? "")
               }}
-
               value={searchValue}
               data={teamList}
               styles={(theme) => ({
@@ -284,7 +285,9 @@ const Register2 = () => {
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
           <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm">Deparment<span className="text-red-500">*</span></label>
+            <label className="sm:text-sm">
+              Deparment<span className="text-red-500">*</span>
+            </label>
             <Select
               placeholder="--"
               onChange={(value) => {
@@ -374,7 +377,8 @@ const Register2 = () => {
                 register={register}
               />
               <AlertInput>{errors?.address?.street?.message}</AlertInput>
-            </div>{/* <div className="flex w-[18.94%] flex-col">
+            </div>
+            {/* <div className="flex w-[18.94%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
@@ -383,7 +387,8 @@ const Register2 = () => {
                 register={register}
               />
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
-            </div> */} <div className="flex w-[20%] flex-col">
+            </div> */}{" "}
+            <div className="flex w-[20%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
                 type={"text"}
@@ -427,6 +432,13 @@ const Register2 = () => {
         /> */}
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
           <button
+            type="button"
+            className="px-4 py-2 font-medium underline"
+            onClick={() => clearAndGoBack()}
+          >
+            Cancel
+          </button>
+          <button
             type="submit"
             className=" rounded-md bg-tangerine-500  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             disabled={isLoading}
@@ -459,8 +471,8 @@ const Register2 = () => {
               Password: {passwordCheck}
             </p>
           </div>
-          <hr className="w-full absolute left-0 bottom-[5.5rem]" />
-          <div className="flex flex-row justify-end mt-16">
+          <hr className="absolute left-0 bottom-[5.5rem] w-full" />
+          <div className="mt-16 flex flex-row justify-end">
             <button
               className="w-[20%] rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
               onClick={() => {

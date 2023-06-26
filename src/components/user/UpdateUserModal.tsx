@@ -559,13 +559,16 @@ export const UserDeleteModal = (props: {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   //trpc utils for delete
+  const utils = trpc.useContext()
+
   const { mutate } = trpc.user.createArchive.useMutation({
     onSuccess() {
       console.log()
       props.setOpenModalDel(false)
       props.setIsLoading(false)
       props.setIsVisible(false)
-      window.location.reload()
+      utils.user.findAll.invalidate()
+
     },
   })
   const handleDelete = async () => {

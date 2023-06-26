@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { VendorCreateInput, VendorEditInput } from "../../schemas/vendor"
+import { VendorCreateInput, VendorDelete, VendorEditInput } from "../../schemas/vendor"
 import { authedProcedure, t } from "../trpc"
 
 export const vendorRouter = t.router({
@@ -9,6 +9,7 @@ export const vendorRouter = t.router({
     const vendor = await ctx.prisma.vendor.findUnique({
       where: { id: input },
       include: {
+
         address: true,
       },
     })
@@ -164,26 +165,30 @@ export const vendorRouter = t.router({
       }
     }),
 
-  delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
-    try {
-      await ctx.prisma.vendor.update({
-        where: {
-          id: input,
-        },
-        data: {
-          deleted: true,
-          deletedAt: new Date(),
-        },
-      })
+  delete: authedProcedure
+    .input(VendorDelete)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input
 
-      return "Vendor deleted successfully"
-    } catch (error) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: JSON.stringify(error),
-      })
-    }
-  }),
+      try {
+        await ctx.prisma.vendor.update({
+          where: {
+            id,
+          },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+          },
+        })
+
+        return "Vendor edited successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
   deleteMany: authedProcedure
     .input(z.array(z.number()))
     .mutation(async ({ ctx, input }) => {

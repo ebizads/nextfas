@@ -43,6 +43,7 @@ export const UpdateEmployeeModal = (props: {
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
   const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
@@ -93,6 +94,9 @@ export const UpdateEmployeeModal = (props: {
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [updated, setUpdated] = useState(false)
 
+  const handleDelete = () => {
+    setOpenModalDel(true)
+  }
 
   const handleEditable = () => {
     setIsEditable(true)
@@ -500,14 +504,18 @@ export const UpdateEmployeeModal = (props: {
             )
           )}
           {isEditable && (
-            <div>
+            <div className="space-x-1">
               <button
                 type="button"
-                className="px-4 py-2 font-medium underline"
-                onClick={() => props.setIsVisible(false)}
+                className="rounded bg-red-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={() => {
+                  handleDelete(), setIsLoading(true)
+                }}
+                disabled={isLoading}
               >
-                Cancel
+                {isLoading ? "Loading..." : "Delete"}
               </button>
+
               <button
                 type="submit"
                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -517,6 +525,14 @@ export const UpdateEmployeeModal = (props: {
               </button>
             </div>
           )}
+          <EmployeeDeleteModal
+            employee={props.employee}
+            openModalDel={openModalDel}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            setOpenModalDel={setOpenModalDel}
+            setIsVisible={props.setIsVisible}
+          />
         </div>
       </form>
       <Modal
@@ -528,7 +544,7 @@ export const UpdateEmployeeModal = (props: {
         <>
           <div className="py-2 items-center flex flex-col gap-3 ">
             <p className="text-center text-lg font-semibold ">
-                Employee Updated Successfully
+              Employee Updated Successfully
             </p>
             <button
               className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -548,5 +564,68 @@ export const UpdateEmployeeModal = (props: {
         </pre>
       )} */}
     </div>
+  )
+}
+export const EmployeeDeleteModal = (props: {
+  employee: EmployeeType
+  openModalDel: boolean
+  isLoading: boolean
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  //trpc utils for delete
+  const utils = trpc.useContext()
+
+  const { mutate } = trpc.employee.delete.useMutation({
+    onSuccess() {
+      console.log()
+      props.setOpenModalDel(false)
+      props.setIsLoading(false)
+      props.setIsVisible(false)
+      utils.employee.findAll.invalidate()
+      // window.location.reload()
+    },
+  })
+  const handleDelete = async () => {
+    mutate({
+      id: props.employee?.id ?? -1,
+    })
+  }
+
+  return (
+    <Modal
+      className="max-w-2xl"
+      title="Delete Employee"
+      isVisible={props.openModalDel}
+      setIsVisible={props.setOpenModalDel}
+    >
+      <div className="m-4 flex flex-col ">
+        <div className="flex flex-col items-center gap-8 text-center">
+          <div>You are about delete this item with employee name: {props.employee?.name}</div>
+          <p className="text-neutral-500">
+            <i className="fa-regular fa-circle-exclamation" /> Please carefully review the action before deleting.
+          </p>
+          <div className="flex items-center justify-end gap-2">
+            <button
+              className="rounded-sm bg-gray-300 px-5 py-1 hover:bg-gray-400"
+              onClick={() => {
+                props.setOpenModalDel(false)
+                props.setIsLoading(false)
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
+              onClick={() => handleDelete()}
+            // disabled={isLoading}
+            >
+              Yes, delete record
+            </button>
+          </div>
+        </div>
+      </div>
+    </Modal>
   )
 }

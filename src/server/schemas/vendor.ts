@@ -38,3 +38,9 @@ export const VendorEditInput = z.object({
 
   address: AddressEditInput,
 })
+
+
+export const VendorDelete = z.object({
+  id: z.number(),
+})
+

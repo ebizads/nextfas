@@ -60,3 +60,7 @@ export const EmployeeEditInput = z.object({
   workMode: z.string().nullish(),
   teamId: z.number().optional(),
 })
+
+export const EmployeeDeleteInput = z.object({
+  id: z.number(),
+})

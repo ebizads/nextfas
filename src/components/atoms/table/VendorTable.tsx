@@ -39,15 +39,6 @@ const VendorTable = (props: {
   const utils = trpc.useContext()
 
 
-  const deleteVendor = trpc.vendor.delete.useMutation({
-    onSuccess: () => {
-      utils.vendor.findAll.invalidate()
-
-
-    }
-  })
-
-
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
       props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))

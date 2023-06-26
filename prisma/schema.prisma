@@ -411,6 +411,7 @@ model Vendor {
   assets    Asset[]
 }
 
+
 model Asset {
   id                Int              @id @default(autoincrement())
   name              String

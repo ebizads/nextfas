@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { authedProcedure, t } from "../trpc"
-import { EmployeeCreateInput, EmployeeEditInput } from "../../schemas/employee"
+import { EmployeeCreateInput, EmployeeDeleteInput, EmployeeEditInput } from "../../schemas/employee"
 import { create, map } from "lodash"
 
 export const employeeRouter = t.router({
@@ -316,26 +316,28 @@ export const employeeRouter = t.router({
         })
       }
     }),
-  delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
-    try {
-      await ctx.prisma.employee.update({
-        where: {
-          id: input,
-        },
-        data: {
-          deleted: true,
-          deletedAt: new Date(),
-        },
-      })
+  delete: authedProcedure.input(EmployeeDeleteInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input
+      try {
+        await ctx.prisma.employee.update({
+          where: {
+            id: id,
+          },
+          data: {
+            deleted: true,
+            deletedAt: new Date(),
+          },
+        })
 
-      return "User deleted successfully"
-    } catch (error) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: JSON.stringify(error),
-      })
-    }
-  }),
+        return "User deleted successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
   deleteMany: authedProcedure
     .input(z.array(z.number()))
     .mutation(async ({ ctx, input }) => {

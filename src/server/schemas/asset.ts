@@ -68,6 +68,31 @@ export const AssetEditInput = z.object({
   // model: ModelEditInput.optional(),
 })
 
+export const AssetTransformInput = z.object({
+  id: z.number(),
+  name: z.string().min(1, "Please Provide Asset Name").optional(),
+  number: z.string().optional(),
+  alt_number: z.string().optional().nullish(),
+  serial_no: z.string().optional().nullish(),
+  barcode: z.string().nullish().optional(),
+  description: z.string().optional().nullish(),
+  remarks: z.string().nullish().optional(),
+  status: z.string().nullish().optional(),
+  invoiceNum: z.string().nullish(),
+  purchaseOrder: z.string().nullish(),
+  deployment_status: z.string().nullish(),
+
+  modelId: z.number().optional().nullish(),
+  custodianId: z.number().optional().nullish(),
+  departmentId: z.number().optional().nullish(),
+  vendorId: z.number().optional().nullish(),
+  subsidiaryId: z.number().optional().nullish(),
+  assetProjectId: z.number().optional().nullish(),
+  parentId: z.number().optional().nullish(),
+  management: ManagementEditInput,
+  model: ModelEditInput,
+})
+
 export const AssetUpdateInput = z.object({
   id: z.number(),
   name: z.string().min(1, "Please provide name"),

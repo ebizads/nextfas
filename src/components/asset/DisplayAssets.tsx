@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react"
 import { Pagination } from "@mantine/core"
 import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
-import Link from "next/link"
 import { AssetType } from "../../types/generic"
 import { columns } from "../../lib/table"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
-import Search from "../atoms/search/Search"
 import { useSearchStore } from "../../store/useStore"
-import InputField from "../atoms/forms/InputField"
-import { currentValue, downloadExcel, downloadExcel_assets } from "../../lib/functions"
+import { downloadExcel_assets } from "../../lib/functions"
 import { UserType } from "../../types/generic"
-import { ExcelExportType } from "../../types/employee"
 import { ExcelExportAssetType } from "../../types/asset"
 import { trpc } from "../../utils/trpc"
 import Modal from "../headless/modal/modal"
@@ -107,8 +103,8 @@ const DisplayAssets = (props: {
                     model_no: model.number,
                     model_brand: model.brand,
                     model_class: model.class?.name ?? "",
-                    model_category: model.category.name,
-                    model_type: model.type.name,
+                    model_category: model.category?.name,
+                    model_type: model.type?.name,
                     // model_name: model.name ?? "",
                     // class_name: model?.class.name,
                     // category_name: model?.category.name,
@@ -125,6 +121,7 @@ const DisplayAssets = (props: {
                     // ...custodian,
                     // project_id: project.id,
                     // ...project,
+                    custodian: rest.custodian?.name,
                     name: rest.name,
                     id: rest.id
                   }

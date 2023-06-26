@@ -129,7 +129,6 @@ export const formatBytes = (bytes: number) => {
 }
 
 export const downloadExcel = (data: ExcelExportType[]) => {
-  console.log("tangina moooooo::::", data)
 
   // if (!data) {  // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])
@@ -153,7 +152,7 @@ export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
   // if (!data) {  // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])
   const worksheet = XLSX.utils.json_to_sheet(
-    data !== null && data !== undefined ? data : []
+    data !== null ? data : []
   )
   const workbook = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")

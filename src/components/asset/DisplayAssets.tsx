@@ -14,6 +14,9 @@ import { UserType } from "../../types/generic"
 import { ExcelExportType } from "../../types/employee"
 import { ExcelExportAssetType } from "../../types/asset"
 import { trpc } from "../../utils/trpc"
+import Modal from "../headless/modal/modal"
+import DropZone from "../dropzone/DropZone"
+import AddAssetPopOver from "../atoms/popover/AddAssetPopOver"
 
 const DisplayAssets = (props: {
   user: UserType
@@ -28,11 +31,14 @@ const DisplayAssets = (props: {
 
   const { search, setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
-  const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+  const [openPopover, setOpenPopover] = useState<boolean>(false)
+  const [openAddPopover, setOpenAddPopover] = useState<boolean>(false)
 
   const [firstLogin, setFirstLogin] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
   const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
   console.log(search)
@@ -89,23 +95,37 @@ const DisplayAssets = (props: {
             <button onClick={() => {
 
               const downloadableAssets = props.assets.map((assets) => {
-                if (assets?.['project'] && assets?.['department'] && assets?.['parent'] && assets?.['vendor'] && assets?.['subsidiary'] && assets?.['addedBy'] && assets?.['custodian']) {
-                  const { project, parent, vendor, subsidiary, addedBy, custodian, ...rest } = assets
+                if (assets?.['management'] && assets?.['department'] && assets?.['model']) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
+                  const { model, department, management, ...rest } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
                   return {
                     ...rest,
-                    parent_id: parent.id,
-                    ...parent,
-                    vendor_id: vendor.id,
-                    ...vendor,
-                    subsidiary_id: subsidiary.id,
-                    ...subsidiary,
-                    addedBy_id: addedBy.id,
-                    ...addedBy,
-                    custodian_id: custodian.id,
-                    ...custodian,
-                    project_id: project.id,
-                    ...project,
 
+                    ...management,
+                    department_name: department.name,
+                    ...department,
+                    model_name: model.name,
+                    model_no: model.number,
+                    model_brand: model.brand,
+                    model_class: model.class?.name ?? "",
+                    model_category: model.category.name,
+                    model_type: model.type.name,
+                    // model_name: model.name ?? "",
+                    // class_name: model?.class.name,
+                    // category_name: model?.category.name,
+                    // type_name: model?.type.name,
+                    // parent_id: parent.id,
+                    // ...parent,
+                    // vendor_id: vendor.id,
+                    // ...vendor,
+                    // subsidiary_id: subsidiary.id,
+                    // ...subsidiary,
+                    // addedBy_id: addedBy.id,
+                    // ...addedBy,
+                    // custodian_id: custodian.id,
+                    // ...custodian,
+                    // project_id: project.id,
+                    // ...project,
+                    name: rest.name,
                     id: rest.id
                   }
                 }
@@ -117,12 +137,18 @@ const DisplayAssets = (props: {
               <i className="fa-solid fa-print text-xs" />
               Print Asset
             </button>
-            <Link href={"/assets/create"}>
+            {/* <Link href={"/assets/create"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
                 <i className="fa-regular fa-plus text-xs" />
                 <p>Add New</p>
               </div>
-            </Link>
+            </Link> */}
+            <AddAssetPopOver
+              openPopover={openAddPopover}
+              setOpenPopover={setOpenAddPopover}
+              // setAddSingleRecord={setAddSingleRecord}
+              setAddBulkRecord={setAddBulkRecord}
+            />
           </div>
         </div>
       </section >
@@ -155,6 +181,20 @@ const DisplayAssets = (props: {
           }}
         />
       </section>
+      <Modal
+        title="Add Bulk Record of Assets"
+        isVisible={addBulkRecord}
+        setIsVisible={setAddBulkRecord}
+        className="max-w-6xl"
+      >
+        <DropZone
+          file_type="xlsx"
+          acceptingMany={false}
+          loading={isLoading}
+          setIsLoading={setIsLoading}
+          setIsVisible={setAddBulkRecord}
+        />
+      </Modal>
       <AssetDeleteModal
         checkboxes={checkboxes}
         setCheckboxes={setCheckboxes}

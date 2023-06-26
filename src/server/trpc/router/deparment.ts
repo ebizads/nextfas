@@ -9,7 +9,11 @@ export const departmentRouter = t.router({
     const department = await ctx.prisma.department.findUnique({
       where: { id: input },
       include: {
-        company: true,
+        company: {
+          include: {
+            address: true,
+          }
+        },
         location: true,
         teams: true,
       },

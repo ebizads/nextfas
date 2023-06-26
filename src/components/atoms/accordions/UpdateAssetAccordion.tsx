@@ -595,13 +595,12 @@ const UpdateAssetAccordion = () => {
                 </div>
                 <div className="col-span-3">
                   <InputField
-                    required
                     register={register}
-                    label="Model Brand"
-                    placeholder="Model Brand"
-                    name="model.brand"
+                    label="Model Number"
+                    placeholder="Model Number"
+                    name="model.number"
                   />
-                  <AlertInput>{errors?.model?.brand?.message}</AlertInput>
+                  <AlertInput>{errors?.model?.number?.message}</AlertInput>
                 </div>
                 <div className="col-span-6 grid grid-cols-9 gap-7">
                   <div className="col-span-3">
@@ -615,12 +614,13 @@ const UpdateAssetAccordion = () => {
                   </div>
                   <div className="col-span-3">
                     <InputField
+                      required
                       register={register}
-                      label="Model Number"
-                      placeholder="Model Number"
-                      name="model.number"
+                      label="Model Brand"
+                      placeholder="Model Brand"
+                      name="model.brand"
                     />
-                    <AlertInput>{errors?.model?.number?.message}</AlertInput>
+                    <AlertInput>{errors?.model?.brand?.message}</AlertInput>
                   </div>
                   <div className="col-span-3">
                     <InputField
@@ -754,8 +754,8 @@ const UpdateAssetAccordion = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-12 grid grid-cols-12 gap-7">
-                    <div className="col-span-3">
+                  <div className="col-span-12 grid grid-cols-10 gap-7">
+                    <div className="col-span-2">
                       <ClassTypeSelect
                         query={departmentId}
                         setQuery={setDepartmentId}
@@ -774,9 +774,9 @@ const UpdateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.departmentId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-2">
                       <div className="text-gray-700">
-                        <div className=" gap-2">
+                        <div className="flex flex-col gap-2">
                           <label htmlFor="floor" className="text-sm">
                             Floor
                           </label>
@@ -799,9 +799,9 @@ const UpdateAssetAccordion = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-2">
                       <div className="text-gray-700">
-                        <div className=" gap-2">
+                        <div className="flex flex-col gap-2">
                           <label htmlFor="address" className="text-sm">
                             Room
                           </label>
@@ -843,8 +843,27 @@ const UpdateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.custodianId?.message}</AlertInput>
                     </div>
+                    <div className="col-span-1 space-y-1">
+                      <label htmlFor="workMode" className="text-sm">
+                        Work Mode
+                      </label>
+                      <input
+                        type="text"
+                        id={"workMode"}
+                        className={
+                          "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                        }
+                        placeholder={"--"}
+                        value={
+                          employee_workMode?.workMode
+                            ? getWorkMode(employee_workMode)
+                            : ""
+                        }
+                        disabled
+                      />
+                    </div>
                   </div>
-                  <div className="col-span-12 grid grid-cols-12 gap-7 ">
+                  <div className="col-span-12 grid grid-cols-10 gap-7 ">
                     <div className="col-span-2">
                       <ClassTypeSelect
                         query={classId}
@@ -899,7 +918,7 @@ const UpdateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-6">
+                    <div className="col-span-4">
                       <InputField
                         register={register}
                         label="Asset Location"
@@ -910,7 +929,7 @@ const UpdateAssetAccordion = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-span-9 grid grid-cols-9 gap-7">
+                <div className="col-span-9 grid grid-cols-10 gap-7">
                   <div className="col-span-4">
                     <InputField
                       register={register}
@@ -919,7 +938,7 @@ const UpdateAssetAccordion = () => {
                       name="purchaseOrder"
                     />
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <InputField
                       register={register}
                       label="Invoice Number"
@@ -945,7 +964,7 @@ const UpdateAssetAccordion = () => {
                     </AlertInput>
                   </div>
 
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <TypeSelect
                       isString
                       name={"management.accounting_method"}
@@ -963,7 +982,7 @@ const UpdateAssetAccordion = () => {
                       {errors?.management?.accounting_method?.message}
                     </AlertInput>
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <TypeSelect
                       isString
                       name={"management.depreciation_rule"}
@@ -988,30 +1007,11 @@ const UpdateAssetAccordion = () => {
                       data={["Deployed", "In-Stock"]}
                     />
                   </div>
-                  <div className="col-span-2 space-y-1">
-                    <label htmlFor="workMode" className="text-sm">
-                      Work Mode
-                    </label>
-                    <input
-                      type="text"
-                      id={"workMode"}
-                      className={
-                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                      }
-                      placeholder={"--"}
-                      value={
-                        employee_workMode?.workMode
-                          ? getWorkMode(employee_workMode)
-                          : ""
-                      }
-                      disabled
-                    />
-                  </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-9 gap-7">
                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">Purchase Date</p>
-                    <DatePicker
+                    {/* <DatePicker
                       placeholder="Month Day, Year"
                       allowFreeInput
                       size="sm"
@@ -1024,51 +1024,93 @@ const UpdateAssetAccordion = () => {
                         input:
                           "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
                       }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                    />
+                    /> */}
+
+                    <div className="relative">
+                      <DatePicker
+                        placeholder=""
+                        allowFreeInput
+                        size="sm"
+                        value={dep_purchase}
+                        onChange={(value) => {
+                          setPurchase(value)
+                          setValue("management.purchase_date", value)
+                        }}
+                        classNames={{
+                          input:
+                            "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                        }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                      />
+                      <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                        <span className="opacity-50">
+                          {dep_purchase ? "" : "Month, Day, Year"}
+                        </span>
+                        <span className="pointer-events-none pr-3">📅</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">
                       Depreciation Start Date
                     </p>
-                    <DatePicker
-                      placeholder={
-                        "Month, Day, Year                                                                📅"
-                      }
-                      allowFreeInput
-                      size="sm"
-                      value={dep_start}
-                      onChange={(value) => {
-                        setDepStart(value)
-                        setValue("management.depreciation_start", value)
-                      }}
-                      classNames={{
-                        input:
-                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                      }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                    />
+
+                    <div className="relative">
+                      <DatePicker
+                        placeholder={""}
+                        allowFreeInput
+                        size="sm"
+                        value={dep_start}
+                        onChange={(value) => {
+                          setDepStart(value)
+                          setValue("management.depreciation_start", value)
+                        }}
+                        classNames={{
+                          input:
+                            "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                        }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                      />
+
+                      <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                        <span className="opacity-50">
+                          {dep_start ? "" : "Month, Day, Year"}
+                        </span>
+                        <span className="pointer-events-none pr-3">📅</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="col-span-2 space-y-2">
+                  <div className="col-span-3 space-y-2">
                     <p className="text-sm text-gray-700">
                       Depreciation End Date
                     </p>
-                    <DatePicker
-                      placeholder={
-                        dep_start ? "Month, Day, Year" : "Select start ffirst"
-                      }
-                      allowFreeInput
-                      size="sm"
-                      value={dep_end}
-                      disabled={!Boolean(dep_start)}
-                      minDate={dep_start ? dep_start : new Date()}
-                      onChange={(value) => {
-                        setDepEnd(value)
-                        setValue("management.depreciation_end", value)
-                      }}
-                      classNames={{
-                        input:
-                          "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
-                      }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
-                    />
+
+                    <div className="relative">
+                      <DatePicker
+                        placeholder={""}
+                        allowFreeInput
+                        size="sm"
+                        value={dep_end}
+                        disabled={!Boolean(dep_start)}
+                        minDate={dep_start ? dep_start : new Date()}
+                        onChange={(value) => {
+                          setDepEnd(value)
+                          setValue("management.depreciation_end", value)
+                        }}
+                        classNames={{
+                          input:
+                            "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                        }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                      />
+                      <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                        <span className="pointer-events-none opacity-50">
+                          {dep_start
+                            ? dep_end
+                              ? ""
+                              : "Month, Day, Year"
+                            : "Select start date first"}
+                        </span>
+                        <span className="pointer-events-none pr-3">📅</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

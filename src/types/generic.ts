@@ -4,6 +4,7 @@ import { z } from "zod"
 import {
   AssetCreateInput,
   AssetEditInput,
+  AssetTransferCreateInput,
   AssetUpdateInput,
 } from "../server/schemas/asset"
 import { EmployeeCreateInput } from "../server/schemas/employee"
@@ -11,11 +12,12 @@ import { AppRouter } from "../server/trpc/router"
 
 //dynamic inference of type
 export type AssetType = inferProcedureOutput<AppRouter["asset"]["findOne"]>
+export type AssetTransferType = inferProcedureOutput<AppRouter["assetTransfer"]["findOne"]>
 export type AssetRepairType = inferProcedureOutput<
   AppRouter["assetRepair"]["findOne"]
 >
 
-export type AssetProject =  inferProcedureOutput<AppRouter["assetproject"]["findOne"]>
+export type AssetProject = inferProcedureOutput<AppRouter["assetproject"]["findOne"]>
 export type AssetClassType = inferProcedureOutput<
   AppRouter["assetClass"]["findOne"]
 >
@@ -37,6 +39,7 @@ export type EmployeeFieldValues = z.infer<typeof EmployeeCreateInput>
 
 //asset field types
 export type AssetFieldValues = z.infer<typeof AssetCreateInput>
+export type AssetTransferValues = z.infer<typeof AssetTransferCreateInput>
 export type AssetEditFieldValues = z.infer<typeof AssetUpdateInput>
 export type TicketHandlerValues = z.infer<typeof ticketTableCreate>
 

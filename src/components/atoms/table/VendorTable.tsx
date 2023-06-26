@@ -9,10 +9,7 @@ import Modal from "../../headless/modal/modal"
 // import Modal from "../../asset/Modal"
 import { trpc } from "../../../utils/trpc"
 
-
-import {
-  UpdateVendorModal,
-} from "../../vendor/UpdateVendorModal"
+import { UpdateVendorModal } from "../../vendor/UpdateVendorModal"
 
 const VendorTable = (props: {
   checkboxes: number[]
@@ -20,11 +17,9 @@ const VendorTable = (props: {
   filterBy: string[]
   rows: VendorType[]
   columns: ColumnType[]
-
 }) => {
   //minimize screen toggle
   const { minimize } = useMinimizeStore()
-
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
@@ -32,9 +27,6 @@ const VendorTable = (props: {
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
   const [details, setDetails] = useState<VendorType>()
   // const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-
-
-
 
   const utils = trpc.useContext()
 
@@ -46,7 +38,6 @@ const VendorTable = (props: {
       props.setCheckboxes([])
     }
   }
-
 
   const toggleCheckbox = async (id: number) => {
     if (props.checkboxes.includes(id)) {
@@ -106,52 +97,53 @@ const VendorTable = (props: {
                 </th>
               ))}
 
-
             {/* <th scope="col" className="p-4 text-center">
                   Action
                 </th> */}
           </tr>
         </thead>
         <tbody>
-          {props.rows.sort((a, b) => (a?.id ?? 0) - (b?.id ?? 0)).map((row, idx) => (
-            <tr
-              key={row?.id ?? idx}
-              className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-            >
-              <td className="w-4 p-2">
-                <div className="flex items-center justify-center">
-                  <Checkbox
-                    value={row?.id ?? idx}
-                    color={"orange"}
-                    onChange={(e) => {
-                      toggleCheckbox(Number(e.target.value))
-                    }}
-                    checked={props.checkboxes.includes(row?.id ?? idx)}
-                    classNames={{
-                      input:
-                        "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                    }}
-                  />
-                </div>
-              </td>
-              {vendorColumns
-                .filter((col) => props.filterBy.includes(col.value))
-                .map((col) => (
-                  <td
-                    key={col.value}
-                    className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
-                    onClick={() => {
-                      // setOpenModalDesc(true)
-                      // setSelectedAsset(row)
+          {props.rows
+            .sort((a, b) => (a?.id ?? 0) - (b?.id ?? 0))
+            .map((row, idx) => (
+              <tr
+                key={row?.id ?? idx}
+                className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+              >
+                <td className="w-4 p-2">
+                  <div className="flex items-center justify-center">
+                    <Checkbox
+                      value={row?.id ?? idx}
+                      color={"orange"}
+                      onChange={(e) => {
+                        toggleCheckbox(Number(e.target.value))
+                      }}
+                      checked={props.checkboxes.includes(row?.id ?? idx)}
+                      classNames={{
+                        input:
+                          "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
+                      }}
+                    />
+                  </div>
+                </td>
+                {vendorColumns
+                  .filter((col) => props.filterBy.includes(col.value))
+                  .map((col) => (
+                    <td
+                      key={col.value}
+                      className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
+                      onClick={() => {
+                        // setOpenModalDesc(true)
+                        // setSelectedAsset(row)
 
-                      setDetails(row)
-                      setUpdateRecord(true)
-                    }}
-                  >
-                    {getPropertyDisposal(col.value, row) ?? "Invalid data"}
-                  </td>
-                ))}
-              {/* <td className="max-w-[10rem] space-x-2 text-center">
+                        setDetails(row)
+                        setUpdateRecord(true)
+                      }}
+                    >
+                      {getPropertyDisposal(col.value, row) ?? "Invalid data"}
+                    </td>
+                  ))}
+                {/* <td className="max-w-[10rem] space-x-2 text-center">
                
                 <button
                   onClick={() => {
@@ -161,8 +153,8 @@ const VendorTable = (props: {
                   <i className="fa-light fa-trash-can text-red-500" />{" "}
                 </button>
               </td> */}
-            </tr>
-          ))}
+              </tr>
+            ))}
         </tbody>
       </table>
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
@@ -251,7 +243,4 @@ const VendorTable = (props: {
   )
 }
 
-
 export default VendorTable
-
-

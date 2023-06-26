@@ -43,7 +43,9 @@ const Assets = () => {
           page={page}
           setPage={setPage}
           limit={limit}
-          setLimit={setLimit} user={null} />
+          setLimit={setLimit}
+          user={null}
+        />
       </div>
     </DashboardLayout>
   )

@@ -14,7 +14,14 @@ export const assetTransferRouter = t.router({
       },
       include: {
         asset: true,
-        transferType: true,
+      },
+    })
+    return assetTransfer
+  }),
+  findAsset: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
+    const assetTransfer = await ctx.prisma.assetTransfer.findUnique({
+      where: {
+        assetId: input,
       },
     })
     return assetTransfer
@@ -30,13 +37,8 @@ export const assetTransferRouter = t.router({
               transferDate: z.date().optional(),
               transferStatus: z.string().optional(),
               transferLocation: z.string().optional(),
-              description: z.string().nullish().optional(),
               departmentCode: z.string().nullish().optional(),
-              salesInvoice: z.string().optional(),
-              transferTypeId: z.number().optional(),
               remarks: z.string().nullish().optional(),
-              telephoneNo: z.string().optional(),
-              apInvoice: z.string().nullish().optional(),
               custodianId: z.number().optional(),
               assetId: z.number().optional(),
             })
@@ -57,7 +59,6 @@ export const assetTransferRouter = t.router({
           },
           include: {
             asset: true,
-            transferType: true,
           },
           where: {
             transferStatus: input?.search?.transferStatus,
@@ -81,6 +82,7 @@ export const assetTransferRouter = t.router({
 
       return {
         assetTransfers,
+        count,
         pages: Math.ceil(count / (input?.limit ?? 0)),
         total: count,
       }
@@ -88,7 +90,7 @@ export const assetTransferRouter = t.router({
   create: authedProcedure
     .input(AssetTransferCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { assetId, transferTypeId, ...rest } = input
+      const { assetId, ...rest } = input
 
       const assetTransfer = await ctx.prisma.assetTransfer.create({
         data: {
@@ -97,16 +99,11 @@ export const assetTransferRouter = t.router({
               id: assetId,
             },
           },
-          transferType: {
-            connect: {
-              id: transferTypeId,
-            },
-          },
+
           ...rest,
         },
         include: {
           asset: true,
-          transferType: true,
         },
       })
       return assetTransfer

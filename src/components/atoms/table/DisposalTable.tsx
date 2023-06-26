@@ -43,7 +43,7 @@ const DisposalTable = (props: {
 
     return (
         <div
-            className={`max-w-[88vw] overflow-x-auto ${minimize ? "xl:w-[86vw]" : "xl:w-[76vw]"
+            className={`max-w-[88vw] overflow-x-auto ${minimize ? "xl:w-[86vw]" : "xl:w-full"
                 } relative border shadow-md sm:rounded-lg`}
         >
             {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}

@@ -1,5 +1,6 @@
 import {
   AssetRepairType,
+  AssetTransferType,
   AssetType,
   DisposeType,
   EmployeeType,
@@ -14,6 +15,7 @@ import { object } from "zod"
 import { trpc } from "../utils/trpc"
 import { useState } from "react"
 import { ExcelExportTypeVendor } from "../types/vendors"
+import { ExcelExportAssetType } from "../types/asset"
 
 const router = Router
 export const getProperty = (
@@ -24,7 +26,7 @@ export const getProperty = (
     | VendorType
     | DisposeType
     | AssetRepairType
-    | UserType
+    | UserType | AssetTransferType
 
   //subfilter?: string
 ) => {
@@ -45,7 +47,7 @@ export const getProperty = (
 
 export const getPropertyDisposal = (
   filter: string,
-  type: DisposeType | AssetRepairType | VendorType
+  type: DisposeType | AssetRepairType | VendorType | AssetTransferType
   //subfilter?: string
 ) => {
   //get object property
@@ -128,10 +130,8 @@ export const formatBytes = (bytes: number) => {
 }
 
 export const downloadExcel = (data: ExcelExportType[]) => {
-  console.log(data)
 
-  // if (!data) {
-  // csv null fall back
+  // if (!data) {  // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])
   const worksheet = XLSX.utils.json_to_sheet(
     data !== null && data !== undefined ? data : []
@@ -145,7 +145,6 @@ export const downloadExcel = (data: ExcelExportType[]) => {
 
   return
 }
-
 export const downloadExcelVendor = (data: ExcelExportTypeVendor[]) => {
   console.log(data)
 
@@ -160,6 +159,22 @@ export const downloadExcelVendor = (data: ExcelExportTypeVendor[]) => {
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
   XLSX.writeFile(workbook, "Vendor_Sheet.xlsx")
+  return
+}
+
+export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
+  console.log("assetsss moooooo::::", data)
+
+  // if (!data) {  // csv null fall back
+  // const worksheet = XLSX.utils.json_to_sheet(data || [])
+  const worksheet = XLSX.utils.json_to_sheet(
+    data !== null ? data : []
+  )
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  XLSX.writeFile(workbook, "Asset_Sheet.xlsx")
   // }
 
   return

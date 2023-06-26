@@ -55,11 +55,12 @@ const RepairAsset = (props: {
   }, [activeTab, setStatus])
 
   useEffect(() => {
-    console.log("page: " + props.page, "limit: " + props.limit, "total: " + props.accessiblePage)
+    console.log(
+      "page: " + props.page,
+      "limit: " + props.limit,
+      "total: " + props.accessiblePage
+    )
   })
-
-
-
 
   return (
     <div className="space-y-4">
@@ -101,7 +102,6 @@ const RepairAsset = (props: {
                     >
                       Pending
                     </p>{" "}
-
                   </div>
                 </Tabs.Tab>
                 <Tabs.Tab value="approved">
@@ -117,7 +117,6 @@ const RepairAsset = (props: {
                     >
                       Approved
                     </p>{" "}
-
                   </div>
                 </Tabs.Tab>
                 <Tabs.Tab value="rejected">
@@ -133,7 +132,6 @@ const RepairAsset = (props: {
                     >
                       Rejected
                     </p>{" "}
-
                   </div>
                 </Tabs.Tab>
                 <Tabs.Tab value="cancelled">
@@ -149,7 +147,6 @@ const RepairAsset = (props: {
                     >
                       Cancelled
                     </p>{" "}
-
                   </div>
                 </Tabs.Tab>
                 <Tabs.Tab value="done">
@@ -165,7 +162,6 @@ const RepairAsset = (props: {
                     >
                       Completed
                     </p>{" "}
-
                   </div>
                 </Tabs.Tab>
               </Tabs.List>
@@ -176,7 +172,9 @@ const RepairAsset = (props: {
                 // setCheckboxes={setCheckboxes}
                 rows={props.assets}
                 filterBy={filterBy}
-                columns={repairColumn.filter((col) => filterBy.includes(col.value))}
+                columns={repairColumn.filter((col) =>
+                  filterBy.includes(col.value)
+                )}
               />
             </div>
           </div>
@@ -200,7 +198,7 @@ const RepairAsset = (props: {
           onChange={props.setPage}
           total={props.accessiblePage}
           classNames={{
-            item: 'bg-transparent selected-page:bg-tangerine-500 border-none'
+            item: "bg-transparent selected-page:bg-tangerine-500 border-none",
           }}
         />
       </section>

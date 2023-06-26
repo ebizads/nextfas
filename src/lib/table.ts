@@ -11,7 +11,7 @@ export const columns = [
   // { value: "description", name: "Description" },
   { value: "custodian", name: "Custodian" },
   // { value: "createdAt", name: "Added Date" },
-  { value: "deployment_status", name: "Status"},
+  { value: "deployment_status", name: "Status" },
 ] as ColumnType[]
 
 export const vendorColumns = [
@@ -52,6 +52,15 @@ export const disposalColumn = [
   { value: "disposalDate", name: "Disposal Date" },
   { value: "completionDate", name: "Disposal Completion" },
   { value: "disposalType.name", name: "Disposal Method" },
+] as ColumnType[]
+
+export const transferColumn = [
+  { value: "asset.number", name: "Asset No." },
+  { value: "asset.name", name: "Asset Name" },
+  { value: "transferDate", name: "Transfer Date" },
+  { value: "transferStatus", name: "Status" },
+  { value: "transferLocation", name: "Location" },
+  { value: "custodian", name: "Recipient" },
 ] as ColumnType[]
 
 export const repairColumn = [
@@ -118,11 +127,11 @@ export const navigations = [
     icon: "fa-users",
     link: "/employees",
   },
-  {
-    name: "Asset Issuance",
-    icon: "fa-users",
-    link: "/issuance",
-  },
+  // {
+  //   name: "Asset Issuance",
+  //   icon: "fa-users",
+  //   link: "/issuance",
+  // },
   {
     name: "Vendors",
     icon: "fa-store",

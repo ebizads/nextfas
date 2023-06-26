@@ -373,7 +373,7 @@ export const UpdateEmployeeModal = (props: {
               }}
               value={workModeValue}
               placeholder="--"
-              data={["Work From Home", "Hybrid", "On Site"]}
+              data={["WFH", "Hybrid", "On Site"]}
               defaultValue={props.employee?.workMode ?? "--"}
               styles={(theme) => ({
                 item: {

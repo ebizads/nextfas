@@ -2,18 +2,15 @@
 import React, { useEffect, useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
-import { Checkbox } from "@mantine/core"
-import { repairColumn } from "../../../lib/table"
+import { transferColumn } from "../../../lib/table"
 import { getPropertyDisposal } from "../../../lib/functions"
-import { AssetRepairType } from "../../../types/generic"
-import Modal from "../../headless/modal/modal"
-import { RepairDetailsModal } from "../../transaction/AddRepair/RepairModal"
+import { AssetTransferType } from "../../../types/generic"
 
-const RepairTable = (props: {
+const TransferAssetTable_new = (props: {
   // checkboxes: number[]
   // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
   filterBy: string[]
-  rows: AssetRepairType[]
+  rows: AssetTransferType[]
   columns: ColumnType[]
   // status: string
 }) => {
@@ -21,14 +18,15 @@ const RepairTable = (props: {
 
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
-  const [details, setDetails] = useState<AssetRepairType>(null)
+  const [details, setDetails] = useState<AssetTransferType>(null)
 
   useEffect(() => {
     console.log(
 
-      "filter ::::" + props.filterBy
+      "filter   :::" + props.filterBy
     )
   })
+
   // const selectAllCheckboxes = () => {
   //   if (props.checkboxes.length === 0) {
   //     props.setCheckboxes([-1])
@@ -77,7 +75,7 @@ const RepairTable = (props: {
                 <th
                   key={col.name}
                   scope="col"
-                  className="max-w-[10rem] truncate px-6 py-4 duration-150"
+                  className="max-w-[11rem] truncate px-6 py-4 duration-150"
                 >
                   {col.name}
                 </th>
@@ -96,7 +94,7 @@ const RepairTable = (props: {
 
                 </div>
               </td>
-              {repairColumn
+              {transferColumn
                 .filter((col) => props.filterBy.includes(col.value))
                 .map((col) => (
                   <td
@@ -115,14 +113,14 @@ const RepairTable = (props: {
           ))}
         </tbody>
       </table>
-      <Modal title="Asset"
+      {/* <Modal title="Asset"
         isVisible={isVisible}
         setIsVisible={setIsVisible}
         className="max-w-4xl">
         <RepairDetailsModal asset={details as AssetRepairType} setCloseModal={setIsVisible} />
-      </Modal>
+      </Modal> */}
     </div>
   )
 }
 
-export default RepairTable
+export default TransferAssetTable_new

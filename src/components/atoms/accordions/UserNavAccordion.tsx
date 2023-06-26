@@ -6,7 +6,7 @@ import { NavType } from "../../../types/table"
 export const userNavigations = [
   {
     name: "User Management",
-    icon: "fa-solid fa-users",
+    icon: "fa-light fa-user-gear",
     link: "#",
     subType: [
       {

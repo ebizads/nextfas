@@ -65,25 +65,39 @@ const DuplicateAccordion_asset = (props: {
         custodianId: props.incomingChanges[splice]?.custodianId ?? 0,
         vendorId: props.incomingChanges[splice]?.vendorId ?? 0,
         assetProjectId: props.incomingChanges[splice]?.assetProjectId ?? 0,
-        // createdAt: props.incomingChanges[splice]?.id ?? 0,
-        // updatedAt: props.incomingChanges[splice]?.id ?? 0,
-        // deletedAt: props.incomingChanges[splice]?.id ?? 0,
-        // deleted: props.incomingChanges[splice]?.id ?? 0,
+        createdAt: props.incomingChanges[splice]?.createdAt ?? new Date(),
+        updatedAt: props.incomingChanges[splice]?.updatedAt ?? new Date(),
+        deletedAt: props.incomingChanges[splice]?.deletedAt ?? null,
+        deleted: props.incomingChanges[splice]?.deleted ?? false,
         departmentId: props.incomingChanges[splice]?.departmentId ?? 0,
         subsidiaryId: props.incomingChanges[splice]?.subsidiaryId ?? 0,
-        // user: props.incomingChanges[splice]?.id ?? 0,
-        // : props.incomingChanges[splice]?.id ?? 0,
-        // cus: props.incomingChanges[splice]?.id ?? 0,
-        // ven: props.incomingChanges[splice]?.id ?? 0,
-        // added
-        // : props.incomingChanges[splice]?.id ?? 0,
         invoiceNum: props.incomingChanges[splice]?.invoiceNum ?? "",
         purchaseOrder: props.incomingChanges[splice]?.purchaseOrder ?? "",
         deployment_status: props.incomingChanges[splice]?.deployment_status ?? "",
         status: props.incomingChanges[splice]?.status ?? "",
+        management: {
+          currency: props.incomingChanges[splice]?.management?.currency ?? "",
+          original_cost: props.incomingChanges[splice]?.management?.original_cost ?? 0,
+          current_cost: props.incomingChanges[splice]?.management?.current_cost ?? 0,
+          residual_value: props.incomingChanges[splice]?.management?.residual_value ?? 0,
+          purchase_date: props.incomingChanges[splice]?.management?.purchase_date,
+          depreciation_start: props.incomingChanges[splice]?.management?.depreciation_start,
+          depreciation_end: props.incomingChanges[splice]?.management?.depreciation_end,
+          depreciation_status: props.incomingChanges[splice]?.management?.depreciation_status,
+          depreciation_period: props.incomingChanges[splice]?.management?.id ?? 0,
+          depreciation_rule: props.incomingChanges[splice]?.management?.depreciation_rule ?? "",
+          // assetId: props.incomingChanges[splice]?.id ?? 0,
+          accounting_method: props.incomingChanges[splice]?.management?.accounting_method ?? "",
+          depreciation_lifetime: props.incomingChanges[splice]?.management?.depreciation_lifetime ?? 0,
+          residual_percentage: props.incomingChanges[splice]?.management?.residual_percentage ?? 0,
+          asset_location: props.incomingChanges[splice]?.management?.asset_location ?? "",
+          asset_quantity: props.incomingChanges[splice]?.management?.asset_quantity ?? 1,
+          asset_lifetime: props.incomingChanges[splice]?.management?.asset_lifetime ?? 0,
+          id: props.incomingChanges[splice]?.management?.id ?? 0
 
+        }
       })
-    } catch { }
+    } catch { console.log(error) }
   }
 
   return (
@@ -106,7 +120,7 @@ const DuplicateAccordion_asset = (props: {
                       Current Record
                     </p>
                     <pre className="text-sm">
-                      {JSON.stringify(asset, null, 2)}
+                      {JSON.stringify(asset, null, 1)}
                     </pre>
                   </div>
                   <div className="flex flex-col gap-1 border-l-2 border-tangerine-500 px-4">

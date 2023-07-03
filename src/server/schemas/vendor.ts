@@ -39,6 +39,23 @@ export const VendorEditInput = z.object({
   address: AddressEditInput,
 })
 
+export const VendorTableEditInput = z.object({
+  id: z.number(),
+  name: z.string(),
+  phone_no: z.array(z.string()),
+  email: z
+    .string()
+    .regex(/\S+@\S+\.\S+/, "Invalid Email input")
+    .nullish(),
+  website: z
+    .string()
+    // .string()
+    .regex(/.+\..+/, "Format invalid"),
+  remarks: z.string().nullish(),
+  fax_no: z.string().nullish(),
+  type: z.string().nullish(),
+
+})
 
 export const VendorDelete = z.object({
   id: z.number(),

@@ -60,6 +60,23 @@ export const EmployeeEditInput = z.object({
   workMode: z.string().nullish(),
   teamId: z.number().optional(),
 })
+export const EmployeeTableEditInput = z.object({
+  id: z.number(),
+  name: z.string().optional(),
+  superviseeId: z.number().nullish().optional(),
+  employee_id: z.string().nullish().optional(),
+  email: z
+    .string()
+    .regex(/.+\..+/, "Format invalid")
+    .nullish()
+    .optional(),
+  hired_date: z.date().nullish().optional(),
+  position: z.string().nullish().optional(),
+  workStation: z.string().nullish(),
+  workMode: z.string().nullish(),
+  teamId: z.number().optional(),
+})
+
 
 export const EmployeeDeleteInput = z.object({
   id: z.number(),

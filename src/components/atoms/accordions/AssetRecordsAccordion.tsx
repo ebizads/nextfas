@@ -14,8 +14,8 @@ const AssetRecordsAccordion = (props: {
         >
           <Accordion.Control className="uppercase">
             <div className="grid w-1/2 grid-cols-2 gap-1">
-              {/* <p>{asset.assetId}</p> */}
-              <p>{asset.assetId} tangina mo</p>
+              <p>{asset.number}</p>
+              <p>{asset.name}</p>
             </div>
           </Accordion.Control>
           <Accordion.Panel>

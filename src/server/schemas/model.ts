@@ -118,8 +118,8 @@ export const ManagementEditInput = z.object({
   currency: z.string().optional().nullish(),
   original_cost: z.number().optional().nullish(),
   current_cost: z.number().optional().nullish(),
-  residual_value: z.number().nullish().nullish(),
-  residual_percentage: z.number().nullish().nullish(),
+  residual_value: z.number().nullish(),
+  residual_percentage: z.number().nullish(),
   purchase_date: z.date().nullish(),
 
   depreciation_start: z.date().nullish(),

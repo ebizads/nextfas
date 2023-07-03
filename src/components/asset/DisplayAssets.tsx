@@ -13,6 +13,7 @@ import { trpc } from "../../utils/trpc"
 import Modal from "../headless/modal/modal"
 import DropZone from "../dropzone/DropZone"
 import AddAssetPopOver from "../atoms/popover/AddAssetPopOver"
+import DropZone_asset from "../dropzone/Asset dropzone/DropZone_asset"
 
 const DisplayAssets = (props: {
   user: UserType
@@ -91,39 +92,14 @@ const DisplayAssets = (props: {
             <button onClick={() => {
 
               const downloadableAssets = props.assets.map((assets) => {
-                if (assets?.['management'] && assets?.['department'] && assets?.['model']) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
-                  const { model, department, management, ...rest } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
+                // console.log("TRIAl: " + JSON.stringify(assets))
+                if (assets?.["custodian"] && assets?.["addedBy"]) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
+                  const { management, ...rest } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
                   return {
                     ...rest,
-
+                    management_id: management?.id,
                     ...management,
-                    department_name: department.name,
-                    ...department,
-                    model_name: model.name,
-                    model_no: model.number,
-                    model_brand: model.brand,
-                    model_class: model.class?.name ?? "",
-                    model_category: model.category?.name,
-                    model_type: model.type?.name,
-                    // model_name: model.name ?? "",
-                    // class_name: model?.class.name,
-                    // category_name: model?.category.name,
-                    // type_name: model?.type.name,
-                    // parent_id: parent.id,
-                    // ...parent,
-                    // vendor_id: vendor.id,
-                    // ...vendor,
-                    // subsidiary_id: subsidiary.id,
-                    // ...subsidiary,
-                    // addedBy_id: addedBy.id,
-                    // ...addedBy,
-                    // custodian_id: custodian.id,
-                    // ...custodian,
-                    // project_id: project.id,
-                    // ...project,
-                    custodian: rest.custodian?.name,
-                    name: rest.name,
-                    id: rest.id
+                    id: rest.id,
                   }
                 }
               }) as ExcelExportAssetType[]
@@ -184,7 +160,7 @@ const DisplayAssets = (props: {
         setIsVisible={setAddBulkRecord}
         className="max-w-6xl"
       >
-        <DropZone
+        <DropZone_asset
           file_type="xlsx"
           acceptingMany={false}
           loading={isLoading}

@@ -21,3 +21,12 @@ export const CompanyEditInput = z.object({
 
   address: AddressEditInput,
 })
+export const CompanyTableEditInput = z.object({
+  id: z.number(),
+  name: z.string(),
+  phone_no: z.array(z.string()),
+  email: z.string().nullish(),
+  website: z.string().nullish(),
+  remarks: z.string().nullish(),
+})
+

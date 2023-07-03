@@ -16,6 +16,13 @@ export const assetRouter = t.router({
         number: input,
       },
       include: {
+        custodian: true,
+        parent: true,
+        project: true,
+        vendor: true,
+        subsidiary: true,
+        management: true,
+        addedBy: true,
         model: {
           include: {
             type: true,
@@ -23,7 +30,6 @@ export const assetRouter = t.router({
             class: true,
           },
         },
-        custodian: true,
         department: {
           include: {
             location: true,
@@ -32,12 +38,6 @@ export const assetRouter = t.router({
           },
         },
 
-        parent: true,
-        project: true,
-        vendor: true,
-        subsidiary: true,
-        management: true,
-        addedBy: true,
       },
     })
     return asset
@@ -162,6 +162,27 @@ export const assetRouter = t.router({
               subsidiary: true,
               management: true,
               addedBy: true,
+            },
+          })
+          return assets
+        } else {
+          return null
+        }
+      }
+    }),
+  checkTableDuplicates: authedProcedure
+    .input(z.array(z.string()))
+    .query(async ({ ctx, input }) => {
+      for (let i = 0; i < input.length; i++) {
+        if (input[i] !== null || input[i] !== undefined) {
+          const assets = await ctx.prisma.asset.findMany({
+            where: {
+              number: {
+                in: input
+              },
+            },
+            include: {
+              management: true,
             },
           })
           return assets
@@ -330,30 +351,27 @@ export const assetRouter = t.router({
   createOrUpdate: authedProcedure
     .input(AssetTransformInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, model, management, ...rest } = input
+      const { management, ...rest } = input
       try {
         await ctx.prisma.asset.upsert({
           where: {
-            id: id,
+            id: rest.id,
           },
           create: {
             ...rest,
-            ...model,
-            ...management,
-
+            management: { create: management },
           },
           update: {
             ...rest,
-            ...model,
-            ...management
+            management: { update: management },
           },
         })
       } catch (error) { }
     }),
   edit: authedProcedure
-    .input(AssetEditInput)
+    .input(AssetTransformInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, ...rest } = input
+      const { id, management, ...rest } = input
       try {
         await ctx.prisma.asset.update({
           where: {
@@ -361,6 +379,9 @@ export const assetRouter = t.router({
           },
           data: {
             ...rest,
+            management: {
+              update: management,
+            }
           },
         })
 

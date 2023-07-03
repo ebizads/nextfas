@@ -2,10 +2,12 @@ import { z } from "zod"
 import {
   AssetCreateInput,
   AssetEditInput,
+  AssetTransformInput,
   AssetUpdateInput,
 } from "../../schemas/asset"
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
+import { VendorEditInput } from "../../schemas/model"
 
 export const assetRouter = t.router({
   findOne: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
@@ -124,6 +126,48 @@ export const assetRouter = t.router({
       return {
         assets,
         count,
+      }
+    }),
+  checkDuplicates: authedProcedure
+    .input(z.array(z.string()))
+    .query(async ({ ctx, input }) => {
+      for (let i = 0; i < input.length; i++) {
+        if (input[i] !== null || input[i] !== undefined) {
+          const assets = await ctx.prisma.asset.findMany({
+            where: {
+              number: {
+                in: input
+              },
+            },
+            include: {
+              model: {
+                include: {
+                  type: true,
+                  category: true,
+                  class: true,
+                },
+              },
+              custodian: true,
+              department: {
+                include: {
+                  location: true,
+                  company: true,
+                  teams: true,
+                },
+              },
+
+              parent: true,
+              project: true,
+              vendor: true,
+              subsidiary: true,
+              management: true,
+              addedBy: true,
+            },
+          })
+          return assets
+        } else {
+          return null
+        }
       }
     }),
   create: authedProcedure
@@ -283,7 +327,29 @@ export const assetRouter = t.router({
       })
       return "Assets successfully created"
     }),
+  createOrUpdate: authedProcedure
+    .input(AssetTransformInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id, model, management, ...rest } = input
+      try {
+        await ctx.prisma.asset.upsert({
+          where: {
+            id: id,
+          },
+          create: {
+            ...rest,
+            ...model,
+            ...management,
 
+          },
+          update: {
+            ...rest,
+            ...model,
+            ...management
+          },
+        })
+      } catch (error) { }
+    }),
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {

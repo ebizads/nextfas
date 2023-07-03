@@ -11,7 +11,7 @@ import Image from "next/image"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../../../types/employee"
 import { trpc } from "../../../utils/trpc"
-import DuplicateAccordion from "../../atoms/accordions/DuplicateAccordion"
+import DuplicateAccordion_asset from "../../atoms/accordions/DuplicateAccordion_asset"
 import { update } from "lodash"
 import { EmployeeEditInput } from "../../../server/schemas/employee"
 import { z } from "zod"
@@ -19,11 +19,12 @@ import EmployeeRecordsAccordion from "../../atoms/accordions/EmployeeRecordsAcco
 import Employee from "../../../pages/employees"
 import Modal from "../../headless/modal/modal"
 import { DropZoneModal } from "../DropZoneModal"
-import { AssetEditInput } from "../../../server/schemas/asset"
+import { AssetTransformInput } from "../../../server/schemas/asset"
 import { ExcelExportAssetType } from "../../../types/asset"
 import CreateAssetAccordion from "../../atoms/accordions/CreateAssetAccordion"
+import AssetRecordsAccordion from "../../atoms/accordions/AssetRecordsAccordion"
 
-export type Asset = z.infer<typeof AssetEditInput>
+export type Asset = z.infer<typeof AssetTransformInput>
 export default function DropZone_asset({
   setImage,
   loading,
@@ -49,7 +50,7 @@ export default function DropZone_asset({
 
   const {
     mutate,
-    isLoading: employeeLoading,
+    isLoading: assetLoading,
     error,
   } = trpc.asset.createOrUpdate.useMutation({
     onSuccess() {
@@ -107,49 +108,41 @@ export default function DropZone_asset({
         subsidId: (ast as (string | number | null)[])[18] as number,
         addedById: (ast as (string | number | null)[])[19] as number,
         status: (ast as (string | null)[])[20] as string,
-        category: (ast as (string | number | null)[])[21] as number,
-
-        invoiceNum: (ast as (string | number | null)[])[22] as number,
-        purchaseOrder: (ast as (string | number | null)[])[23] as number,
-        deployment_status: (ast as (string | null)[])[24] as string,
-        parent: (ast as (string | null)[])[25] as string,
-        custodian: (ast as (string | null)[])[26] as string,
-        vendor: (ast as (string | null)[])[27] as string,
-        addedBy: (ast as (string | null)[])[28] as string,
-        address: {
-          id: (ast as (string | number | null)[])[15] as number,
-          street: (ast as (string | number | null)[])[16] as string,
-          city: (ast as (string | number | null)[])[17] as string,
-          state: (ast as (string | number | null)[])[18] as string,
-          country: (ast as (string | number | null)[])[19] as string,
-          createdAt: new Date(
-            (ast as (string | number | null | boolean)[])[20] as string
-          ) ?? null,
-          updatedAt: new Date(
-            (ast as (string | number | null | boolean)[])[26] as string
-          ) ?? null,
-          //may laktaw po ito
-          deleted: (ast as (string | number | null | boolean)[])[25] as boolean,
-          deletedAt: new Date(
-            (ast as (string | number | null | boolean)[])[26] as string
-          ),
-
-          zip: (ast as (string | number | null)[])[24] as number,
+        user_archiveID: (ast as (string | number | null)[])[21] as number,
+        category: (ast as (string | number | null)[])[22] as number,
+        invoiceNum: (ast as (string | number | null)[])[23] as number,
+        purchaseOrder: (ast as (string | number | null)[])[24] as number,
+        deployment_status: (ast as (string | null)[])[25] as string,
+        parent: (ast as (string | null)[])[26] as string,
+        custodian: (ast as (string | null)[])[27] as string,
+        vendor: (ast as (string | null)[])[28] as string,
+        addedBy: (ast as (string | null)[])[29] as string,
+        management: {
+          currency: (ast as (string | null)[])[30] as string,
+          original_cost: (ast as (string | number | null)[])[31] as number,
+          current_cost: (ast as (string | number | null)[])[32] as number,
+          residual_value: (ast as (string | number | null)[])[33] as number,
+          purchase_date: (ast as (string | null)[])[34] as string,
+          depreciation_start: (ast as (string | null)[])[35] as string,
+          depreciation_end: (ast as (string | null)[])[36] as string,
+          depreciation_status: (ast as (string | null)[])[7] as string,
+          depreciation_period: (ast as (string | null)[])[38] as string,
+          depreciation_rule: (ast as (string | null)[])[39] as string,
+          assetId: (ast as (string | null)[])[40] as string,
+          accounting_method: (ast as (string | null)[])[41] as string,
+          depreciation_lifetime: (ast as (string | number | null)[])[42] as number,
+          residual_percentage: (ast as (string | number | null)[])[43] as number,
+          asset_location: (ast as (string | null)[])[44] as string,
+          asset_quantity: (ast as (string | number | null)[])[45] as number,
+          asset_lifetime: (ast as (string | number | null)[])[46] as number,
         },
-        profile: {
-          id: (ast as (string | number | null)[])[27] as number,
-          first_name: (ast as (string | number)[])[28] as string,
-          middle_name: (ast as (string | number | null)[])[29] as string,
-          last_name: (ast as (string | number)[])[30] as string,
-          suffix: (ast as (string | number | null)[])[31] as string,
-          gender: (ast as (string | number | null)[])[32] as string,
-          image: (ast as (string | number | null)[])[33] as string,
-          date_of_birth: new Date(
-            (ast as (string | number | null | boolean)[])[34] as string
-          ),
-          userId: (ast as (string | number | null)[])[37] as number,
-          astloyeeId: (ast as (string | number | null)[])[36] as number,
-          phone_no: (ast as (string | number | null)[])[35] as string,
+        model: {
+          model_name: (ast as (string | null)[])[47] as string,
+          model_no: (ast as (string | null)[])[48] as string,
+          model_brand: (ast as (string | null)[])[49] as string,
+          model_classID: (ast as (string | number | null)[])[50] as number,
+          model_categoryID: (ast as (string | number | null)[])[51] as number,
+          model_typeID: (ast as (string | number | null)[])[52] as number
         },
       } as unknown as ExcelExportAssetType
       final_dupList.push(data_structure)
@@ -193,47 +186,61 @@ export default function DropZone_asset({
         mutate({
           id: duplicatedAssets[i]?.id ?? 0,
           name: duplicatedAssets[i]?.name ?? "",
-          hired_date: duplicatedAssets[i]?.hired_date,
-          position: duplicatedAssets[i]?.position,
-          employee_id: duplicatedAssets[i]?.employee_id,
-          email: duplicatedAssets[i]?.email,
-          teamId: duplicatedAssets[i]?.teamId ?? 0,
-          superviseeId: duplicatedAssets[i]?.superviseeId ?? 0,
-          // createdAt: duplicatedAssets[i]?.createdAt,
-          // updatedAt: duplicatedAssets[i]?.updatedAt,
-          // deleted: duplicatedAssets[i]?.deleted,
-          // deletedAt: duplicatedAssets[i]?.deletedAt,
-          workMode: duplicatedAssets[i]?.workMode,
-          workStation: duplicatedAssets[i]?.workStation,
-          address: {
-            // id: duplicatedAssets[i]?.address?.id ?? 0,
-            street: duplicatedAssets[i]?.address?.street,
-            city: duplicatedAssets[i]?.address?.city,
-            state: duplicatedAssets[i]?.address?.state,
-            zip: duplicatedAssets[i]?.address?.zip,
-            country: duplicatedAssets[i]?.address?.country,
-            // createdAt: duplicatedAssets[i]?.address?.createdAt,
-            // updatedAt: duplicatedAssets[i]?.address?.updatedAt,
-            //may laktaw po ito
-            // deleted: duplicatedAssets[i]?.address?.deleted,
-            // deletedAt: duplicatedAssets[i]?.address?.deletedAt,
-            // userId: duplicatedAssets[i]?.address?.userId ?? 0,
-            // companyId: duplicatedAssets[i]?.address?.companyId,
-            // vendorId: duplicatedAssets[i]?.address?.vendorId,
-            // employeeId: duplicatedAssets[i]?.address?.employeeId,
+          number: duplicatedAssets[i]?.number ?? "",
+          alt_number: duplicatedAssets[i]?.alt_number,
+          serial_no: duplicatedAssets[i]?.serial_no ?? "",
+          barcode: duplicatedAssets[i]?.barcode,
+          description: duplicatedAssets[i]?.description ?? "",
+          remarks: duplicatedAssets[i]?.remarks ?? "",
+          parentId: duplicatedAssets[i]?.parentId ?? 0,
+          modelId: duplicatedAssets[i]?.modelId ?? 0,
+          custodianId: duplicatedAssets[i]?.custodianId ?? 0,
+          vendorId: duplicatedAssets[i]?.vendorId ?? 0,
+          assetProjectId: duplicatedAssets[i]?.assetProjectId ?? 0,
+          // createdAt: duplicatedAssets[i]?.id ?? 0,
+          // updatedAt: duplicatedAssets[i]?.id ?? 0,
+          // deletedAt: duplicatedAssets[i]?.id ?? 0,
+          // deleted: duplicatedAssets[i]?.id ?? 0,
+          departmentId: duplicatedAssets[i]?.departmentId ?? 0,
+          subsidiaryId: duplicatedAssets[i]?.subsidiaryId ?? 0,
+          // user: duplicatedAssets[i]?.id ?? 0,
+          // : duplicatedAssets[i]?.id ?? 0,
+          // cus: duplicatedAssets[i]?.id ?? 0,
+          // ven: duplicatedAssets[i]?.id ?? 0,
+          // added
+          // : duplicatedAssets[i]?.id ?? 0,
+          invoiceNum: duplicatedAssets[i]?.invoiceNum ?? "",
+          purchaseOrder: duplicatedAssets[i]?.purchaseOrder ?? "",
+          deployment_status: duplicatedAssets[i]?.deployment_status ?? "",
+          status: duplicatedAssets[i]?.status ?? "",
+          management: {
+            currency: duplicatedAssets[i]?.management?.currency ?? "",
+            original_cost: duplicatedAssets[i]?.management?.original_cost ?? 0,
+            current_cost: duplicatedAssets[i]?.management?.current_cost ?? 0,
+            residual_value: duplicatedAssets[i]?.management?.residual_value ?? 0,
+            purchase_date: duplicatedAssets[i]?.management?.purchase_date,
+            depreciation_start: duplicatedAssets[i]?.management?.depreciation_start,
+            depreciation_end: duplicatedAssets[i]?.management?.depreciation_end,
+            depreciation_status: duplicatedAssets[i]?.management?.depreciation_status ?? "",
+            depreciation_period: duplicatedAssets[i]?.management?.id ?? 0,
+            depreciation_rule: duplicatedAssets[i]?.management?.depreciation_rule ?? "",
+            // assetId: duplicatedAssets[i]?.id ?? 0,
+            accounting_method: duplicatedAssets[i]?.management?.accounting_method ?? "",
+            depreciation_lifetime: duplicatedAssets[i]?.management?.depreciation_lifetime ?? 0,
+            residual_percentage: duplicatedAssets[i]?.management?.residual_percentage ?? 0,
+            asset_location: duplicatedAssets[i]?.management?.asset_location ?? "",
+            asset_quantity: duplicatedAssets[i]?.management?.asset_quantity ?? 1,
+            asset_lifetime: duplicatedAssets[i]?.management?.asset_lifetime ?? 0,
+            id: duplicatedAssets[i]?.management?.id ?? 0
           },
-          profile: {
-            // id: duplicatedAssets[i]?.profile?.id,
-            first_name: duplicatedAssets[i]?.profile?.first_name ?? "",
-            middle_name: duplicatedAssets[i]?.profile?.middle_name,
-            last_name: duplicatedAssets[i]?.profile?.last_name ?? "",
-            suffix: duplicatedAssets[i]?.profile?.suffix,
-            gender: duplicatedAssets[i]?.profile?.gender,
-            image: duplicatedAssets[i]?.profile?.image,
-            date_of_birth: duplicatedAssets[i]?.profile?.date_of_birth,
-            // userId: duplicatedAssets[i]?.profile?.userId,
-            // employeeId: duplicatedAssets[i]?.profile?.employeeId,
-            phone_no: duplicatedAssets[i]?.profile?.phone_no,
+          model: {
+            name: duplicatedAssets[i]?.model?.name ?? "",
+            number: duplicatedAssets[i]?.model?.number ?? "",
+            brand: duplicatedAssets[i]?.model?.brand ?? "",
+            classId: duplicatedAssets[i]?.model?.classId ?? 0,
+            categoryId: duplicatedAssets[i]?.model?.categoryId ?? 0,
+            typeId: duplicatedAssets[i]?.model?.typeId ?? 0,
+            id: duplicatedAssets[i]?.model?.id ?? 0
           },
         })
       }
@@ -403,7 +410,7 @@ export default function DropZone_asset({
                 </p>
               </div>
 
-              <CreateAssetAccordion incomingChanges={duplicatedAssets} />
+              <AssetRecordsAccordion incomingChanges={duplicatedAssets} />
 
               <div className="mt-4 flex items-center justify-end gap-2">
                 <button
@@ -415,9 +422,9 @@ export default function DropZone_asset({
                 <button
                   className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                   onClick={() => onSubmitUpdate}
-                  disabled={employeeLoading}
+                  disabled={assetLoading}
                 >
-                  {employeeLoading ? "Loading..." : "Accept Import"}
+                  {assetLoading ? "Loading..." : "Accept Import"}
                   {/* Accept All Changes */}
                 </button>
               </div>
@@ -435,7 +442,7 @@ export default function DropZone_asset({
               </p>
             </div>
             {duplicates != null ? (
-              <DuplicateAccordion
+              <DuplicateAccordion_asset
                 currentRecords={duplicates?.sort(
                   (a: { id: number }, b: { id: number }) => a.id - b.id
                 )}
@@ -455,9 +462,9 @@ export default function DropZone_asset({
               <button
                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                 onClick={onSubmitUpdate}
-                disabled={employeeLoading}
+                disabled={assetLoading}
               >
-                {employeeLoading ? "Loading..." : "Accept All Changes"}
+                {assetLoading ? "Loading..." : "Accept All Changes"}
                 {/* Accept All Changes */}
               </button>
             </div>

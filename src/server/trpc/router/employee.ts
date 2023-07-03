@@ -4,6 +4,9 @@ import { z } from "zod"
 import { authedProcedure, t } from "../trpc"
 import { EmployeeCreateInput, EmployeeDeleteInput, EmployeeEditInput } from "../../schemas/employee"
 import { create, map } from "lodash"
+import { useState } from "react"
+import moment from "moment"
+import { env } from "../../../env/client.mjs"
 
 export const employeeRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -134,13 +137,13 @@ export const employeeRouter = t.router({
       }
     }),
   checkDuplicates: authedProcedure
-    .input(z.array(z.string()))
+    .input(z.array(z.number()))
     .query(async ({ ctx, input }) => {
       for (let i = 0; i < input.length; i++) {
         if (input[i] !== null || input[i] !== undefined) {
           const employees = await ctx.prisma.employee.findMany({
             where: {
-              employee_id: {
+              id: {
                 in: input,
               },
             },
@@ -232,6 +235,8 @@ export const employeeRouter = t.router({
     .input(EmployeeEditInput)
     .mutation(async ({ ctx, input }) => {
       const { id, address, profile, ...rest } = input
+      const empId = moment().format("YY-MDhms")
+
       try {
         await ctx.prisma.employee.upsert({
           where: {
@@ -239,8 +244,9 @@ export const employeeRouter = t.router({
           },
           create: {
             ...rest,
+            employee_id: env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID + empId,
             address: { create: address },
-            profile: { create: profile ?? undefined },
+            profile: { create: profile },
           },
           update: {
             ...rest,
@@ -248,6 +254,7 @@ export const employeeRouter = t.router({
             profile: { update: profile },
           },
         })
+        return (input)
       } catch (error) { }
     }),
   edit: authedProcedure

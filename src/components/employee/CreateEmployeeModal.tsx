@@ -89,9 +89,8 @@ export const CreateEmployeeModal = (props: {
     // Register function
 
     mutate({
-      name: `${employee.profile?.first_name ?? ""} ${
-        employee.profile?.last_name ?? ""
-      }`,
+      name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
+        }`,
       employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
@@ -467,7 +466,7 @@ export const CreateEmployeeModal = (props: {
         <>
           <div className="py-2 items-center flex flex-col gap-3 ">
             <p className="text-center text-lg font-semibold ">
-                Employee Created Successfully
+              Employee Created Successfully
             </p>
             <button
               className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"

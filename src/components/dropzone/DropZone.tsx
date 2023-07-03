@@ -19,6 +19,8 @@ import EmployeeRecordsAccordion from "../atoms/accordions/EmployeeRecordsAccordi
 import Employee from "../../pages/employees"
 import Modal from "../headless/modal/modal"
 import { DropZoneModal } from "./DropZoneModal"
+import moment from "moment"
+import { env } from "../../env/client.mjs"
 
 export type Employee = z.infer<typeof EmployeeEditInput>
 export default function DropZone({
@@ -37,7 +39,7 @@ export default function DropZone({
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const [closeModal, setCloseModal] = useState(false)
-  const [idList, setIdList] = useState<string[]>([])
+  const [idList, setIdList] = useState<number[]>([])
   const [importedData, setImportedData] = useState(false)
   const { data: duplicates } = trpc.employee.checkDuplicates.useQuery(idList)
   const [duplicatedEmployees, setDuplicatedEmployees] = useState<
@@ -47,10 +49,10 @@ export default function DropZone({
   const {
     mutate,
     isLoading: employeeLoading,
-    error,
   } = trpc.employee.createOrUpdate.useMutation({
     onSuccess() {
       setCloseModal(true)
+      console.log(mutate)
       console.log("omsiman")
 
       // invalidate query of asset id when mutations is successful
@@ -62,8 +64,9 @@ export default function DropZone({
   const parseEmployeesData = (data: unknown[]) => {
     //returns all id of parsed employees
     const id_list = data.map((employee) => {
-      return String((employee as string[])[4] as string)
-    }) as string[]
+      return Number((employee as number[])[0] as number)
+    }) as number[]
+
 
     if (id_list) {
       setIdList(id_list)
@@ -74,18 +77,20 @@ export default function DropZone({
     const dupEmployeeList = data.filter((employee) => {
 
       return id_list.includes(
-        employee ? String((employee as string[])[4] as string) : ""
+        employee ? Number((employee as number[])[0] as number) : 0
       )
     }) as any[]
 
     const final_dupList = [] as ExcelExportType[]
     dupEmployeeList.forEach((emp) => {
+
+      const jsDate = new Date(Math.round(((emp as (string | number | null | boolean)[])[2] as number - 25569) * 86400 * 1000));
+
+
       const data_structure = {
         id: (emp as (string | number | null)[])[0] as number,
         name: (emp as (string | number | null)[])[1] as string,
-        hired_date: new Date(
-          (emp as (string | number | null | boolean)[])[2] as string
-        ),
+        hired_date: new Date(Math.round(((emp as (string | number | null | boolean)[])[2] as number - 25569) * 86400 * 1000)),
         position: (emp as (string | number | null)[])[3] as string,
         employee_id: (emp as (string | number | null)[])[4] as string,
         email: (emp as (string | number | null)[])[5] as string,
@@ -133,9 +138,7 @@ export default function DropZone({
           suffix: (emp as (string | number | null)[])[31] as string,
           gender: (emp as (string | number | null)[])[32] as string,
           image: (emp as (string | number | null)[])[33] as string,
-          date_of_birth: new Date(
-            (emp as (string | number | null | boolean)[])[34] as string
-          ),
+          date_of_birth: new Date(Math.round(((emp as (string | number | null | boolean)[])[34] as number - 25569) * 86400 * 1000)),
           userId: (emp as (string | number | null)[])[37] as number,
           employeeId: (emp as (string | number | null)[])[36] as number,
           phone_no: (emp as (string | number | null)[])[35] as string,
@@ -179,15 +182,17 @@ export default function DropZone({
     // Register function
     try {
       for (let i = 0; i < duplicatedEmployees.length; i++) {
+        console.log(i + ": " + duplicatedEmployees[i]?.hired_date)
         mutate({
           id: duplicatedEmployees[i]?.id ?? 0,
           name: duplicatedEmployees[i]?.name ?? "",
           hired_date: duplicatedEmployees[i]?.hired_date,
           position: duplicatedEmployees[i]?.position,
+          // employee_id: env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID + empId,
           employee_id: duplicatedEmployees[i]?.employee_id,
           email: duplicatedEmployees[i]?.email,
           teamId: duplicatedEmployees[i]?.teamId ?? 0,
-          superviseeId: duplicatedEmployees[i]?.superviseeId ?? 0,
+          superviseeId: duplicatedEmployees[i]?.superviseeId ?? null,
           // createdAt: duplicatedEmployees[i]?.createdAt,
           // updatedAt: duplicatedEmployees[i]?.updatedAt,
           // deleted: duplicatedEmployees[i]?.deleted,
@@ -403,7 +408,7 @@ export default function DropZone({
                 </button>
                 <button
                   className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                  onClick={() => onSubmitUpdate}
+                  onClick={onSubmitUpdate}
                   disabled={employeeLoading}
                 >
                   {employeeLoading ? "Loading..." : "Accept Import"}

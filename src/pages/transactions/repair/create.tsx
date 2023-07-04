@@ -7,6 +7,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout"
 import { useRepairAssetStore, useSearchStore } from "../../../store/useStore";
 import { AssetType } from '../../../types/generic';
 import { trpc } from '../../../utils/trpc';
+import { rest } from "lodash";
 
 
 
@@ -30,7 +31,7 @@ const RepairNew = () =>
   const { search } = useSearchStore()
 
   const { data } = trpc.asset.findAll.useQuery({
-    search: { number: search },
+    search: { ...rest },
     limit,
     page
   });
@@ -74,6 +75,10 @@ const RepairNew = () =>
         setRepairAsset(null)
       } else if (repairAsset?.status === "repair") {
         setValidateString("The asset is already in for repair.")
+        setValidateModal(true)
+        setRepairAsset(null)
+      } else if (repairAsset?.status === "transfer") {
+        setValidateString("The asset is being transferred.")
         setValidateModal(true)
         setRepairAsset(null)
       }

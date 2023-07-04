@@ -588,6 +588,9 @@ const TransferAssetTable = (props: {
   //     props.setCheckboxes((prev) => [...prev, id])
   // }
 
+  const validStatuses = ["disposal", "repair", "transfer"];
+
+
   return (
     <div
       className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
@@ -630,12 +633,7 @@ const TransferAssetTable = (props: {
         <tbody>
           {!generate
             ? props.rows.map((row, idx) => {
-              if (
-                getProperty("status", row) !== null &&
-                getProperty("status", row) !== "disposal" &&
-                getProperty("status", row) !== "repair" &&
-                getProperty("status", row) !== "transfer"
-              ) {
+              if (validStatuses.includes(getProperty("status", row)) !== true) {
                 return (
                   <tr
                     key={row?.id ?? idx}

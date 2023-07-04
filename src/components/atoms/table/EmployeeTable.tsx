@@ -60,8 +60,8 @@ const EmployeeTable = (props: {
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto m-0 self-center${minimize ? "xl:w-[88vw]" : "xl:w-[40vw]"
+        } border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">

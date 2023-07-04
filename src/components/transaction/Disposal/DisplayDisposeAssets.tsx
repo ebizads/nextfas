@@ -64,6 +64,10 @@ const DisplayDisposeAssets = (props: {
 				setValidateString("The asset is in for repair.")
 				setValidateModal(true)
 				setAssetNumber("")
+			} else if (asset?.status === "transfer") {
+				setValidateString("The asset is being transferred.")
+				setValidateModal(true)
+				setAssetNumber("")
 			}
 			else {
 				setDisposeAsset(asset as AssetType);

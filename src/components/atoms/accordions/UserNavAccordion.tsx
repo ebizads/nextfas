@@ -14,11 +14,11 @@ export const userNavigations = [
         name: "All Users",
         link: "/auth/",
       },
-      // {
-      //   icon: "fa-regular fa-user",
-      //   name: "Register",
-      //   link: "/reports/register",
-      // },
+      {
+        icon: "fa-regular fa-user-plus",
+        name: "Register",
+        link: "/reports/register",
+      },
     ],
   },
 ] as NavType[]

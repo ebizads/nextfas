@@ -65,10 +65,10 @@ const DuplicateAccordion_asset = (props: {
         custodianId: props.incomingChanges[splice]?.custodianId ?? 0,
         vendorId: props.incomingChanges[splice]?.vendorId ?? 0,
         assetProjectId: props.incomingChanges[splice]?.assetProjectId ?? 0,
-        createdAt: props.incomingChanges[splice]?.createdAt ?? new Date(),
-        updatedAt: props.incomingChanges[splice]?.updatedAt ?? new Date(),
-        deletedAt: props.incomingChanges[splice]?.deletedAt ?? null,
-        deleted: props.incomingChanges[splice]?.deleted ?? false,
+        // createdAt: props.incomingChanges[splice]?.createdAt ?? new Date(),
+        // updatedAt: props.incomingChanges[splice]?.updatedAt ?? new Date(),
+        // deletedAt: props.incomingChanges[splice]?.deletedAt ?? null,
+        // deleted: props.incomingChanges[splice]?.deleted ?? false,
         departmentId: props.incomingChanges[splice]?.departmentId ?? 0,
         subsidiaryId: props.incomingChanges[splice]?.subsidiaryId ?? 0,
         invoiceNum: props.incomingChanges[splice]?.invoiceNum ?? "",
@@ -120,6 +120,7 @@ const DuplicateAccordion_asset = (props: {
                       Current Record
                     </p>
                     <pre className="text-sm">
+
                       {JSON.stringify(asset, null, 1)}
                     </pre>
                   </div>

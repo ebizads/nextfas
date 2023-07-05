@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { Group, Text } from "@mantine/core"
 import { IconUpload, IconX } from "@tabler/icons"
 import {
@@ -23,6 +23,7 @@ import { AssetTransformInput } from "../../../server/schemas/asset"
 import { ExcelExportAssetType } from "../../../types/asset"
 import CreateAssetAccordion from "../../atoms/accordions/CreateAssetAccordion"
 import AssetRecordsAccordion from "../../atoms/accordions/AssetRecordsAccordion"
+import moment from "moment"
 
 export type Asset = z.infer<typeof AssetTransformInput>
 export default function DropZone_asset({
@@ -44,6 +45,9 @@ export default function DropZone_asset({
   const [idList, setIdList] = useState<string[]>([])
   const [importedData, setImportedData] = useState(false)
   const { data: duplicates } = trpc.asset.checkTableDuplicates.useQuery(idList)
+  const [assetId, setAssetId] = useState<string>(
+    `-${moment().format("YYMDhms")}`
+  )
   const [duplicatedAssets, setDuplicatedAssets] = useState<
     ExcelExportAssetType[]
   >([])
@@ -53,18 +57,21 @@ export default function DropZone_asset({
     isLoading: assetLoading,
     error,
   } = trpc.asset.createOrUpdate.useMutation({
-    onSuccess() {
+    onSuccess(rest) {
       setCloseModal(true)
-      console.log("omsiman")
+      console.log("omsiman: " + JSON.stringify(rest))
 
       // invalidate query of asset id when mutations is successful
     },
+    onError() {
+      console.log("TRY: " + error)
+    }
   })
 
 
 
   const parseAssetsData = (data: unknown[]) => {
-    //returns all id of parsed employees
+    //returns all id of parsed assets
     const id_list = data.map((asset) => {
       return String((asset as string[])[2] as string)
     }) as string[]
@@ -76,19 +83,31 @@ export default function DropZone_asset({
     //filters duplicated ID
 
     const dupAssetList = data.filter((asset) => {
+      console.log("TEST: " + JSON.stringify(data))
 
       return id_list.includes(
         asset ? String((asset as string[])[2] as string) : ""
       )
     }) as any[]
 
+    function excelSerialDateToJSDate(serialDate: number) {
+      const millisecondsPerDay = 24 * 60 * 60 * 1000;
+      const epoch = new Date('1899-12-31');
+
+      const offset = (serialDate - 1) * millisecondsPerDay;
+      const jsDate = new Date(epoch.getTime() + offset);
+      jsDate.setUTCHours(jsDate.getUTCHours() - 8);
+
+      return jsDate;
+    }
+
     const final_dupList = [] as ExcelExportAssetType[]
     dupAssetList.forEach((ast) => {
-      console.log("TEST: " + JSON.stringify(ast))
+
       const data_structure = {
         id: (ast as (string | number | null)[])[0] as number,
         name: (ast as (string | number | null)[])[1] as string,
-        number: (ast as (string | number | null)[])[2] as string,
+        number: (ast[2] ? (ast as (string | number | null)[])[2] as string : parseId(((ast as (string | number | null)[])[13] as number).toString() ?? "") + parseId(((ast as (string | number | null)[])[63] as number).toString()) + assetId),
         alt_number: (ast as (string | number | null)[])[3] as string,
         serial_number: (ast as (string | number | null)[])[4] as string,
         barcode: (ast as (string | number | null)[])[5] as string,
@@ -99,53 +118,69 @@ export default function DropZone_asset({
         custodianId: (ast as (string | number | null)[])[10] as number,
         vendorId: (ast as (string | number | null)[])[11] as number,
         assetProjId: (ast as (string | number | null)[])[12] as number,
-        createdAt: (ast[13] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[13] as number - 25569) * 86400 * 1000)) : null),
-        updatedAt: (ast[14] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[14] as number - 25569) * 86400 * 1000)) : null),
-        deletedAt: (ast[15] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[15] as number - 25569) * 86400 * 1000)) : null),
-        deleted: (ast as (string | number | null | boolean)[])[16] as boolean,
-        departmentId: (ast as (string | number | null)[])[17] as number,
-        subsidiaryId: (ast as (string | number | null)[])[18] as number,
-        addedById: (ast as (string | number | null)[])[19] as number,
-        status: (ast as (string | null)[])[20] as string,
-        userArchiveId: (ast as (string | number | null)[])[21] as number,
-        category: (ast as (string | number | null)[])[22] as number,
-        invoiceNum: (ast as (string | number | null)[])[23] as string,
-        purchaseOrder: (ast as (string | number | null)[])[24] as string,
-        deployment_status: (ast as (string | null)[])[25] as string,
+        createdAt: (ast[39] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[39] as number)) : null),
+        updatedAt: (ast[40] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[40] as number)) : null),
+        deletedAt: (ast[41] !== null ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[41] as number)) : null),
+        deleted: (ast as (null | string)[])[42] === "TRUE" ? true : false as boolean,
+        departmentId: (ast as (string | number | null)[])[13] as number,
+        subsidiaryId: (ast as (string | number | null)[])[14] as number,
+        addedById: (ast as (string | number | null)[])[15] as number,
+        status: (ast as (string | null)[])[16] as string,
+        userArchiveId: (ast as (string | number | null)[])[17] as number,
+        category: (ast as (string | number | null)[])[18] as number,
+        invoiceNum: (ast as (string | number | null)[])[19] as string,
+        purchaseOrder: (ast as (string | number | null)[])[20] as string,
+        deployment_status: (ast as (string | null)[])[21] as string,
         management: {
-          id: (ast as (number | null)[])[32] as number,
-          currency: (ast as (string | null)[])[33] as string,
-          original_cost: (ast as (string | number | null)[])[34] as number,
-          current_cost: (ast as (string | number | null)[])[35] as number,
-          residual_value: (ast as (string | number | null)[])[36] as number,
-          purchase_date: (ast[37] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[37] as number - 25569) * 86400 * 1000)) : null),
-          depreciation_start: (ast[38] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[38] as number - 25569) * 86400 * 1000)) : null),
-          depreciation_end: (ast[39] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[39] as number - 25569) * 86400 * 1000)) : null),
-          depreciation_status: (ast as (string | null)[])[38] as string,
-          depreciation_period: (ast as (number | null)[])[39] as number,
-          depreciation_rule: (ast as (string | null)[])[40] as string,
-          createdAt: (ast[13] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[13] as number - 25569) * 86400 * 1000)) : null),
-          updatedAt: (ast[14] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[14] as number - 25569) * 86400 * 1000)) : null),
-          deletedAt: (ast[15] ? new Date(Math.round(((ast as (string | number | null | boolean)[])[15] as number - 25569) * 86400 * 1000)) : null),
-          deleted: (ast as (null | boolean)[])[42] as boolean,
-          assetId: (ast as (number | null)[])[43] as number,
-          accounting_method: (ast as (string | null)[])[44] as string,
-          depreciation_lifetime: (ast as (string | number | null)[])[45] as number,
-          remarks: (ast as (string | null)[])[46] as string,
-          residual_percentage: (ast as (string | number | null)[])[46] as number,
-          asset_location: (ast as (string | null)[])[47] as string,
-          asset_quantity: (ast as (string | number | null)[])[48] as number,
-          asset_lifetime: (ast as (string | number | null)[])[49] as number,
+          id: (ast as (number | null)[])[27] as number,
+          currency: (ast as (string | null)[])[28] as string,
+          original_cost: (ast as (string | number | null)[])[29] as number,
+          current_cost: (ast as (string | number | null)[])[30] as number,
+          residual_value: (ast as (string | number | null)[])[31] as number,
+          purchase_date: (ast[32] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[32] as number)) : null),
+          depreciation_start: (ast[33] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[33] as number)) : null),
+          depreciation_end: (ast[34] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[34] as number)) : null),
+          depreciation_status: (ast as (string | null)[])[35] as string,
+          depreciation_period: (ast as (number | null)[])[36] as number,
+          depreciation_rule: (ast as (string | null)[])[37] as string,
+          createdAt: (ast[49] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[49] as number)) : null),
+          updatedAt: (ast[50] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[50] as number)) : null),
+          deletedAt: (ast[51] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[51] as number)) : null),
+          deleted: (ast as (null | boolean)[])[52] as boolean,
+          assetId: (ast as (number | null)[])[42] as number,
+          accounting_method: (ast as (string | null)[])[43] as string,
+          depreciation_lifetime: (ast as (string | number | null)[])[44] as number,
+          remarks: (ast as (string | null)[])[53] as string,
+          residual_percentage: (ast as (string | number | null)[])[45] as number,
+          asset_location: (ast as (string | null)[])[46] as string,
+          asset_quantity: (ast as (string | number | null)[])[47] as number,
+          asset_lifetime: (ast as (string | number | null)[])[48] as number,
         },
+        model: {
+          id: (ast as (string | number | null)[])[54] as number,
+          name: (ast as (string | null)[])[55] as string,
+          brand: (ast as (string | number | null)[])[61] as string,
+          number: (ast as (string | number | null)[])[56] as string,
+          classId: (ast as (string | number | null)[])[62] as number,
+          typeId: (ast as (string | number | null)[])[63] as number,
+          categoryId: (ast as (string | number | null)[])[64] as number,
+          createdAt: (ast[57] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[57] as number)) : null),
+          updatedAt: (ast[58] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[58] as number)) : null),
+          deletedAt: (ast[59] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[59] as number)) : null),
+          deleted: (ast as (string | null)[])[60] === "TRUE" ? true : false as boolean,
+        }
+
+
       } as ExcelExportAssetType
       final_dupList.push(data_structure)
-      console.log(data_structure)
+
+      // console.log(data_structure)
 
     })
 
     setDuplicatedAssets(
       final_dupList.sort((a, b) => {
-        console.log("try: " + final_dupList)
+        console.log("try: " + JSON.stringify(final_dupList))
         console.log("sort" + ((a.id ?? 0) - (b.id ?? 0)))
         return (a.id ?? 0) - (b.id ?? 0)
       })
@@ -174,10 +209,26 @@ export default function DropZone_asset({
   const onDiscard = () => {
     setIsVisible(false)
   }
+
+  const parseId = (id: string | null | undefined) => {
+    if (!id) {
+      return "00"
+    }
+    if (id?.length === 1) {
+      return 0 + id
+    } else {
+      return id
+    }
+  }
+
+
+
+
   const onSubmitUpdate = () => {
     // Register function
     try {
       for (let i = 0; i < duplicatedAssets.length; i++) {
+        console.log("assets: " + JSON.stringify(duplicatedAssets[i]))
         mutate({
           id: duplicatedAssets[i]?.id ?? 0,
           name: duplicatedAssets[i]?.name ?? "",
@@ -192,18 +243,12 @@ export default function DropZone_asset({
           custodianId: duplicatedAssets[i]?.custodianId ?? 0,
           vendorId: duplicatedAssets[i]?.vendorId ?? 0,
           assetProjectId: duplicatedAssets[i]?.assetProjectId ?? 0,
-          // createdAt: duplicatedAssets[i]?.id ?? 0,
-          // updatedAt: duplicatedAssets[i]?.id ?? 0,
-          // deletedAt: duplicatedAssets[i]?.id ?? 0,
-          // deleted: duplicatedAssets[i]?.id ?? 0,
+          // createdAt: duplicatedAssets[i]?.createdAt ?? new Date(),
+          updatedAt: duplicatedAssets[i]?.updatedAt ?? new Date(),
+          deletedAt: duplicatedAssets[i]?.deletedAt ?? null,
+          deleted: duplicatedAssets[i]?.deleted ?? false,
           departmentId: duplicatedAssets[i]?.departmentId ?? 0,
           subsidiaryId: duplicatedAssets[i]?.subsidiaryId ?? 0,
-          // user: duplicatedAssets[i]?.id ?? 0,
-          // : duplicatedAssets[i]?.id ?? 0,
-          // cus: duplicatedAssets[i]?.id ?? 0,
-          // ven: duplicatedAssets[i]?.id ?? 0,
-          // added
-          // : duplicatedAssets[i]?.id ?? 0,
           invoiceNum: duplicatedAssets[i]?.invoiceNum ?? "",
           purchaseOrder: duplicatedAssets[i]?.purchaseOrder ?? "",
           deployment_status: duplicatedAssets[i]?.deployment_status ?? "",
@@ -228,9 +273,23 @@ export default function DropZone_asset({
             asset_lifetime: duplicatedAssets[i]?.management?.asset_lifetime ?? 0,
             id: duplicatedAssets[i]?.management?.id ?? 0
           },
-          createdAt: duplicatedAssets[i]?.createdAt ?? new Date(),
-          updatedAt: duplicatedAssets[i]?.updatedAt ?? new Date(),
-          deleted: false
+          model: {
+            id: duplicatedAssets[i]?.model?.id ?? 0,
+            name: duplicatedAssets[i]?.model?.name ?? "",
+            brand: duplicatedAssets[i]?.model?.brand ?? "",
+            number: duplicatedAssets[i]?.model?.number ?? "",
+            classId: duplicatedAssets[i]?.model?.classId ?? 0,
+            typeId: duplicatedAssets[i]?.model?.typeId ?? 0,
+            categoryId: duplicatedAssets[i]?.model?.categoryId ?? 0,
+            // class: {
+            //   name: duplicatedAssets[i]?.model?.class?.name ?? "",
+            // }
+            createdAt: duplicatedAssets[i]?.model?.createdAt ?? new Date(),
+            updatedAt: duplicatedAssets[i]?.model?.updatedAt ?? new Date(),
+            deletedAt: duplicatedAssets[i]?.model?.deletedAt ?? null,
+            deleted: duplicatedAssets[i]?.model?.deleted ?? false,
+          }
+
         })
       }
     } catch { }
@@ -410,7 +469,7 @@ export default function DropZone_asset({
                 </button>
                 <button
                   className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                  onClick={() => onSubmitUpdate}
+                  onClick={onSubmitUpdate}
                   disabled={assetLoading}
                 >
                   {assetLoading ? "Loading..." : "Accept Import"}

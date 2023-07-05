@@ -206,11 +206,19 @@ const AssetDetailsModal = (props: {
                       </p>
                     </div>
                   </section>
-                  <section>
-                    <p className="font-light">Description</p>
-                    <p className="font-medium">
-                      {props.asset?.description ?? "--"}
-                    </p>
+                  <section className="grid grid-cols-4">
+                    <div className="col-span-1">
+                      <p className="font-light">Description</p>
+                      <p className="font-medium">
+                        {props.asset?.description ?? "--"}
+                      </p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Remarks</p>
+                      <p className="font-medium">
+                        {props.asset?.remarks ?? "--"}
+                      </p>
+                    </div>
                   </section>
                 </div>
               </section>

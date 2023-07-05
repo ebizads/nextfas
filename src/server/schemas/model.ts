@@ -78,9 +78,9 @@ export const ModelCreateInput = z.object({
 
 export const ModelEditInput = z.object({
   id: z.number(),
-  name: z.string().min(1),
-  brand: z.string(),
-  number: z.string(),
+  name: z.string(),
+  brand: z.string().optional(),
+  number: z.string().optional(),
 
   // asset_class: AssetClassCreateInput
   classId: z.number({ required_error: "Please select asset class" }),
@@ -89,6 +89,25 @@ export const ModelEditInput = z.object({
   //asset_type: AssetTypeCreateInput,
   typeId: z.number({ required_error: "Please select asset type" }),
   //type: TypeEditInput.optional(),
+})
+export const ModelEditTableInput = z.object({
+  id: z.number(),
+  name: z.string(),
+  brand: z.string().optional(),
+  number: z.string().optional(),
+
+  // asset_class: AssetClassCreateInput
+  classId: z.number({ required_error: "Please select asset class" }),
+  //asset_category: AssetCategoryCreateInput,
+  categoryId: z.number({ required_error: "Please select asset category" }),
+  //asset_type: AssetTypeCreateInput,
+  typeId: z.number({ required_error: "Please select asset type" }),
+  //type: TypeEditInput.optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  deletedAt: z.date().nullish(),
+  deleted: z.boolean(),
+
 })
 
 export const ManagementCreateInput = z.object({
@@ -122,6 +141,29 @@ export const ManagementEditInput = z.object({
   residual_percentage: z.number().nullish(),
   purchase_date: z.date().nullish(),
 
+  depreciation_start: z.date().nullish(),
+  depreciation_end: z.date().nullish(),
+  depreciation_status: z.string().nullish(),
+  depreciation_period: z.number().nullish(),
+  depreciation_lifetime: z.number().nullish(),
+  depreciation_rule: z.string().nullish(),
+  asset_lifetime: z.number().nullish(),
+  asset_quantity: z.number().nullish(),
+  asset_location: z.string().nullish(),
+  accounting_method: z.string().nullish(),
+  remarks: z.string().nullish(),
+})
+
+export const ManagementTableEditInput = z.object({
+  id: z.number(),
+  currency: z.string().optional().nullish(),
+  original_cost: z.number().optional().nullish(),
+  current_cost: z.number().optional().nullish(),
+  residual_value: z.number().nullish(),
+  residual_percentage: z.number().nullish(),
+  purchase_date: z.date().nullish(),
+
+  assetId: z.number(),
   depreciation_start: z.date().nullish(),
   depreciation_end: z.date().nullish(),
   depreciation_status: z.string().nullish(),

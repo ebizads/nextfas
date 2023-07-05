@@ -69,6 +69,7 @@ const DisplayEmployees = (props: {
   useEffect(() => {
     setSearch("")
   }, [setSearch])
+
   const { mutate } = trpc.employee.deleteMany.useMutation({
     onSuccess: () => {
       utils.employee.findAll.invalidate()
@@ -122,6 +123,8 @@ const DisplayEmployees = (props: {
                         ...rest,
                         address_id: address.id,
                         ...address,
+                        address_createdAt: address.createdAt,
+                        address_updatedAt: address.updatedAt,
                         address_deleted: address.deleted,
                         address_deletedAt: address.deletedAt,
                         profile_id: profile.id,

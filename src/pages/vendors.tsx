@@ -170,6 +170,7 @@ const Vendors = () => {
                         const { address, ...rest } = vendor
                         return {
                           ...rest,
+
                           address_id: address.id,
                           ...address,
                           address_createdAt: address.createdAt,

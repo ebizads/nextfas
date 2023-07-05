@@ -74,6 +74,17 @@ export default function DropzoneVendor({
 
         //filters duplicated ID
 
+        function excelSerialDateToJSDate(serialDate: number) {
+            const millisecondsPerDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+            const epoch = new Date('1899-12-31'); // Excel epoch (1900-01-01 in Excel is 1 as the serial date)
+
+            const offset = (serialDate - 1) * millisecondsPerDay; // Subtracting 1 to account for the Excel epoch
+            const jsDate = new Date(epoch.getTime() + offset);
+            jsDate.setUTCHours(jsDate.getUTCHours() - 8);
+
+            return jsDate;
+        }
+
         const dupVendorList = data.filter((vendor) => {
 
             return id_list.includes(
@@ -93,29 +104,21 @@ export default function DropzoneVendor({
                 image: (ven as (string | number | null)[])[6] as string,
                 fax_no: (ven as (string | number | null)[])[7] as string,
                 type: (ven as (string | number | null)[])[8] as string,
-                createdAt: new Date((ven as (string | number | null)[])[8] as string),
-                updatedAt: new Date((ven as (string | number | null)[])[9] as string),
+                createdAt: (ven[9] ? new Date(excelSerialDateToJSDate((ven as (string | number | null | boolean)[])[9] as number)) : null),
+                updatedAt: (ven[10] ? new Date(excelSerialDateToJSDate((ven as (string | number | null | boolean)[])[10] as number)) : null),
+                deletedAt: (ven[11] ? new Date(excelSerialDateToJSDate((ven as (string | number | null | boolean)[])[11] as number)) : null),
                 deleted: (ven as (string | number | null | boolean)[])[12] as boolean,
-                deletedAt: new Date(
-                    (ven as (string | number | null | boolean)[])[11] as string
-                ),
                 address: {
                     id: (ven as (string | number | null)[])[13] as number,
                     street: (ven as (string | number | null)[])[14] as string,
                     city: (ven as (string | number | null)[])[15] as string,
                     state: (ven as (string | number | null)[])[16] as string,
                     country: (ven as (string | number | null)[])[17] as string,
-                    createdAt: new Date(
-                        (ven as (string | number | null | boolean)[])[23] as string
-                    ) ?? null,
-                    updatedAt: new Date(
-                        (ven as (string | number | null | boolean)[])[24] as string
-                    ) ?? null,
+                    createdAt: (ven[23] ? new Date(excelSerialDateToJSDate((ven as (string | number | null | boolean)[])[23] as number)) : null),
+                    updatedAt: (ven[24] ? new Date(excelSerialDateToJSDate((ven as (string | number | null | boolean)[])[24] as number)) : null),
                     //may laktaw po ito
                     deleted: (ven as (string | number | null | boolean)[])[25] as boolean,
-                    deletedAt: new Date(
-                        (ven as (string | number | null | boolean)[])[26] as string
-                    ),
+                    deletedAt: (ven[26] ? new Date(excelSerialDateToJSDate((ven as (string | number | null | boolean)[])[26] as number)) : null),
                     userId: (ven as (string | number | null)[])[18] as number,
                     companyId: (ven as (number | string | null)[])[19] as number,
                     vendorId: (ven as (string | number | null)[])[20] as number,

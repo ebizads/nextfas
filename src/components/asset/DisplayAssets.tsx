@@ -39,8 +39,6 @@ const DisplayAssets = (props: {
 
   const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
   console.log(search)
-  const { data } = trpc.asset.findAll.useQuery({
-  })
 
   useEffect(
     () => {
@@ -50,15 +48,11 @@ const DisplayAssets = (props: {
     [setSearch]
 
   );
-  const [assets, setAssets] = useState<AssetType[]>([])
 
   useEffect(() => {
-    //get and parse all data
-    console.log("sample ", data, search)
-    if (data) {
-      setAssets(data.assets as AssetType[])
-    }
-  }, [data, search])
+    setSearch("")
+  }, [setSearch])
+
   return (
     <div className="space-y-4">
       <section className="space-y-4">
@@ -92,14 +86,34 @@ const DisplayAssets = (props: {
             <button onClick={() => {
 
               const downloadableAssets = props.assets.map((assets) => {
-                // console.log("TRIAl: " + JSON.stringify(assets))
-                if (assets?.["custodian"] && assets?.["addedBy"]) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
-                  const { management, ...rest } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
+                console.log("TRIAl: " + JSON.stringify(assets?.model))
+                if (assets?.["model"] && assets?.["management"]) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
+                  const { management, createdAt, updatedAt, deleted, deletedAt, model, ...rest } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
                   return {
                     ...rest,
                     management_id: management?.id,
                     ...management,
+                    management_createdAt: management?.createdAt,
+                    management_updatedAt: management?.updatedAt,
+                    mangement_deletedAt: management?.deletedAt,
+                    management_deleted: management?.deleted,
+                    management_remarks: management?.remarks,
+                    model_id: model?.id,
+                    model_name: model?.name,
+                    model_number: model?.number,
+                    model_createdAt: model?.createdAt,
+                    model_updatedAt: model?.updatedAt,
+                    model_deletedAt: model?.deletedAt,
+                    model_deleted: model?.deleted,
+                    ...model,
+                    ...rest,
+                    remarks: rest?.remarks,
                     id: rest.id,
+                    number: rest.number,
+                    createdAt: createdAt,
+                    updatedAt: updatedAt,
+                    deletedAt: deletedAt,
+                    deleted: deleted,
                   }
                 }
               }) as ExcelExportAssetType[]

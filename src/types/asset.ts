@@ -1,9 +1,10 @@
-import { Department, Model, Company, AssetManagement, Employee, AssetProject, Vendor, User } from "@prisma/client"
-import { AssetType } from "./generic"
+import { Department, Company, AssetManagement, Employee, AssetProject, Vendor, User, Model } from "@prisma/client"
+import { AssetTypeTable } from "./generic"
 
 export type ExcelExportAssetType =
-  Partial<AssetType> &
-  Partial<AssetManagement>
+  Partial<AssetTypeTable> &
+  Partial<AssetManagement> &
+  Partial<Model>
 
 
 

@@ -8,6 +8,7 @@ import {
 import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
 import { VendorEditInput } from "../../schemas/model"
+import { type } from "os"
 
 export const assetRouter = t.router({
   findOne: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
@@ -38,6 +39,18 @@ export const assetRouter = t.router({
           },
         },
 
+      },
+    })
+    return asset
+  }),
+  findOneTable: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const asset = await ctx.prisma.asset.findUnique({
+      where: {
+        number: input,
+      },
+      include: {
+        management: true,
+        model: true,
       },
     })
     return asset
@@ -183,6 +196,7 @@ export const assetRouter = t.router({
             },
             include: {
               management: true,
+              model: true,
             },
           })
           return assets
@@ -351,25 +365,100 @@ export const assetRouter = t.router({
   createOrUpdate: authedProcedure
     .input(AssetTransformInput)
     .mutation(async ({ ctx, input }) => {
-      const { management, ...rest } = input
-      try {
-        await ctx.prisma.asset.upsert({
-          where: {
-            id: rest.id,
-          },
-          create: {
-            ...rest,
-            management: { create: management },
-          },
-          update: {
-            ...rest,
-            management: { update: management },
-          },
+      const { management, id, model, ...rest } = input
+      console.log("MODEL:", model)
+
+      const existAssets = await ctx.prisma?.asset.findFirst({
+        where: {
+          id: id
+        }
+      })
+
+      let modelId = null
+
+      if (model.id) {
+        const existModel = await ctx.prisma?.model.findFirst({
+          where: { id: model.id ?? 0 },
         })
-      } catch (error) { }
+        if (existModel?.id) {
+          // return { pumasok: existModel?.id }
+          await ctx.prisma?.model.update({
+            where: {
+              id: model.id
+            }, data: {
+              ...model
+            }
+          })
+          modelId = existModel?.id
+        } else {
+          // return { indiPumasok: existModel?.id }
+          const newModel = await ctx.prisma?.model.create({
+            data: {
+              ...model
+            }
+          })
+          modelId = newModel.id
+        }
+      }
+
+
+      if (existAssets?.id) {
+        await ctx.prisma?.asset.update({
+          where: {
+            id: id
+          },
+          data: {
+            ...rest,
+            vendorId: rest.vendorId ?? 0,
+            management: { update: management },
+            modelId: modelId,
+          }
+        })
+      } else {
+        await ctx.prisma?.asset.create({
+          data: {
+            ...rest,
+            vendorId: rest.vendorId ?? 0,
+            management: { create: management },
+            modelId: modelId,
+          }
+        })
+      }
+
+      // await ctx.prisma.asset.upsert({
+      //   where: {
+      //     id: id,
+      //   },
+      //   create: {
+      //     ...rest,
+      //     // modelId: rest?.modelId ?? 0,
+      //     vendorId: rest.vendorId ?? 0,
+      //     management: { create: management },
+      //     model: {
+      //       connectOrCreate: {
+      //         where: { id: model.id },
+      //         create: {
+
+      //         },
+      //       },
+      //     },
+      //   },
+
+
+      //   // update: {
+      //   //   ...rest,
+      //   //   modelId: rest.modelId ?? 0,
+      //   //   vendorId: rest.vendorId ?? 0,
+      //   //   management: { update: management },
+      //   //   model: {
+      //   //     update: model
+
+      //   //   },
+      //   // },
+      // })
     }),
   edit: authedProcedure
-    .input(AssetTransformInput)
+    .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
       const { id, management, ...rest } = input
       try {

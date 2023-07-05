@@ -81,27 +81,32 @@ export default function DropZone({
       )
     }) as any[]
 
+    function excelSerialDateToJSDate(serialDate: number) {
+      const millisecondsPerDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+      const epoch = new Date('1899-12-31'); // Excel epoch (1900-01-01 in Excel is 1 as the serial date)
+
+      const offset = (serialDate - 1) * millisecondsPerDay; // Subtracting 1 to account for the Excel epoch
+      const jsDate = new Date(epoch.getTime() + offset);
+      jsDate.setUTCHours(jsDate.getUTCHours() - 8);
+
+      return jsDate;
+    }
     const final_dupList = [] as ExcelExportType[]
     dupEmployeeList.forEach((emp) => {
-
-      const jsDate = new Date(Math.round(((emp as (string | number | null | boolean)[])[2] as number - 25569) * 86400 * 1000));
-
 
       const data_structure = {
         id: (emp as (string | number | null)[])[0] as number,
         name: (emp as (string | number | null)[])[1] as string,
-        hired_date: new Date(Math.round(((emp as (string | number | null | boolean)[])[2] as number - 25569) * 86400 * 1000)),
+        hired_date: new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[2] as number)),
         position: (emp as (string | number | null)[])[3] as string,
         employee_id: (emp as (string | number | null)[])[4] as string,
         email: (emp as (string | number | null)[])[5] as string,
         teamId: (emp as (number | null)[])[6] as number,
         superviseeId: (emp as (number | null)[])[7] as number,
-        createdAt: new Date((emp as (string | number | null)[])[8] as string),
-        updatedAt: new Date((emp as (string | number | null)[])[9] as string),
+        createdAt: (emp[8] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[8] as number)) : null),
+        updatedAt: (emp[9] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[9] as number)) : null),
         deleted: (emp as (string | number | null | boolean)[])[10] as boolean,
-        deletedAt: new Date(
-          (emp as (string | number | null | boolean)[])[11] as string
-        ),
+        deletedAt: (emp[11] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[11] as number)) : null),
         workMode: (emp as (string | null)[])[12] as string,
         workStation: (emp as (string | null)[])[13] as string,
         address: {
@@ -111,18 +116,12 @@ export default function DropZone({
           state: (emp as (string | number | null)[])[18] as string,
           country: (emp as (string | number | null)[])[19] as string,
           createdAt:
-            new Date(
-              (emp as (string | number | null | boolean)[])[20] as string
-            ) ?? null,
+            (emp[25] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[25] as number)) : null),
           updatedAt:
-            new Date(
-              (emp as (string | number | null | boolean)[])[26] as string
-            ) ?? null,
+            (emp[26] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[26] as number)) : null),
           //may laktaw po ito
-          deleted: (emp as (string | number | null | boolean)[])[25] as boolean,
-          deletedAt: new Date(
-            (emp as (string | number | null | boolean)[])[26] as string
-          ),
+          deleted: (emp as (string | number | null | boolean)[])[27] as boolean,
+          deletedAt: (emp[28] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[28] as number)) : null),
           userId: (emp as (string | number | null)[])[20] as number,
           companyId: (emp as (number | string | null)[])[21] as number,
           vendorId: (emp as (string | number | null)[])[22] as number,
@@ -131,19 +130,21 @@ export default function DropZone({
 
         },
         profile: {
-          id: (emp as (string | number | null)[])[27] as number,
-          first_name: (emp as (string | number)[])[28] as string,
-          middle_name: (emp as (string | number | null)[])[29] as string,
-          last_name: (emp as (string | number)[])[30] as string,
-          suffix: (emp as (string | number | null)[])[31] as string,
-          gender: (emp as (string | number | null)[])[32] as string,
-          image: (emp as (string | number | null)[])[33] as string,
-          date_of_birth: new Date(Math.round(((emp as (string | number | null | boolean)[])[34] as number - 25569) * 86400 * 1000)),
-          userId: (emp as (string | number | null)[])[37] as number,
-          employeeId: (emp as (string | number | null)[])[36] as number,
-          phone_no: (emp as (string | number | null)[])[35] as string,
+          id: (emp as (string | number | null)[])[29] as number,
+          first_name: (emp as (string | number)[])[30] as string,
+          middle_name: (emp as (string | number | null)[])[31] as string,
+          last_name: (emp as (string | number)[])[32] as string,
+          suffix: (emp as (string | number | null)[])[33] as string,
+          gender: (emp as (string | number | null)[])[34] as string,
+          image: (emp as (string | number | null)[])[35] as string,
+          date_of_birth: new Date(Math.round(((emp as (string | number | null | boolean)[])[36] as number - 25569) * 86400 * 1000)),
+          userId: (emp as (string | number | null)[])[39] as number,
+          employeeId: (emp as (string | number | null)[])[38] as number,
+          phone_no: (emp as (string | number | null)[])[37] as string,
         },
       } as ExcelExportType
+      console.log("checker: " + emp)
+      console.log(data_structure)
       final_dupList.push(data_structure)
     })
 

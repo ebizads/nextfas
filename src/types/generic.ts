@@ -12,6 +12,8 @@ import { AppRouter } from "../server/trpc/router"
 
 //dynamic inference of type
 export type AssetType = inferProcedureOutput<AppRouter["asset"]["findOne"]>
+export type AssetTypeTable = inferProcedureOutput<AppRouter["asset"]["findOneTable"]>
+
 export type AssetTransferType = inferProcedureOutput<AppRouter["assetTransfer"]["findOne"]>
 export type AssetRepairType = inferProcedureOutput<
   AppRouter["assetRepair"]["findOne"]

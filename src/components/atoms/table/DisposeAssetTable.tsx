@@ -675,7 +675,8 @@ const DisposeAssetTable = (props: {
                             if (
                                 getProperty("status", row) !== null &&
                                 getProperty("status", row) !== "disposal" &&
-                                getProperty("status", row) !== "repair"
+                                getProperty("status", row) !== "repair" &&
+                                getProperty("status", row) !== "transfer"
                             ) {
                                 return (
                                     <tr

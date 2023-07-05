@@ -126,7 +126,7 @@ const Vendors = () => {
   return (
     <DashboardLayout>
       {/* <pre>{JSON.stringify(vendors, null, 2)}</pre> */}
-      <div className="space-y-4">
+      <div className="space-y-4 flex flex-col align-middle">
 
         <section className="space-y-6">
           <h3 className="text-xl font-medium">Vendors</h3>

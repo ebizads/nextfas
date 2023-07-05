@@ -63,6 +63,10 @@ const DisposeNew = () => {
                 setValidateString("The asset is in for repair.")
                 setValidateModal(true)
                 setDisposeAsset(null)
+            } else if (disposeAsset?.status === "transfer") {
+                setValidateString("The asset is being transferred.")
+                setValidateModal(true)
+                setDisposeAsset(null)
             }
             else {
                 setDisposeAsset(disposeAsset);

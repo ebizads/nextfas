@@ -15,9 +15,9 @@ export const userNavigations = [
         link: "/auth/",
       },
       {
-        icon: "fa-regular fa-user",
+        icon: "fa-regular fa-user-plus",
         name: "Register",
-        link: "/auth/registerDashboard",
+        link: "/reports/register",
       },
     ],
   },

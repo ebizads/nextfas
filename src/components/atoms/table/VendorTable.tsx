@@ -63,11 +63,11 @@ const VendorTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[70vw] overflow-x-auto m-0 self-center ${minimize ? "xl:w-[88vw]" : "xl:w-[77vw] xl:max-w-[90vw]"
+        }  border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
-      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 justify-self-center">
         <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
             <th scope="col" className="py-1">
@@ -104,7 +104,6 @@ const VendorTable = (props: {
         </thead>
         <tbody>
           {props.rows
-            .sort((a, b) => (a?.id ?? 0) - (b?.id ?? 0))
             .map((row, idx) => (
               <tr
                 key={row?.id ?? idx}

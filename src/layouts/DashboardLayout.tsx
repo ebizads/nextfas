@@ -14,9 +14,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Sidebar */}
       <SideBar />
       <div
-        className={`flex flex-1 flex-col ${
-          minimize ? "w-[90vw]" : "w-[75vw]"
-        } min-h-screen duration-200 xl:w-full`}
+        className={`flex flex-1 flex-col ${minimize ? "w-[90vw]" : "w-[75vw]"
+          } min-h-screen duration-200 xl:w-full`}
       >
         {/* Topbar */}
 
@@ -25,7 +24,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
         <AnimatePresence mode="wait">
           <AnimatedPage>
-            <section className={`flex w-full flex-1 flex-col p-4`}>
+            <section className={`flex w-full flex-1 flex-col p-4 overflow-x-hidden`}>
               {children}
             </section>
           </AnimatedPage>

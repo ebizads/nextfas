@@ -16,7 +16,10 @@ const Employee = () => {
 
 
     const { data } = trpc.employee.findAll.useQuery({
-        search: { name: search },
+        search: {
+            employee_id: search,
+            name: search
+        },
         limit,
         page,
     })

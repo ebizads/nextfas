@@ -6,14 +6,14 @@ const VendorRecordsAccordion = (props: {
 }) => {
     return (
         <Accordion>
-            {props.incomingChanges?.map((employee, idx) => (
+            {props.incomingChanges?.map((vendor, idx) => (
                 <Accordion.Item
-                    value={employee?.id?.toString() ?? (0).toString()}
+                    value={vendor?.id?.toString() ?? (0).toString()}
                     key={idx}
                 >
                     <Accordion.Control className="uppercase">
                         <div className="grid w-1/2 grid-cols-2 gap-1">
-                            <p>{employee.name}</p>
+                            <p>{vendor?.name}</p>
                         </div>
                     </Accordion.Control>
                     <Accordion.Panel>

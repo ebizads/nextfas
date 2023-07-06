@@ -13,7 +13,12 @@ const Assets = () => {
   const router = useRouter()
   const { search } = useSearchStore()
   // Get asset by asset id
-  const { data } = trpc.asset.findAll.useQuery({
+  const { data: dataAssets } = trpc.asset.findAll.useQuery({
+    search: { name: search },
+    limit,
+    page,
+  })
+  const { data: sample } = trpc.asset.findAllSample.useQuery({
     search: { name: search },
     limit,
     page,
@@ -21,15 +26,20 @@ const Assets = () => {
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [assets, setAssets] = useState<AssetType[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
+  const [sampleAssets, setSampleAssets] = useState<AssetType[]>([])
 
   useEffect(() => {
     //get and parse all data
-    console.log("sample ", data, search)
-    if (data) {
-      setAssets(data.assets as AssetType[])
-      setAccessiblePage(Math.ceil(data?.count / limit))
+    console.log("sample ", dataAssets, search)
+    if (dataAssets) {
+      setAssets(dataAssets.assets as AssetType[])
+      setAccessiblePage(Math.ceil(dataAssets?.count / limit))
     }
-  }, [data, limit, router])
+    if (sample) {
+      setSampleAssets(sample.assets as AssetType[])
+      console.log(sampleAssets)
+    }
+  }, [dataAssets, limit, router, sample, sampleAssets, search])
 
   return (
     <DashboardLayout>
@@ -37,8 +47,9 @@ const Assets = () => {
       <div className="space-y-6">
         <h3 className="text-xl font-medium">Assets</h3>
         <DisplayAssets
-          total={data?.count ?? 0}
+          total={dataAssets?.count ?? 0}
           assets={assets}
+          assetsSample={sampleAssets}
           accessiblePage={accessiblePage}
           page={page}
           setPage={setPage}

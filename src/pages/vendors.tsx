@@ -18,7 +18,7 @@ import AlertInput from "../components/atoms/forms/AlertInput"
 import { Textarea } from "@mantine/core"
 import { ImageJSON } from "../types/table"
 import DropZoneComponent from "../components/dropzone/DropZoneComponent"
-import { currentValue, downloadExcel, downloadExcelVendor } from "../lib/functions"
+import { currentValue, downloadExcel, downloadExcelTemplateVendor, downloadExcelVendor } from "../lib/functions"
 import { ExcelExportTypeVendor } from "../types/vendors"
 import TypeSelect from "../components/atoms/select/TypeSelect"
 import Modal from "../components/headless/modal/modal"
@@ -36,6 +36,7 @@ const Vendors = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [vendors, setVendors] = useState<VendorType[]>([])
+  const [vendorsSample, setVendorsSample] = useState<VendorType[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
@@ -46,12 +47,17 @@ const Vendors = () => {
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
   const [search, setSearch] = useState<string>("")
 
-  const { data } = trpc.vendor.findAll.useQuery({
+  const { data: dataVendor } = trpc.vendor.findAll.useQuery({
     search: { name: search },
     limit,
     page,
   })
 
+  const { data: vendorDataSample } = trpc.vendor.findAllSample.useQuery({
+    search: { name: search },
+    limit,
+    page,
+  })
 
   const utils = trpc.useContext()
 
@@ -67,12 +73,16 @@ const Vendors = () => {
 
   useEffect(() => {
     //get and parse all data
-    if (data) {
-      setVendors(data.vendors as VendorType[])
-      setAccessiblePage(Math.ceil(data?.count / limit))
+    if (dataVendor) {
+      setVendors(dataVendor.vendors as VendorType[])
+      setAccessiblePage(Math.ceil(dataVendor?.count / limit))
+    }
+    if (vendorDataSample) {
+
+      setVendorsSample(vendorDataSample.vendors as VendorType[])
     }
 
-  }, [data, limit])
+  }, [dataVendor, vendorDataSample, limit])
 
 
   // Infer the TS type according to the zod schema.
@@ -84,6 +94,7 @@ const Vendors = () => {
   } = trpc.vendor.create.useMutation({
     onSuccess: () => {
       utils.vendor.findAll.invalidate()
+      utils.vendor.findAllSample.invalidate()
       setAddSingleRecord(false);
     },
   })
@@ -164,6 +175,35 @@ const Vendors = () => {
               </button> */}
               <button
                 onClick={() => {
+                  const downloadableVendors = vendorsSample.map(
+                    (vendor) => {
+                      if (vendor?.["address"]) {
+                        const { address, ...rest } = vendor
+                        return {
+                          ...rest,
+                          address_id: address.id,
+                          ...address,
+                          address_createdAt: address.createdAt,
+                          address_updatedAt: address.updatedAt,
+                          address_deleted: address.deleted,
+                          address_deletedAt: address.deletedAt,
+                          deleted: rest.deleted,
+                          deletedAt: rest.deletedAt,
+                          id: rest.id,
+                        }
+                      }
+                    }
+                  ) as ExcelExportTypeVendor[]
+                  console.log(JSON.stringify(vendorDataSample))
+                  downloadExcelTemplateVendor(downloadableVendors)
+                }}
+                className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
+              >
+                <i className="fa-solid fa-print text-xs" />
+                Generate Template
+              </button>
+              <button
+                onClick={() => {
                   const downloadableVendors = vendors.map(
                     (vendor) => {
                       if (vendor?.["address"]) {
@@ -177,6 +217,8 @@ const Vendors = () => {
                           address_updatedAt: address.updatedAt,
                           address_deleted: address.deleted,
                           address_deletedAt: address.deletedAt,
+                          deleted: rest.deleted,
+                          deletedAt: rest.deletedAt,
                           id: rest.id,
                         }
                       }
@@ -397,7 +439,7 @@ const Vendors = () => {
                 <div className="col-span-2">
                   <label className="sm:text-sm">Zip Code</label>
                   <InputField
-                    type={"text"}
+                    type={"number"}
                     label={""}
                     name={"address.zip"}
                     register={register}

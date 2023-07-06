@@ -28,7 +28,7 @@ const form = () => {
     },
   });
 
-  
+
   const onSubmit: SubmitHandler<AssetFieldValues> = (
     form_data: AssetFieldValues
   ) => {
@@ -36,17 +36,17 @@ const form = () => {
       console.log("ERROR ENCOUNTERED")
       console.error("Prisma Error: ", error)
       console.error("Form Error:", errors)
-    } 
     }
+  }
 
-    return (
-       <div>
-        
-       </div>
-      )
-  };
+  return (
+    <div>
+
+    </div>
+  )
+};
 
 
-  
+
 
 export default form;

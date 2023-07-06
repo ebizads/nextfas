@@ -6,7 +6,7 @@ import { columns } from "../../lib/table"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import { useSearchStore } from "../../store/useStore"
-import { downloadExcel_assets } from "../../lib/functions"
+import { downloadExcel_assets, downloadExcel_templateAssets } from "../../lib/functions"
 import { UserType } from "../../types/generic"
 import { ExcelExportAssetType } from "../../types/asset"
 import { trpc } from "../../utils/trpc"
@@ -19,6 +19,7 @@ const DisplayAssets = (props: {
   user: UserType
   total: number
   assets: AssetType[]
+  assetsSample: AssetType[]
   accessiblePage: number
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
@@ -83,6 +84,50 @@ const DisplayAssets = (props: {
             )}
           </div>
           <div className="flex items-center gap-2">
+
+            <button onClick={() => {
+              const downloadableAssets = props.assetsSample.map((assets) => {
+                console.log("TRIAl: " + JSON.stringify(assets))
+                if (assets?.['model'] && assets?.['management']) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
+                  const { management, createdAt, updatedAt, deleted, deletedAt, model, ...rest } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
+
+                  return {
+                    ...rest,
+                    management_id: management?.id,
+                    ...management,
+                    management_createdAt: management?.createdAt,
+                    management_updatedAt: management?.updatedAt,
+                    mangement_deletedAt: management?.deletedAt,
+                    management_deleted: management?.deleted,
+                    management_remarks: management?.remarks,
+                    model_id: model?.id,
+                    model_name: model?.name,
+                    model_number: model?.number,
+                    model_createdAt: model?.createdAt,
+                    model_updatedAt: model?.updatedAt,
+                    model_deletedAt: model?.deletedAt,
+                    model_deleted: model?.deleted,
+                    ...model,
+                    ...rest,
+                    remarks: rest?.remarks,
+                    id: rest.id,
+                    number: rest.number,
+                    createdAt: createdAt,
+                    updatedAt: updatedAt,
+                    deletedAt: deletedAt,
+                    deleted: deleted,
+
+                  }
+                }
+
+              }) as ExcelExportAssetType[]
+              console.log("TEST: " + JSON.stringify(downloadableAssets))
+
+              downloadExcel_templateAssets(downloadableAssets)
+            }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
+              <i className="fa-solid fa-print text-xs" />
+              Generate Template
+            </button>
             <button onClick={() => {
 
               const downloadableAssets = props.assets.map((assets) => {
@@ -122,7 +167,7 @@ const DisplayAssets = (props: {
               downloadExcel_assets(downloadableAssets)
             }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
               <i className="fa-solid fa-print text-xs" />
-              Print Asset
+              Generate Table
             </button>
             {/* <Link href={"/assets/create"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">

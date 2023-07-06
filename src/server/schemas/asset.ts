@@ -3,6 +3,7 @@ import {
   CustodianEditInput,
   ManagementCreateInput,
   ManagementEditInput,
+  ManagementTableEditInput,
   ModelCreateInput,
   ModelEditInput,
   ModelEditTableInput,
@@ -89,7 +90,7 @@ export const AssetTransformInput = z.object({
   purchaseOrder: z.string().nullish(),
   deployment_status: z.string().nullish(),
   // createdAt: z.date(),
-  updatedAt: z.date(),
+  // updatedAt: z.date(),
   deletedAt: z.date().nullish(),
   deleted: z.boolean(),
 

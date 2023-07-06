@@ -9,7 +9,6 @@ export const vendorRouter = t.router({
     const vendor = await ctx.prisma.vendor.findUnique({
       where: { id: input },
       include: {
-
         address: true,
       },
     })
@@ -94,6 +93,69 @@ export const vendorRouter = t.router({
                   deleted: true,
                 },
               },
+            }),
+            ctx.prisma.vendor.count({
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+              },
+            }),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        )
+        return {
+          vendors,
+          count,
+        }
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  findAllSample: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              name: z.string().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const [vendors, count] = await ctx.prisma.$transaction(
+          [
+            ctx.prisma.vendor.findMany({
+              orderBy: {
+                createdAt: "desc",
+              },
+              include: {
+                address: true,
+              },
+              where: {
+                name: {
+                  contains: input?.search?.name ? input.search.name : undefined,
+                  mode: 'insensitive'
+                },
+
+                id: 999999,
+
+              },
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+              take: input?.limit ?? 10,
+
             }),
             ctx.prisma.vendor.count({
               where: {

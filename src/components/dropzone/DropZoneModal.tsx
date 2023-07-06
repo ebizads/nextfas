@@ -10,7 +10,7 @@ export const DropZoneModal = (props: {
   const closeAll = () => {
     props.setCloseModal(false)
     props.setIsVisible(false)
-    window.location.reload()
+    // window.location.reload()
   }
   return (
     <Modal

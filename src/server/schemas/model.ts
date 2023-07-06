@@ -103,8 +103,7 @@ export const ModelEditTableInput = z.object({
   //asset_type: AssetTypeCreateInput,
   typeId: z.number({ required_error: "Please select asset type" }),
   //type: TypeEditInput.optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+
   deletedAt: z.date().nullish(),
   deleted: z.boolean(),
 

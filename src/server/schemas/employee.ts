@@ -72,9 +72,26 @@ export const EmployeeTableEditInput = z.object({
     .optional(),
   hired_date: z.date().nullish().optional(),
   position: z.string().nullish().optional(),
+  profile: z
+    .object({
+      first_name: z.string(),
+      last_name: z.string(),
+      middle_name: z.string().nullish().optional(),
+      suffix: z.string().nullish().optional(),
+      date_of_birth: z.date().nullish().optional(),
+      phone_no: z.string().nullish().optional(),
+      gender: z.string().nullish().optional(),
+      image: z.string().nullish().optional(),
+    })
+    .optional(),
+  address: AddressEditInput,
   workStation: z.string().nullish(),
   workMode: z.string().nullish(),
   teamId: z.number().optional(),
+  // createdAt: z.date(),
+  // updatedAt: z.date(),
+  deletedAt: z.date().nullish(),
+  deleted: z.boolean(),
 })
 
 

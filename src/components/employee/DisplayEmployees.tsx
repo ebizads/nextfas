@@ -6,7 +6,7 @@ import { columns } from "../../lib/employeeTable"
 import { ImageJSON } from "../../types/table"
 import Modal from "../headless/modal/modal"
 import { CreateEmployeeModal } from "./CreateEmployeeModal"
-import { downloadExcel } from "../../lib/functions"
+import { downloadExcel, downloadExcel_template } from "../../lib/functions"
 import { ExcelExportType } from "../../types/employee"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import { employeeColumns } from "../../lib/table"
@@ -40,6 +40,7 @@ import { filter } from "lodash"
 const DisplayEmployees = (props: {
   total: number
   employees: EmployeeType[]
+  sampleEmployee: EmployeeType[]
   employeePage: number
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
@@ -115,6 +116,38 @@ const DisplayEmployees = (props: {
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
+                const downloadableEmployees = props.sampleEmployee.map(
+                  (employee) => {
+                    if (employee?.["address"] && employee?.["profile"]) {
+                      const { address, profile, ...rest } = employee
+                      return {
+                        ...rest,
+                        address_id: address.id,
+                        ...address,
+                        address_createdAt: address.createdAt,
+                        address_updatedAt: address.updatedAt,
+                        address_deleted: address.deleted,
+                        address_deletedAt: address.deletedAt,
+                        profile_id: profile.id,
+                        ...profile,
+                        profile_employeeId: profile.employeeId,
+                        profile_userId: profile.userId,
+                        deleted: rest.deleted,
+                        deletedAt: rest.deletedAt,
+                        id: rest.id,
+                      }
+                    }
+                  }
+                ) as ExcelExportType[]
+                downloadExcel_template(downloadableEmployees)
+              }}
+              className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
+            >
+              <i className="fa-solid fa-print text-xs" />
+              Generate Template
+            </button>
+            <button
+              onClick={() => {
                 const downloadableEmployees = props.employees.map(
                   (employee) => {
                     if (employee?.["address"] && employee?.["profile"]) {
@@ -131,6 +164,8 @@ const DisplayEmployees = (props: {
                         ...profile,
                         profile_employeeId: profile.employeeId,
                         profile_userId: profile.userId,
+                        deleted: rest.deleted,
+                        deletedAt: rest.deletedAt,
                         id: rest.id,
                       }
                     }

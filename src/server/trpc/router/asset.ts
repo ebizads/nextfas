@@ -117,10 +117,95 @@ export const assetRouter = t.router({
           },
           where: {
             NOT: {
+              // id: 999999,
               deleted: true,
             },
             name: { contains: input?.search?.name, mode: 'insensitive' },
             number: { contains: input?.search?.number, mode: 'insensitive' },
+          },
+          skip: input?.page
+            ? (input.page - 1) * (input.limit ?? 10)
+            : undefined,
+          take: input?.limit ?? 10,
+        }),
+        ctx.prisma.asset.count({
+          where: {
+            NOT: {
+              deleted: true,
+            },
+          },
+        }),
+      ])
+
+      return {
+        assets,
+        count,
+      }
+    }),
+
+  findAllSample: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              name: z.string().optional(),
+              number: z.string().optional(),
+              serial_no: z.string().optional(),
+              barcode: z.string().optional(),
+              description: z.string().optional(),
+              remarks: z.string().optional(),
+              invoiceNum: z.string().optional(),
+              purchaseOrder: z.string().optional(),
+              deployment_status: z.string().optional(),
+              custodianId: z.number().optional(),
+              departmentId: z.number().optional(),
+              vendorId: z.number().optional(),
+              subsidiaryId: z.number().optional(),
+              assetProjectId: z.number().optional(),
+              parentId: z.number().optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              updatedAt: z.date().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const [assets, count] = await ctx.prisma.$transaction([
+        ctx.prisma.asset.findMany({
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            model: {
+              include: {
+                class: true,
+                category: true,
+                type: true,
+              },
+            },
+            department: {
+              include: {
+                location: true,
+                company: true,
+                teams: true,
+              },
+            },
+            parent: true,
+            custodian: true,
+            vendor: true,
+            management: true,
+            addedBy: true,
+          },
+          where: {
+            id: 999999,
+
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)
@@ -288,7 +373,6 @@ export const assetRouter = t.router({
           addedBy: true,
         },
       })
-      console.log(asset)
       return asset
     }),
   createMany: authedProcedure
@@ -365,12 +449,12 @@ export const assetRouter = t.router({
   createOrUpdate: authedProcedure
     .input(AssetTransformInput)
     .mutation(async ({ ctx, input }) => {
-      const { management, id, model, ...rest } = input
+      const { management, model, number, id, ...rest } = input
       console.log("MODEL:", model)
 
       const existAssets = await ctx.prisma?.asset.findFirst({
         where: {
-          id: id
+          number: number
         }
       })
 
@@ -405,10 +489,11 @@ export const assetRouter = t.router({
       if (existAssets?.id) {
         await ctx.prisma?.asset.update({
           where: {
-            id: id
+            number: number
           },
           data: {
             ...rest,
+            number: number,
             vendorId: rest.vendorId ?? 0,
             management: { update: management },
             modelId: modelId,
@@ -418,6 +503,7 @@ export const assetRouter = t.router({
         await ctx.prisma?.asset.create({
           data: {
             ...rest,
+            number: number,
             vendorId: rest.vendorId ?? 0,
             management: { create: management },
             modelId: modelId,

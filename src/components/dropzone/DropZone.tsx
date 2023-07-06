@@ -45,18 +45,23 @@ export default function DropZone({
   const [duplicatedEmployees, setDuplicatedEmployees] = useState<
     ExcelExportType[]
   >([])
+  const utils = trpc.useContext()
 
   const {
     mutate,
     isLoading: employeeLoading,
+    error,
   } = trpc.employee.createOrUpdate.useMutation({
-    onSuccess() {
+    onSuccess(profile) {
       setCloseModal(true)
-      console.log(mutate)
+      // console.log("sample: ", profile)
       console.log("omsiman")
-
+      utils.asset.findAll.invalidate()
       // invalidate query of asset id when mutations is successful
     },
+    onError() {
+      console.log(JSON.stringify(error))
+    }
   })
 
 
@@ -195,9 +200,9 @@ export default function DropZone({
           teamId: duplicatedEmployees[i]?.teamId ?? 0,
           superviseeId: duplicatedEmployees[i]?.superviseeId ?? null,
           // createdAt: duplicatedEmployees[i]?.createdAt,
-          // updatedAt: duplicatedEmployees[i]?.updatedAt,
-          // deleted: duplicatedEmployees[i]?.deleted,
-          // deletedAt: duplicatedEmployees[i]?.deletedAt,
+          // updatedAt: duplicatedEmployees[i]?.updatedAt?,
+          deleted: duplicatedEmployees[i]?.deleted ?? false,
+          deletedAt: duplicatedEmployees[i]?.deletedAt,
           workMode: duplicatedEmployees[i]?.workMode,
           workStation: duplicatedEmployees[i]?.workStation,
           address: {

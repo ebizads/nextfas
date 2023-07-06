@@ -52,13 +52,17 @@ export default function DropZone_asset({
     ExcelExportAssetType[]
   >([])
 
+  const utils = trpc.useContext()
+
   const {
     mutate,
     isLoading: assetLoading,
     error,
   } = trpc.asset.createOrUpdate.useMutation({
-    onSuccess(rest) {
+    onSuccess(rest: any) {
       setCloseModal(true)
+      utils.asset.findAll.invalidate()
+
       console.log("omsiman: " + JSON.stringify(rest))
 
       // invalidate query of asset id when mutations is successful
@@ -71,6 +75,7 @@ export default function DropZone_asset({
 
 
   const parseAssetsData = (data: unknown[]) => {
+
     //returns all id of parsed assets
     const id_list = data.map((asset) => {
       return String((asset as string[])[2] as string)
@@ -86,7 +91,7 @@ export default function DropZone_asset({
       console.log("TEST: " + JSON.stringify(data))
 
       return id_list.includes(
-        asset ? String((asset as string[])[2] as string) : ""
+        asset && Number((asset as number[])[2] as number) !== 999999 ? String((asset as string[])[2] as string) : ""
       )
     }) as any[]
 
@@ -100,14 +105,14 @@ export default function DropZone_asset({
 
       return jsDate;
     }
+    console.log("idlist: ", id_list)
 
     const final_dupList = [] as ExcelExportAssetType[]
     dupAssetList.forEach((ast) => {
-
       const data_structure = {
         id: (ast as (string | number | null)[])[0] as number,
         name: (ast as (string | number | null)[])[1] as string,
-        number: (ast[2] ? (ast as (string | number | null)[])[2] as string : parseId(((ast as (string | number | null)[])[13] as number).toString() ?? "") + parseId(((ast as (string | number | null)[])[63] as number).toString()) + assetId),
+        number: (ast[2] ? (ast as (string | number | null)[])[2] as string : parseId(((ast as (string | number | null)[])[13] as string) ?? "") + parseId(((ast as (string | number | null)[])[63] as string)) + assetId),
         alt_number: (ast as (string | number | null)[])[3] as string,
         serial_number: (ast as (string | number | null)[])[4] as string,
         barcode: (ast as (string | number | null)[])[5] as string,
@@ -118,10 +123,10 @@ export default function DropZone_asset({
         custodianId: (ast as (string | number | null)[])[10] as number,
         vendorId: (ast as (string | number | null)[])[11] as number,
         assetProjId: (ast as (string | number | null)[])[12] as number,
-        createdAt: (ast[39] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[39] as number)) : null),
-        updatedAt: (ast[40] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[40] as number)) : null),
-        deletedAt: (ast[41] !== null ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[41] as number)) : null),
-        deleted: (ast as (null | string)[])[42] === "TRUE" ? true : false as boolean,
+        createdAt: (ast[38] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[38] as number)) : null),
+        updatedAt: (ast[39] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[39] as number)) : null),
+        deletedAt: (ast[40] !== null ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[40] as number)) : null),
+        deleted: (ast as (null | boolean)[])[41] as boolean,
         departmentId: (ast as (string | number | null)[])[13] as number,
         subsidiaryId: (ast as (string | number | null)[])[14] as number,
         addedById: (ast as (string | number | null)[])[15] as number,
@@ -167,7 +172,7 @@ export default function DropZone_asset({
           createdAt: (ast[57] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[57] as number)) : null),
           updatedAt: (ast[58] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[58] as number)) : null),
           deletedAt: (ast[59] ? new Date(excelSerialDateToJSDate((ast as (string | number | null | boolean)[])[59] as number)) : null),
-          deleted: (ast as (string | null)[])[60] === "TRUE" ? true : false as boolean,
+          deleted: (ast as (boolean | null)[])[60] as boolean,
         }
 
 
@@ -244,7 +249,7 @@ export default function DropZone_asset({
           vendorId: duplicatedAssets[i]?.vendorId ?? 0,
           assetProjectId: duplicatedAssets[i]?.assetProjectId ?? 0,
           // createdAt: duplicatedAssets[i]?.createdAt ?? new Date(),
-          updatedAt: duplicatedAssets[i]?.updatedAt ?? new Date(),
+          // updatedAt: duplicatedAssets[i]?.updatedAt ?? new Date(),
           deletedAt: duplicatedAssets[i]?.deletedAt ?? null,
           deleted: duplicatedAssets[i]?.deleted ?? false,
           departmentId: duplicatedAssets[i]?.departmentId ?? 0,
@@ -284,8 +289,8 @@ export default function DropZone_asset({
             // class: {
             //   name: duplicatedAssets[i]?.model?.class?.name ?? "",
             // }
-            createdAt: duplicatedAssets[i]?.model?.createdAt ?? new Date(),
-            updatedAt: duplicatedAssets[i]?.model?.updatedAt ?? new Date(),
+            // createdAt: duplicatedAssets[i]?.model?.createdAt ?? new Date(),
+            // updatedAt: duplicatedAssets[i]?.model?.updatedAt ?? new Date(),
             deletedAt: duplicatedAssets[i]?.model?.deletedAt ?? null,
             deleted: duplicatedAssets[i]?.model?.deleted ?? false,
           }

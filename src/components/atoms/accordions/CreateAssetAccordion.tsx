@@ -48,7 +48,11 @@ import Assets from "../../../pages/assets"
 import Employee from "../../../pages/employees"
 
 const CreateAssetAccordion = () => {
-  const { mutate, isLoading, error } = trpc.asset.create.useMutation()
+  const { mutate, isLoading, error } = trpc.asset.create.useMutation({
+    onError() {
+      console.log(error)
+    }
+  })
 
   const {
     register,

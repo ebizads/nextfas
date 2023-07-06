@@ -91,11 +91,15 @@ const UpdateUserModal = (props: {
     console.log(("test") + JSON.stringify(user))
     reset(props.user as User)
     setCertificate(generateCertificate)
+
+    console.log("error mo to", JSON.stringify(error))
   }, [props.user, reset, user])
 
   const onSubmit = async (userForm: User) => {
     // Register function
     console.log(userForm)
+    console.log("error na nga to anoba", JSON.stringify(error))
+
 
     mutate({
       ...userForm,
@@ -476,6 +480,7 @@ const UpdateUserModal = (props: {
               <pre className="mt-2 text-sm italic text-red-500">
                 Something went wrong!
               </pre>
+
             )
           )}
           <Modal

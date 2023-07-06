@@ -74,77 +74,67 @@ export const userRouter = t.router({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      try {
-        const [user, count] = await ctx.prisma.$transaction(
-          [
-            ctx.prisma.user.findMany({
-              orderBy: {
-                createdAt: "desc",
-              },
-              include: {
-                address: true,
-                profile: true,
-                validateTable: true,
-                Userteam: {
-                  include: {
-                    department: {
-                      include: {
-                        location: true,
-                      },
+
+      const [user, count] = await ctx.prisma.$transaction(
+        [
+          ctx.prisma.user.findMany({
+            orderBy: {
+              createdAt: "desc",
+            },
+            include: {
+              address: true,
+              profile: true,
+              validateTable: true,
+              Userteam: {
+                include: {
+                  department: {
+                    include: {
+                      location: true,
                     },
                   },
                 },
               },
-              where: {
-                name: {
-                  contains: input?.search?.name,
-                  mode: 'insensitive'
-                },
-                NOT: {
-                  deleted: true,
-                },
-                // hired_date: input?.filter?.hired_date,
-                // name: { contains: input?.search?.name },
-                // employee_id: { contains: input?.search?.employee_id },
-                // email: { contains: input?.search?.email },
-                // team: {
-                //   department: {
-                //     id: {
-                //       equals: input?.search?.team?.department?.id,
-                //     },
-                //   },
-                // },
+            },
+            where: {
+              name: {
+                contains: input?.search?.name,
+                mode: 'insensitive'
               },
-              skip: input?.page
-                ? (input.page - 1) * (input.limit ?? 10)
-                : undefined,
-              take: input?.limit ?? 10,
-            }),
-            ctx.prisma.user.count({
-              where: {
-                NOT: {
-                  deleted: true,
-                },
+              NOT: {
+                deleted: true,
               },
-            }),
-          ],
-          {
-            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-          }
-        )
+              // hired_date: input?.filter?.hired_date,
+              // name: { contains: input?.search?.name },
+              // employee_id: { contains: input?.search?.employee_id },
+              // email: { contains: input?.search?.email },
+              // team: {
+              //   department: {
+              //     id: {
+              //       equals: input?.search?.team?.department?.id,
+              //     },
+              //   },
+              // },
+            },
+            skip: input?.page
+              ? (input.page - 1) * (input.limit ?? 10)
+              : undefined,
+            take: input?.limit ?? 10,
+          }),
+          ctx.prisma.user.count({
+            where: {
+              NOT: {
+                deleted: true,
+              },
+            },
+          }),
+        ]
+      )
 
-        return {
-          user,
-          pages: Math.ceil(count / (input?.limit ?? 0)),
-          total: count,
-        }
-      } catch (error) {
-        console.log(error)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: JSON.stringify(error),
-        })
+      return {
+        user,
+        count,
       }
+
     }),
   findValidate: authedProcedure
     .input(z.number())

@@ -82,6 +82,14 @@ export const UpdateEmployeeModal = (props: {
 
   useEffect(() => reset(props.employee as Employee), [props.employee, reset])
 
+  const [isEditable, setIsEditable] = useState<boolean>(false)
+  const [updated, setUpdated] = useState(false)
+
+  useEffect(() => {
+    setEditable(false)
+    console.log("editable na dapat ito 9999", editable, "udpated na dapat ito", updated)
+  }, [])
+
   const onSubmit = async (employee: Employee) => {
     // Register function
     mutate({
@@ -90,9 +98,6 @@ export const UpdateEmployeeModal = (props: {
     })
     reset()
   }
-
-  const [isEditable, setIsEditable] = useState<boolean>(false)
-  const [updated, setUpdated] = useState(false)
 
   const handleDelete = () => {
     setOpenModalDel(true)
@@ -104,10 +109,12 @@ export const UpdateEmployeeModal = (props: {
 
   const handleIsEditable = () => {
     if (!updated) {
-      setEditable(!editable)
+      setEditable(true)
       setUpdated(true)
     }
+
   }
+
 
   // useEffect(() => { console.log("department: " + props.employee?.team?.department?.name) })
 

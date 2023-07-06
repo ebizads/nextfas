@@ -5,7 +5,7 @@ import ChangePassModal from "../../../pages/auth/ChangePassModal"
 import { useSession } from "next-auth/react"
 import { trpc } from "../../../utils/trpc"
 import UserValidateModal from "../../user/UserValidateModal"
-import { useEditableStore } from "../../../store/useStore"
+import { useUserEditableStore } from "../../../store/useStore"
 
 const LogOutPopOver = (props: {
   openPopover: boolean
@@ -22,17 +22,23 @@ const LogOutPopOver = (props: {
   const { data: user } = trpc.user.findOne.useQuery(userId)
   const [validateIsVisible, setValidate] = useState<boolean>(false)
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
-  const { editable, setEditable } = useEditableStore()
+  const { userEditable, setUserEditable } = useUserEditableStore()
 
   useEffect(() => {
-    if (!validateIsVisible && editable) {
-      setEditable(false)
+    if (!validateIsVisible && userEditable) {
+      setUserEditable(false)
     }
     setUserId(Number(session?.user?.id))
     //console.log(user)
+    console.log("userEditable:", userEditable)
 
     //setOpenChangePass(props.isVisible)
-  }, [editable, props, session, setEditable, user, validateIsVisible])
+  }, [userEditable, props, session, setUserEditable, user, validateIsVisible])
+
+
+  useEffect(() => {
+    console.log("userEditable: " + userEditable, "validatevisible: " + validateIsVisible)
+  })
 
   return (
     <div>

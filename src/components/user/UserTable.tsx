@@ -60,7 +60,7 @@ const UserTable = (props: {
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : ""
         } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}

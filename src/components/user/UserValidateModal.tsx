@@ -88,8 +88,6 @@ const UserValidateModal = (props: {
     },
   })
 
-
-
   const {
     handleSubmit,
     reset,
@@ -162,7 +160,12 @@ const UserValidateModal = (props: {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [updated, setUpdated] = useState(false);
 
+  useEffect(() => {
+    setUserEditable(false)
 
+  }, [])
+
+  useEffect(() => { setUpdated(false); })
 
   const handleEditable = () => {
 
@@ -171,10 +174,12 @@ const UserValidateModal = (props: {
 
   const handleIsEditable = () => {
     if (!updated) {
-      setUserEditable(!userEditable);
+      setUserEditable(true);
       setUpdated(true);
+
     }
   };
+
 
   console.log(user?.position);
   return (
@@ -182,7 +187,7 @@ const UserValidateModal = (props: {
       isVisible={props.openModalDesc}
       setIsVisible={props.setOpenModalDesc}
       className="max-w-4xl"
-      title="User Details"
+      title={(userEditable) ? "Update User Details" : "User Details"}
     >
       <div>
         <div className="flex w-full flex-row-reverse">

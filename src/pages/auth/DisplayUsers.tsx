@@ -48,11 +48,7 @@ const DisplayUsers = (props: {
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [search, setSearch] = useState<string>("")
-  const { data } = trpc.user.findAll.useQuery({
-    search: { name: search },
-    limit,
-    page,
-  })
+
   const utils = trpc.useContext()
 
   // const Search = (props: { data: SearchType[] }) => {
@@ -72,11 +68,11 @@ const DisplayUsers = (props: {
   //   )
   // }
 
-  useEffect(() => {
-    if (data) {
-      setUsers(data.user as UserType[])
-    }
-  }, [data])
+  // useEffect(() => {
+  //   if (data) {
+  //     setUsers(data.user as UserType[])
+  //   }
+  // }, [data])
 
   const { mutate } = trpc.user.deleteMany.useMutation({
     onSuccess: () => {
@@ -154,7 +150,7 @@ const DisplayUsers = (props: {
         <UserTable
           checkboxes={checkboxes}
           setCheckboxes={setCheckboxes}
-          rows={users}
+          rows={props.users}
           filterBy={filterBy}
           columns={columnsuser.filter((col) => filterBy.includes(col.value))}
         />

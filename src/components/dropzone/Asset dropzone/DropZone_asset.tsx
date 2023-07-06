@@ -108,11 +108,28 @@ export default function DropZone_asset({
     console.log("idlist: ", id_list)
 
     const final_dupList = [] as ExcelExportAssetType[]
+
+    const parseId = (id: string | null) => {
+      console.log("id: " + id)
+      if (!id) {
+        return "00"
+      }
+      if (id?.length === 1) {
+        return "0" + id
+      } else {
+        return id
+      }
+    }
+
+    const transformNumber = (id: string | number) => {
+      return id?.toString()
+    }
+
     dupAssetList.forEach((ast) => {
       const data_structure = {
         id: (ast as (string | number | null)[])[0] as number,
         name: (ast as (string | number | null)[])[1] as string,
-        number: (ast[2] ? (ast as (string | number | null)[])[2] as string : parseId(((ast as (string | number | null)[])[13] as string) ?? "") + parseId(((ast as (string | number | null)[])[63] as string)) + assetId),
+        number: (ast[2] ? (ast as (string | number | null)[])[2] as string : (parseId(transformNumber((ast as (string | number | null)[])[13] as number)) + parseId(transformNumber((ast as (string | number | null)[])[63] as number)) + assetId as string)),
         alt_number: (ast as (string | number | null)[])[3] as string,
         serial_number: (ast as (string | number | null)[])[4] as string,
         barcode: (ast as (string | number | null)[])[5] as string,
@@ -215,16 +232,6 @@ export default function DropZone_asset({
     setIsVisible(false)
   }
 
-  const parseId = (id: string | null | undefined) => {
-    if (!id) {
-      return "00"
-    }
-    if (id?.length === 1) {
-      return 0 + id
-    } else {
-      return id
-    }
-  }
 
 
 
@@ -233,7 +240,7 @@ export default function DropZone_asset({
     // Register function
     try {
       for (let i = 0; i < duplicatedAssets.length; i++) {
-        console.log("assets: " + JSON.stringify(duplicatedAssets[i]))
+        console.log("assets: " + JSON.stringify(duplicatedAssets[i]?.number))
         mutate({
           id: duplicatedAssets[i]?.id ?? 0,
           name: duplicatedAssets[i]?.name ?? "",

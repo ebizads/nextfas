@@ -505,7 +505,14 @@ export const assetRouter = t.router({
             ...rest,
             number: number,
             vendorId: rest.vendorId ?? 0,
-            management: { create: management },
+            management: {
+              connectOrCreate: {
+                where: {
+                  id: 0,
+                },
+                create: management,
+              },
+            },
             modelId: modelId,
           }
         })

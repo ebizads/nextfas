@@ -30,6 +30,7 @@ export const CreateEmployeeModal = (props: {
   const [workModeValue, onSearchWorkMode] = useState("")
   const [workStationValue, onSearchWorkStation] = useState("")
   const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [tryReset, setTryReset] = useState<boolean>(false)
   const [empId] = useState<string>(moment().format("YY-MDhms"))
   const { data: teams } = trpc.team.findAll.useQuery()
   const utils = trpc.useContext()
@@ -124,9 +125,11 @@ export const CreateEmployeeModal = (props: {
     reset()
   }
   const onDiscard = () => {
+    props.setIsVisible(false)
     document.forms[0]?.reset()
     reset()
-    props.setIsVisible(false)
+
+
   }
 
   return (

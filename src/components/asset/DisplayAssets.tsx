@@ -126,7 +126,7 @@ const DisplayAssets = (props: {
               downloadExcel_templateAssets(downloadableAssets)
             }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
               <i className="fa-solid fa-print text-xs" />
-              Generate Template
+              Download Template
             </button>
             <button onClick={() => {
 
@@ -167,7 +167,7 @@ const DisplayAssets = (props: {
               downloadExcel_assets(downloadableAssets)
             }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
               <i className="fa-solid fa-print text-xs" />
-              Generate Table
+              Download Assets
             </button>
             {/* <Link href={"/assets/create"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">

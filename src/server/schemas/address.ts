@@ -31,6 +31,5 @@ export const AddressEditInput = z
     zip: z.number().nullish(),
     country: z.string().nullish(),
   })
-  .optional()
 
 

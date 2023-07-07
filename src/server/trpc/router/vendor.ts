@@ -25,7 +25,14 @@ export const vendorRouter = t.router({
           },
           create: {
             ...rest,
-            address: { create: address },
+            address: {
+              connectOrCreate: {
+                where: {
+                  id: 0,
+                },
+                create: address,
+              },
+            },
           },
           update: {
             ...rest,

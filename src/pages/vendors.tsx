@@ -200,7 +200,7 @@ const Vendors = () => {
                 className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
               >
                 <i className="fa-solid fa-print text-xs" />
-                Generate Template
+                Download Template
               </button>
               <button
                 onClick={() => {
@@ -229,7 +229,7 @@ const Vendors = () => {
                 className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
               >
                 <i className="fa-solid fa-print text-xs" />
-                Generate Table
+                Download Vendors
               </button>
               <AddVendorPopOver
                 openPopover={openAddPopover}

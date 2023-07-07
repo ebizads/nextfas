@@ -75,8 +75,9 @@ export default function DropZone({
 
     if (id_list) {
       setIdList(id_list)
-    }
+      console.log("idlist:", id_list)
 
+    }
     //filters duplicated ID
 
     const dupEmployeeList = data.filter((employee) => {
@@ -174,10 +175,11 @@ export default function DropZone({
         duplicatedEmployees[x]?.id == 0 ||
         duplicatedEmployees[x]?.id == null
       ) {
-        console.log("SPLICE" + duplicatedEmployees[x]?.id)
 
         duplicatedEmployees.splice(x, 1)
       }
+      console.log("SPLICE" + JSON.stringify(duplicates))
+
     }
   }
 

@@ -82,8 +82,7 @@ export const EmployeeTableEditInput = z.object({
       phone_no: z.string().nullish().optional(),
       gender: z.string().nullish().optional(),
       image: z.string().nullish().optional(),
-    })
-    .optional(),
+    }),
   address: AddressEditInput,
   workStation: z.string().nullish(),
   workMode: z.string().nullish(),

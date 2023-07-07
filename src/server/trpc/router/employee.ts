@@ -242,11 +242,11 @@ export const employeeRouter = t.router({
     .query(async ({ ctx, input }) => {
       3
       for (let i = 0; i < input.length; i++) {
-        if (input[i] !== null || input[i] !== undefined) {
+        if (input[i] !== null || input[i] !== undefined || input[i] !== 0) {
           const employees = await ctx.prisma.employee.findMany({
             where: {
               id: {
-                in: input,
+                in: input[i],
               },
             },
             include: {
@@ -345,10 +345,25 @@ export const employeeRouter = t.router({
           id: id,
         },
         create: {
+
           ...rest,
           employee_id: env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID + empId,
-          address: { create: address },
-          profile: { create: profile },
+          address: {
+            connectOrCreate: {
+              where: {
+                id: 0,
+              },
+              create: address,
+            },
+          },
+          profile: {
+            connectOrCreate: {
+              where: {
+                id: 0
+              },
+              create: profile,
+            }
+          },
         },
         update: {
           ...rest,

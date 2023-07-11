@@ -7,19 +7,19 @@ export const userNavigations = [
   {
     name: "User Management",
     icon: "fa-light fa-user-gear",
-    link: "#",
-    subType: [
-      {
-        icon: "fa-regular fa-users",
-        name: "All Users",
-        link: "/auth/",
-      },
-      {
-        icon: "fa-regular fa-user-plus",
-        name: "Register",
-        link: "/reports/register",
-      },
-    ],
+    link: "/auth/",
+    // subType: [
+    //   {
+    //     icon: "fa-regular fa-users",
+    //     name: "All Users",
+    //     link: "/auth/",
+    //   },
+    // {
+    //   icon: "fa-regular fa-user-plus",
+    //   name: "Register",
+    //   link: "/reports/register",
+    // },
+    // ],
   },
 ] as NavType[]
 

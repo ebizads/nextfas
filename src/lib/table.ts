@@ -139,6 +139,11 @@ export const navigations = [
   },
   // {
   //   name: "User Management",
+  //   icon: "fa-light fa-user-gear",
+  //   link: "/auth",
+  // },
+  // {
+  //   name: "User Management",
   //   icon: "fa-user-pen",
   //   link: "/vendors",
   // },

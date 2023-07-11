@@ -2,56 +2,78 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { DatePicker } from "@mantine/dates"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { EmployeeCreateInput } from "../../server/schemas/employee"
-import { ImageJSON } from "../../types/table"
-import { trpc } from "../../utils/trpc"
-import AlertInput from "../atoms/forms/AlertInput"
-import { InputField } from "../atoms/forms/InputField"
+import { date, z } from "zod"
+import { EmployeeCreateInput, EmployeeEditInput } from "../../../server/schemas/employee"
+import { ImageJSON } from "../../../types/table"
+import { trpc } from "../../../utils/trpc"
+import AlertInput from "../../../components/atoms/forms/AlertInput"
+import InputField from "../../../components/atoms/forms/InputField"
 import { Select } from "@mantine/core"
-import DropZoneComponent from "../dropzone/DropZoneComponent"
-import { env } from "../../env/client.mjs"
+import { env } from "../../../env/client.mjs"
 import moment from "moment"
-import Modal from "../headless/modal/modal"
-import TypeSelect, { SelectValueType } from "../atoms/select/TypeSelect"
+import Modal from "../../../components/headless/modal/modal"
+import { SelectValueType } from "../../../components/atoms/select/TypeSelect"
+import DropZoneComponent from "../../../components/dropzone/DropZoneComponent"
+import { EmployeeType } from "../../../types/generic"
+// import { useEditableStore } from "../../../store/useStore"
+import { useEditableStore, useSelectedEmpStore } from "../../../store/useStore"
 
-export type Employee = z.infer<typeof EmployeeCreateInput>
 
-export const CreateEmployeeModal = (props: {
-  date: Date
-  setDate: React.Dispatch<React.SetStateAction<Date>>
-  setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
-  images: ImageJSON[]
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-  isLoading: boolean
-  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+export type Employee = z.infer<typeof EmployeeEditInput>
+// export type Employee = z.infer<typeof EmployeeCreateInput>
+
+export const UpdateEmployee = (props: {
+  employee: EmployeeType
+  // setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
+  // images: ImageJSON[]
+  // setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  // isLoading: boolean
+  // setEditable: boolean
+  // setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  const [searchValue, onSearchChange] = useState("")
-  const [workModeValue, onSearchWorkMode] = useState("")
-  const [workStationValue, onSearchWorkStation] = useState("")
   const [isVisible, setIsVisible] = useState<boolean>(false)
-  const [tryReset, setTryReset] = useState<boolean>(false)
-  const [empId] = useState<string>(moment().format("YY-MDhms"))
-  const { data: teams } = trpc.team.findAll.useQuery()
+  const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
+
+  const [searchValue, onSearchChange] = useState<string>(
+    props.employee?.teamId?.toString() ?? "0"
+  )
+  const [workModeValue, onSearchWorkMode] = useState<string>(
+    props.employee?.workMode?.toString() ?? " "
+  )
+  const [workStationValue, onSearchWorkStation] = useState<string>(
+    props.employee?.workStation?.toString() ?? " "
+  )
+  const [date, setDate] = useState(props.employee?.hired_date ?? new Date())
   const utils = trpc.useContext()
+  const [images, setImage] = useState<ImageJSON[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
+
+  const { data: teams } = trpc.team.findAll.useQuery()
+  const { editable, setEditable } = useEditableStore()
+
+  const teamList = useMemo(() => {
+    const list = teams?.teams.map(
+      (team: { id: { toString: () => any }; name: any }) => {
+        return { value: team.id.toString(), label: team.name }
+      }
+    ) as SelectValueType[]
+    return list ?? []
+  }, [teams]) as SelectValueType[]
+
   const {
     mutate,
     isLoading: employeeLoading,
     error,
-  } = trpc.employee.create.useMutation({
-    onSuccess: () => {
+  } = trpc.employee.edit.useMutation({
+    onSuccess() {
+      console.log("omsim")
+      // invalidate query of asset id when mutations is successful
+      setIsVisible(true)
       utils.employee.findAll.invalidate()
-      props.setImage([])
+      setImage([])
     },
   })
-
-  const teamList = useMemo(() => {
-    const list = teams?.teams.map((team) => {
-      return { value: team.id.toString(), label: team.name }
-    }) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
-
   const {
     register,
     handleSubmit,
@@ -59,81 +81,53 @@ export const CreateEmployeeModal = (props: {
     setValue,
     formState: { errors },
   } = useForm<Employee>({
-    resolver: zodResolver(EmployeeCreateInput),
-    defaultValues: {
-      name: "",
-      employee_id: "",
-      // supervisee: {
-      //   name: ""
-      // },
-      // superviseeId: 0,
-      teamId: 0,
-      email: "",
-      hired_date: new Date(),
-      position: "",
-      address: {
-        city: "",
-        country: "",
-        street: "",
-        zip: 0,
-      },
-      profile: {
-        first_name: "",
-        middle_name: "",
-        last_name: "",
-        image: "",
-      },
-    },
+    resolver: zodResolver(EmployeeEditInput),
   })
+
+  useEffect(() => reset(props.employee as Employee), [props.employee, reset])
+
+  const [isEditable, setIsEditable] = useState<boolean>(false)
+  const [updated, setUpdated] = useState(false)
+
+
+
+  useEffect(() => {
+    setEditable(false)
+    console.log("editable na dapat ito 9999", editable, "udpated na dapat ito", updated)
+  }, [])
 
   const onSubmit = async (employee: Employee) => {
     // Register function
-
     mutate({
-      name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
-        }`,
-      employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
-      email: employee.email,
-      //   (employee.profile.first_name[0] + employee.profile.last_name)
-      //     .replace(" ", "")
-      //     .toLowerCase()
-      //     .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
-      hired_date: employee.hired_date,
-      teamId: employee.teamId,
-      // supervisee: {
-      //   name: employee.supervisee?.name ?? ""
-      // },
-      // superviseeId: employee.superviseeId,
-      position: employee.position,
-      address: {
-        city: employee.address?.city,
-        country: employee.address?.country,
-        street: employee.address?.street,
-        state: employee.address?.state,
-        zip: employee.address?.zip,
-      },
-      profile: {
-        first_name: employee.profile?.first_name ?? "",
-        middle_name: employee.profile?.middle_name,
-        last_name: employee.profile?.last_name ?? "",
-        phone_no: employee.profile?.phone_no,
-        image: props.images[0]?.file ?? "",
-      },
-      workMode: employee.workMode,
-      workStation: employee.workStation,
+      ...employee,
+      name: `${employee.profile?.first_name} ${employee.profile?.last_name}`,
     })
     reset()
   }
-  const onDiscard = () => {
-    props.setIsVisible(false)
-    document.forms[0]?.reset()
-    reset()
 
+  const handleDelete = () => {
+    setOpenModalDel(true)
+  }
+
+  const handleEditable = () => {
+    setIsEditable(true)
+  }
+
+  const handleIsEditable = () => {
+    if (!updated) {
+      setEditable(true)
+      setUpdated(true)
+    }
 
   }
 
+  console.log("ALAM MO TONG EMPLOYEE NA TO::::", props.employee)
+
   return (
-    <div>
+    <main className="container mx-auto flex flex-col justify-center p-2">
+      <h3 className="mb-2 bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text text-xl font-bold leading-normal text-transparent md:text-[2rem]">
+        Update Employee Record
+      </h3>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-4"
@@ -143,6 +137,7 @@ export const CreateEmployeeModal = (props: {
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">First Name</label>
             <InputField
+
               register={register}
               name="profile.first_name"
               type={"text"}
@@ -153,6 +148,8 @@ export const CreateEmployeeModal = (props: {
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Middle Name (Optional)</label>
             <InputField
+              // className="0 appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
+
               type={"text"}
               label={""}
               name={"profile.middle_name"}
@@ -162,6 +159,7 @@ export const CreateEmployeeModal = (props: {
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Last Name</label>
             <InputField
+
               type={"text"}
               label={""}
               name={"profile.last_name"}
@@ -171,14 +169,15 @@ export const CreateEmployeeModal = (props: {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 py-2.5">
+        <div className="flex w-full flex-wrap gap-4 py-2.5">
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Team</label>
             <Select
+
               placeholder="Pick one"
               onChange={(value) => {
                 setValue("teamId", Number(value) ?? 0)
-                onSearchChange(value ?? "")
+                onSearchChange(value ?? "0")
               }}
               value={searchValue}
               data={teamList}
@@ -203,8 +202,13 @@ export const CreateEmployeeModal = (props: {
                 },
               })}
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
+            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Employee Number</label>
@@ -215,13 +219,19 @@ export const CreateEmployeeModal = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{`${props.employee?.employee_id}`}</p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
             <InputField
               type={"text"}
+
               label={""}
+              // placeholder={props.employee?.}
               name={"position"}
               register={register}
             />
@@ -234,29 +244,30 @@ export const CreateEmployeeModal = (props: {
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Email</label>
             <InputField
-              // disabled={!editable}
+
               type={"text"}
               label={""}
               name={"email"}
               register={register}
-              placeholder={"--@email.com"}
             />
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
           <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm">Department</label>
+            <label className="sm:text-sm">Departmemt</label>
             {/* <InputField
               // placeholder={props.employee?.department}
               type={"text"}
-              // disabled={!editable}
+              disabled={!editable}
               label={""}
-              value={props.employee?.team?.department?.name}
+              placeholder={props.employee?.team?.department?.name}
               name={"department"}
               register={register}
             /> */}
-            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
-              {"--"}
-            </p>
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{`${props.employee?.team?.department?.name}`}</p>
           </div>
         </div>
 
@@ -268,25 +279,36 @@ export const CreateEmployeeModal = (props: {
             type={"text"}
           /> */}
             <DatePicker
-              dropdownType="popover"
+
+              dropdownType="modal"
               placeholder="Pick Date"
               size="sm"
               variant="unstyled"
-              value={props.date}
+              value={date}
               onChange={(value) => {
                 setValue("hired_date", value)
-                value === null
-                  ? props.setDate(new Date())
-                  : props.setDate(value)
+                value === null ? setDate(new Date()) : setDate(value)
               }}
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className={
+                isEditable
+                  ? "my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
           </div>
+
           <div className="flex w-[23%] flex-col">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
+
               type="number"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              pattern="[0-9]*"
+              defaultValue={props.employee?.profile?.phone_no ?? "--"}
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
               onKeyDown={(e) => {
                 if (e.key === "e") {
                   e.preventDefault()
@@ -303,21 +325,23 @@ export const CreateEmployeeModal = (props: {
                 )
               }}
             />
+
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="flex w-[23%] flex-col">
             <label className="sm:text-sm">Device</label>
             <Select
-              placeholder="Select Work Location"
+
               onChange={(value) => {
                 setValue("workStation", String(value) ?? " ")
-                onSearchWorkStation(value ?? " ")
+                onSearchWorkStation(value ?? "")
               }}
+              placeholder="--"
               value={workStationValue}
+              defaultValue={props.employee?.workStation ?? "--"}
               data={["Desktop", "Latop"]}
               styles={(theme) => ({
                 item: {
-                  // applies styles to selected item
                   "&[data-selected]": {
                     "&, &:hover": {
                       backgroundColor:
@@ -330,25 +354,30 @@ export const CreateEmployeeModal = (props: {
                           : theme.black,
                     },
                   },
-
                   // applies styles to hovered item (with mouse or keyboard)
                   "&[data-hovered]": {},
                 },
               })}
               variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
           </div>
           <div className="flex w-[23%] flex-col">
             <label className="sm:text-sm">Work Mode</label>
             <Select
-              placeholder="Select your Work mode"
+
               onChange={(value) => {
-                setValue("workMode", String(value) ?? " ")
-                onSearchWorkMode(value ?? " ")
+                setValue("workMode", String(value) ?? "")
+                onSearchWorkMode(value ?? "")
               }}
               value={workModeValue}
-              data={["WFH", "Hybrid", "On-Site"]}
+              placeholder="--"
+              data={["WFH", "Hybrid", "On Site"]}
+              defaultValue={props.employee?.workMode ?? "--"}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -370,7 +399,11 @@ export const CreateEmployeeModal = (props: {
                 },
               })}
               variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
@@ -381,23 +414,29 @@ export const CreateEmployeeModal = (props: {
                 label={""}
                 name="address.street"
                 register={register}
+
               />
             </div>
-            <div className="flex w-[18.4%] flex-col">
+            {/* <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
                 label={""}
                 name={"address.state"}
+                
                 register={register}
-              /><AlertInput>{errors?.address?.state?.message}</AlertInput>
-            </div>
+              />
+
+
+              <AlertInput>{errors?.address?.state?.message}</AlertInput>
+            </div> */}
             <div className="flex w-[25%] flex-col">
               <label className="sm:text-sm">City</label>
               <InputField
                 type={"text"}
                 label={""}
                 name={"address.city"}
+
                 register={register}
               />
 
@@ -406,9 +445,10 @@ export const CreateEmployeeModal = (props: {
             <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Zip Code</label>
               <InputField
-                type={"number"}
+                type={"text"}
                 label={""}
                 name={"address.zip"}
+
                 register={register}
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
@@ -419,6 +459,7 @@ export const CreateEmployeeModal = (props: {
                 type={"text"}
                 label={""}
                 name={"address.country"}
+
                 register={register}
               />
 
@@ -427,39 +468,69 @@ export const CreateEmployeeModal = (props: {
           </div>
         </div>
 
-        {/* <DropZoneComponent
-          setImage={props.setImage}
-          setIsLoading={props.setIsLoading}
-          images={props.images}
-          isLoading={props.isLoading}
-          acceptingMany={true}
-          setIsVisible={props.setIsVisible}
-        /> */}
+        {/* {(
+          <DropZoneComponent
+            setImage={setImage}
+            setIsLoading={setIsLoading}
+            images={images}
+            isLoading={isLoading}
+            acceptingMany={false}
+            setIsVisible={props.setIsVisible}
+          />
+        )} */}
         <hr className="w-full"></hr>
-        <div className="flex w-full justify-end">
-          <div className="flex items-center justify-end gap-2">
-            <button
-              className="px-4 py-2 font-medium underline"
-              onClick={() => onDiscard()}
-            >
-              Cancel
-            </button>
-          </div>
-          <button
+        {/* <div className="flex w-full justify-end">
+          {isEditable && <button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={employeeLoading}
           >
-            {employeeLoading ? "Loading..." : "Register"}
-          </button>
+            {employeeLoading ? "Loading..." : "Save"}
+          </button>}
+        </div> */}
+        <div className="flex w-full justify-between">
+          {!(
+            error &&
+            errors && (
+              <pre className="mt-2 text-sm italic text-red-500">
+                Something went wrong!
+              </pre>
+            )
+          ) ? (
+            <div></div>
+          ) : (
+            error &&
+            errors && (
+              <pre className="mt-2 text-sm italic text-red-500">
+                Something went wrong!
+              </pre>
+            )
+          )}
+          {isEditable && (
+            <div className="space-x-1">
+              <button
+                type="button"
+                className="rounded bg-red-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={() => {
+                  handleDelete(), setIsLoading(true)
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Delete"}
+              </button>
+
+              <button
+                type="submit"
+                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                disabled={employeeLoading}
+              >
+                {employeeLoading ? "Loading..." : "Save"}
+              </button>
+            </div>
+          )}
+
         </div>
       </form>
-      {error && errors && (
-        <pre className="mt-2 text-sm italic text-red-500">
-          Something went wrong!
-          {JSON.stringify({ error, errors }, null, 2)}
-        </pre>
-      )}
       <Modal
         className="max-w-lg"
         isVisible={isVisible}
@@ -469,13 +540,13 @@ export const CreateEmployeeModal = (props: {
         <>
           <div className="py-2 items-center flex flex-col gap-3 ">
             <p className="text-center text-lg font-semibold ">
-              Employee Created Successfully
+              Employee Updated Successfully
             </p>
             <button
               className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
               onClick={() => {
-                props.setIsVisible(false)
-                setIsVisible(false)
+                // props.setIsVisible(false)
+                // setIsVisible(false)
               }}
             >
               Confirm
@@ -483,6 +554,14 @@ export const CreateEmployeeModal = (props: {
           </div>
         </>
       </Modal>
-    </div>
+      {error && errors && (
+        <pre className="mt-2 text-sm italic text-red-500">
+          Something went wrong!
+          {JSON.stringify({ error, errors }, null, 2)}
+        </pre>
+      )}
+    </main>
   )
 }
+
+export default UpdateEmployee

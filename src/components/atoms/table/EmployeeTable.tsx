@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState } from "react"
-import { useEditableStore, useMinimizeStore } from "../../../store/useStore"
+import { useEditableStore, useMinimizeStore, useSelectedEmpStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
@@ -23,6 +23,7 @@ const EmployeeTable = (props: {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
   const [details, setDetails] = useState<EmployeeType>()
+  const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -45,10 +46,11 @@ const EmployeeTable = (props: {
   const { editable, setEditable } = useEditableStore()
 
   useEffect(() => {
+    setSelectedEmp(null)
     if (!updateRecord && editable) {
       setEditable(false)
     }
-  }, [setEditable, updateRecord, editable])
+  }, [setEditable, updateRecord, editable, setSelectedEmp])
 
   useEffect(() => {
     console.log("editable: " + editable, "updateRecord: " + updateRecord)
@@ -131,7 +133,9 @@ const EmployeeTable = (props: {
                     onClick={() => {
                       // setIsVisible(setUpdateRecord)
                       setDetails(row)
+                      setSelectedEmp(details)
                       setUpdateRecord(true)
+                      console.log("ALAM MO TONG EMPLOYEE NA TO SELECT SELECT::::", selectedEmp)
                     }}
                   >
                     {

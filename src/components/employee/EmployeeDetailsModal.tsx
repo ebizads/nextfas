@@ -16,13 +16,11 @@ import { SelectValueType } from "../atoms/select/TypeSelect"
 import { EmployeeType } from "../../types/generic"
 import { useEditableStore } from "../../store/useStore"
 import Modal from "../headless/modal/modal"
-import Link from "next/link"
-
 // import { useEditableStore } from "../../store/useStore"
 
 export type Employee = z.infer<typeof EmployeeEditInput>
 
-export const UpdateEmployeeModal = (props: {
+export const EmployeeDetailsModal = (props: {
   employee: EmployeeType
   // setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
   // images: ImageJSON[]
@@ -124,15 +122,14 @@ export const UpdateEmployeeModal = (props: {
     <div>
       <div className="flex w-full flex-row-reverse">
         <div className="flex items-center space-x-1 align-middle ">
-          {/* <p className="text-xs uppercase text-gray-500">edit form </p>
+          <p className="text-xs uppercase text-gray-500">edit form </p>
           <i
             className="fa-light fa-pen-to-square cursor-pointer"
             onClick={() => {
               handleIsEditable()
               handleEditable()
             }}
-          /> */}
-          <Link href={"/employees/update"}><button className="px-6 py-2 hover:bg-tangerine-100">Add single record</button></Link>
+          />
         </div>
       </div>
       <form

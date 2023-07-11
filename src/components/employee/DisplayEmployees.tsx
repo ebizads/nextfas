@@ -5,7 +5,7 @@ import { EmployeeType } from "../../types/generic"
 import { columns } from "../../lib/employeeTable"
 import { ImageJSON } from "../../types/table"
 import Modal from "../headless/modal/modal"
-import { CreateEmployeeModal } from "./CreateEmployeeModal"
+import { CreateEmployee } from "./CreateEmployee"
 import { downloadExcel, downloadExcel_template } from "../../lib/functions"
 import { ExcelExportType } from "../../types/employee"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
@@ -224,7 +224,7 @@ const DisplayEmployees = (props: {
         setIsVisible={setAddSingleRecord}
         className="max-w-4xl"
       >
-        <CreateEmployeeModal
+        <CreateEmployee
           date={date}
           setDate={setDate}
           setImage={setImage}

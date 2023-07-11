@@ -22,11 +22,10 @@ const SideBar = () => {
 
   return (
     <div
-      className={`max-w-md duration-300 ${
-        minimize
-          ? "w-[10vw] min-w-[10vw]"
-          : "w-[25vw] min-w-[25vw] xl:w-[20vw] xl:min-w-[20vw]"
-      } flex min-h-screen flex-col space-y-4 overflow-hidden border-r px-2 py-4`}
+      className={`max-w-md duration-300 ${minimize
+        ? "w-[10vw] min-w-[10vw]"
+        : "w-[25vw] min-w-[25vw] xl:w-[20vw] xl:min-w-[20vw]"
+        } flex min-h-screen flex-col space-y-4 overflow-hidden border-r px-2 py-4`}
     >
       <div
         className="relative flex w-full flex-col px-2 pb-2"
@@ -77,22 +76,19 @@ const SideBar = () => {
           </p>
         )}
         <div
-          className={`py-4 px-2 ${
-            paths[paths.length - 1] === "assets"
-              ? "bg-tangerine-50 font-medium text-tangerine-500"
-              : "text-light-secondary"
-          }`}
+          className={`py-4 px-2 ${paths[paths.length - 1] === "assets"
+            ? "bg-tangerine-50 font-medium text-tangerine-500"
+            : "text-light-secondary"
+            }`}
         >
           <Link href={"/assets"}>
             <div
-              className={`flex items-center ${
-                minimize ? "justify-center" : "justify-start pl-2"
-              } cursor-pointer gap-2 pl-2`}
+              className={`flex items-center ${minimize ? "justify-center" : "justify-start pl-2"
+                } cursor-pointer gap-2 pl-2`}
             >
               <i
-                className={`fa-cubes w-8 ${
-                  minimize ? "fa-regular text-2xl" : "fa-light"
-                } text-left`}
+                className={`fa-cubes w-8 ${minimize ? "fa-regular text-2xl" : "fa-light"
+                  } text-left`}
               />
               {!minimize && <p className="text-light-primary">Assets</p>}
             </div>
@@ -106,39 +102,63 @@ const SideBar = () => {
         {navigations.map((page, idx) => (
           <div
             key={idx}
-            className={`py-4 px-2 ${
-              paths[paths.length - 1]?.toUpperCase() === page.name.toUpperCase()
-                ? "bg-tangerine-50 font-medium text-tangerine-500"
-                : ""
-            }`}
+            className={`py-4 px-2 ${paths[paths.length - 1]?.toUpperCase() === page.name.toUpperCase()
+              ? "bg-tangerine-50 font-medium text-tangerine-500"
+              : ""
+              }`}
           >
             <Link href={page.link}>
               <div
-                className={`flex items-center ${
-                  minimize ? "justify-center" : "justify-start pl-2"
-                } cursor-pointer gap-2 pl-2`}
+                className={`flex items-center ${minimize ? "justify-center" : "justify-start pl-2"
+                  } cursor-pointer gap-2 pl-2`}
               >
                 <i
-                  className={`${page.icon} ${
-                    paths[paths.length - 1]?.toUpperCase() ===
+                  className={`${page.icon} ${paths[paths.length - 1]?.toUpperCase() ===
                     page.name.toUpperCase()
-                      ? "bg-tangerine-50 font-medium text-tangerine-500"
-                      : "text-light-secondary"
-                  } w-8 ${
-                    minimize ? "fa-regular text-2xl" : "fa-light"
-                  } text-left`}
+                    ? "bg-tangerine-50 font-medium text-tangerine-500"
+                    : "text-light-secondary"
+                    } w-8 ${minimize ? "fa-regular text-2xl" : "fa-light"
+                    } text-left`}
                 />
                 {!minimize && <p>{page.name}</p>}
               </div>
             </Link>
           </div>
         ))}
-        {(user?.user_type ?? "") === "admin" && <UserNavAccordion
+        {/* {(user?.user_type ?? "") === "admin" && <UserNavAccordion
           paths={paths}
           minimize={minimize}
           setMinimize={setMinimize}
-        />}
+        />} */}
+
       </div>
+      {(user?.user_type ?? "") === "admin" && <div className="flex w-full flex-col">
+        {!minimize && (
+          <p className="px-2 text-xs capitalize text-light-secondary">
+            Maintenance
+          </p>
+        )}
+
+        {<div
+          className={`py-4 px-2 ${paths[paths.length - 1] === "User Management"
+            ? "bg-tangerine-50 font-medium text-tangerine-500"
+            : "text-light-secondary"
+            }`}
+        >
+          <Link href={"/auth"}>
+            <div
+              className={`flex items-center ${minimize ? "justify-center" : "justify-start pl-2"
+                } cursor-pointer gap-2 pl-2`}
+            >
+              <i
+                className={`fa-user-gear w-8 ${minimize ? "fa-regular text-2xl" : "fa-light"
+                  } text-left`}
+              />
+              {!minimize && <p className="text-light-primary">User Management</p>}
+            </div>
+          </Link>
+        </div>}
+      </div>}
     </div>
   )
 }

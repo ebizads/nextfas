@@ -39,7 +39,6 @@ export const UpdateEmployeeModal = (props: {
   const [workStationValue, onSearchWorkStation] = useState<string>(
     props.employee?.workStation?.toString() ?? " "
   )
-  const [date, setDate] = useState(props.employee?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -276,30 +275,7 @@ export const UpdateEmployeeModal = (props: {
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex flex-col sm:w-1/3 md:w-[25%]">
-            <label className="sm:text-sm ">Hired Date</label>
-            {/* <InputField
-            className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
-            type={"text"}
-          /> */}
-            <DatePicker
-              disabled={!isEditable}
-              dropdownType="modal"
-              placeholder="Pick Date"
-              size="sm"
-              variant="unstyled"
-              value={date}
-              onChange={(value) => {
-                setValue("hired_date", value)
-                value === null ? setDate(new Date()) : setDate(value)
-              }}
-              className={
-                isEditable
-                  ? "my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            />
-          </div>
+
 
           <div className="flex w-[23%] flex-col">
             <label className="mb-2 sm:text-sm">Mobile Number</label>

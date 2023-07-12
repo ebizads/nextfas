@@ -171,6 +171,7 @@ const DisplayEmployees = (props: {
                     }
                   }
                 ) as ExcelExportType[]
+                console.log(downloadableEmployees)
                 downloadExcel(downloadableEmployees)
               }}
               className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"

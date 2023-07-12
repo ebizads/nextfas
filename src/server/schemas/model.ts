@@ -73,7 +73,7 @@ export const ModelCreateInput = z.object({
   //asset_category: AssetCategoryCreateInput,
   categoryId: z.number({ required_error: "Please select asset category" }),
   //asset_type: AssetTypeCreateInput,
-  typeId: z.number({ required_error: "Please select asset type" }),
+  typeId: z.number().nullish().optional(),
 })
 
 export const ModelEditInput = z.object({

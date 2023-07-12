@@ -22,7 +22,6 @@ export type EmployeeRowType = {
   last_name: string
   id_no: string
   address: string
-  hire_date: string
   subsidiary: string
   contact_number: string
 }

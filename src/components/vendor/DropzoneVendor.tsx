@@ -132,17 +132,15 @@ export default function DropzoneVendor({
         setDuplicatedVendors(
             final_dupList.sort((a, b) => {
                 // console.log("TEST: " + JSON.stringify(final_dupList))
-                console.log("sort" + ((a.id ?? 0) - (b.id ?? 0)))
-                return (a.id ?? 0) - (b.id ?? 0)
+                console.log("sort" + ((a?.id ?? 0) - (b?.id ?? 0)))
+                return (a?.id ?? 0) - (b?.id ?? 0)
             })
         )
 
         // setDuplicatedVendors(dupEmployees)
         // console.log(dupEmployees)
     }
-    // const updateDate = duplicatedVendors.map((row) => {
-    //   const {id, name, hired_date, position, employee_id,}
-    // })
+
 
     const checkDuplicated = () => {
         for (let x = 0; x <= duplicatedVendors.length; x++) {

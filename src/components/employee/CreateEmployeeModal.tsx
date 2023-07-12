@@ -69,7 +69,6 @@ export const CreateEmployeeModal = (props: {
       // superviseeId: 0,
       teamId: 0,
       email: "",
-      hired_date: new Date(),
       position: "",
       address: {
         city: "",
@@ -98,7 +97,6 @@ export const CreateEmployeeModal = (props: {
       //     .replace(" ", "")
       //     .toLowerCase()
       //     .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
-      hired_date: employee.hired_date,
       teamId: employee.teamId,
       // supervisee: {
       //   name: employee.supervisee?.name ?? ""
@@ -261,27 +259,7 @@ export const CreateEmployeeModal = (props: {
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex flex-col sm:w-1/3 md:w-[25%]">
-            <label className="sm:text-sm ">Hired Date</label>
-            {/* <InputField
-            className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
-            type={"text"}
-          /> */}
-            <DatePicker
-              dropdownType="popover"
-              placeholder="Pick Date"
-              size="sm"
-              variant="unstyled"
-              value={props.date}
-              onChange={(value) => {
-                setValue("hired_date", value)
-                value === null
-                  ? props.setDate(new Date())
-                  : props.setDate(value)
-              }}
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-            />
-          </div>
+
           <div className="flex w-[23%] flex-col">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input

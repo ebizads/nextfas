@@ -117,8 +117,12 @@ export const assetRouter = t.router({
           },
           where: {
             NOT: {
-              // id: 999999,
               deleted: true,
+            },
+            OR: {
+              NOT: {
+                id: 999999,
+              }
             },
             name: { contains: input?.search?.name, mode: 'insensitive' },
             number: { contains: input?.search?.number, mode: 'insensitive' },

@@ -136,13 +136,11 @@ const EmployeeTable = (props: {
                   >
                     {
                       // ternary operator that returns special values for date, name, and address
-                      col.value === "hired_date"
-                        ? row?.hired_date?.toDateString()
-                        : col.value.match(/_name/g)
-                          ? getName(col.value, row)
-                          : col.value === "city"
-                            ? getAddress(row)
-                            : getProperty(col.value, row)
+                      col.value.match(/_name/g)
+                        ? getName(col.value, row)
+                        : col.value === "city"
+                          ? getAddress(row)
+                          : getProperty(col.value, row)
                     }
                   </td>
                 ))}
@@ -258,14 +256,6 @@ function ShowDetails({
                 <div className="py-3">
                   <p className="col-span-2 text-sm">
                     {info.address?.street ?? "NO DATA"}
-                  </p>
-                </div>
-                <div className="py-3">
-                  <p className="text-sm font-semibold">HIRE DATE</p>
-                </div>
-                <div className="py-3">
-                  <p className="col-span-2 text-sm">
-                    {info.hired_date?.toDateString() ?? "NO DATA"}
                   </p>
                 </div>
                 <div className="py-3">

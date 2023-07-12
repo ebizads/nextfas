@@ -208,12 +208,7 @@ export default function DropZone_asset({
       })
     )
 
-    // setduplicatedAssets(dupEmployees)
-    // console.log(dupEmployees)
   }
-  // const updateDate = duplicatedAssets.map((row) => {
-  //   const {id, name, hired_date, position, employee_id,}
-  // })
 
   const checkDuplicated = () => {
     for (let x = 0; x <= duplicatedAssets.length; x++) {

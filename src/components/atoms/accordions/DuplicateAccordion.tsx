@@ -54,7 +54,6 @@ const DuplicateAccordion = (props: {
       mutate({
         id: props.incomingChanges[splice]?.id ?? 0,
         name: props.incomingChanges[splice]?.name ?? "",
-        hired_date: props.incomingChanges[splice]?.hired_date,
         position: props.incomingChanges[splice]?.position,
         employee_id: props.incomingChanges[splice]?.employee_id,
         email: props.incomingChanges[splice]?.email,

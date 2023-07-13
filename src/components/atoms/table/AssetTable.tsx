@@ -280,7 +280,7 @@ const AssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Asset Location</p>
-                      <p className="font-medium">
+                      <p className="font-medium truncate w-[70%]">
                         {props.asset?.management?.asset_location}
                       </p>
                     </div>

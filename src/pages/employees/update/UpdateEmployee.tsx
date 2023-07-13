@@ -17,6 +17,7 @@ import DropZoneComponent from "../../../components/dropzone/DropZoneComponent"
 import { EmployeeType } from "../../../types/generic"
 // import { useEditableStore } from "../../../store/useStore"
 import { useEditableStore, useSelectedEmpStore } from "../../../store/useStore"
+import { useRouter } from "next/router"
 
 
 export type Employee = z.infer<typeof EmployeeEditInput>
@@ -34,6 +35,9 @@ export const UpdateEmployee = (props: {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
 
+  const router = useRouter();
+
+
   const [searchValue, onSearchChange] = useState<string>(
     props.employee?.teamId?.toString() ?? "0"
   )
@@ -43,7 +47,7 @@ export const UpdateEmployee = (props: {
   const [workStationValue, onSearchWorkStation] = useState<string>(
     props.employee?.workStation?.toString() ?? " "
   )
-  const [date, setDate] = useState(props.employee?.hired_date ?? new Date())
+  // const [date, setDate] = useState(props.employee?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -92,9 +96,11 @@ export const UpdateEmployee = (props: {
 
 
   useEffect(() => {
-    setEditable(false)
-    console.log("editable na dapat ito 9999", editable, "udpated na dapat ito", updated)
-  }, [])
+    console.log(selectedEmp)
+    if (selectedEmp === null) {
+      router.push('/employees')
+    }
+  })
 
   const onSubmit = async (employee: Employee) => {
     // Register function
@@ -130,11 +136,11 @@ export const UpdateEmployee = (props: {
       </h3>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col space-y-4"
+        className="grid grid-cols-9 gap-7"
         noValidate
       >
-        <div className="flex w-full flex-wrap gap-4 py-2.5">
-          <div className="flex w-[32%] flex-col">
+        <div className="col-span-9 grid grid-cols-12 gap-7">
+          <div className="col-span-4">
             <label className="sm:text-sm">First Name</label>
             <InputField
 
@@ -145,7 +151,7 @@ export const UpdateEmployee = (props: {
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
           </div>
-          <div className="flex w-[32%] flex-col">
+          <div className="col-span-4">
             <label className="sm:text-sm">Middle Name (Optional)</label>
             <InputField
               // className="0 appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
@@ -156,7 +162,7 @@ export const UpdateEmployee = (props: {
               register={register}
             />
           </div>
-          <div className="flex w-[32%] flex-col">
+          <div className="col-span-4">
             <label className="sm:text-sm">Last Name</label>
             <InputField
 
@@ -169,63 +175,35 @@ export const UpdateEmployee = (props: {
           </div>
         </div>
 
-        <div className="flex w-full flex-wrap gap-4 py-2.5">
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Team</label>
-            <Select
+        <div className="col-span-9 grid grid-cols-12 gap-7">
 
-              placeholder="Pick one"
-              onChange={(value) => {
-                setValue("teamId", Number(value) ?? 0)
-                onSearchChange(value ?? "0")
-              }}
-              value={searchValue}
-              data={teamList}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className={
-                isEditable
-                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            />
-            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
-          </div>
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Employee Number</label>
-            {/* <InputField
-               
+          <div className="col-span-4">
+            <label className="sm:text-sm flex justify-between">Employee Number
+              <div className="flex gap-2 items-center">
+                <i
+                  className="fa-light fa-pen-to-square cursor-pointer"
+                  onClick={() => {
+                    handleIsEditable()
+                    handleEditable()
+                  }}
+                />
+              </div>
+            </label>
+            <InputField
+              disabled={!isEditable}
               type={"text"}
               label={""}
               name={"employee_id"}
               register={register}
-            /> */}
-            <p
+            />
+
+            {/* <p
               className={
                 "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
               }
-            >{`${props.employee?.employee_id}`}</p>
+            >{`${props.employee?.employee_id}`}</p> */}
           </div>
-          <div className="flex w-[32%] flex-col">
+          <div className="col-span-4">
             <label className="sm:text-sm">Designation / Position</label>
             <InputField
               type={"text"}
@@ -238,135 +216,7 @@ export const UpdateEmployee = (props: {
 
             <AlertInput>{errors?.position?.message}</AlertInput>
           </div>
-        </div>
-
-        <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm">Email</label>
-            <InputField
-
-              type={"text"}
-              label={""}
-              name={"email"}
-              register={register}
-            />
-            <AlertInput>{errors?.email?.message}</AlertInput>
-          </div>
-          <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm">Departmemt</label>
-            {/* <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.employee?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
-            <p
-              className={
-                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >{`${props.employee?.team?.department?.name}`}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex flex-col sm:w-1/3 md:w-[25%]">
-            <label className="sm:text-sm ">Hired Date</label>
-            {/* <InputField
-            className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
-            type={"text"}
-          /> */}
-            <DatePicker
-
-              dropdownType="modal"
-              placeholder="Pick Date"
-              size="sm"
-              variant="unstyled"
-              value={date}
-              onChange={(value) => {
-                setValue("hired_date", value)
-                value === null ? setDate(new Date()) : setDate(value)
-              }}
-              className={
-                isEditable
-                  ? "my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            />
-          </div>
-
-          <div className="flex w-[23%] flex-col">
-            <label className="mb-2 sm:text-sm">Mobile Number</label>
-            <input
-
-              type="number"
-              pattern="[0-9]*"
-              defaultValue={props.employee?.profile?.phone_no ?? "--"}
-              className={
-                isEditable
-                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-              onKeyDown={(e) => {
-                if (e.key === "e") {
-                  e.preventDefault()
-                }
-              }}
-              onChange={(event) => {
-                if (event.target.value.length > 11) {
-                  console.log("more than 11")
-                  event.target.value = event.target.value.slice(0, 11)
-                }
-                setValue(
-                  "profile.phone_no",
-                  event.currentTarget.value.toString()
-                )
-              }}
-            />
-
-            <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
-          </div>
-          <div className="flex w-[23%] flex-col">
-            <label className="sm:text-sm">Device</label>
-            <Select
-
-              onChange={(value) => {
-                setValue("workStation", String(value) ?? " ")
-                onSearchWorkStation(value ?? "")
-              }}
-              placeholder="--"
-              value={workStationValue}
-              defaultValue={props.employee?.workStation ?? "--"}
-              data={["Desktop", "Latop"]}
-              styles={(theme) => ({
-                item: {
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className={
-                isEditable
-                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            />
-          </div>
-          <div className="flex w-[23%] flex-col">
+          <div className="col-span-4">
             <label className="sm:text-sm">Work Mode</label>
             <Select
 
@@ -399,25 +249,192 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className={
-                isEditable
-                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
+              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+
             />
           </div>
-          <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">Street</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name="address.street"
-                register={register}
+        </div>
 
-              />
-            </div>
-            {/* <div className="flex w-[18.4%] flex-col">
+        <div className="col-span-9 grid grid-cols-12 gap-7">
+
+          <div className="col-span-3">
+            <label className="sm:text-sm">Team</label>
+            <Select
+
+              placeholder="Pick one"
+              onChange={(value) => {
+                setValue("teamId", Number(value) ?? 0)
+                onSearchChange(value ?? "0")
+              }}
+              value={searchValue}
+              data={teamList}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className=
+
+              "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+
+            />
+            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
+          </div>
+
+          <div className="col-span-3">
+            <label className="sm:text-sm">Department</label>
+            {/* <InputField
+              // placeholder={props.employee?.department}
+              type={"text"}
+              disabled={!editable}
+              label={""}
+              placeholder={props.employee?.team?.department?.name}
+              name={"department"}
+              register={register}
+            /> */}
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{`${props.employee?.team?.department?.name}`}</p>
+          </div>
+
+          <div className="col-span-6">
+            <label className="sm:text-sm">Location</label>
+            {/* <InputField
+              // placeholder={props.employee?.department}
+              type={"text"}
+              disabled={!editable}
+              label={""}
+              placeholder={props.employee?.team?.department?.name}
+              name={"department"}
+              register={register}
+            /> */}
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate "
+              }
+            >{"based on workmode (based wer?)"}</p>
+          </div>
+        </div>
+
+        <div className="col-span-9 grid grid-cols-12 gap-7">
+
+
+          <div className="col-span-4">
+            <label className="mb-2 sm:text-sm">Mobile Number</label>
+            <input
+
+              type="number"
+              pattern="[0-9]*"
+              defaultValue={props.employee?.profile?.phone_no ?? "--"}
+              className=
+
+              "!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+
+
+              onKeyDown={(e) => {
+                if (e.key === "e") {
+                  e.preventDefault()
+                }
+              }}
+              onChange={(event) => {
+                if (event.target.value.length > 11) {
+                  console.log("more than 11")
+                  event.target.value = event.target.value.slice(0, 11)
+                }
+                setValue(
+                  "profile.phone_no",
+                  event.currentTarget.value.toString()
+                )
+              }}
+            />
+
+            <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
+          </div>
+
+          <div className="col-span-4">
+            <label className="sm:text-sm">Email</label>
+            <InputField
+
+              type={"text"}
+              label={""}
+              name={"email"}
+              register={register}
+            />
+            <AlertInput>{errors?.email?.message}</AlertInput>
+          </div>
+          <div className="col-span-4">
+            <label className="sm:text-sm">Device</label>
+            <Select
+
+              onChange={(value) => {
+                setValue("workStation", String(value) ?? " ")
+                onSearchWorkStation(value ?? "")
+              }}
+              placeholder="--"
+              value={workStationValue}
+              defaultValue={props.employee?.workStation ?? "--"}
+              data={["Desktop", "Latop"]}
+              styles={(theme) => ({
+                item: {
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className=
+
+              "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+
+            />
+          </div>
+
+
+
+
+
+        </div>
+        <div className="col-span-9 grid grid-cols-12 gap-7">
+          <div className="col-span-3">
+            <label className="sm:text-sm">Street</label>
+            <InputField
+              type={"text"}
+              label={""}
+              name="address.street"
+              register={register}
+
+            />
+          </div>
+          {/* <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">Barangay</label>
               <InputField
                 type={"text"}
@@ -430,41 +447,40 @@ export const UpdateEmployee = (props: {
 
               <AlertInput>{errors?.address?.state?.message}</AlertInput>
             </div> */}
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">City</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name={"address.city"}
+          <div className="col-span-3">
+            <label className="sm:text-sm">City</label>
+            <InputField
+              type={"text"}
+              label={""}
+              name={"address.city"}
 
-                register={register}
-              />
+              register={register}
+            />
 
-              <AlertInput>{errors?.address?.city?.message}</AlertInput>
-            </div>
-            <div className="flex w-[18.4%] flex-col">
-              <label className="sm:text-sm">Zip Code</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name={"address.zip"}
+            <AlertInput>{errors?.address?.city?.message}</AlertInput>
+          </div>
+          <div className="col-span-3">
+            <label className="sm:text-sm">Zip Code</label>
+            <InputField
+              type={"text"}
+              label={""}
+              name={"address.zip"}
 
-                register={register}
-              />
-              <AlertInput>{errors?.address?.zip?.message}</AlertInput>
-            </div>
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">Country</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name={"address.country"}
+              register={register}
+            />
+            <AlertInput>{errors?.address?.zip?.message}</AlertInput>
+          </div>
+          <div className="col-span-3">
+            <label className="sm:text-sm">Country</label>
+            <InputField
+              type={"text"}
+              label={""}
+              name={"address.country"}
 
-                register={register}
-              />
+              register={register}
+            />
 
-              <AlertInput>{errors?.address?.country?.message}</AlertInput>
-            </div>
+            <AlertInput>{errors?.address?.country?.message}</AlertInput>
           </div>
         </div>
 
@@ -478,9 +494,9 @@ export const UpdateEmployee = (props: {
             setIsVisible={props.setIsVisible}
           />
         )} */}
-        <hr className="w-full"></hr>
+        <hr className="col-span-full"></hr>
         {/* <div className="flex w-full justify-end">
-          {isEditable && <button
+          {<button
             type="submit"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={employeeLoading}
@@ -488,7 +504,7 @@ export const UpdateEmployee = (props: {
             {employeeLoading ? "Loading..." : "Save"}
           </button>}
         </div> */}
-        <div className="flex w-full justify-between">
+        <div className="col-span-full">
           {!(
             error &&
             errors && (
@@ -506,8 +522,8 @@ export const UpdateEmployee = (props: {
               </pre>
             )
           )}
-          {isEditable && (
-            <div className="space-x-1">
+          {(
+            <div className="flex gap-4 w-full justify-end">
               <button
                 type="button"
                 className="rounded bg-red-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -528,7 +544,14 @@ export const UpdateEmployee = (props: {
               </button>
             </div>
           )}
-
+          <EmployeeDeleteModal
+            employee={props.employee}
+            openModalDel={openModalDel}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            setOpenModalDel={setOpenModalDel}
+          // setIsVisible={props.setIsVisible}
+          />
         </div>
       </form>
       <Modal
@@ -547,6 +570,8 @@ export const UpdateEmployee = (props: {
               onClick={() => {
                 // props.setIsVisible(false)
                 // setIsVisible(false)
+                router.push('/employees')
+
               }}
             >
               Confirm
@@ -565,3 +590,103 @@ export const UpdateEmployee = (props: {
 }
 
 export default UpdateEmployee
+
+export const EmployeeDeleteModal = (props: {
+  employee: EmployeeType
+  openModalDel: boolean
+  isLoading: boolean
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
+  // setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  //trpc utils for delete
+  const utils = trpc.useContext()
+  const router = useRouter();
+  const [isDeleteVisible, setIsDeleteVisible] = useState<boolean>(false)
+
+
+
+  const { mutate } = trpc.employee.delete.useMutation({
+    onSuccess() {
+      console.log()
+      props.setOpenModalDel(false)
+      props.setIsLoading(false)
+      // props.setIsVisible(false)
+      // router.push('/employees')
+      utils.employee.findAll.invalidate()
+      // window.location.reload()
+    },
+  })
+  const handleDelete = async () => {
+    mutate({
+      id: props.employee?.id ?? -1,
+    })
+  }
+
+  return (
+    <>
+      <Modal
+        className="max-w-2xl"
+        title="Delete Employee"
+        isVisible={props.openModalDel}
+        setIsVisible={props.setOpenModalDel}
+      >
+        <div className="m-4 flex flex-col ">
+          <div className="flex flex-col items-center gap-8 text-center">
+            <div>You are about delete this item with employee name: {props.employee?.name}</div>
+            <p className="text-neutral-500">
+              <i className="fa-regular fa-circle-exclamation" /> Please carefully review the action before deleting.
+            </p>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                className="rounded-sm bg-gray-300 px-5 py-1 hover:bg-gray-400"
+                onClick={() => {
+                  props.setOpenModalDel(false)
+                  props.setIsLoading(false)
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
+                onClick={() => {
+                  handleDelete()
+                  setIsDeleteVisible(true)
+                }}
+              // disabled={isLoading}
+              >
+                Yes, delete record
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        className="max-w-lg"
+        isVisible={isDeleteVisible}
+        setIsVisible={setIsDeleteVisible}
+        title="NOTICE!"
+      >
+        <>
+          <div className="py-2 items-center flex flex-col gap-3 ">
+            <p className="text-center text-lg font-semibold ">
+              Employee Deleted Successfully
+            </p>
+            <button
+              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+              onClick={() => {
+                // props.setIsVisible(false)
+                // setIsVisible(false)
+                router.push('/employees')
+
+              }}
+            >
+              Confirm
+            </button>
+          </div>
+        </>
+      </Modal>
+    </>
+  )
+}

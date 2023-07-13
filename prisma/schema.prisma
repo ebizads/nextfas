@@ -113,7 +113,6 @@ model validateTable {
 model Employee {
   id           Int       @id @default(autoincrement())
   name         String?
-  hired_date   DateTime?
   position     String?
   employee_id  String?   @unique
   email        String?   @unique

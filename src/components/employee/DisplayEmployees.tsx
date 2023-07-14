@@ -55,6 +55,8 @@ const DisplayEmployees = (props: {
     employeeColumns.map((i) => i.value)
   )
 
+  const [employeeId, setEmployeeId] = useState("")
+
   const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
@@ -181,6 +183,8 @@ const DisplayEmployees = (props: {
             </button>
             <AddEmployeePopOver
               openPopover={openAddPopover}
+              employeeId={employeeId}
+              setEmployeeId={setEmployeeId}
               setOpenPopover={setOpenAddPopover}
               setAddSingleRecord={setAddSingleRecord}
               setAddBulkRecord={setAddBulkRecord}
@@ -195,7 +199,7 @@ const DisplayEmployees = (props: {
           filterBy={filterBy}
           columns={columns.filter((col) => filterBy.includes(col.value))}
         />
-      </section >
+      </section>
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">
           <p>Showing up to</p>
@@ -233,6 +237,7 @@ const DisplayEmployees = (props: {
           setIsLoading={setIsLoading}
           isLoading={isLoading}
           setIsVisible={setAddSingleRecord}
+          generateId={employeeId}
         />
       </Modal>
       <Modal
@@ -249,7 +254,7 @@ const DisplayEmployees = (props: {
           setIsVisible={setAddBulkRecord}
         />
       </Modal>
-    </div >
+    </div>
   )
 }
 

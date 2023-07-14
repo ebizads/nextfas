@@ -228,7 +228,7 @@ export default function DropZone({
         id: duplicatedEmployees[i]?.id ?? 0,
         name: duplicatedEmployees[i]?.name ?? "",
         position: duplicatedEmployees[i]?.position,
-        employee_id: String(duplicatedEmployees[i]?.teamId) + employeeId[i],
+        employee_id: String(duplicatedEmployees[i]?.teamId).padStart(2, "0") + employeeId[i],
         email: duplicatedEmployees[i]?.email,
         teamId: duplicatedEmployees[i]?.teamId ?? 0,
         superviseeId: duplicatedEmployees[i]?.superviseeId ?? null,

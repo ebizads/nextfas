@@ -21,6 +21,7 @@ export const AddressCreateInput = z.object({
     .string({ required_error: "Country is required" })
     .min(1, "Country is required")
     .nullish(),
+  baranggay: z.string().nullish(),
 })
 
 export const AddressEditInput = z
@@ -30,6 +31,8 @@ export const AddressEditInput = z
     state: z.string().nullish(),
     zip: z.number().nullish(),
     country: z.string().nullish(),
+    baranggay: z.string().nullish(),
+
   })
 
 

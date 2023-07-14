@@ -162,6 +162,8 @@ model Address {
   vendorId   Int?      @unique
   employeeId Int?      @unique
   zip        Int?
+  baranggay  String?
+  province   String?
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)

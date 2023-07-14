@@ -182,7 +182,7 @@ export const employeeRouter = t.router({
           [
             ctx.prisma.employee.findMany({
               orderBy: {
-                createdAt: "desc",
+                employee_id: "asc",
               },
               include: {
                 address: true,

@@ -55,7 +55,7 @@ const CreateAssetAccordion = () => {
       console.log(error)
     },
     onSuccess() {
-      router.push("/asset")
+      router.push("/assets")
     },
   })
 
@@ -215,6 +215,7 @@ const CreateAssetAccordion = () => {
 
   const departmentList = useMemo(() => {
     if (companyId) {
+
       const dept = departmentData?.departments.filter(
         (department) => department.companyId === Number(companyId)
       )
@@ -781,7 +782,7 @@ const CreateAssetAccordion = () => {
                         disabled={!Boolean(categoryId)}
                         query={typeId}
                         setQuery={setTypeId}
-
+                        required
                         name={"model.typeId"}
                         setValue={setValue}
                         value={getValues("model.typeId")?.toString()}

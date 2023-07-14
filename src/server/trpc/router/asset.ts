@@ -312,6 +312,7 @@ export const assetRouter = t.router({
 
       const asset = await ctx.prisma.asset.create({
         data: {
+          ...rest,
           model: {
             connectOrCreate: {
               where: {
@@ -363,7 +364,6 @@ export const assetRouter = t.router({
               id: addedById ?? 0,
             },
           },
-          ...rest,
         },
         include: {
           model: true,

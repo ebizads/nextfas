@@ -4,6 +4,7 @@ import { trpc } from "../../../utils/trpc"
 import { ExcelExportType } from "../../../types/employee"
 import { useState } from "react"
 import { MouseEventHandler } from "react"
+import { EmployeeType } from "../../../types/generic"
 
 const DuplicateAccordion = (props: {
   currentRecords: Employee[]
@@ -12,6 +13,7 @@ const DuplicateAccordion = (props: {
   const [employeeArray, setEmployeeArray] = useState<number[]>([])
   const [employeeId, setEmployeeId] = useState<number>(-1)
   const [spliceId, setSpliceId] = useState<number>(-1)
+  const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
   const [employeesMutate, setEmployeesMutate] = useState<ExcelExportType[]>([])
 
   const {
@@ -45,9 +47,23 @@ const DuplicateAccordion = (props: {
     )
   }
 
+  function generateEmployeeId(employee: EmployeeType[]) {
+    for (let x = 0; x <= (allEmp?.employees ? allEmp?.employees?.length : 0) + 1;) {
+      if ((employee.some((item) => item?.employee_id?.includes(String(x + 1).padStart(4, '0'))))) {
+        x++
+      } else {
+        return String(x + 1).padStart(4, '0')
+      }
+    }
+  }
+
   const acceptChange = (splice: number, employeeId: number) => () => {
+
     setEmployeeId(employeeId)
     setSpliceId(splice)
+    const employeesAll: EmployeeType[] = allEmp?.employees as EmployeeType[];
+
+    const id = generateEmployeeId(employeesAll)
 
     console.log("data: " + JSON.stringify(props.incomingChanges[splice]))
     try {
@@ -55,7 +71,7 @@ const DuplicateAccordion = (props: {
         id: props.incomingChanges[splice]?.id ?? 0,
         name: props.incomingChanges[splice]?.name ?? "",
         position: props.incomingChanges[splice]?.position,
-        employee_id: props.incomingChanges[splice]?.employee_id,
+        employee_id: (String(props.incomingChanges[splice]?.teamId) + id),
         email: props.incomingChanges[splice]?.email,
         teamId: props.incomingChanges[splice]?.teamId ?? 0,
         superviseeId: props.incomingChanges[splice]?.superviseeId ?? 0,

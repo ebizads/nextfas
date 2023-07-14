@@ -22,6 +22,7 @@ import Modal from "../headless/modal/modal"
 import { DropZoneModal } from "./DropZoneModal"
 import moment from "moment"
 import { env } from "../../env/client.mjs"
+import { EmployeeType } from "../../types/generic"
 
 export type Employee = z.infer<typeof EmployeeEditInput>
 export default function DropZone({
@@ -44,8 +45,8 @@ export default function DropZone({
   const [employeeRandomizer, setEmployeeRandomizer] = useState<string>("000001")
   const [lastNumber, setLastNumber] = useState<string>()
   const [importedData, setImportedData] = useState(false)
-  const [checker, setChecker] = useState<string>("000000")
-  const { data: allEmp } = trpc.employee.findAll.useQuery()
+  const [checker, setChecker] = useState<string>("0000")
+  const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
   const { data: checkUnique } = trpc.employee.checkUnique.useQuery(checker)
   const { data: duplicates } = trpc.employee.checkDuplicates.useQuery(idList)
   const [duplicatedEmployees, setDuplicatedEmployees] = useState<
@@ -81,8 +82,7 @@ export default function DropZone({
 
     if (id_list) {
       setIdList(id_list)
-      console.log("idlist:", id_list)
-
+      console.log("idlist:", duplicates)
     }
     //filters duplicated ID
 
@@ -106,8 +106,6 @@ export default function DropZone({
 
     const final_dupList = [] as ExcelExportType[]
     dupEmployeeList.forEach((emp) => {
-
-
 
       const data_structure = {
         id: (emp as (string | number | null)[])[0] as number,
@@ -171,6 +169,7 @@ export default function DropZone({
     )
     // setDuplicatedEmployees(dupEmployees)
     // console.log(dupEmployees)
+
   }
 
 
@@ -191,33 +190,21 @@ export default function DropZone({
     setIsVisible(false)
   }
 
-  function generateEmployeeId(length: number) {
+  function generateEmployeeId(length: number, employee: EmployeeType[]) {
     const numberArray: string[] = []
-    for (let x = 0, y = 0, z = false; x <= (allEmp?.employees ? allEmp?.employees?.length : 0) + 1;) {
-
-      setChecker(String(x).padStart(4, '0'))
-      if (checkUnique) {
+    for (let x = 0, y = 0; x <= (allEmp?.employees ? allEmp?.employees?.length : 0) + 1;) {
+      if ((employee.some((item) => item?.employee_id?.includes(String(x + 1).padStart(4, '0')))) || (numberArray?.includes(String(x + 1).padStart(4, '0')))) {
         x++
-      }
-      if (!checkUnique && z == false) {
+      } else {
         numberArray.push(String(x + 1).padStart(4, '0'))
-        x++
-        z = true
-      }
-      if (!checkUnique && y < length) {
-        numberArray.push(String(x + 1).padStart(4, '0'))
-        x++
+        x = 0
         y++
-        console.log('true', x, length)
       }
-
       if (y >= length) {
         break;
       }
 
-      if (x >= length) {
-        break;
-      }
+
     }
     console.log("Chk: " + JSON.stringify(numberArray))
 
@@ -229,49 +216,19 @@ export default function DropZone({
     setChecker(employeeRandomizer);
   }, [employeeRandomizer])
 
-  // useEffect(() => {
-  //   if (!checkUnique) {
-  //     setEmployeeId(employeeRandomizer);
-  //   } else {
-  //     console.log("nagture: ", checkUnique);
-  //   }
-  // }, [checkUnique, employeeRandomizer])
   const OnSubmitUpdate = async () => {
     // Register function
-    // try {
-    const employeeId: string[] = generateEmployeeId(duplicatedEmployees.length)
+    const employeesAll: EmployeeType[] = allEmp?.employees as EmployeeType[];
+    const employeeId: string[] = generateEmployeeId(duplicatedEmployees.length, employeesAll)
     // setChecker(employeeRandomizer)
     for (let i = 0; i < duplicatedEmployees.length; i++) {
-
-      // for (let x = 0; x < (allEmp?.employees ? allEmp?.employees?.length : 0); x++) {
-
-      //   if (existingEmployee) {
-      //     empId = String((duplicatedEmployees[i]?.teamId ?? 0) + (String(x).padStart(6, '0')))
-      //   }
-      //   if (!checkUnique) {
-      //     setEmployeeRandomizer((prevRandomizer) => {
-      //       const incrementedValue = parseInt(prevRandomizer) + 1;
-      //       return String(incrementedValue).padStart(6, '0');
-      //     });
-
-      //     break;
-      //   } else {
-      //     setEmployeeRandomizer((prevRandomizer) => {
-      //       const incrementedValue = parseInt(prevRandomizer) + 1;
-      //       return String(incrementedValue).padStart(6, '0');
-      //     });
-      //     console.log("nagture: ", checkUnique);
-      //   }
-
-      //   console.log("checking", employeeRandomizer, "try", empId);
-      // }
 
 
       mutate({
         id: duplicatedEmployees[i]?.id ?? 0,
         name: duplicatedEmployees[i]?.name ?? "",
         position: duplicatedEmployees[i]?.position,
-        employee_id: employeeId[i],
+        employee_id: String(duplicatedEmployees[i]?.teamId) + employeeId[i],
         email: duplicatedEmployees[i]?.email,
         teamId: duplicatedEmployees[i]?.teamId ?? 0,
         superviseeId: duplicatedEmployees[i]?.superviseeId ?? null,
@@ -313,20 +270,20 @@ export default function DropZone({
         },
       });
 
-      // } catch { }
     }
   }
   checkDuplicated()
   return (
     <div>
-      {/* {"DUPLICATES: " + duplicates?.length} */}
+      {/* {"DUPLICATES: " + JSON.stringify(duplicates)} */}
       {importedData ? (
-        duplicates?.length == 0 ||
-          duplicates == null ||
-          duplicates == undefined ? (
-          duplicatedEmployees.length == 0 ||
-            duplicatedEmployees == null ||
-            duplicatedEmployees == undefined ? (
+        duplicates?.length === 0 ||
+          duplicates === null ||
+          duplicates === undefined ||
+          duplicates[0]?.id === 0 ? (
+          duplicatedEmployees.length === 0 ||
+            duplicatedEmployees === null ||
+            duplicatedEmployees === undefined ? (
             <div className="flex flex-col gap-2 px-4 py-2">
               <div className="flex items-center gap-4 bg-yellow-100 p-4 text-light-secondary">
                 <i className="fa-regular fa-circle-exclamation" />

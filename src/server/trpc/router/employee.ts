@@ -13,6 +13,7 @@ export const employeeRouter = t.router({
     const employee = await ctx.prisma.employee.findUnique({
       where: { id: input },
       include: {
+
         address: true,
         profile: true,
         team: {

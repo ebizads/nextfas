@@ -1,13 +1,47 @@
 import React from "react"
 import { Popover } from "@mantine/core"
 import Link from "next/link"
+import { trpc } from "../../../utils/trpc"
+import { EmployeeType } from "../../../types/generic"
 
 const AddEmployeePopOver = (props: {
   openPopover: boolean
+  employeeId: string
+  setEmployeeId: React.Dispatch<React.SetStateAction<string>>
   setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
   setAddSingleRecord: React.Dispatch<React.SetStateAction<boolean>>
   setAddBulkRecord: React.Dispatch<React.SetStateAction<boolean>>
+
 }) => {
+
+  const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
+  const employeesAll: EmployeeType[] = allEmp?.employees as EmployeeType[]
+
+
+  function generateEmployeeId() {
+    let numberArray = ""
+
+    for (
+      let x = 0;
+      x <= (allEmp?.employees ? allEmp?.employees?.length : 0) + 1;
+
+    ) {
+      if (
+        employeesAll.some((item) =>
+          item?.employee_id?.includes(String(x + 1).padStart(4, "0"))
+        )
+      ) {
+        x++
+      } else {
+        console.log("Chk: " + JSON.stringify(true))
+
+        return (numberArray = String(x + 1).padStart(4, "0"))
+      }
+    }
+
+    return numberArray
+  }
+
   return (
     <Popover
       opened={props.openPopover}

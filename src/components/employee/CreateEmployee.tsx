@@ -14,6 +14,8 @@ import { env } from "../../env/client.mjs"
 import moment from "moment"
 import Modal from "../headless/modal/modal"
 import TypeSelect, { SelectValueType } from "../atoms/select/TypeSelect"
+import ph_regions from "../../ph_regions.json"
+import { EmployeeType } from "../../types/generic"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -22,6 +24,7 @@ export const CreateEmployee = (props: {
   setDate: React.Dispatch<React.SetStateAction<Date>>
   setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
   images: ImageJSON[]
+  generateId: string
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   isLoading: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -31,9 +34,17 @@ export const CreateEmployee = (props: {
   const [workStationValue, onSearchWorkStation] = useState("")
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [tryReset, setTryReset] = useState<boolean>(false)
-  const [empId] = useState<string>(moment().format("YY-MDhms"))
+  const [empId] = useState<string>(moment().format("YY-"))
   const { data: teams } = trpc.team.findAll.useQuery()
+  const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
+  const [country, setCountry] = useState("")
+  const [state, setState] = useState("")
+  const [province, setProvince] = useState("")
+  const [city, setCity] = useState("")
+  const [barangay, setBarangay] = useState("")
+
   const utils = trpc.useContext()
+
   const {
     mutate,
     isLoading: employeeLoading,
@@ -69,7 +80,6 @@ export const CreateEmployee = (props: {
       // superviseeId: 0,
       teamId: 0,
       email: "",
-      hired_date: new Date(),
       position: "",
       address: {
         city: "",
@@ -90,15 +100,17 @@ export const CreateEmployee = (props: {
     // Register function
 
     mutate({
-      name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
-        }`,
-      employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
+      name: `${employee.profile?.first_name ?? ""} ${
+        employee.profile?.last_name ?? ""
+      }`,
+      employee_id:
+        `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}` +
+        (String(employee.teamId).padStart(2, "0") + props.generateId),
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
       //     .replace(" ", "")
       //     .toLowerCase()
       //     .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
-      hired_date: employee.hired_date,
       teamId: employee.teamId,
       // supervisee: {
       //   name: employee.supervisee?.name ?? ""
@@ -107,6 +119,8 @@ export const CreateEmployee = (props: {
       position: employee.position,
       address: {
         city: employee.address?.city,
+        province: employee.address?.province,
+        baranggay: employee.address?.baranggay,
         country: employee.address?.country,
         street: employee.address?.street,
         state: employee.address?.state,
@@ -128,9 +142,91 @@ export const CreateEmployee = (props: {
     props.setIsVisible(false)
     document.forms[0]?.reset()
     reset()
-
-
   }
+
+  const filteredState = useMemo(() => {
+    const upperLevel = Object.entries(ph_regions)
+      .sort(([key1], [key2]) => {
+        const num1 = parseInt(key1)
+        const num2 = parseInt(key2)
+        return num1 - num2
+      })
+      .map(([key]) => key)
+    setState("")
+    console.log("keys:", upperLevel)
+    return upperLevel
+  }, [])
+
+  const filteredProvince = useMemo(() => {
+    const newProvince: Array<any> = []
+    if (state === null ?? "") {
+      setProvince("")
+
+      return newProvince
+    }
+    const jsonData = ph_regions
+
+    if (state) {
+      const provinceLevel = Object.keys(
+        (jsonData as Record<string, any>)[state].province_list
+      )
+      console.log("province", provinceLevel)
+      setProvince("")
+
+      return provinceLevel
+    }
+    setProvince("")
+
+    return newProvince
+  }, [state])
+
+  const filteredCity = useMemo(() => {
+    const newCity: Array<any> = []
+    if (province === null ?? "") {
+      setCity("")
+
+      return newCity
+    }
+
+    if (state && province) {
+      const jsonData = (ph_regions as Record<string, any>)[state].province_list
+
+      const cityLevel = Object.keys(
+        (jsonData as Record<string, any>)[province].municipality_list
+      )
+      console.log("city", cityLevel)
+      setCity("")
+
+      return cityLevel
+    }
+    setCity("")
+
+    return newCity
+  }, [state, province])
+
+  const filteredBarangay = useMemo(() => {
+    const newBarangay: Array<any> = []
+    if (city === null ?? "") {
+      setBarangay("")
+
+      return newBarangay
+    }
+
+    if (state && province && city) {
+      const jsonData = (ph_regions as Record<string, any>)[state].province_list
+      const cityData = (jsonData as Record<string, any>)[province]
+        .municipality_list
+      const barangayLevel = (cityData as Record<string, any>)[city]
+        .barangay_list
+      console.log("city", barangayLevel)
+      setBarangay("")
+
+      return barangayLevel
+    }
+    setBarangay("")
+
+    return newBarangay
+  }, [state, province, city])
 
   return (
     <div>
@@ -203,7 +299,7 @@ export const CreateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
           <div className="flex w-[32%] flex-col">
@@ -215,7 +311,11 @@ export const CreateEmployee = (props: {
               name={"employee_id"}
               register={register}
             /> */}
-            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`}</p>
+            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
+              {`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}${
+                String(searchValue).padStart(2, "0") + props.generateId
+              }`}
+            </p>
           </div>
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Designation / Position</label>
@@ -254,39 +354,19 @@ export const CreateEmployee = (props: {
               name={"department"}
               register={register}
             /> */}
-            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
+            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
               {"--"}
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex flex-col sm:w-1/3 md:w-[25%]">
-            <label className="sm:text-sm ">Hired Date</label>
-            {/* <InputField
-            className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
-            type={"text"}
-          /> */}
-            <DatePicker
-              dropdownType="popover"
-              placeholder="Pick Date"
-              size="sm"
-              variant="unstyled"
-              value={props.date}
-              onChange={(value) => {
-                setValue("hired_date", value)
-                value === null
-                  ? props.setDate(new Date())
-                  : props.setDate(value)
-              }}
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-            />
-          </div>
           <div className="flex w-[23%] flex-col">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
+              placeholder="--"
               type="number"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
               onKeyDown={(e) => {
                 if (e.key === "e") {
                   e.preventDefault()
@@ -336,7 +416,7 @@ export const CreateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
           <div className="flex w-[23%] flex-col">
@@ -346,8 +426,12 @@ export const CreateEmployee = (props: {
               onChange={(value) => {
                 setValue("workMode", String(value) ?? " ")
                 onSearchWorkMode(value ?? " ")
+                setState(value ?? "")
+                setProvince("")
+                setCity("")
+                setBarangay("")
               }}
-              value={workModeValue}
+              value={workModeValue ?? ""}
               data={["WFH", "Hybrid", "On-Site"]}
               styles={(theme) => ({
                 item: {
@@ -370,59 +454,262 @@ export const CreateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
-          <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">Street</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name="address.street"
-                register={register}
+          <div className="flex w-full flex-wrap gap-3 py-2.5">
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">Country</label>
+              <Select
+                name={"address.country"}
+                id="address.country"
+                searchable
+                required
+                placeholder="Country"
+                data={["Philippines"]}
+                onChange={(value) => {
+                  setValue("address.country", value ?? "")
+                  setCountry(value ?? "")
+                }}
+                value={country ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                clearable
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
               />
+
+              <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.4%] flex-col">
-              <label className="sm:text-sm">Barangay</label>
-              <InputField
-                type={"text"}
-                label={""}
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">Region/State</label>
+              <Select
                 name={"address.state"}
-                register={register}
-              /><AlertInput>{errors?.address?.state?.message}</AlertInput>
+                searchable
+                required
+                id="address.state"
+                placeholder="State"
+                data={filteredState ?? [""]}
+                disabled={country === ""}
+                onChange={(value) => {
+                  setValue("address.state", value ?? "")
+                  setState(value ?? "")
+                  setProvince("")
+                  setCity("")
+                  setBarangay("")
+                }}
+                value={state ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                clearable
+                nothingFound="No options"
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              />
+
+              <AlertInput>{errors?.address?.state?.message}</AlertInput>
             </div>
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">City</label>
-              <InputField
+
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">Province</label>
+              <Select
+                name={"address.province"}
+                searchable
+                required
+                id="address.province"
+                placeholder="Province"
+                data={filteredProvince}
+                disabled={state === ""}
+                onChange={(value) => {
+                  setValue("address.province", value ?? "")
+                  setProvince(value ?? "")
+                  setCity("")
+                  setBarangay("")
+                }}
+                value={province ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              />
+              {/* <InputField
                 type={"text"}
                 label={""}
                 name={"address.city"}
                 register={register}
+              /> */}
+
+              <AlertInput>{errors?.address?.province?.message}</AlertInput>
+            </div>
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">City</label>
+              <Select
+                name={"address.city"}
+                id="address.city"
+                placeholder="City"
+                searchable
+                required
+                disabled={province === ""}
+                data={filteredCity}
+                onChange={(value) => {
+                  setValue("address.city", value ?? "")
+                  setCity(value ?? "")
+                  setBarangay("")
+                }}
+                value={city ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
               />
+              {/* <InputField
+                type={"text"}
+                label={""}
+                name={"address.city"}
+                register={register}
+              /> */}
 
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.4%] flex-col">
-              <label className="sm:text-sm">Zip Code</label>
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">Barangay</label>
+              <Select
+                name={"address.barangay"}
+                id="address.barangay"
+                placeholder="Barangay"
+                data={filteredBarangay}
+                searchable
+                required
+                disabled={city === ""}
+                onChange={(value) => {
+                  setValue("address.baranggay", value ?? "")
+                  setBarangay(value ?? "")
+                }}
+                value={barangay ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              />
+              <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
+            </div>
+            <div className="flex w-[23%] flex-col ">
+              <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
+                Street
+              </label>
+              <InputField
+                type={"text"}
+                label={""}
+                placeholder="Street"
+                disabled={barangay === ""}
+                name={"address.street"}
+                register={register}
+              />
+              <AlertInput>{errors?.address?.street?.message}</AlertInput>
+            </div>
+
+            <div className="flex w-[23%] flex-col">
+              <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
+                Zip Code
+              </label>
               <InputField
                 type={"number"}
                 label={""}
+                disabled={barangay === ""}
                 name={"address.zip"}
                 register={register}
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
-            </div>
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">Country</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name={"address.country"}
-                register={register}
-              />
-
-              <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
           </div>
         </div>
@@ -467,7 +754,7 @@ export const CreateEmployee = (props: {
         title="NOTICE!"
       >
         <>
-          <div className="py-2 items-center flex flex-col gap-3 ">
+          <div className="flex flex-col items-center gap-3 py-2 ">
             <p className="text-center text-lg font-semibold ">
               Employee Created Successfully
             </p>

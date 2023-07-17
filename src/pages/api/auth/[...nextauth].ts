@@ -76,7 +76,6 @@ export const authOptions: NextAuthOptions = {
                   name: user?.name ?? "",
                   email: user?.email ?? "",
                   username: user?.username ?? "",
-                  hired_date: user?.hired_date,
                   user_type: user?.user_type ?? ""
 
                 },

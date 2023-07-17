@@ -1,9 +1,12 @@
 import { Accordion } from "@mantine/core"
 import { ExcelExportType } from "../../../types/employee"
+import { EmployeeType } from "../../../types/generic"
+import { trpc } from "../../../utils/trpc"
 
 const EmployeeRecordsAccordion = (props: {
   incomingChanges: ExcelExportType[]
 }) => {
+
   return (
     <Accordion>
       {props.incomingChanges?.map((employee, idx) => (
@@ -13,7 +16,6 @@ const EmployeeRecordsAccordion = (props: {
         >
           <Accordion.Control className="uppercase">
             <div className="grid w-1/2 grid-cols-2 gap-1">
-              <p>{employee.employee_id}</p>
               <p>{employee.name}</p>
             </div>
           </Accordion.Control>

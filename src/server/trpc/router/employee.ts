@@ -92,6 +92,12 @@ export const employeeRouter = t.router({
               where: {
                 NOT: {
                   deleted: true,
+
+                },
+                OR: {
+                  NOT: {
+                    profile: null,
+                  }
                 },
                 // hired_date: input?.filter?.hired_date,
                 name: { contains: input?.search?.name, mode: 'insensitive' },
@@ -136,8 +142,7 @@ export const employeeRouter = t.router({
         })
       }
     }),
-
-  findAllSample: authedProcedure
+  findAllNoLimit: authedProcedure
     .input(
       z
         .object({
@@ -149,6 +154,208 @@ export const employeeRouter = t.router({
               name: z.string().optional(),
               employee_id: z.string().optional(),
 
+              email: z.string().optional(),
+              team: z
+                .object({
+                  name: z.string().optional(),
+                  department: z
+                    .object({
+                      id: z.number(),
+                    })
+                    .optional(),
+                })
+                .optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              hired_date: z.date().optional(),
+              subsidiary: z.string().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const [employees, count] = await ctx.prisma.$transaction(
+          [
+            ctx.prisma.employee.findMany({
+              orderBy: {
+                employee_id: "asc",
+              },
+              include: {
+                address: true,
+                profile: true,
+                team: {
+                  include: {
+                    department: {
+                      include: {
+                        location: true,
+                      },
+                    },
+                  },
+                },
+              },
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+                // hired_date: input?.filter?.hired_date,
+                // name: { contains: input?.search?.name, mode: 'insensitive' },
+                // employee_id: { contains: input?.search?.employee_id },
+                // email: { contains: input?.search?.email },
+                // team: {
+                //   department: {
+                //     id: {
+                //       equals: input?.search?.team?.department?.id,
+                //     },
+                //   },
+                // },
+              },
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+              take: input?.limit,
+            }),
+            ctx.prisma.employee.count({
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+              },
+            }),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        )
+
+        return {
+          employees,
+          total: count
+        }
+      } catch (error) {
+        console.log(error)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  findAllCustodians: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+
+          search: z
+            .object({
+              name: z.string().optional(),
+              employee_id: z.string().optional(),
+
+              email: z.string().optional(),
+              team: z
+                .object({
+                  name: z.string().optional(),
+                  department: z
+                    .object({
+                      id: z.number(),
+                    })
+                    .optional(),
+                })
+                .optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              hired_date: z.date().optional(),
+              subsidiary: z.string().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const [employees, count] = await ctx.prisma.$transaction(
+          [
+            ctx.prisma.employee.findMany({
+              orderBy: {
+                createdAt: "desc",
+              },
+              include: {
+                address: true,
+                profile: true,
+                team: {
+                  include: {
+                    department: {
+                      include: {
+                        location: true,
+                      },
+                    },
+                  },
+                },
+              },
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+                // hired_date: input?.filter?.hired_date,
+                name: { contains: input?.search?.name, mode: 'insensitive' },
+                employee_id: { contains: input?.search?.employee_id },
+                // email: { contains: input?.search?.email },
+                // team: {
+                //   department: {
+                //     id: {
+                //       equals: input?.search?.team?.department?.id,
+                //     },
+                //   },
+                // },
+              },
+              skip: input?.page
+                ? (input.page - 1) * (input.limit ?? 10)
+                : undefined,
+            }),
+            ctx.prisma.employee.count({
+              where: {
+                NOT: {
+                  deleted: true,
+                },
+              },
+            }),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          }
+        )
+
+        return {
+          employees,
+          pages: Math.ceil(count / (input?.limit ?? 0)),
+          total: count,
+        }
+      } catch (error) {
+        console.log(error)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  findAllSample: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+
+          search: z
+            .object({
+              name: z.string().optional(),
+              employee_id: z.string().optional(),
+              number: z.string().optional(),
               email: z.string().optional(),
               team: z
                 .object({
@@ -206,10 +413,6 @@ export const employeeRouter = t.router({
                 //   },
                 // },
               },
-              skip: input?.page
-                ? (input.page - 1) * (input.limit ?? 10)
-                : undefined,
-              take: input?.limit ?? 10,
             }),
             ctx.prisma.employee.count({
               where: {
@@ -237,16 +440,27 @@ export const employeeRouter = t.router({
         })
       }
     }),
+  checkUnique: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const employee = await ctx.prisma.employee.findFirst({
+      where: {
+        employee_id: {
+          contains: input,
+        },
+      },
+    })
+    if (employee) {
+      return employee
+    } else { return null }
+  }),
   checkDuplicates: authedProcedure
     .input(z.array(z.number()))
     .query(async ({ ctx, input }) => {
-      3
       for (let i = 0; i < input.length; i++) {
         if (input[i] !== null || input[i] !== undefined || input[i] !== 0) {
           const employees = await ctx.prisma.employee.findMany({
             where: {
               id: {
-                in: input[i],
+                in: input,
               },
             },
             include: {
@@ -336,8 +550,10 @@ export const employeeRouter = t.router({
   createOrUpdate: authedProcedure
     .input(EmployeeTableEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, address, profile, ...rest } = input
-      const empId = moment().format("YY-MDhms")
+      const empId = moment().format("YY-")
+
+
+      const { id, address, profile, employee_id, ...rest } = input
 
 
       await ctx.prisma.employee.upsert({
@@ -345,9 +561,8 @@ export const employeeRouter = t.router({
           id: id,
         },
         create: {
-
           ...rest,
-          employee_id: env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID + empId,
+          employee_id: env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID + empId + employee_id,
           address: {
             connectOrCreate: {
               where: {

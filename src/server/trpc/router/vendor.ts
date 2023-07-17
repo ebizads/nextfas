@@ -18,28 +18,27 @@ export const vendorRouter = t.router({
     .input(VendorEditInput)
     .mutation(async ({ ctx, input }) => {
       const { id, address, ...rest } = input
-      try {
-        await ctx.prisma.employee.upsert({
-          where: {
-            id: id,
-          },
-          create: {
-            ...rest,
-            address: {
-              connectOrCreate: {
-                where: {
-                  id: 0,
-                },
-                create: address,
+
+      await ctx.prisma.vendor.upsert({
+        where: {
+          id: id,
+        },
+        create: {
+          ...rest,
+          address: {
+            connectOrCreate: {
+              where: {
+                id: 0,
               },
+              create: address,
             },
           },
-          update: {
-            ...rest,
-            address: { update: address },
-          },
-        })
-      } catch (error) { }
+        },
+        update: {
+          ...rest,
+          address: { update: address },
+        },
+      })
     }),
   checkDuplicates: authedProcedure
     .input(z.array(z.number()))
@@ -99,6 +98,11 @@ export const vendorRouter = t.router({
                 NOT: {
                   deleted: true,
                 },
+                OR: {
+                  NOT: {
+                    address: null,
+                  }
+                }
               },
             }),
             ctx.prisma.vendor.count({

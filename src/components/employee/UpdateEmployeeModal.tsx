@@ -41,7 +41,6 @@ export const UpdateEmployeeModal = (props: {
   const [workStationValue, onSearchWorkStation] = useState<string>(
     props.employee?.workStation?.toString() ?? " "
   )
-  // const [date, setDate] = useState(props.employee?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)

@@ -11,7 +11,6 @@ export const EmployeeCreateInput = z.object({
     .regex(/.+\..+/, "Format invalid")
     .nullish()
     .optional(),
-  hired_date: z.date().nullish().optional(),
   position: z.string().nullish().optional(),
   profile: z
     .object({
@@ -41,7 +40,6 @@ export const EmployeeEditInput = z.object({
     .regex(/.+\..+/, "Format invalid")
     .nullish()
     .optional(),
-  hired_date: z.date().nullish().optional(),
   position: z.string().nullish().optional(),
   profile: z
     .object({
@@ -70,7 +68,6 @@ export const EmployeeTableEditInput = z.object({
     .regex(/.+\..+/, "Format invalid")
     .nullish()
     .optional(),
-  hired_date: z.date().nullish().optional(),
   position: z.string().nullish().optional(),
   profile: z
     .object({

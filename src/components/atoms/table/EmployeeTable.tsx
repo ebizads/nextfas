@@ -263,14 +263,6 @@ function ShowDetails({
                   </p>
                 </div>
                 <div className="py-3">
-                  <p className="text-sm font-semibold">HIRE DATE</p>
-                </div>
-                {/* <div className="py-3">
-                  <p className="col-span-2 text-sm">
-                    {info.hired_date?.toDateString() ?? "NO DATA"}
-                  </p>
-                </div> */}
-                <div className="py-3">
                   <p className="text-sm font-semibold">TEAM</p>
                 </div>
                 <div className="py-3">

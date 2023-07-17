@@ -48,10 +48,15 @@ import Assets from "../../../pages/assets"
 import Employee from "../../../pages/employees"
 
 const CreateAssetAccordion = () => {
+  const router = useRouter()
+
   const { mutate, isLoading, error } = trpc.asset.create.useMutation({
     onError() {
       console.log(error)
-    }
+    },
+    onSuccess() {
+      router.push("/assets")
+    },
   })
 
   const {
@@ -175,7 +180,7 @@ const CreateAssetAccordion = () => {
   ) as SelectValueType[] | undefined
 
   //gets and sets all employee
-  const { data: employeeData } = trpc.employee.findAll.useQuery()
+  const { data: employeeData } = trpc.employee.findAllCustodians.useQuery()
   const employeeList = useMemo(
     () =>
       employeeData?.employees
@@ -210,6 +215,7 @@ const CreateAssetAccordion = () => {
 
   const departmentList = useMemo(() => {
     if (companyId) {
+
       const dept = departmentData?.departments.filter(
         (department) => department.companyId === Number(companyId)
       )
@@ -297,6 +303,7 @@ const CreateAssetAccordion = () => {
     }
   }, [companyId, companyData])
 
+
   const [loading, setIsLoading] = useState<boolean>(false)
   const [assetId, setAssetId] = useState<string>(
     `-${moment().format("YYMDhms")}`
@@ -337,7 +344,6 @@ const CreateAssetAccordion = () => {
     }
   }, [assetId, asset_number, setValue])
 
-  const router = useRouter()
   const { data: session } = useSession()
 
   const onSubmit: SubmitHandler<AssetFieldValues> = (
@@ -362,7 +368,7 @@ const CreateAssetAccordion = () => {
       setTypeId(null)
       setCompanyId(null)
       setDepartmentId(null)
-      router.push("/assets")
+      // router.push("/assets")
     }
   }
 
@@ -790,7 +796,40 @@ const CreateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-4">
+                    <div className="text-gray-700 col-span-4">
+                      <div className="flex flex-1 flex-col gap-2">
+                        <label htmlFor="address" className="text-sm">
+                          Asset Location
+                        </label>
+                        <input
+                          type="text"
+                          id={"management.asset_location"}
+                          className={
+                            "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                          }
+                          placeholder="Company Address will appear here"
+                          value={
+                            employee_workMode?.workMode === "On-Site" ? (company_address?.address
+                              ? getAddress(company_address)
+                              : "")
+                              : employee_workMode?.workMode === "Work From Home"
+                                ? (employee_workMode.address
+                                  ? getAddress(employee_workMode)
+                                  : "")
+                                : employee_workMode?.workMode === "Hybrid" ? (company_address?.address
+                                  ? ("[" + getAddress(company_address) + "]")
+                                  : "") + " & " +
+                                  (employee_workMode.address
+                                    ? ("[" + getAddress(employee_workMode) + "]")
+                                    : "")
+                                  : "--"
+                          }
+                          disabled
+                        />
+                      </div>
+                    </div>
+                    {/* <div className="col-span-4">
+
                       <InputField
                         register={register}
                         label="Asset Location"
@@ -798,7 +837,7 @@ const CreateAssetAccordion = () => {
                         name="management.asset_location"
                         required
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-10 gap-7">

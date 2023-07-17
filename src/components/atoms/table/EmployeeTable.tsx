@@ -6,7 +6,7 @@ import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
 import { EmployeeType } from "../../../types/generic"
 import { employeeColumns } from "../../../lib/table"
-import { getAddress, getName, getProperty } from "../../../lib/functions"
+import { getAddress, getName, getProperty, getWorkMode } from "../../../lib/functions"
 import {
   Employee,
   UpdateEmployeeModal,
@@ -142,9 +142,11 @@ const EmployeeTable = (props: {
                       // ternary operator that returns special values for date, name, and address
                       col.value.match(/_name/g)
                         ? getName(col.value, row)
-                        : col.value === "city"
-                          ? getAddress(row)
-                          : getProperty(col.value, row)
+                        : col.value === "workMode"
+                          ? getWorkMode(row)
+                          : col.value === "city"
+                            ? getAddress(row)
+                            : getProperty(col.value, row)
                     }
                   </td>
                 ))}

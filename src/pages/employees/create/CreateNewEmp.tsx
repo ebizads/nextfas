@@ -67,7 +67,6 @@ export const CreateEmployee_new = (props: {
       // superviseeId: 0,
       teamId: 0,
       email: "",
-      hired_date: new Date(),
       position: "",
       address: {
         city: "",
@@ -96,7 +95,6 @@ export const CreateEmployee_new = (props: {
       //     .replace(" ", "")
       //     .toLowerCase()
       //     .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
-      hired_date: employee.hired_date,
       teamId: employee.teamId,
       // supervisee: {
       //   name: employee.supervisee?.name ?? ""

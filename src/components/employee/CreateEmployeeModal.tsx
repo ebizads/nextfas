@@ -14,8 +14,11 @@ import { env } from "../../env/client.mjs"
 import moment from "moment"
 import Modal from "../headless/modal/modal"
 import TypeSelect, { SelectValueType } from "../atoms/select/TypeSelect"
-import ph_regions from "../../ph_regions.json"
-import { EmployeeType } from "../../types/generic"
+import ph_regions from "../../json/ph_regions.json"
+import all_countries from "../../json/countries.json"
+import all_states from "../../json/states.json"
+import all_cities from "../../json/cities.json"
+import { set } from "lodash"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -38,7 +41,7 @@ export const CreateEmployeeModal = (props: {
   const { data: teams } = trpc.team.findAll.useQuery()
   const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
   const [country, setCountry] = useState("")
-  const [state, setState] = useState("")
+  const [region, setRegion] = useState("")
   const [province, setProvince] = useState("")
   const [city, setCity] = useState("")
   const [barangay, setBarangay] = useState("")
@@ -52,6 +55,7 @@ export const CreateEmployeeModal = (props: {
   } = trpc.employee.create.useMutation({
     onSuccess: () => {
       utils.employee.findAll.invalidate()
+      setIsVisible(true)
       props.setImage([])
     },
   })
@@ -122,7 +126,7 @@ export const CreateEmployeeModal = (props: {
         baranggay: employee.address?.baranggay,
         country: employee.address?.country,
         street: employee.address?.street,
-        state: employee.address?.state,
+        region: employee.address?.region,
         zip: employee.address?.zip,
       },
       profile: {
@@ -143,7 +147,16 @@ export const CreateEmployeeModal = (props: {
     reset()
   }
 
-  const filteredState = useMemo(() => {
+  const filteredAllCountries = useMemo(() => {
+    const countries = all_countries.map((countries) => { return countries.name })
+    setCountry("")
+    console.log("country", countries)
+    return countries
+
+  }, [])
+
+  const filteredRegion = useMemo(() => {
+
     const upperLevel = Object.entries(ph_regions)
       .sort(([key1], [key2]) => {
         const num1 = parseInt(key1)
@@ -151,57 +164,92 @@ export const CreateEmployeeModal = (props: {
         return num1 - num2
       })
       .map(([key]) => key)
-    setState("")
+    setRegion("")
     console.log("keys:", upperLevel)
     return upperLevel
+
+
+
   }, [])
 
   const filteredProvince = useMemo(() => {
-    const newProvince: Array<any> = []
-    if (state === null ?? "") {
-      setProvince("")
+    const newProvince: Array<string> = []
+    if (country === "Philippines") {
+      if (region === null ?? "") {
+        setProvince("")
 
+        return newProvince
+      }
+      const jsonData = ph_regions
+
+      if (region) {
+        const provinceLevel = Object.keys(
+          (jsonData as Record<string, any>)[region].province_list
+        )
+        console.log("province", provinceLevel)
+        setProvince("")
+
+        return provinceLevel
+      }
+    } else {
+
+      if (country) {
+        const states = all_states
+        console.log("states", all_states)
+        const specStates = states.filter((states) => { return states.country_name === country })
+        const finalStates = specStates.map((states) => { return states.name })
+        if (finalStates.length === 0) {
+          return newProvince
+        }
+        console.log("states:", specStates)
+        return finalStates
+      }
       return newProvince
-    }
-    const jsonData = ph_regions
 
-    if (state) {
-      const provinceLevel = Object.keys(
-        (jsonData as Record<string, any>)[state].province_list
-      )
-      console.log("province", provinceLevel)
-      setProvince("")
-
-      return provinceLevel
     }
     setProvince("")
 
     return newProvince
-  }, [state])
+  }, [country, region])
 
   const filteredCity = useMemo(() => {
     const newCity: Array<any> = []
-    if (province === null ?? "") {
-      setCity("")
+    if (country === "Philippines") {
+      if (province === null ?? "") {
+        setCity("")
 
-      return newCity
-    }
+        return newCity
+      }
 
-    if (state && province) {
-      const jsonData = (ph_regions as Record<string, any>)[state].province_list
+      if (region && province) {
+        const jsonData = (ph_regions as Record<string, any>)[region].province_list
 
-      const cityLevel = Object.keys(
-        (jsonData as Record<string, any>)[province].municipality_list
-      )
-      console.log("city", cityLevel)
-      setCity("")
+        const cityLevel = Object.keys(
+          (jsonData as Record<string, any>)[province].municipality_list
+        )
+        console.log("city", cityLevel)
+        setCity("")
 
-      return cityLevel
+        return cityLevel
+      }
+    } else {
+      if (province) {
+        const cities = JSON.parse(JSON.stringify(all_cities))
+        const specCities = cities.filter((city: { state_name: string }) => { return city.state_name === province })
+        const finalCities = specCities.map((city: { name: string }) => { return city.name })
+        console.log("cities", finalCities)
+        setCity("")
+        if (finalCities.length === 0) {
+          return newCity
+        }
+        return finalCities
+      }
+
     }
     setCity("")
 
     return newCity
-  }, [state, province])
+  }, [country, province, region])
 
   const filteredBarangay = useMemo(() => {
     const newBarangay: Array<any> = []
@@ -211,8 +259,8 @@ export const CreateEmployeeModal = (props: {
       return newBarangay
     }
 
-    if (state && province && city) {
-      const jsonData = (ph_regions as Record<string, any>)[state].province_list
+    if (region && province && city) {
+      const jsonData = (ph_regions as Record<string, any>)[region].province_list
       const cityData = (jsonData as Record<string, any>)[province]
         .municipality_list
       const barangayLevel = (cityData as Record<string, any>)[city]
@@ -225,7 +273,7 @@ export const CreateEmployeeModal = (props: {
     setBarangay("")
 
     return newBarangay
-  }, [state, province, city])
+  }, [region, province, city])
 
   return (
     <div>
@@ -424,10 +472,7 @@ export const CreateEmployeeModal = (props: {
               onChange={(value) => {
                 setValue("workMode", String(value) ?? " ")
                 onSearchWorkMode(value ?? " ")
-                setState(value ?? "")
-                setProvince("")
-                setCity("")
-                setBarangay("")
+
               }}
               value={workModeValue ?? ""}
               data={["WFH", "Hybrid", "On-Site"]}
@@ -464,10 +509,14 @@ export const CreateEmployeeModal = (props: {
                 searchable
                 required
                 placeholder="Country"
-                data={["Philippines"]}
+                data={filteredAllCountries}
                 onChange={(value) => {
                   setValue("address.country", value ?? "")
                   setCountry(value ?? "")
+                  setRegion("")
+                  setProvince("")
+                  setCity("")
+                  setBarangay("")
                 }}
                 value={country ?? ""}
                 styles={(theme) => ({
@@ -498,23 +547,23 @@ export const CreateEmployeeModal = (props: {
               <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
             <div className="flex w-[23%] flex-col">
-              <label className="sm:text-sm">Region/State</label>
+              <label className="sm:text-sm">Region</label>
               <Select
-                name={"address.state"}
+                name={"address.region"}
                 searchable
-                required
-                id="address.state"
-                placeholder="State"
-                data={filteredState ?? [""]}
-                disabled={country === ""}
+                // required
+                id="address.region"
+                placeholder="Region"
+                data={filteredRegion ?? [""]}
+                disabled={country === "" || country !== "Philippines"}
                 onChange={(value) => {
-                  setValue("address.state", value ?? "")
-                  setState(value ?? "")
+                  setValue("address.region", value ?? "")
+                  setRegion(value ?? "")
                   setProvince("")
                   setCity("")
                   setBarangay("")
                 }}
-                value={state ?? ""}
+                value={region ?? ""}
                 styles={(theme) => ({
                   item: {
                     // applies styles to selected item
@@ -541,19 +590,19 @@ export const CreateEmployeeModal = (props: {
                 className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
               />
 
-              <AlertInput>{errors?.address?.state?.message}</AlertInput>
+              <AlertInput>{errors?.address?.region?.message}</AlertInput>
             </div>
 
             <div className="flex w-[23%] flex-col">
-              <label className="sm:text-sm">Province</label>
+              <label className="sm:text-sm">Province/States</label>
               <Select
                 name={"address.province"}
                 searchable
-                required
+                // required
                 id="address.province"
-                placeholder="Province"
+                placeholder="Province/States"
                 data={filteredProvince}
-                disabled={state === ""}
+                disabled={country === "Philippines " ? (region === "") : country === ""}
                 onChange={(value) => {
                   setValue("address.province", value ?? "")
                   setProvince(value ?? "")
@@ -600,7 +649,7 @@ export const CreateEmployeeModal = (props: {
                 id="address.city"
                 placeholder="City"
                 searchable
-                required
+                // required
                 disabled={province === ""}
                 data={filteredCity}
                 onChange={(value) => {
@@ -650,7 +699,7 @@ export const CreateEmployeeModal = (props: {
                 data={filteredBarangay}
                 searchable
                 required
-                disabled={city === ""}
+                disabled={country !== "Philippines"}
                 onChange={(value) => {
                   setValue("address.baranggay", value ?? "")
                   setBarangay(value ?? "")
@@ -689,7 +738,7 @@ export const CreateEmployeeModal = (props: {
                 type={"text"}
                 label={""}
                 placeholder="Street"
-                disabled={barangay === ""}
+                disabled={country === ""}
                 name={"address.street"}
                 register={register}
               />
@@ -703,7 +752,7 @@ export const CreateEmployeeModal = (props: {
               <InputField
                 type={"number"}
                 label={""}
-                disabled={barangay === ""}
+                disabled={country === ""}
                 name={"address.zip"}
                 register={register}
               />

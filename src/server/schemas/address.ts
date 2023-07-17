@@ -6,17 +6,11 @@ export const AddressCreateInput = z.object({
     .min(1, "Street is required")
     .nullish(),
   city: z
-    .string({ required_error: "City is required" })
-    .min(1, "City is required")
-    .nullish(),
+    .string().nullish(),
   province: z
-    .string({ required_error: "Province is required" })
-    .min(1, "Province is required")
-    .nullish(),
-  state: z
-    .string({ required_error: "Barangay is required" })
-    .min(1, "Barangay is required")
-    .nullish(),
+    .string().nullish(),
+  region: z
+    .string().nullish(),
   zip: z
     .number({ required_error: "Zip is required" })
     .min(1, "Zip is required")
@@ -32,7 +26,7 @@ export const AddressEditInput = z
   .object({
     street: z.string().nullish(),
     city: z.string().nullish(),
-    state: z.string().nullish(),
+    region: z.string().nullish(),
     zip: z.number().nullish(),
     country: z.string().nullish(),
     baranggay: z.string().nullish(),

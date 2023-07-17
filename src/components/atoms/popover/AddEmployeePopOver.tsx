@@ -10,7 +10,7 @@ const AddEmployeePopOver = (props: {
   setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>
   setAddSingleRecord: React.Dispatch<React.SetStateAction<boolean>>
   setAddBulkRecord: React.Dispatch<React.SetStateAction<boolean>>
-  
+
 }) => {
 
   const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
@@ -40,7 +40,7 @@ const AddEmployeePopOver = (props: {
 
     return numberArray
   }
-  
+
   return (
     <Popover
       opened={props.openPopover}

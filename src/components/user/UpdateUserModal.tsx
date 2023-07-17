@@ -409,12 +409,12 @@ const UpdateUserModal = (props: {
               <InputField
                 type={"text"}
                 label={""}
-                name={"address.state"}
+                name={"address.region"}
                 disabled={!isEditable}
                 register={register}
               />
 
-              <AlertInput>{errors?.address?.state?.message}</AlertInput>
+              <AlertInput>{errors?.address?.region?.message}</AlertInput>
             </div>
             <div className="flex w-[18.4%] flex-col">
               <label className="sm:text-sm">City</label>

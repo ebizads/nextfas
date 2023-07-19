@@ -147,12 +147,13 @@ export const UpdateEmployeeModal = (props: {
                 </div>
                 <div className="col-span-1">
                   <p className="font-light">Last Name</p>
-                  <p className="font-medium">{props.employee?.profile?.last_name}</p>
-
+                  <p className="font-medium">
+                    {props.employee?.profile?.last_name}
+                  </p>
                   {/* <p className="font-medium">{props.asset?.name}</p> */}
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Serial No.</p>
+                  <p className="font-light"></p>
                   <p className="font-medium">
                     {/* {props.asset?.serial_no !== "" */}
                     {/* // ? props.asset?.serial_no */}
@@ -162,82 +163,90 @@ export const UpdateEmployeeModal = (props: {
               </section>
               <section className="grid grid-cols-4">
                 <div className="col-span-1">
-                  <p className="font-light">Parent Asset</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.parentId !== 0 */}
-                    {/* // ? props.asset?.parent?.name */}
-                    {/* // : "--"} */}
-                  </p>
-                  <p className="text-[0.6rem] italic text-neutral-500">
-                    {/* {props.asset?.parentId !== 0 && */}
-                    {/* // props.asset?.parent?.number} */}
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-light">Model Name</p>
+                  <p className="font-light">Employee Number</p>
                   <p className="font-medium">
                     {/* {props.asset?.model?.name */}
                     {/* // ? props.asset?.model?.name
                       // : "--"} */}
+                    {props.employee?.employee_id}
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Model Brand</p>
+                  <p className="font-light">Team</p>
+                  <p className="font-medium">
+                    {/* {props.asset?.parentId !== 0 */}
+                    {/* // ? props.asset?.parent?.name */}
+                    {/* // : "--"} */}
+                    {props.employee?.team?.name === null ? "--" : props.employee?.team?.name === undefined ? "--" : props.employee?.team?.name === "" ? "--" : props.employee?.team?.name}
+                  </p>
+                </div>
+                <div className="col-span-1">
+                  <p className="font-light">Department</p>
+                  <p className="font-medium">
+                    {/* {props.asset?.parentId !== 0 */}
+                    {/* // ? props.asset?.parent?.name */}
+                    {/* // : "--"} */}
+                    {props.employee?.team?.department?.name === null ? "--" : props.employee?.team?.department?.name === undefined ? "--" : props.employee?.team?.department?.name === "" ? "--" : props.employee?.team?.department?.name}
+                  </p>
+                </div>
+                <div className="col-span-1">
+                  <p className="font-light">Designation / Position</p>
                   <p className="font-medium">
                     {/* {props.asset?.model?.brand */}
                     {/* // ? props.asset?.model?.brand
                       // : "--"} */}
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-light">Model Number</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.model?.number
-                      ? props.asset?.model?.number
-                      : "--"} */}
+                    {props.employee?.position ?? "--"}
                   </p>
                 </div>
               </section>
+
+
               <section className="grid grid-cols-4">
                 <div className="col-span-1">
-                  <p className="font-light">Original Cost</p>
+                  <p className="font-light">Email</p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.currency}{" "} */}
                     {/* {props.asset?.management?.original_cost ?? 
                       "no information"}*/}
+                    {props.employee?.email ?? "--"}
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Current Cost</p>
+                  <p className="font-light">Mobile Number</p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.currency}{" "}
                     {props.asset?.management?.current_cost ??
                       "no information"} */}
+                    {props.employee?.profile?.phone_no ?? "--"}
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Residual Value Cost</p>
+                  <p className="font-light">Work Station</p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.currency}{" "} */}
                     {/* {props.asset?.management?.residual_value ?? */}
                     {/* // "no information"} */}
+                    {props.employee?.workStation ?? "--"}
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Residual Value Percentage</p>
+                  <p className="font-light">Work Mode</p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.residual_percentage ?? "--"}% */}
+                    {props.employee?.workMode ?? "--"}
+
                   </p>
                 </div>
               </section>
               <section className="grid grid-cols-4">
                 <div className="col-span-1">
-                  <p className="font-light">Asset Lifetime</p>
-                  <p className="font-medium">
+                  <p className="font-light">Address</p>
+                  <p className="font-medium flex">
                     {/* {props.asset?.management?.asset_lifetime */}
                     {/* // ? props.asset?.management?.asset_lifetime
                       // : "--"}{" "} */}
-                    Months
+                    {props.employee?.address?.street ?? "--"}
+
                   </p>
                 </div>
                 <div className="col-span-2">
@@ -454,44 +463,15 @@ export const UpdateEmployeeModal = (props: {
               </section>
             </div>
           </section>
-          {/* <section className="pb-4">
-                <p className="font-medium text-neutral-600 text-base">Depreciation Information</p>
-                <div className="text-sm mt-4 flex flex-col gap-2">
-                  <section className="grid grid-cols-4 gap-2">
-                    <div className="col-span-1">
-                      <p className="font-light">Start Date</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_start ? props.asset?.management?.depreciation_start?.toLocaleDateString() : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">End Date</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_end ? props.asset?.management?.depreciation_end?.toLocaleDateString() : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Residual Value</p>
-                      <p className="font-medium">{props.asset?.management?.residual_value ? props.asset?.management?.residual_value : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Period</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_period ? props.asset?.management?.depreciation_period : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Method</p>
-                      <p className="font-medium">{props.asset?.management?.depreciation_rule ? props.asset?.management?.depreciation_rule : "--"}</p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Asset Quantity</p>
-                      <p className="font-medium">{props.asset?.management?.asset_quantity ? props.asset?.management?.asset_quantity : "--"}</p>
-                    </div>
-                  </section>
-                  <section>
-                    <p className="font-light">Remarks</p>
-                    <p className="font-medium">{props.asset?.management?.remarks ?? "--"}</p>
-                  </section>
-                </div>
-              </section> */}
+          <section className="pb-4 flex flex-row-reverse">
+            <Link href="/employees/update">
+              <div className="flex w-[20%]  cursor-pointer items-center gap-2 rounded-md bg-[#555555] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                <i className={"fa-solid fa-pen-to-square"} />
+                Edit
+              </div>
+            </Link>
+          </section>
         </div>
-
-
       </div>
     </div>
   )

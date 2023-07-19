@@ -31,10 +31,22 @@ const AssetDetailsModal = (props: {
   // const { editable, setEditable } = useEditableStore()
   const barcodeRef = useRef(null)
   const qrcodeRef = useRef(null)
+  const [divOpacity, setDivOpacity] = useState(50);
 
   const handleBarPrint = useReactToPrint({
     content: () => barcodeRef.current,
-  })
+    // onBeforeGetContent: () => {
+    //   setDivOpacity("");
+
+    // },
+    onBeforePrint: () => {
+      setDivOpacity(50);
+    },
+
+    onAfterPrint: () => {
+      setDivOpacity(50);
+    },
+  });
   const handleQRPrint = useReactToPrint({
     content: () => qrcodeRef.current,
   })
@@ -43,6 +55,14 @@ const AssetDetailsModal = (props: {
   const genBar = () => {
     setGenBarcode(true)
     JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
+      textAlign: "left",
+      textPosition: "bottom",
+      fontOptions: "",
+      fontSize: 12,
+      textMargin: 9,
+      height: 50,
+      width: 2,
+    }), JsBarcode("#barcode-show", props.asset ? props.asset!.number! : "No data", {
       textAlign: "left",
       textPosition: "bottom",
       fontOptions: "",
@@ -469,8 +489,11 @@ const AssetDetailsModal = (props: {
                       </button>
                     )}
 
-                    <div id="printSVG" ref={barcodeRef}>
-                      <svg id="barcode" />
+                    <div id="printSVG" className="relative z-20">
+                      <svg id="barcode-show" />
+                    </div>
+                    <div ref={barcodeRef}>
+                      <svg id="barcode" className={"absolute top-0 z-0 pointer-events-none " + `w-[${divOpacity}%]`} />
                     </div>
                   </div>
                   {genBarcode && (
@@ -484,7 +507,7 @@ const AssetDetailsModal = (props: {
                           barcodeRef
                         )
                       }}
-                      className="absolute bottom-3 right-2 flex items-center justify-center gap-2 rounded-full bg-tangerine-300 p-2 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+                      className="absolute z-20 bottom-3 right-2 flex items-center justify-center gap-2 rounded-full bg-tangerine-300 p-2 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
                     >
                       {""} <i className="fa-solid fa-print" />
                     </button>

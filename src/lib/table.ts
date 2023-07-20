@@ -12,6 +12,7 @@ export const columns = [
   { value: "custodian", name: "Custodian" },
   // { value: "createdAt", name: "Added Date" },
   { value: "deployment_status", name: "Status" },
+  { value: "tag", name: "Tag" },
 ] as ColumnType[]
 
 export const vendorColumns = [

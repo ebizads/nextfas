@@ -106,6 +106,7 @@ const AssetDetailsModal = (props: {
                           : "No Alternate Number"}
                       </p>
                     </div>
+                    
                     <div className="col-span-1">
                       <p className="font-light">Name</p>
                       <p className="font-medium">{props.asset?.name}</p>
@@ -113,8 +114,8 @@ const AssetDetailsModal = (props: {
                     <div className="col-span-1">
                       <p className="font-light">Serial No.</p>
                       <p className="font-medium">
-                        {props.asset?.serial_no !== ""
-                          ? props.asset?.serial_no
+                        {props.asset?.tag !== ""
+                          ? props.asset?.tag
                           : "--"}
                       </p>
                     </div>
@@ -191,6 +192,26 @@ const AssetDetailsModal = (props: {
                   </section>
                   <section className="grid grid-cols-4">
                     <div className="col-span-1">
+                      <p className="font-light">Description</p>
+                      <p className="font-medium">
+                        {props.asset?.description ?? "--"}
+                      </p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Remarks</p>
+                      <p className="font-medium">
+                        {props.asset?.remarks ?? "--"}
+                      </p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Tag</p>
+                      <p className="font-medium">
+                        {props.asset?.tag ?? "--"}
+                      </p>
+                    </div>
+                  </section>
+                  <section className="grid grid-cols-4">
+                    <div className="col-span-1">
                       <p className="font-light">Asset Lifetime</p>
                       <p className="font-medium">
                         {props.asset?.management?.asset_lifetime
@@ -206,20 +227,7 @@ const AssetDetailsModal = (props: {
                       </p>
                     </div>
                   </section>
-                  <section className="grid grid-cols-4">
-                    <div className="col-span-1">
-                      <p className="font-light">Description</p>
-                      <p className="font-medium">
-                        {props.asset?.description ?? "--"}
-                      </p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Remarks</p>
-                      <p className="font-medium">
-                        {props.asset?.remarks ?? "--"}
-                      </p>
-                    </div>
-                  </section>
+                 
                 </div>
               </section>
               {/* General information */}
@@ -691,6 +699,7 @@ export const AssetDeleteModal = (props: {
     </Modal>
   )
 }
+
 const AssetTable = (props: {
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>

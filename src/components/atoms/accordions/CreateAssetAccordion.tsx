@@ -17,6 +17,8 @@ import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
 } from "../select/TypeSelect"
+import { Select } from "@mantine/core"
+
 import { Textarea } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
@@ -43,7 +45,6 @@ import { useSession } from "next-auth/react"
 import { FormErrorMessage } from "./UpdateAssetAccordion"
 import InputNumberField from "../forms/InputNumberField"
 import { clearAndGoBack } from "../../../lib/functions"
-import Select from "react-select"
 import Assets from "../../../pages/assets"
 import Employee from "../../../pages/employees"
 
@@ -115,6 +116,7 @@ const CreateAssetAccordion = () => {
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [typeId, setTypeId] = useState<string | null>(null)
   const [serialId, setSerialId] = useState<string | null>(null)
+  const [searchValue, onSearchChange] = useState("")
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [departmentId, setDepartmentId] = useState<string | null>(null)
   const [employeeId, setEmployeeId] = useState<string | null>(null)
@@ -215,7 +217,6 @@ const CreateAssetAccordion = () => {
 
   const departmentList = useMemo(() => {
     if (companyId) {
-
       const dept = departmentData?.departments.filter(
         (department) => department.companyId === Number(companyId)
       )
@@ -302,7 +303,6 @@ const CreateAssetAccordion = () => {
       return address ?? null
     }
   }, [companyId, companyData])
-
 
   const [loading, setIsLoading] = useState<boolean>(false)
   const [assetId, setAssetId] = useState<string>(
@@ -413,7 +413,7 @@ const CreateAssetAccordion = () => {
             </Accordion.Control>
             <Accordion.Panel>
               <div className="grid grid-cols-9 gap-7">
-                <div className="col-span-9 grid grid-cols-8 gap-7">
+                <div className="col-span-9 grid grid-cols-12 gap-7">
                   <div className="col-span-4">
                     <InputField
                       register={register}
@@ -432,6 +432,42 @@ const CreateAssetAccordion = () => {
                       name="alt_number"
                     />
                     <AlertInput>{errors?.alt_number?.message}</AlertInput>
+                  </div>
+                  <div className="col-span-4">
+                    <label className="sm:text-sm">Tag</label>
+                    <Select
+                      placeholder="Pick one"
+                      onChange={(value) => {
+                        setValue("tag", String(value) ?? 0)
+                        onSearchChange(value ?? "")
+
+                      }}
+                      value={searchValue}
+                      data={["Fixed", "Moveable"]}
+                      styles={(theme) => ({
+                        item: {
+                          // applies styles to selected item
+                          "&[data-selected]": {
+                            "&, &:hover": {
+                              backgroundColor:
+                                theme.colorScheme === "light"
+                                  ? theme.colors.orange[3]
+                                  : theme.colors.orange[1],
+                              color:
+                                theme.colorScheme === "dark"
+                                  ? theme.white
+                                  : theme.black,
+                            },
+                          },
+
+                          // applies styles to hovered item (with mouse or keyboard)
+                          "&[data-hovered]": {},
+                        },
+                      })}
+                      variant="unstyled"
+                      className="ht-11 mt-1 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    />
+                    <AlertInput>{errors?.departmentId?.message}</AlertInput>
                   </div>
                 </div>
                 <div className="col-span-3">
@@ -796,7 +832,7 @@ const CreateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                     </div>
-                    <div className="text-gray-700 col-span-4">
+                    <div className="col-span-4 text-gray-700">
                       <div className="flex flex-1 flex-col gap-2">
                         <label htmlFor="address" className="text-sm">
                           Asset Location
@@ -809,20 +845,23 @@ const CreateAssetAccordion = () => {
                           }
                           placeholder="Company Address will appear here"
                           value={
-                            employee_workMode?.workMode === "On-Site" ? (company_address?.address
-                              ? getAddress(company_address)
-                              : "")
+                            employee_workMode?.workMode === "On-Site"
+                              ? company_address?.address
+                                ? getAddress(company_address)
+                                : ""
                               : employee_workMode?.workMode === "Work From Home"
-                                ? (employee_workMode.address
-                                  ? getAddress(employee_workMode)
+                              ? employee_workMode.address
+                                ? getAddress(employee_workMode)
+                                : ""
+                              : employee_workMode?.workMode === "Hybrid"
+                              ? (company_address?.address
+                                  ? "[" + getAddress(company_address) + "]"
+                                  : "") +
+                                " & " +
+                                (employee_workMode.address
+                                  ? "[" + getAddress(employee_workMode) + "]"
                                   : "")
-                                : employee_workMode?.workMode === "Hybrid" ? (company_address?.address
-                                  ? ("[" + getAddress(company_address) + "]")
-                                  : "") + " & " +
-                                  (employee_workMode.address
-                                    ? ("[" + getAddress(employee_workMode) + "]")
-                                    : "")
-                                  : "--"
+                              : "--"
                           }
                           disabled
                         />

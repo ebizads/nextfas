@@ -452,19 +452,19 @@ const UserValidateModal = (props: {
                 {/* <InputField
                   type={"text"}
                   label={""}
-                  name={"address.state"}
+                  name={"address.region"}
                   disabled={!isEditable}
                   register={register}
                 />
 
-                <AlertInput>{errors?.address?.state?.message}</AlertInput> */}
+                <AlertInput>{errors?.address?.region?.message}</AlertInput> */}
                 <input
                   className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                  id="address.state"
+                  id="address.region"
                   type={"text"}
-                  placeholder={user?.address?.state ?? "--"}
+                  placeholder={user?.address?.region ?? "--"}
                   onChange={(e) => {
-                    setValue("address.state", e.currentTarget.value)
+                    setValue("address.region", e.currentTarget.value)
                   }}
                   disabled={!isEditable}
                 />
@@ -765,13 +765,13 @@ const UserValidateModal = (props: {
                   <label className="sm:text-sm">Barangay</label>
                   <input
                     onChange={(e) => {
-                      setValue("address.state", e.currentTarget.value)
+                      setValue("address.region", e.currentTarget.value)
                     }}
                     className="ring-tangerine-400/ w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600  placeholder-gray-600 outline-none placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                     disabled={!isEditable}
                     type={"text"}
-                    name={"address.state"}
-                    placeholder={user?.address?.state ?? "-"}
+                    name={"address.region"}
+                    placeholder={user?.address?.region ?? "-"}
                   />
                 </div>
                 <div className="flex w-[18.4%] flex-col">

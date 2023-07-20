@@ -180,7 +180,7 @@ export default function DropzoneVendor({
                         // id: duplicatedVendors[i]?.address?.id ?? 0,
                         street: duplicatedVendors[i]?.address?.street,
                         city: duplicatedVendors[i]?.address?.city,
-                        state: duplicatedVendors[i]?.address?.state,
+                        region: duplicatedVendors[i]?.address?.region,
                         zip: duplicatedVendors[i]?.address?.zip,
                         country: duplicatedVendors[i]?.address?.country,
                         // createdAt: duplicatedVendors[i]?.address?.createdAt,

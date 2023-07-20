@@ -1522,7 +1522,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="State"
-                                                value={department?.company?.address?.state ?? ""}
+                                                value={department?.company?.address?.region ?? ""}
                                                 disabled
                                             />
                                             <input

@@ -85,7 +85,7 @@ const DuplicateAccordion = (props: {
           // id: props.incomingChanges[splice]?.address?.id ?? 0,
           street: props.incomingChanges[splice]?.address?.street,
           city: props.incomingChanges[splice]?.address?.city,
-          state: props.incomingChanges[splice]?.address?.state,
+          region: props.incomingChanges[splice]?.address?.region,
           zip: props.incomingChanges[splice]?.address?.zip,
           country: props.incomingChanges[splice]?.address?.country,
           // createdAt: props.incomingChanges[splice]?.address?.createdAt,

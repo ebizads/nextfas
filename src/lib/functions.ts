@@ -100,7 +100,7 @@ export const getAddressUser = (
       address: Address | null
     })
 ) => {
-  return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country}, ${type?.name} `
+  return `${type?.address?.street}, ${type?.address?.region}, ${type?.address?.city}, ${type?.address?.country}, ${type?.name} `
 }
 
 export const getAddress = (
@@ -110,11 +110,11 @@ export const getAddress = (
       address: Address | null
     })
 ) => {
-  return `${type?.address?.street}, ${type?.address?.state}, ${type?.address?.city}, ${type?.address?.country} `
+  return `${type?.address?.street}, ${type?.address?.region}, ${type?.address?.city}, ${type?.address?.country} `
 }
 
 export const getWorkMode = (type: EmployeeType) => {
-  return `${type?.workMode}`
+  return `${type?.workMode !== null ? type?.workMode : "--"}`
 }
 
 export const formatBytes = (bytes: number) => {

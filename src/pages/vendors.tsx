@@ -417,12 +417,12 @@ const Vendors = () => {
                   <InputField
                     type={"text"}
                     label={""}
-                    name={"address.state"}
+                    name={"address.region"}
                     register={register}
                   />
 
 
-                  <AlertInput>{errors?.address?.state?.message}</AlertInput>
+                  <AlertInput>{errors?.address?.region?.message}</AlertInput>
                 </div> */}
                 <div className="col-span-2">
                   <label className="sm:text-sm">City</label>

@@ -473,6 +473,421 @@ export const UpdateEmployeeModal = (props: {
           </section>
         </div>
       </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col space-y-4"
+        noValidate
+      >
+        <div className="flex w-full flex-wrap gap-4 py-2.5">
+          <div className="flex w-[32%] flex-col">
+            <label className="sm:text-sm">First Name</label>
+            <InputField
+              disabled={!isEditable}
+              register={register}
+              name="profile.first_name"
+              type={"text"}
+              label={""}
+            />
+            <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
+          </div>
+          <div className="flex w-[32%] flex-col">
+            <label className="sm:text-sm">Middle Name (Optional)</label>
+            <InputField
+              // className="0 appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
+              disabled={!isEditable}
+              type={"text"}
+              label={""}
+              name={"profile.middle_name"}
+              register={register}
+            />
+          </div>
+          <div className="flex w-[32%] flex-col">
+            <label className="sm:text-sm">Last Name</label>
+            <InputField
+              disabled={!isEditable}
+              type={"text"}
+              label={""}
+              name={"profile.last_name"}
+              register={register}
+            />
+            <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+          </div>
+        </div>
+
+        <div className="flex w-full flex-wrap gap-4 py-2.5">
+          <div className="flex w-[32%] flex-col">
+            <label className="sm:text-sm">Team</label>
+            <Select
+              disabled={!isEditable}
+              placeholder="Pick one"
+              onChange={(value) => {
+                setValue("teamId", Number(value) ?? 0)
+                onSearchChange(value ?? "0")
+              }}
+              value={searchValue}
+              data={teamList}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            />
+            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
+          </div>
+          <div className="flex w-[32%] flex-col">
+            <label className="sm:text-sm">Employee Number</label>
+            {/* <InputField
+               
+              type={"text"}
+              label={""}
+              name={"employee_id"}
+              register={register}
+            /> */}
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{`${props.employee?.employee_id}`}</p>
+          </div>
+          <div className="flex w-[32%] flex-col">
+            <label className="sm:text-sm">Designation / Position</label>
+            <InputField
+              type={"text"}
+              disabled={!isEditable}
+              label={""}
+              // placeholder={props.employee?.}
+              name={"position"}
+              register={register}
+            />
+
+            <AlertInput>{errors?.position?.message}</AlertInput>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-4 py-2.5">
+          <div className="flex w-[49%] flex-col">
+            <label className="sm:text-sm">Email</label>
+            <InputField
+              disabled={!isEditable}
+              type={"text"}
+              label={""}
+              name={"email"}
+              register={register}
+            />
+            <AlertInput>{errors?.email?.message}</AlertInput>
+          </div>
+          <div className="flex w-[49%] flex-col">
+            <label className="sm:text-sm">Departmemt</label>
+            {/* <InputField
+              // placeholder={props.employee?.department}
+              type={"text"}
+              disabled={!editable}
+              label={""}
+              placeholder={props.employee?.team?.department?.name}
+              name={"department"}
+              register={register}
+            /> */}
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{`${props.employee?.team?.department?.name}`}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-4 py-2.5">
+
+
+          <div className="flex w-[23%] flex-col">
+            <label className="mb-2 sm:text-sm">Mobile Number</label>
+            <input
+              disabled={!isEditable}
+              type="number"
+              pattern="[0-9]*"
+              defaultValue={props.employee?.profile?.phone_no ?? "--"}
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+              onKeyDown={(e) => {
+                if (e.key === "e") {
+                  e.preventDefault()
+                }
+              }}
+              onChange={(event) => {
+                if (event.target.value.length > 11) {
+                  console.log("more than 11")
+                  event.target.value = event.target.value.slice(0, 11)
+                }
+                setValue(
+                  "profile.phone_no",
+                  event.currentTarget.value.toString()
+                )
+              }}
+            />
+
+            <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
+          </div>
+          <div className="flex w-[23%] flex-col">
+            <label className="sm:text-sm">Device</label>
+            <Select
+              disabled={!isEditable}
+              onChange={(value) => {
+                setValue("workStation", String(value) ?? " ")
+                onSearchWorkStation(value ?? "")
+              }}
+              placeholder="--"
+              value={workStationValue}
+              defaultValue={props.employee?.workStation ?? "--"}
+              data={["Desktop", "Latop"]}
+              styles={(theme) => ({
+                item: {
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            />
+          </div>
+          <div className="flex w-[23%] flex-col">
+            <label className="sm:text-sm">Work Mode</label>
+            <Select
+              disabled={!isEditable}
+              onChange={(value) => {
+                setValue("workMode", String(value) ?? "")
+                onSearchWorkMode(value ?? "")
+              }}
+              value={workModeValue}
+              placeholder="--"
+              data={["WFH", "Hybrid", "On Site"]}
+              defaultValue={props.employee?.workMode ?? "--"}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            />
+          </div>
+          <div className="flex w-full flex-wrap gap-4 py-2.5">
+            <div className="flex w-[25%] flex-col">
+              <label className="sm:text-sm">Street</label>
+              <InputField
+                type={"text"}
+                label={""}
+                name="address.street"
+                register={register}
+                disabled={!isEditable}
+              />
+            </div>
+            {/* <div className="flex w-[18.4%] flex-col">
+              <label className="sm:text-sm">Barangay</label>
+              <InputField
+                type={"text"}
+                label={""}
+                name={"address.region"}
+                disabled={!isEditable}
+                register={register}
+              />
+
+
+              <AlertInput>{errors?.address?.region?.message}</AlertInput>
+            </div> */}
+            <div className="flex w-[25%] flex-col">
+              <label className="sm:text-sm">City</label>
+              <InputField
+                type={"text"}
+                label={""}
+                name={"address.city"}
+                disabled={!isEditable}
+                register={register}
+              />
+
+              <AlertInput>{errors?.address?.city?.message}</AlertInput>
+            </div>
+            <div className="flex w-[18.4%] flex-col">
+              <label className="sm:text-sm">Zip Code</label>
+              <InputField
+                type={"text"}
+                label={""}
+                name={"address.zip"}
+                disabled={!isEditable}
+                register={register}
+              />
+              <AlertInput>{errors?.address?.zip?.message}</AlertInput>
+            </div>
+            <div className="flex w-[25%] flex-col">
+              <label className="sm:text-sm">Country</label>
+              <InputField
+                type={"text"}
+                label={""}
+                name={"address.country"}
+                disabled={!isEditable}
+                register={register}
+              />
+
+              <AlertInput>{errors?.address?.country?.message}</AlertInput>
+            </div>
+          </div>
+        </div>
+
+        {isEditable && (
+          <DropZoneComponent
+            setImage={setImage}
+            setIsLoading={setIsLoading}
+            images={images}
+            isLoading={isLoading}
+            acceptingMany={false}
+            setIsVisible={props.setIsVisible}
+          />
+        )}
+        <hr className="w-full"></hr>
+        {/* <div className="flex w-full justify-end">
+          {isEditable && <button
+            type="submit"
+            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+            disabled={employeeLoading}
+          >
+            {employeeLoading ? "Loading..." : "Save"}
+          </button>}
+        </div> */}
+        <div className="flex w-full justify-between">
+          {!(
+            error &&
+            errors && (
+              <pre className="mt-2 text-sm italic text-red-500">
+                Something went wrong!
+              </pre>
+            )
+          ) ? (
+            <div></div>
+          ) : (
+            error &&
+            errors && (
+              <pre className="mt-2 text-sm italic text-red-500">
+                Something went wrong!
+              </pre>
+            )
+          )}
+          {isEditable && (
+            <div className="space-x-1">
+              <button
+                type="button"
+                className="rounded bg-red-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={() => {
+                  handleDelete(), setIsLoading(true)
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Delete"}
+              </button>
+
+              <button
+                type="submit"
+                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                disabled={employeeLoading}
+              >
+                {employeeLoading ? "Loading..." : "Save"}
+              </button>
+            </div>
+          )}
+          <EmployeeDeleteModal
+            employee={props.employee}
+            openModalDel={openModalDel}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            setOpenModalDel={setOpenModalDel}
+            setIsVisible={props.setIsVisible}
+          />
+        </div>
+      </form>
+      <Modal
+        className="max-w-lg"
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        title="NOTICE!"
+      >
+        <>
+          <div className="py-2 items-center flex flex-col gap-3 ">
+            <p className="text-center text-lg font-semibold ">
+              Employee Updated Successfully
+            </p>
+            <button
+              className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+              onClick={() => {
+                props.setIsVisible(false)
+                setIsVisible(false)
+              }}
+            >
+              Confirm
+            </button>
+          </div>
+        </>
+      </Modal>
+      {/* {error && errors && (
+        <pre className="mt-2 text-sm italic text-red-500">
+          Something went wrong!
+        </pre>
+      )} */}
     </div>
   )
 }

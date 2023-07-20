@@ -383,10 +383,10 @@ const Register2 = () => {
               <InputField
                 type={"text"}
                 label={""}
-                name={"address.state"}
+                name={"address.region"}
                 register={register}
               />
-              <AlertInput>{errors?.address?.state?.message}</AlertInput>
+              <AlertInput>{errors?.address?.region?.message}</AlertInput>
             </div> */}{" "}
             <div className="flex w-[20%] flex-col">
               <label className="sm:text-sm">City</label>

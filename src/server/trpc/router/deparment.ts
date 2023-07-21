@@ -14,6 +14,7 @@ export const departmentRouter = t.router({
             address: true,
           }
         },
+        building: true,
         location: true,
         teams: true,
       },
@@ -46,6 +47,8 @@ export const departmentRouter = t.router({
                 company: true,
                 location: true,
                 teams: true,
+                building: true,
+
               },
               skip: input?.page ? input.page * (input.limit ?? 10) : 0,
               take: input?.limit ? input.limit : 10,
@@ -82,6 +85,14 @@ export const departmentRouter = t.router({
             connectOrCreate: {
               where: {
                 id: input.companyId ?? undefined,
+              },
+              create: { name: "" },
+            },
+          },
+          building: {
+            connectOrCreate: {
+              where: {
+                id: input.buildingId ?? undefined,
               },
               create: { name: "" },
             },

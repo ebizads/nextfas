@@ -24,6 +24,7 @@ export const assetRouter = t.router({
         subsidiary: true,
         management: true,
         addedBy: true,
+        assetTag: true,
         model: {
           include: {
             type: true,
@@ -36,6 +37,7 @@ export const assetRouter = t.router({
             location: true,
             company: true,
             teams: true,
+            building: true,
           },
         },
 
@@ -51,6 +53,7 @@ export const assetRouter = t.router({
       include: {
         management: true,
         model: true,
+
       },
     })
     return asset
@@ -107,6 +110,7 @@ export const assetRouter = t.router({
                 location: true,
                 company: true,
                 teams: true,
+                building: true,
               },
             },
             parent: true,
@@ -114,6 +118,7 @@ export const assetRouter = t.router({
             vendor: true,
             management: true,
             addedBy: true,
+            assetTag: true,
           },
           where: {
             NOT: {
@@ -123,6 +128,94 @@ export const assetRouter = t.router({
               NOT: {
                 id: 999999,
               }
+            },
+            name: { contains: input?.search?.name, mode: 'insensitive' },
+            number: { contains: input?.search?.number, mode: 'insensitive' },
+          },
+          skip: input?.page
+            ? (input.page - 1) * (input.limit ?? 10)
+            : undefined,
+          take: input?.limit ?? 10,
+        }),
+        ctx.prisma.asset.count({
+          where: {
+            NOT: {
+              deleted: true,
+            },
+          },
+        }),
+      ])
+
+      return {
+        assets,
+        count,
+      }
+    }),
+  findAllNoLimit: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              name: z.string().optional(),
+              number: z.string().optional(),
+              serial_no: z.string().optional(),
+              barcode: z.string().optional(),
+              description: z.string().optional(),
+              remarks: z.string().optional(),
+              invoiceNum: z.string().optional(),
+              purchaseOrder: z.string().optional(),
+              deployment_status: z.string().optional(),
+              custodianId: z.number().optional(),
+              departmentId: z.number().optional(),
+              vendorId: z.number().optional(),
+              subsidiaryId: z.number().optional(),
+              assetProjectId: z.number().optional(),
+              parentId: z.number().optional(),
+            })
+            .optional(),
+          filter: z
+            .object({
+              updatedAt: z.date().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const [assets, count] = await ctx.prisma.$transaction([
+        ctx.prisma.asset.findMany({
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            model: {
+              include: {
+                class: true,
+                category: true,
+                type: true,
+              },
+            },
+            department: {
+              include: {
+                location: true,
+                company: true,
+                teams: true,
+                building: true,
+              },
+            },
+            parent: true,
+            custodian: true,
+            vendor: true,
+            management: true,
+            addedBy: true,
+            assetTag: true,
+          },
+          where: {
+            NOT: {
+              id: 999999,
             },
             name: { contains: input?.search?.name, mode: 'insensitive' },
             number: { contains: input?.search?.number, mode: 'insensitive' },
@@ -206,6 +299,7 @@ export const assetRouter = t.router({
             vendor: true,
             management: true,
             addedBy: true,
+            assetTag: true,
           },
           where: {
             id: 999999,
@@ -257,7 +351,7 @@ export const assetRouter = t.router({
                   teams: true,
                 },
               },
-
+              assetTag: true,
               parent: true,
               project: true,
               vendor: true,
@@ -307,6 +401,7 @@ export const assetRouter = t.router({
         assetProjectId,
         parentId,
         addedById,
+        assetTagId,
         ...rest
       } = input
 
@@ -364,6 +459,11 @@ export const assetRouter = t.router({
               id: addedById ?? 0,
             },
           },
+          assetTag: {
+            connect: {
+              id: assetTagId ?? 0,
+            }
+          }
         },
         include: {
           model: true,
@@ -375,6 +475,7 @@ export const assetRouter = t.router({
           vendor: true,
           management: true,
           addedBy: true,
+          assetTag: true,
         },
       })
       return asset

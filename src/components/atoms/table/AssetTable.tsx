@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import {
   useEditableStore,
   useMinimizeStore,
@@ -7,7 +7,7 @@ import {
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
 import Modal from "../../asset/Modal"
-import { AssetType } from "../../../types/generic"
+import { AssetType, EmployeeType } from "../../../types/generic"
 import { columns } from "../../../lib/table"
 import { getProperty } from "../../../lib/functions"
 import { navigations } from "../accordions/NavAccordion"
@@ -51,10 +51,12 @@ const AssetDetailsModal = (props: {
     content: () => qrcodeRef.current,
   })
 
+  const emp = trpc.employee.findOne.useQuery(props.asset?.custodianId)
+
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
     setGenBarcode(true)
-    JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
+    JsBarcode("#barcode", props.asset ? (props.asset!.number!) : "No data", {
       textAlign: "left",
       textPosition: "bottom",
       fontOptions: "",
@@ -126,7 +128,7 @@ const AssetDetailsModal = (props: {
                           : "No Alternate Number"}
                       </p>
                     </div>
-                    
+
                     <div className="col-span-1">
                       <p className="font-light">Name</p>
                       <p className="font-medium">{props.asset?.name}</p>
@@ -134,8 +136,8 @@ const AssetDetailsModal = (props: {
                     <div className="col-span-1">
                       <p className="font-light">Serial No.</p>
                       <p className="font-medium">
-                        {props.asset?.tag !== ""
-                          ? props.asset?.tag
+                        {props.asset?.serial_no !== ""
+                          ? props.asset?.serial_no
                           : "--"}
                       </p>
                     </div>
@@ -212,26 +214,6 @@ const AssetDetailsModal = (props: {
                   </section>
                   <section className="grid grid-cols-4">
                     <div className="col-span-1">
-                      <p className="font-light">Description</p>
-                      <p className="font-medium">
-                        {props.asset?.description ?? "--"}
-                      </p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Remarks</p>
-                      <p className="font-medium">
-                        {props.asset?.remarks ?? "--"}
-                      </p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Tag</p>
-                      <p className="font-medium">
-                        {props.asset?.tag ?? "--"}
-                      </p>
-                    </div>
-                  </section>
-                  <section className="grid grid-cols-4">
-                    <div className="col-span-1">
                       <p className="font-light">Asset Lifetime</p>
                       <p className="font-medium">
                         {props.asset?.management?.asset_lifetime
@@ -240,14 +222,36 @@ const AssetDetailsModal = (props: {
                         Months
                       </p>
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-1">
                       <p className="font-light">Project</p>
                       <p className="font-medium">
                         {props.asset?.project?.name ?? "--"}
                       </p>
                     </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Tag</p>
+                      <p className="font-medium">
+                        {props.asset?.assetTag?.name !== ""
+                          ? props.asset?.assetTag?.name
+                          : "--"}
+                      </p>
+                    </div>
                   </section>
-                 
+                  <section className="grid grid-cols-4">
+                    <div className="col-span-2">
+                      <p className="font-light">Description</p>
+                      <p className="font-medium">
+                        {props.asset?.description ?? "--"}
+                      </p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="font-light">Remarks</p>
+                      <p className="font-medium">
+                        {props.asset?.remarks ?? "--"}
+                      </p>
+                    </div>
+                  </section>
+
                 </div>
               </section>
               {/* General information */}
@@ -279,9 +283,7 @@ const AssetDetailsModal = (props: {
                     <div className="col-span-1">
                       <p className="font-light">Team</p>
                       <p className="font-medium">
-                        {props.asset?.department?.teams[
-                          props.asset?.custodian?.teamId ?? 0
-                        ]?.name ?? "--"}
+                        {emp.data?.team?.name ?? "--"}
                       </p>
                     </div>
                   </section>
@@ -292,6 +294,12 @@ const AssetDetailsModal = (props: {
                         {props.asset?.department?.company?.name !== ""
                           ? props.asset?.department?.company?.name
                           : "--"}
+                      </p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Building</p>
+                      <p className="font-medium">
+                        {props.asset?.department?.building?.name}
                       </p>
                     </div>
                     <div className="col-span-1">
@@ -306,12 +314,8 @@ const AssetDetailsModal = (props: {
                         {props.asset?.department?.name}
                       </p>
                     </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Asset Location</p>
-                      <p className="font-medium">
-                        {props.asset?.management?.asset_location}
-                      </p>
-                    </div>
+
+
                   </section>
                   {/* <section className="grid grid-cols-4 gap-4">
                                         <div className="col-span-1">
@@ -353,7 +357,10 @@ const AssetDetailsModal = (props: {
                     <div className="col-span-1">
                       <p className="font-light">Accounting Method</p>
                       <p className="font-medium">
-                        {props.asset?.management?.accounting_method ?? "--"}
+                        {props.asset?.management?.accounting_method
+                          ? props.asset?.management?.accounting_method
+                          : "--"}
+
                       </p>
                     </div>
                     <div className="col-span-1">
@@ -374,6 +381,13 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Work Mode</p>
                       <p className="font-medium">
                         {props.asset?.custodian?.workMode ?? "--"}
+                      </p>
+                    </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Asset Location</p>
+                      <p className="font-medium">
+                        {props.asset?.management?.asset_location ?
+                          props.asset?.management?.asset_location : "--"}
                       </p>
                     </div>
                   </section>
@@ -397,7 +411,9 @@ const AssetDetailsModal = (props: {
                     <div className="col-span-1">
                       <p className="font-light">Depreciation Method</p>
                       <p className="font-medium">
-                        {props.asset?.management?.depreciation_rule ?? "--"}
+                        {props.asset?.management?.depreciation_rule
+                          ? props.asset?.management?.depreciation_rule
+                          : "--"}
                       </p>
                     </div>
                   </section>

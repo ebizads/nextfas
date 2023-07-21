@@ -39,7 +39,7 @@ const DisplayAssets = (props: {
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
   const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
-  console.log(search)
+  console.log("check", filterBy)
 
   useEffect(
     () => {

@@ -131,14 +131,14 @@ export default function DropZone_asset({
         number: ast[2]
           ? ((ast as (string | number | null)[])[2] as string)
           : ((parseId(
-              transformNumber((ast as (string | number | null)[])[13] as number)
+            transformNumber((ast as (string | number | null)[])[13] as number)
+          ) +
+            parseId(
+              transformNumber(
+                (ast as (string | number | null)[])[63] as number
+              )
             ) +
-              parseId(
-                transformNumber(
-                  (ast as (string | number | null)[])[63] as number
-                )
-              ) +
-              assetId) as string),
+            assetId) as string),
         alt_number: (ast as (string | number | null)[])[3] as string,
         serial_number: (ast as (string | number | null)[])[4] as string,
         barcode: (ast as (string | number | null)[])[5] as string,
@@ -151,25 +151,25 @@ export default function DropZone_asset({
         assetProjId: (ast as (string | number | null)[])[12] as number,
         createdAt: ast[38]
           ? new Date(
-              excelSerialDateToJSDate(
-                (ast as (string | number | null | boolean)[])[38] as number
-              )
+            excelSerialDateToJSDate(
+              (ast as (string | number | null | boolean)[])[38] as number
             )
+          )
           : null,
         updatedAt: ast[39]
           ? new Date(
-              excelSerialDateToJSDate(
-                (ast as (string | number | null | boolean)[])[39] as number
-              )
+            excelSerialDateToJSDate(
+              (ast as (string | number | null | boolean)[])[39] as number
             )
+          )
           : null,
         deletedAt:
           ast[40] !== null
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[40] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[40] as number
               )
+            )
             : null,
         deleted: (ast as (null | boolean)[])[41] as boolean,
         departmentId: (ast as (string | number | null)[])[13] as number,
@@ -181,7 +181,7 @@ export default function DropZone_asset({
         invoiceNum: (ast as (string | number | null)[])[19] as string,
         purchaseOrder: (ast as (string | number | null)[])[20] as string,
         deployment_status: (ast as (string | null)[])[21] as string,
-        tag: (ast as (string | null)[])[22] as string,
+        assetTagId: (ast as (number | string | null)[])[22] as number,
         management: {
           id: (ast as (number | null)[])[28] as number,
           currency: (ast as (string | null)[])[29] as string,
@@ -190,48 +190,48 @@ export default function DropZone_asset({
           residual_value: (ast as (string | number | null)[])[32] as number,
           purchase_date: ast[33]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[33] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[33] as number
               )
+            )
             : null,
           depreciation_start: ast[34]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[34] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[34] as number
               )
+            )
             : null,
           depreciation_end: ast[35]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[35] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[35] as number
               )
+            )
             : null,
           depreciation_status: (ast as (string | null)[])[36] as string,
           depreciation_period: (ast as (number | null)[])[37] as number,
           depreciation_rule: (ast as (string | null)[])[38] as string,
           createdAt: ast[50]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[50] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[50] as number
               )
+            )
             : null,
           updatedAt: ast[51]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[51] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[51] as number
               )
+            )
             : null,
           deletedAt: ast[52]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[52] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[52] as number
               )
+            )
             : null,
           deleted: (ast as (null | boolean)[])[53] as boolean,
           assetId: (ast as (number | null)[])[43] as number,
@@ -257,24 +257,24 @@ export default function DropZone_asset({
           categoryId: (ast as (string | number | null)[])[65] as number,
           createdAt: ast[58]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[58] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[58] as number
               )
+            )
             : null,
           updatedAt: ast[59]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[59] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[59] as number
               )
+            )
             : null,
           deletedAt: ast[60]
             ? new Date(
-                excelSerialDateToJSDate(
-                  (ast as (string | number | null | boolean)[])[60] as number
-                )
+              excelSerialDateToJSDate(
+                (ast as (string | number | null | boolean)[])[60] as number
               )
+            )
             : null,
           deleted: (ast as (boolean | null)[])[61] as boolean,
         },
@@ -336,7 +336,7 @@ export default function DropZone_asset({
           purchaseOrder: duplicatedAssets[i]?.purchaseOrder ?? "",
           deployment_status: duplicatedAssets[i]?.deployment_status ?? "",
           status: duplicatedAssets[i]?.status ?? "",
-          tag: duplicatedAssets[i]?.tag ?? "",
+          assetTagId: duplicatedAssets[i]?.assetTagId ?? 0,
           management: {
             currency: duplicatedAssets[i]?.management?.currency ?? "",
             original_cost: duplicatedAssets[i]?.management?.original_cost ?? 0,
@@ -385,7 +385,7 @@ export default function DropZone_asset({
           },
         })
       }
-    } catch {}
+    } catch { }
   }
   checkDuplicated()
   return (
@@ -393,11 +393,11 @@ export default function DropZone_asset({
       {/* {"DUPLICATES: " + duplicates?.length} */}
       {importedData ? (
         duplicates?.length == 0 ||
-        duplicates == null ||
-        duplicates == undefined ? (
+          duplicates == null ||
+          duplicates == undefined ? (
           duplicatedAssets.length == 0 ||
-          duplicatedAssets == null ||
-          duplicatedAssets == undefined ? (
+            duplicatedAssets == null ||
+            duplicatedAssets == undefined ? (
             <div className="flex flex-col gap-2 px-4 py-2">
               <div className="flex items-center gap-4 bg-yellow-100 p-4 text-light-secondary">
                 <i className="fa-regular fa-circle-exclamation" />

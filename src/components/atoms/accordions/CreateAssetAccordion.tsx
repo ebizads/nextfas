@@ -32,9 +32,10 @@ import {
   AssetClassType,
   AssetEditFieldValues,
   AssetFieldValues,
+  AssetType,
 } from "../../../types/generic"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { getAddress, getWorkMode } from "../../../lib/functions"
+import { getAddress, getBuilding, getWorkMode } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import moment from "moment"
 import JsBarcode from "jsbarcode"
@@ -115,14 +116,19 @@ const CreateAssetAccordion = () => {
   const [classId, setClassId] = useState<string | null>(null)
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [typeId, setTypeId] = useState<string | null>(null)
-  const [serialId, setSerialId] = useState<string | null>(null)
-  const [searchValue, onSearchChange] = useState("")
   const [companyId, setCompanyId] = useState<string | null>(null)
+  const [assetTag, setAssetTag] = useState<string | null>(null)
   const [departmentId, setDepartmentId] = useState<string | null>(null)
+  const [buildingId, setBuildingId] = useState<string | null>(null)
+  const [floorId, setFloorId] = useState<string | null>(null)
+
   const [employeeId, setEmployeeId] = useState<string | null>(null)
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAll.useQuery()
+  const { data: allAssets } = trpc.asset.findAllNoLimit.useQuery()
+  const assetsAll: AssetType[] = allAssets?.assets as AssetType[]
+
   const assetsList = useMemo(
     () =>
       assetsData?.assets
@@ -202,6 +208,8 @@ const CreateAssetAccordion = () => {
     }
   }, [employeeId, employeeData])
 
+  const { data: assetTagData } = trpc.assetTag.findAll.useQuery()
+
   //gets and sets all class, categories, and types
   const { data: departmentData } = trpc.department.findAll.useQuery()
 
@@ -214,6 +222,18 @@ const CreateAssetAccordion = () => {
     // setValue('locationId', department?.locationId ?? undefined)
     return department?.location
   }, [departmentId, departmentData]) as Location
+
+
+
+
+
+  const assetTagList = useMemo(() =>
+    assetTagData?.assetTag.
+      filter((item) => item.id != 0)
+      .map((assetTag) => {
+        return { value: assetTag.id.toString(), label: assetTag.name }
+      }),
+    [assetTagData]) as SelectValueType[] | undefined
 
   const departmentList = useMemo(() => {
     if (companyId) {
@@ -232,6 +252,23 @@ const CreateAssetAccordion = () => {
     // console.error("Error loading departments")
     return null
   }, [companyId, departmentData])
+  const buildingLocation = useMemo(() => {
+    if (departmentId) {
+      const department = departmentData?.departments.filter(
+        (department) => department.id === Number(departmentId)
+      )[0]
+      return department?.building ?? null
+    }
+  }, [departmentId, departmentData])
+
+  useEffect(() => {
+    setFloorId(String(selectedDepartment?.id))
+  }, [selectedDepartment])
+
+  useEffect(() => {
+    setBuildingId(String(buildingLocation?.id))
+  }, [buildingLocation])
+
 
   //asset description
   const [description, setDescription] = useState<string | null>(null)
@@ -309,6 +346,31 @@ const CreateAssetAccordion = () => {
     `-${moment().format("YYMDhms")}`
   )
 
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const generateAssetNumber = useMemo(() => {
+    let numberArray = ""
+
+    for (
+      let x = 0;
+      x <= (allAssets?.assets ? allAssets?.assets?.length : 0) + 1;
+
+    ) {
+      if (
+        assetsAll?.some((item) =>
+          item?.number?.includes(String(x + 1).padStart(4, "0"))
+        )
+      ) {
+        x++
+      } else {
+        console.log("Chk: " + JSON.stringify(true))
+
+        return (numberArray = String(x + 1).padStart(4, "0"))
+      }
+    }
+
+    return numberArray
+  }, [allAssets?.assets, assetsAll])
   const asset_number = useMemo(() => {
     const parseId = (id: string | null) => {
       if (!id) {
@@ -321,16 +383,18 @@ const CreateAssetAccordion = () => {
       }
     }
 
-    if (typeId && departmentId) {
-      return parseId(departmentId) + parseId(typeId)
+    if (typeId && departmentId && buildingId && floorId && assetTag) {
+      console.log(parseId(departmentId) + parseId(buildingId) + parseId(floorId) + "-" + parseId(assetTag))
+      return parseId(departmentId) + parseId(buildingId) + parseId(floorId) + "-" + parseId(assetTag)
     }
 
     return null
-  }, [typeId, departmentId]) as string | null
+  }, [typeId, departmentId, buildingId, floorId, assetTag]) as string | null
 
   useEffect(() => {
     if (asset_number) {
-      const id = `${asset_number}${assetId}`
+      const id = `${asset_number}` + "-" + `${generateAssetNumber}`
+      console.log(id)
       setValue("number", id)
       JsBarcode("#barcode2", id, {
         textAlign: "left",
@@ -342,7 +406,7 @@ const CreateAssetAccordion = () => {
         width: 1,
       })
     }
-  }, [assetId, asset_number, setValue])
+  }, [assetId, asset_number, generateAssetNumber, setValue])
 
   const { data: session } = useSession()
 
@@ -368,6 +432,9 @@ const CreateAssetAccordion = () => {
       setTypeId(null)
       setCompanyId(null)
       setDepartmentId(null)
+      setBuildingId(null)
+      setFloorId(null)
+      setAssetTag(null)
       // router.push("/assets")
     }
   }
@@ -434,38 +501,16 @@ const CreateAssetAccordion = () => {
                     <AlertInput>{errors?.alt_number?.message}</AlertInput>
                   </div>
                   <div className="col-span-4">
-                    <label className="sm:text-sm">Tag</label>
-                    <Select
-                      placeholder="Pick one"
-                      onChange={(value) => {
-                        setValue("tag", String(value) ?? 0)
-                        onSearchChange(value ?? "")
-
-                      }}
-                      value={searchValue}
-                      data={["Fixed", "Moveable"]}
-                      styles={(theme) => ({
-                        item: {
-                          // applies styles to selected item
-                          "&[data-selected]": {
-                            "&, &:hover": {
-                              backgroundColor:
-                                theme.colorScheme === "light"
-                                  ? theme.colors.orange[3]
-                                  : theme.colors.orange[1],
-                              color:
-                                theme.colorScheme === "dark"
-                                  ? theme.white
-                                  : theme.black,
-                            },
-                          },
-
-                          // applies styles to hovered item (with mouse or keyboard)
-                          "&[data-hovered]": {},
-                        },
-                      })}
-                      variant="unstyled"
-                      className="ht-11 mt-1 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    <ClassTypeSelect
+                      query={assetTag}
+                      setQuery={setAssetTag}
+                      required
+                      name={"assetTagId"}
+                      setValue={setValue}
+                      value={getValues("assetTagId")?.toString()}
+                      title={"Tag"}
+                      placeholder={"Select Tag"}
+                      data={assetTagList ?? []}
                     />
                     <AlertInput>{errors?.departmentId?.message}</AlertInput>
                   </div>
@@ -639,7 +684,7 @@ const CreateAssetAccordion = () => {
             <Accordion.Panel>
               <div className="grid gap-7">
                 <div className="col-span-9 grid grid-cols-9 gap-7">
-                  <div className="col-span-4">
+                  <div className="col-span-3">
                     <ClassTypeSelect
                       query={companyId}
                       setQuery={setCompanyId}
@@ -653,7 +698,7 @@ const CreateAssetAccordion = () => {
                     />
                     <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
                   </div>
-                  <div className="col-span-8">
+                  <div className="col-span-4">
                     <div className="text-gray-700">
                       <div className="flex flex-1 flex-col gap-2">
                         <label htmlFor="address" className="text-sm">
@@ -676,26 +721,47 @@ const CreateAssetAccordion = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="col-span-5">
+                    <ClassTypeSelect
+                      query={departmentId}
+                      setQuery={setDepartmentId}
+                      required
+                      disabled={!Boolean(companyId)}
+                      name={"departmentId"}
+                      setValue={setValue}
+                      value={getValues("departmentId")?.toString()}
+                      title={"Department"}
+                      placeholder={
+                        !Boolean(companyId)
+                          ? "Select company first"
+                          : "Select room type"
+                      }
+                      data={departmentList ?? []}
+                    />
+                    <AlertInput>{errors?.departmentId?.message}</AlertInput>
+                  </div>
                   <div className="col-span-12 grid grid-cols-10 gap-7">
                     <div className="col-span-2">
-                      <ClassTypeSelect
-                        query={departmentId}
-                        setQuery={setDepartmentId}
-                        required
-                        disabled={!Boolean(companyId)}
-                        name={"departmentId"}
-                        setValue={setValue}
-                        value={getValues("departmentId")?.toString()}
-                        title={"Department"}
-                        placeholder={
-                          !Boolean(companyId)
-                            ? "Select company first"
-                            : "Select room type"
+                      <label htmlFor="address" className="text-sm">
+                        Building
+                      </label>
+                      <input
+                        type="text"
+                        id={"building"}
+                        className={
+                          "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                         }
-                        data={departmentList ?? []}
+                        placeholder="Building will appear here"
+                        value={
+                          buildingLocation
+                            ? getBuilding(buildingLocation)
+                            : ""
+                        }
+                        disabled
                       />
-                      <AlertInput>{errors?.departmentId?.message}</AlertInput>
+                      <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
                     </div>
+
                     <div className="col-span-2">
                       <div className="text-gray-700">
                         <div className="flex flex-col gap-2">
@@ -843,25 +909,25 @@ const CreateAssetAccordion = () => {
                           className={
                             "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                           }
-                          placeholder="Company Address will appear here"
+                          placeholder="Asset address will appear here"
                           value={
                             employee_workMode?.workMode === "On-Site"
                               ? company_address?.address
                                 ? getAddress(company_address)
                                 : ""
                               : employee_workMode?.workMode === "Work From Home"
-                              ? employee_workMode.address
-                                ? getAddress(employee_workMode)
-                                : ""
-                              : employee_workMode?.workMode === "Hybrid"
-                              ? (company_address?.address
-                                  ? "[" + getAddress(company_address) + "]"
-                                  : "") +
-                                " & " +
-                                (employee_workMode.address
-                                  ? "[" + getAddress(employee_workMode) + "]"
-                                  : "")
-                              : "--"
+                                ? employee_workMode.address
+                                  ? getAddress(employee_workMode)
+                                  : ""
+                                : employee_workMode?.workMode === "Hybrid"
+                                  ? (company_address?.address
+                                    ? "[" + getAddress(company_address) + "]"
+                                    : "") +
+                                  " & " +
+                                  (employee_workMode.address
+                                    ? "[" + getAddress(employee_workMode) + "]"
+                                    : "")
+                                  : "--"
                           }
                           disabled
                         />

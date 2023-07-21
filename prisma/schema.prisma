@@ -178,7 +178,6 @@ model Location {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
   deleted     Boolean      @default(false)
-  building    String?
   departments Department[]
 }
 
@@ -234,6 +233,26 @@ model AssetType {
   deleted    Boolean        @default(false)
   category   AssetCategory? @relation(fields: [categoryId], references: [id])
   model      Model[]
+}
+
+model assetTag {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+  assets    Asset[]
+}
+
+model Building {
+  id         Int          @id @default(autoincrement())
+  name       String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  deletedAt  DateTime?
+  deleted    Boolean      @default(false)
+  department Department[]
 }
 
 model AssetManagement {
@@ -363,7 +382,9 @@ model Department {
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
   deleted    Boolean   @default(false)
+  buildingId Int?
   assets     Asset[]
+  building   Building? @relation(fields: [buildingId], references: [id], onDelete: Cascade)
   company    Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
   teams      Team[]
@@ -439,9 +460,10 @@ model Asset {
   invoiceNum        String?
   purchaseOrder     String?
   deployment_status String?
-  tag               String?
+  assetTagId        Int?
   addedBy           User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project           AssetProject?    @relation(fields: [assetProjectId], references: [id])
+  assetTag          assetTag?        @relation(fields: [assetTagId], references: [id], onDelete: Cascade)
   custodian         Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
   department        Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   model             Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)

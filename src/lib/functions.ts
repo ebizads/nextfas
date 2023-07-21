@@ -6,10 +6,13 @@ import {
   EmployeeType,
   UserType,
   VendorType,
+  AssetTag,
+  DepartmentType,
+  BuildingType,
 } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
-import { Address, Company } from "@prisma/client"
+import { Address, Company, assetTag } from "@prisma/client"
 import Router from "next/router"
 import { object } from "zod"
 import { trpc } from "../utils/trpc"
@@ -26,8 +29,9 @@ export const getProperty = (
     | VendorType
     | DisposeType
     | AssetRepairType
-    | UserType | AssetTransferType
-
+    | UserType
+    | AssetTransferType
+    | AssetTag
   //subfilter?: string
 ) => {
   //get object property
@@ -101,6 +105,14 @@ export const getAddressUser = (
     })
 ) => {
   return `${type?.address?.street}, ${type?.address?.region}, ${type?.address?.city}, ${type?.address?.country}, ${type?.name} `
+}
+
+export const getBuilding = (
+  type:
+    | BuildingType
+
+) => {
+  return `${type?.name}`
 }
 
 export const getAddress = (

@@ -200,7 +200,7 @@ export const employeeRouter = t.router({
               },
               where: {
                 NOT: {
-                  deleted: true,
+                  id: 999999,
                 },
                 // hired_date: input?.filter?.hired_date,
                 // name: { contains: input?.search?.name, mode: 'insensitive' },

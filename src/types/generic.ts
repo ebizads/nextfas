@@ -14,6 +14,8 @@ import { AppRouter } from "../server/trpc/router"
 export type AssetType = inferProcedureOutput<AppRouter["asset"]["findOne"]>
 export type AssetTypeTable = inferProcedureOutput<AppRouter["asset"]["findOneTable"]>
 
+export type AssetTag = inferProcedureOutput<AppRouter["assetTag"]["findOne"]>
+
 export type AssetTransferType = inferProcedureOutput<AppRouter["assetTransfer"]["findOne"]>
 export type AssetRepairType = inferProcedureOutput<
   AppRouter["assetRepair"]["findOne"]
@@ -23,6 +25,9 @@ export type AssetProject = inferProcedureOutput<AppRouter["assetproject"]["findO
 export type AssetClassType = inferProcedureOutput<
   AppRouter["assetClass"]["findOne"]
 >
+
+export type BuildingType = inferProcedureOutput<AppRouter["building"]["findOne"]>
+
 export type DepartmentType = inferProcedureOutput<
   AppRouter["department"]["findOne"]
 >

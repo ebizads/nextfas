@@ -7,12 +7,18 @@ import { EmployeeCreateInput } from "../../../server/schemas/employee"
 import { ImageJSON } from "../../../types/table"
 import { trpc } from "../../../utils/trpc"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
-import InputField from "../../../components/atoms/forms/InputField"
+import { InputField } from "../../../components/atoms/forms/InputField"
 import { Select } from "@mantine/core"
+import DropZoneComponent from "../../../components/dropzone/DropZoneComponent"
 import { env } from "../../../env/client.mjs"
 import moment from "moment"
 import Modal from "../../../components/headless/modal/modal"
-import { SelectValueType } from "../../../components/atoms/select/TypeSelect"
+import TypeSelect, { SelectValueType } from "../../../components/atoms/select/TypeSelect"
+import ph_regions from "../../../json/ph_regions.json"
+import all_countries from "../../../json/countries.json"
+import all_states from "../../../json/states.json"
+import all_cities from "../../../json/cities.json"
+import { set } from "lodash"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -21,17 +27,27 @@ export const CreateEmployee_new = (props: {
   setDate: React.Dispatch<React.SetStateAction<Date>>
   setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
   images: ImageJSON[]
+  generateId: string
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   isLoading: boolean
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [searchValue, onSearchChange] = useState("")
   const [workModeValue, onSearchWorkMode] = useState("")
   const [workStationValue, onSearchWorkStation] = useState("")
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [tryReset, setTryReset] = useState<boolean>(false)
-  const [empId] = useState<string>(moment().format("YY-MDhms"))
+  const [empId] = useState<string>(moment().format("YY-"))
   const { data: teams } = trpc.team.findAll.useQuery()
+  const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
+  const [country, setCountry] = useState("")
+  const [region, setRegion] = useState("")
+  const [province, setProvince] = useState("")
+  const [city, setCity] = useState("")
+  const [barangay, setBarangay] = useState("")
+
   const utils = trpc.useContext()
+
   const {
     mutate,
     isLoading: employeeLoading,
@@ -39,6 +55,7 @@ export const CreateEmployee_new = (props: {
   } = trpc.employee.create.useMutation({
     onSuccess: () => {
       utils.employee.findAll.invalidate()
+      setIsVisible(true)
       props.setImage([])
     },
   })
@@ -89,7 +106,9 @@ export const CreateEmployee_new = (props: {
     mutate({
       name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
         }`,
-      employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
+      employee_id:
+        `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}` +
+        (String(employee.teamId).padStart(2, "0") + props.generateId),
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
       //     .replace(" ", "")
@@ -103,9 +122,11 @@ export const CreateEmployee_new = (props: {
       position: employee.position,
       address: {
         city: employee.address?.city,
+        province: employee.address?.province,
+        baranggay: employee.address?.baranggay,
         country: employee.address?.country,
         street: employee.address?.street,
-        state: employee.address?.state,
+        region: employee.address?.region,
         zip: employee.address?.zip,
       },
       profile: {
@@ -121,31 +142,151 @@ export const CreateEmployee_new = (props: {
     reset()
   }
   const onDiscard = () => {
+    props.setIsVisible(false)
     document.forms[0]?.reset()
     reset()
-
-
   }
 
-  const [EMPID, setEMPID] = useState('');
+  const filteredAllCountries = useMemo(() => {
+    const countries = all_countries.map((countries) => { return countries.name })
+    setCountry("")
+    console.log("country", countries)
+    return countries
 
-  useEffect(() => {
-    setEMPID(`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`);
-  }, []);
+  }, [])
 
+  const filteredRegion = useMemo(() => {
+
+    const upperLevel = Object.entries(ph_regions)
+      .sort(([key1], [key2]) => {
+        const num1 = parseInt(key1)
+        const num2 = parseInt(key2)
+        return num1 - num2
+      })
+      .map(([key]) => key)
+    setRegion("")
+    console.log("keys:", upperLevel)
+    return upperLevel
+
+
+
+  }, [])
+
+  const filteredProvince = useMemo(() => {
+    const newProvince: Array<string> = []
+    if (country === "Philippines") {
+      if (region === null ?? "") {
+        setProvince("")
+
+        return newProvince
+      }
+      const jsonData = ph_regions
+
+      if (region) {
+        const provinceLevel = Object.keys(
+          (jsonData as Record<string, any>)[region].province_list
+        )
+        console.log("province", provinceLevel)
+        setProvince("")
+
+        return provinceLevel
+      }
+    } else {
+
+      if (country) {
+        const states = all_states
+        console.log("states", all_states)
+        const specStates = states.filter((states) => { return states.country_name === country })
+        const finalStates = specStates.map((states) => { return states.name })
+        if (finalStates.length === 0) {
+          return newProvince
+        }
+        console.log("states:", specStates)
+        return finalStates
+      }
+      return newProvince
+
+    }
+    setProvince("")
+
+    return newProvince
+  }, [country, region])
+
+  const filteredCity = useMemo(() => {
+    const newCity: Array<any> = []
+    if (country === "Philippines") {
+      if (province === null ?? "") {
+        setCity("")
+
+        return newCity
+      }
+
+      if (region && province) {
+        const jsonData = (ph_regions as Record<string, any>)[region].province_list
+
+        const cityLevel = Object.keys(
+          (jsonData as Record<string, any>)[province].municipality_list
+        )
+        console.log("city", cityLevel)
+        setCity("")
+
+        return cityLevel
+      }
+    } else {
+      if (province) {
+        const cities = JSON.parse(JSON.stringify(all_cities))
+        const specCities = cities.filter((city: { state_name: string }) => { return city.state_name === province })
+        const finalCities = specCities.map((city: { name: string }) => { return city.name })
+        console.log("cities", finalCities)
+        setCity("")
+        if (finalCities.length === 0) {
+          return newCity
+        }
+        return finalCities
+      }
+
+    }
+    setCity("")
+
+    return newCity
+  }, [country, province, region])
+
+  const filteredBarangay = useMemo(() => {
+    const newBarangay: Array<any> = []
+    if (city === null ?? "") {
+      setBarangay("")
+
+      return newBarangay
+    }
+
+    if (region && province && city) {
+      const jsonData = (ph_regions as Record<string, any>)[region].province_list
+      const cityData = (jsonData as Record<string, any>)[province]
+        .municipality_list
+      const barangayLevel = (cityData as Record<string, any>)[city]
+        .barangay_list
+      console.log("city", barangayLevel)
+      setBarangay("")
+
+      return barangayLevel
+    }
+    setBarangay("")
+
+    return newBarangay
+  }, [region, province, city])
 
   return (
     <main className="container mx-auto flex flex-col justify-center p-2">
       <h3 className="mb-2 bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text text-xl font-bold leading-normal text-transparent md:text-[2rem]">
-        Create new Employee
+        Create Employee Record
       </h3>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col space-y-4"
+        className="grid grid-cols-9 gap-7"
         noValidate
       >
-        <div className="flex w-full flex-wrap gap-4 py-2.5">
-          <div className="flex w-[32%] flex-col">
+        <div className="col-span-9 grid grid-cols-12 gap-7">
+          <div className="col-span-4">
             <label className="sm:text-sm">First Name</label>
             <InputField
               register={register}
@@ -155,7 +296,7 @@ export const CreateEmployee_new = (props: {
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
           </div>
-          <div className="flex w-[32%] flex-col">
+          <div className="col-span-4">
             <label className="sm:text-sm">Middle Name (Optional)</label>
             <InputField
               type={"text"}
@@ -164,7 +305,7 @@ export const CreateEmployee_new = (props: {
               register={register}
             />
           </div>
-          <div className="flex w-[32%] flex-col">
+          <div className="col-span-4">
             <label className="sm:text-sm">Last Name</label>
             <InputField
               type={"text"}
@@ -176,8 +317,73 @@ export const CreateEmployee_new = (props: {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex w-[32%] flex-col">
+        <div className="col-span-9 grid grid-cols-12 gap-7">
+          <div className="col-span-4">
+            <label className="sm:text-sm">Employee Number</label>
+            {/* <InputField
+               
+              type={"text"}
+              label={""}
+              name={"employee_id"}
+              register={register}
+            /> */}
+            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
+              {`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}${String(searchValue).padStart(2, "0") + props.generateId
+                }`}
+            </p>
+          </div>
+          <div className="col-span-4">
+            <label className="sm:text-sm">Designation / Position</label>
+            <InputField
+              type={"text"}
+              label={""}
+              name={"position"}
+              register={register}
+            />
+
+            <AlertInput>{errors?.position?.message}</AlertInput>
+          </div>
+          <div className="col-span-4">
+            <label className="sm:text-sm">Work Mode</label>
+            <Select
+              placeholder="Select your Work mode"
+              onChange={(value) => {
+                setValue("workMode", String(value) ?? " ")
+                onSearchWorkMode(value ?? " ")
+
+              }}
+              value={workModeValue ?? ""}
+              data={["WFH", "Hybrid", "On-Site"]}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+            />
+          </div>
+        </div>
+
+
+
+        <div className="col-span-9 grid grid-cols-12 gap-7">
+          <div className="col-span-6">
             <label className="sm:text-sm">Team</label>
             <Select
               placeholder="Pick one"
@@ -208,34 +414,29 @@ export const CreateEmployee_new = (props: {
                 },
               })}
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Employee Number</label>
+          <div className="col-span-6">
+            <label className="sm:text-sm">Department</label>
             {/* <InputField
-               
+              // placeholder={props.employee?.department}
               type={"text"}
+              disabled={!editable}
               label={""}
-              name={"employee_id"}
+              placeholder={props.employee?.team?.department?.name}
+              name={"department"}
               register={register}
             /> */}
-            {<p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">{EMPID}</p>}
-          </div>
-          <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Designation / Position</label>
-            <InputField
-              type={"text"}
-              label={""}
-              name={"position"}
-              register={register}
-            />
-
-            <AlertInput>{errors?.position?.message}</AlertInput>
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{"--"}</p>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 py-2.5">
+        <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Email</label>
             <InputField
@@ -248,50 +449,16 @@ export const CreateEmployee_new = (props: {
             />
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
-          <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm">Department</label>
-            {/* <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              // disabled={!editable}
-              label={""}
-              value={props.employee?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
-            <p className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
-              {"--"}
-            </p>
-          </div>
+
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-          {/* <div className="flex flex-col sm:w-1/3 md:w-[25%]">
-            <label className="sm:text-sm ">Hired Date</label>
-            <InputField
-            className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
-            type={"text"}
-          />
-            <DatePicker
-              dropdownType="popover"
-              placeholder="Pick Date"
-              size="sm"
-              variant="unstyled"
-              value={props.date}
-              onChange={(value) => {
-                setValue("hired_date", value)
-                value === null
-                  ? props.setDate(new Date())
-                  : props.setDate(value)
-              }}
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-            />
-          </div> */}
           <div className="flex w-[23%] flex-col">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
+              placeholder="--"
               type="number"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
               onKeyDown={(e) => {
                 if (e.key === "e") {
                   e.preventDefault()
@@ -341,93 +508,267 @@ export const CreateEmployee_new = (props: {
                 },
               })}
               variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
-          <div className="flex w-[23%] flex-col">
-            <label className="sm:text-sm">Work Mode</label>
-            <Select
-              placeholder="Select your Work mode"
-              onChange={(value) => {
-                setValue("workMode", String(value) ?? " ")
-                onSearchWorkMode(value ?? " ")
-              }}
-              value={workModeValue}
-              data={["WFH", "Hybrid", "On-Site"]}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
 
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-            />
-          </div>
-          <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">Street</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name="address.street"
-                register={register}
+          <div className="flex w-full flex-wrap gap-3 py-2.5">
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">Country</label>
+              <Select
+                name={"address.country"}
+                id="address.country"
+                searchable
+                required
+                placeholder="Country"
+                data={filteredAllCountries}
+                onChange={(value) => {
+                  setValue("address.country", value ?? "")
+                  setCountry(value ?? "")
+                  setRegion("")
+                  setProvince("")
+                  setCity("")
+                  setBarangay("")
+                }}
+                value={country ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                clearable
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
               />
+
+              <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.4%] flex-col">
-              <label className="sm:text-sm">Barangay</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name={"address.state"}
-                register={register}
-              /><AlertInput>{errors?.address?.state?.message}</AlertInput>
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">Region</label>
+              <Select
+                name={"address.region"}
+                searchable
+                // required
+                id="address.region"
+                placeholder="Region"
+                data={filteredRegion ?? [""]}
+                disabled={country === "" || country !== "Philippines"}
+                onChange={(value) => {
+                  setValue("address.region", value ?? "")
+                  setRegion(value ?? "")
+                  setProvince("")
+                  setCity("")
+                  setBarangay("")
+                }}
+                value={region ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                clearable
+                nothingFound="No options"
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              />
+
+              <AlertInput>{errors?.address?.region?.message}</AlertInput>
             </div>
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">City</label>
-              <InputField
+
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">Province/States</label>
+              <Select
+                name={"address.province"}
+                searchable
+                // required
+                id="address.province"
+                placeholder="Province/States"
+                data={filteredProvince}
+                disabled={country === "Philippines " ? (region === "") : country === ""}
+                onChange={(value) => {
+                  setValue("address.province", value ?? "")
+                  setProvince(value ?? "")
+                  setCity("")
+                  setBarangay("")
+                }}
+                value={province ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              />
+              {/* <InputField
                 type={"text"}
                 label={""}
                 name={"address.city"}
                 register={register}
+              /> */}
+
+              <AlertInput>{errors?.address?.province?.message}</AlertInput>
+            </div>
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">City</label>
+              <Select
+                name={"address.city"}
+                id="address.city"
+                placeholder="City"
+                searchable
+                // required
+                disabled={province === ""}
+                data={filteredCity}
+                onChange={(value) => {
+                  setValue("address.city", value ?? "")
+                  setCity(value ?? "")
+                  setBarangay("")
+                }}
+                value={city ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
               />
+              {/* <InputField
+                type={"text"}
+                label={""}
+                name={"address.city"}
+                register={register}
+              /> */}
 
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
-            <div className="flex w-[18.4%] flex-col">
-              <label className="sm:text-sm">Zip Code</label>
+            <div className="flex w-[23%] flex-col">
+              <label className="sm:text-sm">Barangay</label>
+              <Select
+                name={"address.barangay"}
+                id="address.barangay"
+                placeholder="Barangay"
+                data={filteredBarangay}
+                searchable
+                required
+                disabled={country !== "Philippines"}
+                onChange={(value) => {
+                  setValue("address.baranggay", value ?? "")
+                  setBarangay(value ?? "")
+                }}
+                value={barangay ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              />
+              <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
+            </div>
+            <div className="flex w-[23%] flex-col ">
+              <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
+                Street
+              </label>
+              <InputField
+                type={"text"}
+                label={""}
+                placeholder="Street"
+                disabled={country === ""}
+                name={"address.street"}
+                register={register}
+              />
+              <AlertInput>{errors?.address?.street?.message}</AlertInput>
+            </div>
+
+            <div className="flex w-[23%] flex-col">
+              <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
+                Zip Code
+              </label>
               <InputField
                 type={"number"}
                 label={""}
+                disabled={country === ""}
                 name={"address.zip"}
                 register={register}
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
-            </div>
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">Country</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name={"address.country"}
-                register={register}
-              />
-
-              <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
           </div>
         </div>
@@ -459,12 +800,14 @@ export const CreateEmployee_new = (props: {
           </button>
         </div>
       </form>
-      {error && errors && (
-        <pre className="mt-2 text-sm italic text-red-500">
-          Something went wrong!
-          {JSON.stringify({ error, errors }, null, 2)}
-        </pre>
-      )}
+      {
+        error && errors && (
+          <pre className="mt-2 text-sm italic text-red-500">
+            Something went wrong!
+            {JSON.stringify({ error, errors }, null, 2)}
+          </pre>
+        )
+      }
       <Modal
         className="max-w-lg"
         isVisible={isVisible}
@@ -472,15 +815,15 @@ export const CreateEmployee_new = (props: {
         title="NOTICE!"
       >
         <>
-          <div className="py-2 items-center flex flex-col gap-3 ">
+          <div className="flex flex-col items-center gap-3 py-2 ">
             <p className="text-center text-lg font-semibold ">
               Employee Created Successfully
             </p>
             <button
               className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
               onClick={() => {
-                // props.setIsVisible(false)
-                // setIsVisible(false)
+                props.setIsVisible(false)
+                setIsVisible(false)
               }}
             >
               Confirm
@@ -488,8 +831,7 @@ export const CreateEmployee_new = (props: {
           </div>
         </>
       </Modal>
-
-    </main>
+    </main >
   )
 }
 

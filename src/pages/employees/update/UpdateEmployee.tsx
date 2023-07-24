@@ -176,7 +176,6 @@ export const UpdateEmployee = (props: {
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
-
           <div className="col-span-4">
             <label className="sm:text-sm flex justify-between">Employee Number
               <div className="flex gap-2 items-center">
@@ -256,7 +255,6 @@ export const UpdateEmployee = (props: {
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
-
           <div className="col-span-3">
             <label className="sm:text-sm">Team</label>
             <Select

@@ -589,7 +589,7 @@ const AssetDetailsModal = (props: {
                   </button>
                   <p className="font-medium xl:text-lg">Asset Options</p>
                   <Link href="/assets/update">
-                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid fa-pen-to-square"} />
                       Edit
                     </div>
@@ -599,7 +599,7 @@ const AssetDetailsModal = (props: {
                       props.setOpenModalDel(true)
                       props.setCheckboxes([props.asset?.id ?? -1])
                     }}
-                    className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
+                    className="flex items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
                   >
                     <i className={"fa-solid fa-trash-can text-red-500"} />
                     Delete

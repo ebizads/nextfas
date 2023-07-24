@@ -3,7 +3,10 @@ import { DatePicker } from "@mantine/dates"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { date, z } from "zod"
-import { EmployeeCreateInput, EmployeeEditInput } from "../../../server/schemas/employee"
+import {
+  EmployeeCreateInput,
+  EmployeeEditInput,
+} from "../../../server/schemas/employee"
 import { ImageJSON } from "../../../types/table"
 import { trpc } from "../../../utils/trpc"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
@@ -19,6 +22,11 @@ import { EmployeeType } from "../../../types/generic"
 import { useEditableStore, useSelectedEmpStore } from "../../../store/useStore"
 import { useRouter } from "next/router"
 
+import ph_regions from "../../../json/ph_regions.json"
+import all_countries from "../../../json/countries.json"
+import all_states from "../../../json/states.json"
+import all_cities from "../../../json/cities.json"
+import { clearAndGoBack } from "../../../lib/functions"
 
 export type Employee = z.infer<typeof EmployeeEditInput>
 // export type Employee = z.infer<typeof EmployeeCreateInput>
@@ -34,9 +42,12 @@ export const UpdateEmployee = (props: {
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
-
-  const router = useRouter();
-
+  const [country, setCountry] = useState("")
+  const [region, setRegion] = useState("")
+  const [province, setProvince] = useState("")
+  const [city, setCity] = useState("")
+  const [barangay, setBarangay] = useState("")
+  const router = useRouter()
 
   const [searchValue, onSearchChange] = useState<string>(
     props.employee?.teamId?.toString() ?? "0"
@@ -93,12 +104,10 @@ export const UpdateEmployee = (props: {
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [updated, setUpdated] = useState(false)
 
-
-
   useEffect(() => {
     console.log(selectedEmp)
     if (selectedEmp === null) {
-      router.push('/employees')
+      router.push("/employees")
     }
   })
 
@@ -124,8 +133,138 @@ export const UpdateEmployee = (props: {
       setEditable(true)
       setUpdated(true)
     }
-
   }
+  const filteredAllCountries = useMemo(() => {
+    console.log("checkcount: ", country)
+    const countries = all_countries.map((countries) => {
+      return countries.name
+    })
+    setCountry("")
+    console.log("country", countries)
+    return countries
+  }, [])
+
+  const filteredRegion = useMemo(() => {
+    const upperLevel = Object.entries(ph_regions)
+      .sort(([key1], [key2]) => {
+        const num1 = parseInt(key1)
+        const num2 = parseInt(key2)
+        return num1 - num2
+      })
+      .map(([key]) => key)
+    setRegion("")
+    console.log("keys:", upperLevel)
+    return upperLevel
+  }, [])
+
+  const filteredProvince = useMemo(() => {
+    const newProvince: Array<string> = []
+    if (country === "Philippines") {
+      if (region === null ?? "") {
+        setProvince("")
+
+        return newProvince
+      }
+      const jsonData = ph_regions
+
+      if (region) {
+        const provinceLevel = Object.keys(
+          (jsonData as Record<string, any>)[region].province_list
+        )
+        console.log("province", provinceLevel)
+        setProvince("")
+
+        return provinceLevel
+      }
+    } else {
+      if (country) {
+        const states = all_states
+        console.log("states", all_states)
+        const specStates = states.filter((states) => {
+          return states.country_name === country
+        })
+        const finalStates = specStates.map((states) => {
+          return states.name
+        })
+        if (finalStates.length === 0) {
+          return newProvince
+        }
+        console.log("states:", specStates)
+        return finalStates
+      }
+      return newProvince
+    }
+    setProvince("")
+
+    return newProvince
+  }, [country, region])
+
+  const filteredCity = useMemo(() => {
+    const newCity: Array<any> = []
+    if (country === "Philippines") {
+      if (province === null ?? "") {
+        setCity("")
+
+        return newCity
+      }
+
+      if (region && province) {
+        const jsonData = (ph_regions as Record<string, any>)[region]
+          .province_list
+
+        const cityLevel = Object.keys(
+          (jsonData as Record<string, any>)[province].municipality_list
+        )
+        console.log("city", cityLevel)
+        setCity("")
+
+        return cityLevel
+      }
+    } else {
+      if (province) {
+        const cities = JSON.parse(JSON.stringify(all_cities))
+        const specCities = cities.filter((city: { state_name: string }) => {
+          return city.state_name === province
+        })
+        const finalCities = specCities.map((city: { name: string }) => {
+          return city.name
+        })
+        console.log("cities", finalCities)
+        setCity("")
+        if (finalCities.length === 0) {
+          return newCity
+        }
+        return finalCities
+      }
+    }
+    setCity("")
+
+    return newCity
+  }, [country, province, region])
+
+  const filteredBarangay = useMemo(() => {
+    const newBarangay: Array<any> = []
+    if (city === null ?? "") {
+      setBarangay("")
+
+      return newBarangay
+    }
+
+    if (region && province && city) {
+      const jsonData = (ph_regions as Record<string, any>)[region].province_list
+      const cityData = (jsonData as Record<string, any>)[province]
+        .municipality_list
+      const barangayLevel = (cityData as Record<string, any>)[city]
+        .barangay_list
+      console.log("city", barangayLevel)
+      setBarangay("")
+
+      return barangayLevel
+    }
+    setBarangay("")
+
+    return newBarangay
+  }, [region, province, city])
 
   console.log("ALAM MO TONG EMPLOYEE NA TO::::", props.employee)
 
@@ -143,7 +282,6 @@ export const UpdateEmployee = (props: {
           <div className="col-span-4">
             <label className="sm:text-sm">First Name</label>
             <InputField
-
               register={register}
               name="profile.first_name"
               type={"text"}
@@ -165,7 +303,6 @@ export const UpdateEmployee = (props: {
           <div className="col-span-4">
             <label className="sm:text-sm">Last Name</label>
             <InputField
-
               type={"text"}
               label={""}
               name={"profile.last_name"}
@@ -177,8 +314,9 @@ export const UpdateEmployee = (props: {
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
-            <label className="sm:text-sm flex justify-between pb-1">Employee Number
-              <div className="flex gap-2 items-center">
+            <label className="flex justify-between pb-1 sm:text-sm">
+              Employee Number
+              <div className="flex items-center gap-2">
                 <i
                   className="fa-light fa-pen-to-square cursor-pointer"
                   onClick={() => {
@@ -206,7 +344,6 @@ export const UpdateEmployee = (props: {
             <label className="sm:text-sm">Designation / Position</label>
             <InputField
               type={"text"}
-
               label={""}
               // placeholder={props.employee?.}
               name={"position"}
@@ -218,7 +355,6 @@ export const UpdateEmployee = (props: {
           <div className="col-span-4">
             <label className="sm:text-sm">Work Mode</label>
             <Select
-
               onChange={(value) => {
                 setValue("workMode", String(value) ?? "")
                 onSearchWorkMode(value ?? "")
@@ -249,16 +385,14 @@ export const UpdateEmployee = (props: {
               })}
               variant="unstyled"
               className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-
             />
           </div>
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
-          <div className="col-span-3">
+          <div className="col-span-6">
             <label className="sm:text-sm">Team</label>
             <Select
-
               placeholder="Pick one"
               onChange={(value) => {
                 setValue("teamId", Number(value) ?? 0)
@@ -287,15 +421,12 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className=
-
-              "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-
+              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
             />
             {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-6">
             <label className="sm:text-sm">Department</label>
             {/* <InputField
               // placeholder={props.employee?.department}
@@ -313,9 +444,9 @@ export const UpdateEmployee = (props: {
             >{`${props.employee?.team?.department?.name}`}</p>
           </div>
 
-          <div className="col-span-6">
+          {/* <div className="col-span-6">
             <label className="sm:text-sm">Location</label>
-            {/* <InputField
+            <InputField
               // placeholder={props.employee?.department}
               type={"text"}
               disabled={!editable}
@@ -323,30 +454,25 @@ export const UpdateEmployee = (props: {
               placeholder={props.employee?.team?.department?.name}
               name={"department"}
               register={register}
-            /> */}
+            />
             <p
               className={
-                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate "
+                "my-2 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
               }
-            >{"based on workmode (based wer?)"}</p>
-          </div>
+            >
+              {"based on workmode (based wer?)"}
+            </p>
+          </div> */}
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
-
-
           <div className="col-span-4">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
-
               type="number"
               pattern="[0-9]*"
               defaultValue={props.employee?.profile?.phone_no ?? "--"}
-              className=
-
-              "!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-
-
+              className="!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
               onKeyDown={(e) => {
                 if (e.key === "e") {
                   e.preventDefault()
@@ -370,7 +496,6 @@ export const UpdateEmployee = (props: {
           <div className="col-span-4">
             <label className="sm:text-sm">Email</label>
             <InputField
-
               type={"text"}
               label={""}
               name={"email"}
@@ -381,7 +506,6 @@ export const UpdateEmployee = (props: {
           <div className="col-span-4">
             <label className="sm:text-sm">Device</label>
             <Select
-
               onChange={(value) => {
                 setValue("workStation", String(value) ?? " ")
                 onSearchWorkStation(value ?? "")
@@ -409,17 +533,9 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className=
-
-              "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-
+              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
             />
           </div>
-
-
-
-
-
         </div>
         <div className="col-span-9 grid grid-cols-8 gap-7">
           <div className="col-span-2">
@@ -429,7 +545,7 @@ export const UpdateEmployee = (props: {
               id="address.country"
               searchable
               required
-              placeholder="Country"
+              placeholder={props.employee?.address?.country ?? "Country"}
               data={filteredAllCountries}
               onChange={(value) => {
                 setValue("address.country", value ?? "")
@@ -439,7 +555,7 @@ export const UpdateEmployee = (props: {
                 setCity("")
                 setBarangay("")
               }}
-              value={country ?? ""}
+              value={country}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -472,9 +588,9 @@ export const UpdateEmployee = (props: {
             <Select
               name={"address.region"}
               searchable
-              // required
+              // required = {country !== "" && country === "Philippines"}
               id="address.region"
-              placeholder="Region"
+              placeholder={props.employee?.address?.region ?? "Region"}
               data={filteredRegion ?? [""]}
               disabled={country === "" || country !== "Philippines"}
               onChange={(value) => {
@@ -521,9 +637,13 @@ export const UpdateEmployee = (props: {
               searchable
               // required
               id="address.province"
-              placeholder="Province/States"
+              placeholder={
+                props.employee?.address?.province ?? "Province/States"
+              }
               data={filteredProvince}
-              disabled={country === "Philippines " ? (region === "") : country === ""}
+              disabled={
+                country === "Philippines" ? region === "" : country === ""
+              }
               onChange={(value) => {
                 setValue("address.province", value ?? "")
                 setProvince(value ?? "")
@@ -568,7 +688,7 @@ export const UpdateEmployee = (props: {
             <Select
               name={"address.city"}
               id="address.city"
-              placeholder="City"
+              placeholder={props.employee?.address?.city ?? "City"}
               searchable
               // required
               disabled={province === ""}
@@ -611,16 +731,20 @@ export const UpdateEmployee = (props: {
 
             <AlertInput>{errors?.address?.city?.message}</AlertInput>
           </div>
-          <div className="col-start-2 col-span-2">
+          <div className="col-span-2 col-start-2">
             <label className="sm:text-sm">Barangay</label>
             <Select
               name={"address.barangay"}
               id="address.barangay"
-              placeholder="Barangay"
+              placeholder={props.employee?.address?.baranggay ?? "Barangay"}
               data={filteredBarangay}
               searchable
               required
-              disabled={country !== "Philippines"}
+              disabled={
+                country === "Philippines"
+                  ? city === ""
+                  : country !== "Philippines"
+              }
               onChange={(value) => {
                 setValue("address.baranggay", value ?? "")
                 setBarangay(value ?? "")
@@ -681,8 +805,6 @@ export const UpdateEmployee = (props: {
           </div>
         </div>
 
-
-
         {/* {(
           <DropZoneComponent
             setImage={setImage}
@@ -721,8 +843,16 @@ export const UpdateEmployee = (props: {
               </pre>
             )
           )}
-          {(
-            <div className="flex gap-4 w-full justify-end">
+          {
+            <div className="flex w-full justify-end gap-4">
+              <button
+                type="button"
+                className=" px-4 py-1 font-medium underline "
+                onClick={() => clearAndGoBack()}
+              >
+                Cancel
+              </button>
+
               <button
                 type="button"
                 className="rounded bg-red-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -742,14 +872,14 @@ export const UpdateEmployee = (props: {
                 {employeeLoading ? "Loading..." : "Save"}
               </button>
             </div>
-          )}
+          }
           <EmployeeDeleteModal
             employee={props.employee}
             openModalDel={openModalDel}
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             setOpenModalDel={setOpenModalDel}
-          // setIsVisible={props.setIsVisible}
+            // setIsVisible={props.setIsVisible}
           />
         </div>
       </form>
@@ -760,7 +890,7 @@ export const UpdateEmployee = (props: {
         title="NOTICE!"
       >
         <>
-          <div className="py-2 items-center flex flex-col gap-3 ">
+          <div className="flex flex-col items-center gap-3 py-2 ">
             <p className="text-center text-lg font-semibold ">
               Employee Updated Successfully
             </p>
@@ -769,8 +899,7 @@ export const UpdateEmployee = (props: {
               onClick={() => {
                 // props.setIsVisible(false)
                 // setIsVisible(false)
-                router.push('/employees')
-
+                router.push("/employees")
               }}
             >
               Confirm
@@ -800,10 +929,8 @@ export const EmployeeDeleteModal = (props: {
 }) => {
   //trpc utils for delete
   const utils = trpc.useContext()
-  const router = useRouter();
+  const router = useRouter()
   const [isDeleteVisible, setIsDeleteVisible] = useState<boolean>(false)
-
-
 
   const { mutate } = trpc.employee.delete.useMutation({
     onSuccess() {
@@ -832,9 +959,13 @@ export const EmployeeDeleteModal = (props: {
       >
         <div className="m-4 flex flex-col ">
           <div className="flex flex-col items-center gap-8 text-center">
-            <div>You are about delete this item with employee name: {props.employee?.name}</div>
+            <div>
+              You are about delete this item with employee name:{" "}
+              {props.employee?.name}
+            </div>
             <p className="text-neutral-500">
-              <i className="fa-regular fa-circle-exclamation" /> Please carefully review the action before deleting.
+              <i className="fa-regular fa-circle-exclamation" /> Please
+              carefully review the action before deleting.
             </p>
             <div className="flex items-center justify-end gap-2">
               <button
@@ -852,7 +983,7 @@ export const EmployeeDeleteModal = (props: {
                   handleDelete()
                   setIsDeleteVisible(true)
                 }}
-              // disabled={isLoading}
+                // disabled={isLoading}
               >
                 Yes, delete record
               </button>
@@ -868,7 +999,7 @@ export const EmployeeDeleteModal = (props: {
         title="NOTICE!"
       >
         <>
-          <div className="py-2 items-center flex flex-col gap-3 ">
+          <div className="flex flex-col items-center gap-3 py-2 ">
             <p className="text-center text-lg font-semibold ">
               Employee Deleted Successfully
             </p>
@@ -877,8 +1008,7 @@ export const EmployeeDeleteModal = (props: {
               onClick={() => {
                 // props.setIsVisible(false)
                 // setIsVisible(false)
-                router.push('/employees')
-
+                router.push("/employees")
               }}
             >
               Confirm

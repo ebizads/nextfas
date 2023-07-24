@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState } from "react"
-import { useEditableStore, useMinimizeStore, useSelectedEmpStore } from "../../../store/useStore"
+import { useEditableStore, useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
 import { EmployeeType } from "../../../types/generic"
 import { employeeColumns } from "../../../lib/table"
-import { getAddress, getName, getProperty, getWorkMode } from "../../../lib/functions"
+import { getAddress, getName, getProperty } from "../../../lib/functions"
 import {
   Employee,
   UpdateEmployeeModal,
@@ -23,7 +23,6 @@ const EmployeeTable = (props: {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
   const [details, setDetails] = useState<EmployeeType>()
-  const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -46,24 +45,24 @@ const EmployeeTable = (props: {
   const { editable, setEditable } = useEditableStore()
 
   useEffect(() => {
-    // setSelectedEmp(null)
     if (!updateRecord && editable) {
       setEditable(false)
     }
-  }, [setEditable, updateRecord, editable, setSelectedEmp])
+  }, [setEditable, updateRecord, editable])
 
   useEffect(() => {
     console.log("editable: " + editable, "updateRecord: " + updateRecord)
   })
 
   if (editable) {
-    console.log("dapat maging editable");
+    console.log("dapat maging editable")
   }
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto m-0 self-center${minimize ? "xl:w-[88vw]" : "xl:w-[40vw]"
-        } border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -95,8 +94,6 @@ const EmployeeTable = (props: {
                   {col.name}
                 </th>
               ))}
-
-
           </tr>
         </thead>
         <tbody>
@@ -133,20 +130,16 @@ const EmployeeTable = (props: {
                     onClick={() => {
                       // setIsVisible(setUpdateRecord)
                       setDetails(row)
-                      setSelectedEmp(row)
                       setUpdateRecord(true)
-                      // console.log("ALAM MO TONG EMPLOYEE NA TO SELECT SELECT::::", selectedEmp)
                     }}
                   >
                     {
                       // ternary operator that returns special values for date, name, and address
                       col.value.match(/_name/g)
                         ? getName(col.value, row)
-                        : col.value === "workMode"
-                          ? getWorkMode(row)
-                          : col.value === "city"
-                            ? getAddress(row)
-                            : getProperty(col.value, row)
+                        : col.value === "city"
+                        ? getAddress(row)
+                        : getProperty(col.value, row)
                     }
                   </td>
                 ))}
@@ -172,7 +165,7 @@ const EmployeeTable = (props: {
 
       {details !== null ? (
         <Modal
-          title={(editable) ? "Update Employee Record" : "Employee Record"}
+          title={ "Employee Record"}
           isVisible={updateRecord}
           setIsVisible={setUpdateRecord}
           className="max-w-4xl"
@@ -264,6 +257,10 @@ function ShowDetails({
                     {info.address?.street ?? "NO DATA"}
                   </p>
                 </div>
+                <div className="py-3">
+                  <p className="text-sm font-semibold">HIRE DATE</p>
+                </div>
+                
                 <div className="py-3">
                   <p className="text-sm font-semibold">TEAM</p>
                 </div>

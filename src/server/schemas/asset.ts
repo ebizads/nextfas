@@ -37,15 +37,16 @@ export const AssetCreateInput = z.object({
   invoiceNum: z.string().nullish(),
   purchaseOrder: z.string().nullish(),
   deployment_status: z.string().nullish(),
+  tag: z.string(),
 
   model: ModelCreateInput,
   custodianId: z.number().optional(),
   departmentId: z.number({ required_error: "Please provide a department" }),
   vendorId: z.number().optional(),
-  assetTagId: z.number().optional(),
   subsidiaryId: z.number({
     required_error: "Please provide a company/subsidiary",
   }),
+  assetTagId: z.number().optional(),
   assetProjectId: z.number().optional(),
   parentId: z.number().optional(),
   addedById: z.number().optional(),
@@ -65,8 +66,8 @@ export const AssetEditInput = z.object({
   invoiceNum: z.string().nullish(),
   purchaseOrder: z.string().nullish(),
   deployment_status: z.string().nullish(),
+  tag: z.string().nullish(),
 
-  assetTagId: z.number().optional().nullish(),
   modelId: z.number().optional().nullish(),
   custodianId: z.number().optional().nullish(),
   departmentId: z.number().optional().nullish(),
@@ -95,8 +96,9 @@ export const AssetTransformInput = z.object({
   // updatedAt: z.date(),
   deletedAt: z.date().nullish(),
   deleted: z.boolean(),
-  assetTagId: z.number().nullish(),
+  tag: z.string().nullish(),
 
+  assetTagId: z.number(),
   modelId: z.number(),
   custodianId: z.number(),
   departmentId: z.number().nullish(),

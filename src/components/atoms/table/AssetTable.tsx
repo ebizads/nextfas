@@ -31,7 +31,7 @@ const AssetDetailsModal = (props: {
   // const { editable, setEditable } = useEditableStore()
   const barcodeRef = useRef(null)
   const qrcodeRef = useRef(null)
-  const [divOpacity, setDivOpacity] = useState(50);
+  const [divOpacity, setDivOpacity] = useState(50)
 
   const handleBarPrint = useReactToPrint({
     content: () => barcodeRef.current,
@@ -40,23 +40,23 @@ const AssetDetailsModal = (props: {
 
     // },
     onBeforePrint: () => {
-      setDivOpacity(50);
+      setDivOpacity(50)
     },
 
     onAfterPrint: () => {
-      setDivOpacity(50);
+      setDivOpacity(50)
     },
-  });
+  })
   const handleQRPrint = useReactToPrint({
     content: () => qrcodeRef.current,
   })
 
-  const emp = trpc.employee.findOne.useQuery(props.asset?.custodianId)
+  const emp = trpc.employee.findOne.useQuery(props.asset?.custodianId ?? 0)
 
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
     setGenBarcode(true)
-    JsBarcode("#barcode", props.asset ? (props.asset!.number!) : "No data", {
+    JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
       textAlign: "left",
       textPosition: "bottom",
       fontOptions: "",
@@ -64,15 +64,20 @@ const AssetDetailsModal = (props: {
       textMargin: 9,
       height: 50,
       width: 2,
-    }), JsBarcode("#barcode-show", props.asset ? props.asset!.number! : "No data", {
-      textAlign: "left",
-      textPosition: "bottom",
-      fontOptions: "",
-      fontSize: 12,
-      textMargin: 6,
-      height: 50,
-      width: 1,
-    })
+    }),
+      JsBarcode(
+        "#barcode-show",
+        props.asset ? props.asset!.number! : "No data",
+        {
+          textAlign: "left",
+          textPosition: "bottom",
+          fontOptions: "",
+          fontSize: 12,
+          textMargin: 6,
+          height: 50,
+          width: 1,
+        }
+      )
   }
 
   // const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
@@ -251,7 +256,6 @@ const AssetDetailsModal = (props: {
                       </p>
                     </div>
                   </section>
-
                 </div>
               </section>
               {/* General information */}
@@ -316,7 +320,7 @@ const AssetDetailsModal = (props: {
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Asset Location</p>
-                      <p className="font-medium truncate w-[70%]">
+                      <p className="w-[70%] truncate font-medium">
                         {props.asset?.management?.asset_location}
                       </p>
                     </div>
@@ -364,7 +368,6 @@ const AssetDetailsModal = (props: {
                         {props.asset?.management?.accounting_method
                           ? props.asset?.management?.accounting_method
                           : "--"}
-
                       </p>
                     </div>
                     <div className="col-span-1">
@@ -390,8 +393,9 @@ const AssetDetailsModal = (props: {
                     <div className="col-span-1">
                       <p className="font-light">Asset Location</p>
                       <p className="font-medium">
-                        {props.asset?.management?.asset_location ?
-                          props.asset?.management?.asset_location : "--"}
+                        {props.asset?.management?.asset_location
+                          ? props.asset?.management?.asset_location
+                          : "--"}
                       </p>
                     </div>
                   </section>
@@ -521,7 +525,13 @@ const AssetDetailsModal = (props: {
                       <svg id="barcode-show" />
                     </div>
                     <div ref={barcodeRef}>
-                      <svg id="barcode" className={"absolute top-0 z-0 pointer-events-none " + `w-[${divOpacity}%]`} />
+                      <svg
+                        id="barcode"
+                        className={
+                          "pointer-events-none absolute top-0 z-0 " +
+                          `w-[${divOpacity}%]`
+                        }
+                      />
                     </div>
                   </div>
                   {genBarcode && (
@@ -535,7 +545,7 @@ const AssetDetailsModal = (props: {
                           barcodeRef
                         )
                       }}
-                      className="absolute z-20 bottom-3 right-2 flex items-center justify-center gap-2 rounded-full bg-tangerine-300 p-2 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+                      className="absolute bottom-3 right-2 z-20 flex items-center justify-center gap-2 rounded-full bg-tangerine-300 p-2 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
                     >
                       {""} <i className="fa-solid fa-print" />
                     </button>
@@ -694,8 +704,9 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}{" "}
               {props.checkboxes.length > 1 ? "records" : "record"}{" "}
               <i
-                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
-                  }`}
+                className={`fa-solid ${
+                  showList ? " fa-caret-up" : " fa-caret-down"
+                }`}
               />
             </button>{" "}
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -732,7 +743,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete record/s
             </button>
@@ -779,8 +790,9 @@ const AssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-full"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">

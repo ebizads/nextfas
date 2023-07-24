@@ -88,7 +88,12 @@ export const UpdateEmployeeModal = (props: {
 
   useEffect(() => {
     setEditable(false)
-    console.log("editable na dapat ito 9999", editable, "udpated na dapat ito", updated)
+    console.log(
+      "editable na dapat ito 9999",
+      editable,
+      "udpated na dapat ito",
+      updated
+    )
   }, [])
 
   const onSubmit = async (employee: Employee) => {
@@ -113,11 +118,28 @@ export const UpdateEmployeeModal = (props: {
       setEditable(true)
       setUpdated(true)
     }
+  }
 
+  const address = () => {
+   return props.employee?.address?.country !== null ??
+    props.employee?.address?.country !== ""
+      ? props.employee?.address?.country === "Philippines"
+        ? (props.employee?.address?.country + ", " ?? "") +
+          (props.employee?.address?.region + ", " ?? "") +
+          (props.employee?.address?.province + ", " ?? "") +
+          (props.employee?.address?.city + ", " ?? "") +
+          (props.employee?.address?.baranggay + ", " ?? "") +
+          (props.employee?.address?.street + ", " ?? "") +
+          (props.employee?.address?.zip ?? "")
+        : (props.employee?.address?.country + ", " ?? "") +
+          (props.employee?.address?.province + ", " ?? "") +
+          (props.employee?.address?.city + ", " ?? "") +
+          (props.employee?.address?.street + ", " ?? "") +
+          (String(props.employee?.address?.zip) ?? "")
+      : "--"
   }
 
   const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
-
 
   // useEffect(() => { console.log("department: " + props.employee?.team?.department?.name) })
 
@@ -134,7 +156,9 @@ export const UpdateEmployeeModal = (props: {
               <section className="grid grid-cols-4">
                 <div className="col-span-1">
                   <p className="font-light">First Name</p>
-                  <p className="font-medium">{selectedEmp?.profile?.first_name}</p>
+                  <p className="font-medium">
+                    {selectedEmp?.profile?.first_name}
+                  </p>
                 </div>
                 <div className="col-span-1">
                   <p className="font-light">Middle Name</p>
@@ -177,7 +201,13 @@ export const UpdateEmployeeModal = (props: {
                     {/* {props.asset?.parentId !== 0 */}
                     {/* // ? props.asset?.parent?.name */}
                     {/* // : "--"} */}
-                    {props.employee?.team?.name === null ? "--" : props.employee?.team?.name === undefined ? "--" : props.employee?.team?.name === "" ? "--" : props.employee?.team?.name}
+                    {props.employee?.team?.name === null
+                      ? "--"
+                      : props.employee?.team?.name === undefined
+                      ? "--"
+                      : props.employee?.team?.name === ""
+                      ? "--"
+                      : props.employee?.team?.name}
                   </p>
                 </div>
                 <div className="col-span-1">
@@ -186,7 +216,13 @@ export const UpdateEmployeeModal = (props: {
                     {/* {props.asset?.parentId !== 0 */}
                     {/* // ? props.asset?.parent?.name */}
                     {/* // : "--"} */}
-                    {props.employee?.team?.department?.name === null ? "--" : props.employee?.team?.department?.name === undefined ? "--" : props.employee?.team?.department?.name === "" ? "--" : props.employee?.team?.department?.name}
+                    {props.employee?.team?.department?.name === null
+                      ? "--"
+                      : props.employee?.team?.department?.name === undefined
+                      ? "--"
+                      : props.employee?.team?.department?.name === ""
+                      ? "--"
+                      : props.employee?.team?.department?.name}
                   </p>
                 </div>
                 <div className="col-span-1">
@@ -199,7 +235,6 @@ export const UpdateEmployeeModal = (props: {
                   </p>
                 </div>
               </section>
-
 
               <section className="grid grid-cols-4">
                 <div className="col-span-1">
@@ -234,25 +269,23 @@ export const UpdateEmployeeModal = (props: {
                   <p className="font-medium">
                     {/* {props.asset?.management?.residual_percentage ?? "--"}% */}
                     {props.employee?.workMode ?? "--"}
-
                   </p>
                 </div>
               </section>
               <section className="grid grid-cols-4">
-                <div className="col-span-1">
+                <div className="col-span-4">
                   <p className="font-light">Address</p>
-                  <p className="font-medium flex">
+                  <p className="flex font-medium">
                     {/* {props.asset?.management?.asset_lifetime */}
                     {/* // ? props.asset?.management?.asset_lifetime
                       // : "--"}{" "} */}
-                    {props.employee?.address?.street ?? "--"}
-
+                    {address()}
                   </p>
                 </div>
               </section>
             </div>
           </section>
-          <section className="pt-4 flex flex-row-reverse">
+          <section className="flex flex-row-reverse pt-4">
             <Link href="/employees/update">
               <div className="flex w-[20%]  cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                 <i className={"fa-solid fa-pen-to-square"} />
@@ -301,9 +334,13 @@ export const EmployeeDeleteModal = (props: {
     >
       <div className="m-4 flex flex-col ">
         <div className="flex flex-col items-center gap-8 text-center">
-          <div>You are about delete this item with employee name: {props.employee?.name}</div>
+          <div>
+            You are about delete this item with employee name:{" "}
+            {props.employee?.name}
+          </div>
           <p className="text-neutral-500">
-            <i className="fa-regular fa-circle-exclamation" /> Please carefully review the action before deleting.
+            <i className="fa-regular fa-circle-exclamation" /> Please carefully
+            review the action before deleting.
           </p>
           <div className="flex items-center justify-end gap-2">
             <button
@@ -318,7 +355,7 @@ export const EmployeeDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete record
             </button>

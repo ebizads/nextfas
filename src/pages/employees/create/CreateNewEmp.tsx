@@ -19,6 +19,7 @@ import all_countries from "../../../json/countries.json"
 import all_states from "../../../json/states.json"
 import all_cities from "../../../json/cities.json"
 import { set } from "lodash"
+import { clearAndGoBack } from "../../../lib/functions"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -30,7 +31,7 @@ export const CreateEmployee_new = (props: {
   generateId: string
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   isLoading: boolean
-  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+  // setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [searchValue, onSearchChange] = useState("")
   const [workModeValue, onSearchWorkMode] = useState("")
@@ -141,11 +142,8 @@ export const CreateEmployee_new = (props: {
     })
     reset()
   }
-  const onDiscard = () => {
-    props.setIsVisible(false)
-    document.forms[0]?.reset()
-    reset()
-  }
+
+  
 
   const filteredAllCountries = useMemo(() => {
     const countries = all_countries.map((countries) => { return countries.name })
@@ -783,7 +781,7 @@ export const CreateEmployee_new = (props: {
         <div className="col-span-full flex justify-end">
           <button
             className="px-4 py-2 font-medium underline"
-            onClick={() => onDiscard()}
+            onClick={() => clearAndGoBack()}
           >
             Cancel
           </button>
@@ -818,7 +816,7 @@ export const CreateEmployee_new = (props: {
             <button
               className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
               onClick={() => {
-                props.setIsVisible(false)
+                // props.setIsVisible(false)
                 setIsVisible(false)
               }}
             >

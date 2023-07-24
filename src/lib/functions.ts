@@ -84,34 +84,30 @@ export const getName = (filter: string, type: EmployeeType) => {
   return filter === "first_name"
     ? Object.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-      ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
-      : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+    ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+    : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getNameUser = (filter: string, type: UserType) => {
   return filter === "first_name"
     ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-      ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
+    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
         ?.value
-      : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getAddressUser = (
   type:
     | UserType
     | (Company & {
-      address: Address | null
-    })
+        address: Address | null
+      })
 ) => {
   return `${type?.address?.street}, ${type?.address?.region}, ${type?.address?.city}, ${type?.address?.country}, ${type?.name} `
 }
 
-export const getBuilding = (
-  type:
-    | BuildingType
-
-) => {
+export const getBuilding = (type: BuildingType) => {
   return `${type?.name}`
 }
 
@@ -119,10 +115,12 @@ export const getAddress = (
   type:
     | EmployeeType
     | (Company & {
-      address: Address | null
-    })
+        address: Address | null
+      })
 ) => {
-  return `${type?.address?.street}, ${type?.address?.region}, ${type?.address?.city}, ${type?.address?.country} `
+  return type?.address?.country === "Philippines"
+    ? ` ${type?.address?.region}, ${type?.address?.street},  ${type?.address?.baranggay},  ${type?.address?.city},  ${type?.address?.province}, ${type?.address?.country} `
+    : ` ${type?.address?.street},  ${type?.address?.city},  ${type?.address?.province}, ${type?.address?.country} `
 }
 
 export const getWorkMode = (type: EmployeeType) => {
@@ -142,7 +140,6 @@ export const formatBytes = (bytes: number) => {
 }
 
 export const downloadExcel = (data: ExcelExportType[]) => {
-
   // if (!data) {  // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])
   const worksheet = XLSX.utils.json_to_sheet(
@@ -159,7 +156,6 @@ export const downloadExcel = (data: ExcelExportType[]) => {
 }
 
 export const downloadExcel_template = (data: ExcelExportType[]) => {
-
   // if (!data) {  // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])
   const worksheet = XLSX.utils.json_to_sheet(
@@ -292,8 +288,8 @@ export const getLifetime = (start_date: Date, end_date: Date) => {
   return differenceInDay > 364
     ? `${convertDaysToYears(differenceInDay)} year/s`
     : differenceInDay > 30
-      ? `${convertDaysToMonths(differenceInDay)} month/s`
-      : `${differenceInDay} day/s`
+    ? `${convertDaysToMonths(differenceInDay)} month/s`
+    : `${differenceInDay} day/s`
 }
 
 export const convertDaysToYears = (days: number) => {

@@ -59,9 +59,8 @@ export default function DropZone({
     isLoading: employeeLoading,
     error,
   } = trpc.employee.createOrUpdate.useMutation({
-    onSuccess(profile) {
+    onSuccess() {
       setCloseModal(true)
-      // console.log("sample: ", profile)
       console.log("omsiman")
       utils.asset.findAll.invalidate()
       // invalidate query of asset id when mutations is successful

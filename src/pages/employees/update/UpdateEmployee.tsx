@@ -731,7 +731,7 @@ export const UpdateEmployee = (props: {
 
             <AlertInput>{errors?.address?.city?.message}</AlertInput>
           </div>
-          <div className="col-span-2 col-start-2">
+          <div className="col-span-2">
             <label className="sm:text-sm">Barangay</label>
             <Select
               name={"address.barangay"}
@@ -879,7 +879,7 @@ export const UpdateEmployee = (props: {
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             setOpenModalDel={setOpenModalDel}
-            // setIsVisible={props.setIsVisible}
+          // setIsVisible={props.setIsVisible}
           />
         </div>
       </form>
@@ -983,7 +983,7 @@ export const EmployeeDeleteModal = (props: {
                   handleDelete()
                   setIsDeleteVisible(true)
                 }}
-                // disabled={isLoading}
+              // disabled={isLoading}
               >
                 Yes, delete record
               </button>

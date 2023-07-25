@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState } from "react"
-import { useEditableStore, useMinimizeStore } from "../../../store/useStore"
+import { useEditableStore, useMinimizeStore, useSelectedEmpStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
@@ -9,8 +9,8 @@ import { employeeColumns } from "../../../lib/table"
 import { getAddress, getName, getProperty } from "../../../lib/functions"
 import {
   Employee,
-  UpdateEmployeeModal,
-} from "../../employee/UpdateEmployeeModal"
+  EmployeeDetailsModal,
+} from "../../employee/EmployeeDetailsModal"
 
 const EmployeeTable = (props: {
   checkboxes: number[]
@@ -23,6 +23,7 @@ const EmployeeTable = (props: {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
   const [details, setDetails] = useState<EmployeeType>()
+  const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -60,9 +61,8 @@ const EmployeeTable = (props: {
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -131,6 +131,8 @@ const EmployeeTable = (props: {
                       // setIsVisible(setUpdateRecord)
                       setDetails(row)
                       setUpdateRecord(true)
+                      setSelectedEmp(row)
+                      console.log(selectedEmp, "YAYEET EMPLOYEE")
                     }}
                   >
                     {
@@ -138,8 +140,8 @@ const EmployeeTable = (props: {
                       col.value.match(/_name/g)
                         ? getName(col.value, row)
                         : col.value === "city"
-                        ? getAddress(row)
-                        : getProperty(col.value, row)
+                          ? getAddress(row)
+                          : getProperty(col.value, row)
                     }
                   </td>
                 ))}
@@ -165,12 +167,12 @@ const EmployeeTable = (props: {
 
       {details !== null ? (
         <Modal
-          title={ "Employee Record"}
+          title={"Employee Record"}
           isVisible={updateRecord}
           setIsVisible={setUpdateRecord}
           className="max-w-4xl"
         >
-          <UpdateEmployeeModal
+          <EmployeeDetailsModal
             employee={details as EmployeeType}
             setIsVisible={setUpdateRecord}
           />
@@ -260,7 +262,7 @@ function ShowDetails({
                 <div className="py-3">
                   <p className="text-sm font-semibold">HIRE DATE</p>
                 </div>
-                
+
                 <div className="py-3">
                   <p className="text-sm font-semibold">TEAM</p>
                 </div>

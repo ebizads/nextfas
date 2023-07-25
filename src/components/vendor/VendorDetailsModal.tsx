@@ -75,18 +75,18 @@ export const VendorDetailsModal = (props: {
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Middle Name</p>
+                  <p className="font-light">Website</p>
                   <p className="font-medium">
-                    {props.vendor?.middle_name ?? "--"}
+                    {props.vendor?.website ?? "--"}
                     {/* {props.asset?.alt_number !== "" */}
                     {/* // ? props.asset?.alt_number */}
                     {/* // : "No Alternate Number"} */}
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Last Name</p>
+                  <p className="font-light">Vendor Type</p>
                   <p className="font-medium">
-                    {props.vendor?.last_name}
+                    {props.vendor?.type}
                   </p>
                   {/* <p className="font-medium">{props.asset?.name}</p> */}
                 </div>

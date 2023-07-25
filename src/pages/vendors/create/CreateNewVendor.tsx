@@ -20,129 +20,74 @@ import all_states from "../../../json/states.json"
 import all_cities from "../../../json/cities.json"
 import { set } from "lodash"
 import { clearAndGoBack } from "../../../lib/functions"
+import { VendorCreateInput } from "../../../server/schemas/vendor"
+import { Textarea } from "@mantine/core"
+import router from "next/router"
 
-export type Employee = z.infer<typeof EmployeeCreateInput>
 
-export const CreateEmployee_new = (props: {
-  date: Date
-  setDate: React.Dispatch<React.SetStateAction<Date>>
-  setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
-  images: ImageJSON[]
-  generateId: string
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-  isLoading: boolean
-  // setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
+
+export const CreateVendor = () => {
   const [searchValue, onSearchChange] = useState("")
-  const [workModeValue, onSearchWorkMode] = useState("")
-  const [workStationValue, onSearchWorkStation] = useState("")
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [tryReset, setTryReset] = useState<boolean>(false)
-  const [empId] = useState<string>(moment().format("YY-"))
-  const { data: teams } = trpc.team.findAll.useQuery()
-  const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
   const [country, setCountry] = useState("")
   const [region, setRegion] = useState("")
   const [province, setProvince] = useState("")
   const [city, setCity] = useState("")
   const [barangay, setBarangay] = useState("")
+  type Vendor = z.infer<typeof VendorCreateInput>
+
 
   const utils = trpc.useContext()
 
   const {
     mutate,
-    isLoading: employeeLoading,
-    error,
-  } = trpc.employee.create.useMutation({
+  } = trpc.vendor.create.useMutation({
     onSuccess: () => {
-      utils.employee.findAll.invalidate()
+      utils.vendor.findAll.invalidate()
+      utils.vendor.findAllSample.invalidate()
       setIsVisible(true)
-      props.setImage([])
+      // setAddSingleRecord(false);
     },
   })
 
-  const teamList = useMemo(() => {
-    const list = teams?.teams.map((team) => {
-      return { value: team.id.toString(), label: team.name }
-    }) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
+
+  const deleteVendor = trpc.vendor.deleteMany.useMutation({
+    onSuccess: () => {
+      utils.vendor.findAll.invalidate()
+
+
+    }
+  })
+
+  // const teamList = useMemo(() => {
+  //   const list = teams?.teams.map((team) => {
+  //     return { value: team.id.toString(), label: team.name }
+  //   }) as SelectValueType[]
+  //   return list ?? []
+  // }, [teams]) as SelectValueType[]
 
   const {
     register,
     handleSubmit,
-    reset,
+    watch,
+    // clearErrors,
     setValue,
-    formState: { errors },
-  } = useForm<Employee>({
-    resolver: zodResolver(EmployeeCreateInput),
-    defaultValues: {
-      name: "",
-      employee_id: "",
-      // supervisee: {
-      //   name: ""
-      // },
-      // superviseeId: 0,
-      teamId: 0,
-      email: "",
-      position: "",
-      address: {
-        city: "",
-        country: "",
-        street: "",
-        zip: 0,
-      },
-      profile: {
-        first_name: "",
-        middle_name: "",
-        last_name: "",
-        image: "",
-      },
-    },
+    formState: { errors, isSubmitting },
+  } = useForm<Vendor>({
+    resolver: zodResolver(VendorCreateInput), // Configuration the validation with the zod schema.
+    defaultValues: {},
   })
 
-  const onSubmit = async (employee: Employee) => {
+  const onSubmit = async (vendor: Vendor) => {
     // Register function
-
+    console.log(vendor)
     mutate({
-      name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
-        }`,
-      employee_id:
-        `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}` +
-        (String(employee.teamId).padStart(2, "0") + props.generateId),
-      email: employee.email,
-      //   (employee.profile.first_name[0] + employee.profile.last_name)
-      //     .replace(" ", "")
-      //     .toLowerCase()
-      //     .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
-      teamId: employee.teamId,
-      // supervisee: {
-      //   name: employee.supervisee?.name ?? ""
-      // },
-      // superviseeId: employee.superviseeId,
-      position: employee.position,
-      address: {
-        city: employee.address?.city,
-        province: employee.address?.province,
-        baranggay: employee.address?.baranggay,
-        country: employee.address?.country,
-        street: employee.address?.street,
-        region: employee.address?.region,
-        zip: employee.address?.zip,
-      },
-      profile: {
-        first_name: employee.profile?.first_name ?? "",
-        middle_name: employee.profile?.middle_name,
-        last_name: employee.profile?.last_name ?? "",
-        phone_no: employee.profile?.phone_no,
-        image: props.images[0]?.file ?? "",
-      },
-      workMode: employee.workMode,
-      workStation: employee.workStation,
+      ...vendor
     })
-    reset()
   }
 
+  const watcher = watch()
 
 
   const filteredAllCountries = useMemo(() => {
@@ -276,7 +221,7 @@ export const CreateEmployee_new = (props: {
   return (
     <main className="container mx-auto flex flex-col justify-center p-2">
       <h3 className="mb-2 bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text text-xl font-bold leading-normal text-transparent md:text-[2rem]">
-        Create Employee Record
+        Create Vendor Record
       </h3>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -285,112 +230,23 @@ export const CreateEmployee_new = (props: {
       >
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
-            <label className="sm:text-sm">First Name</label>
+            <label className="sm:text-sm">Company Name</label>
             <InputField
               register={register}
-              name="profile.first_name"
-              type={"text"}
-              label={""}
+              label=""
+              name="name"
+              type="text"
             />
-            <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
+            <AlertInput>{errors?.name?.message}</AlertInput>
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Middle Name (Optional)</label>
-            <InputField
-              type={"text"}
-              label={""}
-              name={"profile.middle_name"}
-              register={register}
-            />
-          </div>
-          <div className="col-span-4">
-            <label className="sm:text-sm">Last Name</label>
-            <InputField
-              type={"text"}
-              label={""}
-              name={"profile.last_name"}
-              register={register}
-            />
-            <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
-          </div>
-        </div>
-
-        <div className="col-span-9 grid grid-cols-12 gap-7">
-          <div className="col-span-4">
-            <label className="sm:text-sm">Employee Number</label>
-            {/* <InputField
-               
-              type={"text"}
-              label={""}
-              name={"employee_id"}
-              register={register}
-            /> */}
-            <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
-              {`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}${String(searchValue).padStart(2, "0") + props.generateId
-                }`}
-            </p>
-          </div>
-          <div className="col-span-4">
-            <label className="sm:text-sm">Designation / Position</label>
-            <InputField
-              type={"text"}
-              label={""}
-              name={"position"}
-              register={register}
-            />
-
-            <AlertInput>{errors?.position?.message}</AlertInput>
-          </div>
-          <div className="col-span-4">
-            <label className="sm:text-sm">Work Mode</label>
-            <Select
-              placeholder="Select your Work mode"
-              onChange={(value) => {
-                setValue("workMode", String(value) ?? " ")
-                onSearchWorkMode(value ?? " ")
-
-              }}
-              value={workModeValue ?? ""}
-              data={["WFH", "Hybrid", "On-Site"]}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-            />
-          </div>
-        </div>
-
-
-
-        <div className="col-span-9 grid grid-cols-12 gap-7">
-          <div className="col-span-6">
-            <label className="sm:text-sm">Team</label>
+            <label className="sm:text-sm">Vendor Type</label>
             <Select
               placeholder="Pick one"
               onChange={(value) => {
-                setValue("teamId", Number(value) ?? 0)
-                onSearchChange(value ?? "")
+                setValue("type", value ?? "")
               }}
-              value={searchValue}
-              data={teamList}
+              data={["Manufacturer", "Supplier", "Servicing", "Others"]}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -407,107 +263,88 @@ export const CreateEmployee_new = (props: {
                     },
                   },
 
+
                   // applies styles to hovered item (with mouse or keyboard)
                   "&[data-hovered]": {},
                 },
               })}
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
           </div>
-          <div className="col-span-6">
-            <label className="sm:text-sm">Department</label>
-            {/* <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.employee?.team?.department?.name}
-              name={"department"}
+          <div className="col-span-4">
+            <label className="sm:text-sm">Website</label>
+            <InputField
               register={register}
-            /> */}
-            <p
-              className={
-                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >{"--"}</p>
+              label=""
+              name="website"
+              type="text"
+            />
+            <AlertInput>{errors?.website?.message}</AlertInput>
           </div>
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
-            <label className=" sm:text-sm ">Mobile Number</label>
+            <label className="sm:text-sm">Email</label>
+            <InputField
+              register={register}
+              label=""
+              name="email"
+              type="text"
+            />
+            <AlertInput>{errors?.email?.message}</AlertInput>
+          </div>
+          <div className="col-span-4">
+            <label className="sm:text-sm">Mobile Number: {`(use " , " for multiple Mobile numbers)`}</label>
             <input
-              placeholder="--"
+              type="text"
+              className="mt-2 w-full rounded-md border-2 curs border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              onKeyDown={(e) => {
+                const regex = /^[0-9, ]|Backspace/
+                if (e.key === "e" || !regex.test(e.key)) {
+                  e.preventDefault()
+                }
+              }}
+              onChange={(event) => {
+                const convertToArray = event.currentTarget.value;
+                const phonenumString = convertToArray.replace(/[^0-9, ]/gi, "").split(",")
+                setValue("phone_no", phonenumString);
+              }}
+              value={watcher.phone_no}
+            />
+            <AlertInput>{errors?.phone_no?.message}</AlertInput>
+          </div>
+          <div className="col-span-4">
+            <label className="sm:text-sm ">Fax/Phone Number</label>
+            <input
+              // disabled={!isEditable}
+
               type="number"
-              className="!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              pattern="[0-9]*"
+              className={'!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
               onKeyDown={(e) => {
                 if (e.key === "e") {
                   e.preventDefault()
                 }
               }}
               onChange={(event) => {
-                if (event.target.value.length > 11) {
-                  console.log("more than 11")
-                  event.target.value = event.target.value.slice(0, 11)
+
+                if (event.target.value.length > 8) {
+                  console.log("more than 8")
+                  event.target.value = event.target.value.slice(0, 8);
                 }
                 setValue(
-                  "profile.phone_no",
+                  "fax_no",
                   event.currentTarget.value.toString()
                 )
               }}
             />
-            <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
+            <AlertInput>{errors?.fax_no?.message}</AlertInput>
           </div>
-          <div className="col-span-4">
-            <label className="sm:text-sm">Email</label>
-            <InputField
-              // disabled={!editable}
-              type={"text"}
-              label={""}
-              name={"email"}
-              register={register}
-              placeholder={"--@email.com"}
-            />
-            <AlertInput>{errors?.email?.message}</AlertInput>
-          </div>
-
-          <div className="col-span-4">
-            <label className="sm:text-sm">Device</label>
-            <Select
-              placeholder="Select Work Location"
-              onChange={(value) => {
-                setValue("workStation", String(value) ?? " ")
-                onSearchWorkStation(value ?? " ")
-              }}
-              value={workStationValue}
-              data={["Desktop", "Latop"]}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-            />
-          </div>
-
         </div>
+
+
 
         <div className="col-span-9 grid grid-cols-8 gap-7">
           <div className="col-span-2">
@@ -769,6 +606,20 @@ export const CreateEmployee_new = (props: {
           </div>
         </div>
 
+        <div className="col-span-6">
+          <Textarea
+            placeholder=""
+            label="Remarks"
+            minRows={6}
+            maxRows={6}
+            classNames={{
+              input:
+                "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+              label: "font-sans text-sm text-gray-600 text-light",
+            }}
+          />
+        </div>
+
         {/* <DropZoneComponent
           setImage={props.setImage}
           setIsLoading={props.setIsLoading}
@@ -787,21 +638,23 @@ export const CreateEmployee_new = (props: {
           </button>
           <button
             type="submit"
+            onClick={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+            // className="rounded-md bg-tangerine-500 py-2 px-6 font-semibold text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
             className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={employeeLoading}
           >
-            {employeeLoading ? "Loading..." : "Register"}
+            Add Vendor
           </button>
         </div>
       </form>
-      {
+      {/* {
         error && errors && (
           <pre className="mt-2 text-sm italic text-red-500">
             Something went wrong!
             {JSON.stringify({ error, errors }, null, 2)}
           </pre>
         )
-      }
+      } */}
       <Modal
         className="max-w-lg"
         isVisible={isVisible}
@@ -811,13 +664,15 @@ export const CreateEmployee_new = (props: {
         <>
           <div className="flex flex-col items-center gap-3 py-2 ">
             <p className="text-center text-lg font-semibold ">
-              Employee Created Successfully
+              Vendor Created Successfully
             </p>
             <button
               className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
               onClick={() => {
                 // props.setIsVisible(false)
                 setIsVisible(false)
+                router.push("/vendors")
+
               }}
             >
               Confirm
@@ -829,4 +684,4 @@ export const CreateEmployee_new = (props: {
   )
 }
 
-export default CreateEmployee_new
+export default CreateVendor

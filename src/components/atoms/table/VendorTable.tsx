@@ -2,7 +2,7 @@ import { Avatar, Checkbox } from "@mantine/core"
 import React, { useState, useEffect } from "react"
 import { getProperty, getPropertyDisposal } from "../../../lib/functions"
 import { vendorColumns } from "../../../lib/table"
-import { useEditableStore, useMinimizeStore } from "../../../store/useStore"
+import { useEditableStore, useMinimizeStore, useSelectedVendorStore } from "../../../store/useStore"
 import { VendorType } from "../../../types/generic"
 import { ColumnType } from "../../../types/table"
 import Modal from "../../headless/modal/modal"
@@ -10,6 +10,7 @@ import Modal from "../../headless/modal/modal"
 import { trpc } from "../../../utils/trpc"
 
 import { UpdateVendorModal } from "../../vendor/UpdateVendorModal"
+import { VendorDetailsModal } from "../../vendor/VendorDetailsModal"
 
 const VendorTable = (props: {
   checkboxes: number[]
@@ -20,6 +21,7 @@ const VendorTable = (props: {
 }) => {
   //minimize screen toggle
   const { minimize } = useMinimizeStore()
+  const { selectedVendor, setSelectedVendor } = useSelectedVendorStore()
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
@@ -136,6 +138,8 @@ const VendorTable = (props: {
                         // setSelectedAsset(row)
 
                         setDetails(row)
+                        setSelectedVendor(row)
+
                         setUpdateRecord(true)
                       }}
                     >
@@ -230,7 +234,7 @@ const VendorTable = (props: {
           setIsVisible={setUpdateRecord}
           className="max-w-[57rem]"
         >
-          <UpdateVendorModal
+          <VendorDetailsModal
             vendor={details as VendorType}
             setIsVisible={setUpdateRecord}
           />

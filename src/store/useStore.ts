@@ -1,6 +1,6 @@
 import React from "react"
 import create from "zustand"
-import { AssetType, EmployeeType } from "../types/generic"
+import { AssetType, EmployeeType, VendorType } from "../types/generic"
 
 type MinimizeState = {
   minimize: boolean
@@ -50,6 +50,11 @@ type RepairAssetState = {
 type SelectedEmpState = {
   selectedEmp: EmployeeType
   setSelectedEmp: (newEmployee: EmployeeType) => void
+}
+
+type SelectedVendorState = {
+  selectedVendor: VendorType
+  setSelectedVendor: (newEmployee: VendorType) => void
 }
 
 type DisposalStatusState = {
@@ -122,6 +127,11 @@ export const useRepairAssetStore = create<RepairAssetState>((set) => ({
 export const useSelectedEmpStore = create<SelectedEmpState>((set) => ({
   selectedEmp: null,
   setSelectedEmp: (newEmployee: EmployeeType) => set({ selectedEmp: newEmployee }),
+}))
+
+export const useSelectedVendorStore = create<SelectedVendorState>((set) => ({
+  selectedVendor: null,
+  setSelectedVendor: (newVendor: VendorType) => set({ selectedVendor: newVendor }),
 }))
 
 export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({

@@ -37,7 +37,6 @@ export const AssetCreateInput = z.object({
   invoiceNum: z.string().nullish(),
   purchaseOrder: z.string().nullish(),
   deployment_status: z.string().nullish(),
-  tag: z.string(),
 
   model: ModelCreateInput,
   custodianId: z.number().optional(),
@@ -66,7 +65,6 @@ export const AssetEditInput = z.object({
   invoiceNum: z.string().nullish(),
   purchaseOrder: z.string().nullish(),
   deployment_status: z.string().nullish(),
-  tag: z.string().nullish(),
 
   modelId: z.number().optional().nullish(),
   custodianId: z.number().optional().nullish(),
@@ -96,7 +94,6 @@ export const AssetTransformInput = z.object({
   // updatedAt: z.date(),
   deletedAt: z.date().nullish(),
   deleted: z.boolean(),
-  tag: z.string().nullish(),
 
   assetTagId: z.number(),
   modelId: z.number(),

@@ -434,7 +434,7 @@ model Vendor {
 }
 
 model Asset {
-  id                Int              @id @default(autoincrement())
+  id                Int              @id @default(autoincrement()) @unique
   name              String
   number            String           @unique
   alt_number        String?

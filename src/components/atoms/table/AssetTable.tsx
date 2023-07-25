@@ -704,9 +704,8 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}{" "}
               {props.checkboxes.length > 1 ? "records" : "record"}{" "}
               <i
-                className={`fa-solid ${
-                  showList ? " fa-caret-up" : " fa-caret-down"
-                }`}
+                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
+                  }`}
               />
             </button>{" "}
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -743,7 +742,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-              // disabled={isLoading}
+            // disabled={isLoading}
             >
               Yes, delete record/s
             </button>
@@ -790,9 +789,8 @@ const AssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-full"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -862,6 +860,7 @@ const AssetTable = (props: {
                       onClick={() => {
                         setOpenModalDesc(true)
                         setSelectedAsset(row)
+                        console.log("chek", row)
                       }}
                     >
                       {getProperty(col.value, row)}

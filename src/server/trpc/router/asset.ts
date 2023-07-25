@@ -693,6 +693,7 @@ export const assetRouter = t.router({
         subsidiaryId,
         assetProjectId,
         parentId,
+        assetTagId,
         purchaseOrder,
         invoiceNum,
         deployment_status,
@@ -739,6 +740,11 @@ export const assetRouter = t.router({
             parent: {
               connect: {
                 id: parentId ?? 0,
+              },
+            },
+            assetTag: {
+              connect: {
+                id: assetTagId ?? 0,
               },
             },
           },

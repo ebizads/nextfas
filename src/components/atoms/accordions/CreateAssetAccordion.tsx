@@ -54,7 +54,7 @@ const CreateAssetAccordion = () => {
 
   const { mutate, isLoading, error } = trpc.asset.create.useMutation({
     onError() {
-      console.log(error)
+      console.log(JSON.stringify(error))
     },
     onSuccess() {
       router.push("/assets")
@@ -414,9 +414,10 @@ const CreateAssetAccordion = () => {
     form_data: AssetFieldValues
   ) => {
     if (error) {
+      console.log(form_data)
       console.log("ERROR ENCOUNTERED")
       console.error("Prisma Error: ", error)
-      console.error("Form Error:", errors)
+      console.error("Form Error:", error)
     } else {
       form_data.addedById = Number(session?.user?.id)
       console.log("Submitting: ", form_data)
@@ -512,7 +513,7 @@ const CreateAssetAccordion = () => {
                       placeholder={"Select Tag"}
                       data={assetTagList ?? []}
                     />
-                    <AlertInput>{errors?.departmentId?.message}</AlertInput>
+                    <AlertInput>{errors?.assetTagId?.message}</AlertInput>
                   </div>
                 </div>
                 <div className="col-span-3">
@@ -915,7 +916,7 @@ const CreateAssetAccordion = () => {
                               ? company_address?.address
                                 ? getAddress(company_address)
                                 : ""
-                              : employee_workMode?.workMode === "Work From Home"
+                              : employee_workMode?.workMode === "WFH"
                                 ? employee_workMode.address
                                   ? getAddress(employee_workMode)
                                   : ""
@@ -1271,7 +1272,7 @@ const CreateAssetAccordion = () => {
             type="submit"
             disabled={(!isValid && !isDirty) || isLoading}
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-            onClick={() => console.log(errors)}
+            onClick={() => { console.log("id", assetTag), console.log(errors) }}
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

@@ -9,10 +9,11 @@ import {
   AssetTag,
   DepartmentType,
   BuildingType,
+  AssetDevice,
 } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
-import { Address, Company, assetTag } from "@prisma/client"
+import { Address, Company, assetTag, Model } from "@prisma/client"
 import Router from "next/router"
 import { object } from "zod"
 import { trpc } from "../utils/trpc"
@@ -32,20 +33,33 @@ export const getProperty = (
     | UserType
     | AssetTransferType
     | AssetTag
+    | AssetDevice
   //subfilter?: string
 ) => {
   //get object property
+  if (filter.includes(".")) {
+    const getObj = filter.split(".")
+
+    const property =
+      Object.getOwnPropertyDescriptor(type, getObj[0] ?? "")?.value ?? "--"
+    const value =
+      Object.getOwnPropertyDescriptor(property, getObj[1] ?? "")?.value ?? "--"
+
+    return Object.getOwnPropertyDescriptor(value, "name")?.value ?? "--"
+  }
+
   const property = Object.getOwnPropertyDescriptor(type, filter)?.value ?? "--"
 
   //returns the actual property as string
   if (typeof property === "string" || typeof property === "number") {
     const value = property.toString()
     return value.length > 0 ? property.toString() : "--"
+
   }
 
   //dig deeper if obj is an actual obj
   return property
-    ? Object.getOwnPropertyDescriptor(property, "name")?.value ?? "--"
+    ? Object.getOwnPropertyDescriptor(property, "name")?.value
     : "--"
 }
 
@@ -84,25 +98,25 @@ export const getName = (filter: string, type: EmployeeType) => {
   return filter === "first_name"
     ? Object.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
-    : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+      ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+      : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getNameUser = (filter: string, type: UserType) => {
   return filter === "first_name"
     ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
+      ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
         ?.value
-    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+      : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getAddressUser = (
   type:
     | UserType
     | (Company & {
-        address: Address | null
-      })
+      address: Address | null
+    })
 ) => {
   return `${type?.address?.street}, ${type?.address?.region}, ${type?.address?.city}, ${type?.address?.country}, ${type?.name} `
 }
@@ -115,8 +129,8 @@ export const getAddress = (
   type:
     | EmployeeType
     | (Company & {
-        address: Address | null
-      })
+      address: Address | null
+    })
 ) => {
   return type?.address?.country === "Philippines"
     ? ` ${type?.address?.region}, ${type?.address?.street},  ${type?.address?.baranggay},  ${type?.address?.city},  ${type?.address?.province}, ${type?.address?.country} `
@@ -288,8 +302,8 @@ export const getLifetime = (start_date: Date, end_date: Date) => {
   return differenceInDay > 364
     ? `${convertDaysToYears(differenceInDay)} year/s`
     : differenceInDay > 30
-    ? `${convertDaysToMonths(differenceInDay)} month/s`
-    : `${differenceInDay} day/s`
+      ? `${convertDaysToMonths(differenceInDay)} month/s`
+      : `${differenceInDay} day/s`
 }
 
 export const convertDaysToYears = (days: number) => {

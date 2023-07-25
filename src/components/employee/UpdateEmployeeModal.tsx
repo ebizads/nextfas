@@ -121,21 +121,21 @@ export const UpdateEmployeeModal = (props: {
   }
 
   const address = () => {
-   return props.employee?.address?.country !== null ??
-    props.employee?.address?.country !== ""
+    return props.employee?.address?.country !== null ??
+      props.employee?.address?.country !== ""
       ? props.employee?.address?.country === "Philippines"
         ? (props.employee?.address?.country + ", " ?? "") +
-          (props.employee?.address?.region + ", " ?? "") +
-          (props.employee?.address?.province + ", " ?? "") +
-          (props.employee?.address?.city + ", " ?? "") +
-          (props.employee?.address?.baranggay + ", " ?? "") +
-          (props.employee?.address?.street + ", " ?? "") +
-          (props.employee?.address?.zip ?? "")
+        (props.employee?.address?.region + ", " ?? "") +
+        (props.employee?.address?.province + ", " ?? "") +
+        (props.employee?.address?.city + ", " ?? "") +
+        (props.employee?.address?.baranggay + ", " ?? "") +
+        (props.employee?.address?.street + ", " ?? "") +
+        (props.employee?.address?.zip ?? "")
         : (props.employee?.address?.country + ", " ?? "") +
-          (props.employee?.address?.province + ", " ?? "") +
-          (props.employee?.address?.city + ", " ?? "") +
-          (props.employee?.address?.street + ", " ?? "") +
-          (String(props.employee?.address?.zip) ?? "")
+        (props.employee?.address?.province + ", " ?? "") +
+        (props.employee?.address?.city + ", " ?? "") +
+        (props.employee?.address?.street + ", " ?? "") +
+        (String(props.employee?.address?.zip) ?? "")
       : "--"
   }
 
@@ -204,10 +204,10 @@ export const UpdateEmployeeModal = (props: {
                     {props.employee?.team?.name === null
                       ? "--"
                       : props.employee?.team?.name === undefined
-                      ? "--"
-                      : props.employee?.team?.name === ""
-                      ? "--"
-                      : props.employee?.team?.name}
+                        ? "--"
+                        : props.employee?.team?.name === ""
+                          ? "--"
+                          : props.employee?.team?.name}
                   </p>
                 </div>
                 <div className="col-span-1">
@@ -219,10 +219,10 @@ export const UpdateEmployeeModal = (props: {
                     {props.employee?.team?.department?.name === null
                       ? "--"
                       : props.employee?.team?.department?.name === undefined
-                      ? "--"
-                      : props.employee?.team?.department?.name === ""
-                      ? "--"
-                      : props.employee?.team?.department?.name}
+                        ? "--"
+                        : props.employee?.team?.department?.name === ""
+                          ? "--"
+                          : props.employee?.team?.department?.name}
                   </p>
                 </div>
                 <div className="col-span-1">
@@ -287,7 +287,7 @@ export const UpdateEmployeeModal = (props: {
           </section>
           <section className="flex flex-row-reverse pt-4">
             <Link href="/employees/update">
-              <div className="flex w-[20%]  cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+              <div className="flex w-[20%]  cursor-pointer items`-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                 <i className={"fa-solid fa-pen-to-square"} />
                 Edit
               </div>
@@ -355,7 +355,7 @@ export const EmployeeDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-              // disabled={isLoading}
+            // disabled={isLoading}
             >
               Yes, delete record
             </button>

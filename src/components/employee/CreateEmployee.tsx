@@ -440,7 +440,7 @@ export const CreateEmployee = (props: {
                 onSearchWorkStation(value ?? " ")
               }}
               value={workStationValue}
-              data={["Desktop", "Latop"]}
+              data={["Desktop", "Laptop"]}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item

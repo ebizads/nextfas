@@ -513,7 +513,7 @@ export const UpdateEmployee = (props: {
               placeholder="--"
               value={workStationValue}
               defaultValue={props.employee?.workStation ?? "--"}
-              data={["Desktop", "Latop"]}
+              data={["Desktop", "Laptop"]}
               styles={(theme) => ({
                 item: {
                   "&[data-selected]": {

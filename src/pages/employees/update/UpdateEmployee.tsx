@@ -1,10 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { DatePicker } from "@mantine/dates"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import { date, z } from "zod"
+import { z } from "zod"
 import {
-  EmployeeCreateInput,
   EmployeeEditInput,
 } from "../../../server/schemas/employee"
 import { ImageJSON } from "../../../types/table"
@@ -12,13 +10,9 @@ import { trpc } from "../../../utils/trpc"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
 import InputField from "../../../components/atoms/forms/InputField"
 import { Select } from "@mantine/core"
-import { env } from "../../../env/client.mjs"
-import moment from "moment"
 import Modal from "../../../components/headless/modal/modal"
 import { SelectValueType } from "../../../components/atoms/select/TypeSelect"
-import DropZoneComponent from "../../../components/dropzone/DropZoneComponent"
 import { EmployeeType } from "../../../types/generic"
-// import { useEditableStore } from "../../../store/useStore"
 import { useEditableStore, useSelectedEmpStore } from "../../../store/useStore"
 import { useRouter } from "next/router"
 
@@ -41,7 +35,7 @@ export const UpdateEmployee = (props: {
   // setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false)
-  const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
+  const { selectedEmp } = useSelectedEmpStore()
   const [country, setCountry] = useState("")
   const [region, setRegion] = useState("")
   const [province, setProvince] = useState("")

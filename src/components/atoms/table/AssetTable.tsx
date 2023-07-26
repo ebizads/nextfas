@@ -241,6 +241,14 @@ const AssetDetailsModal = (props: {
                           : "--"}
                       </p>
                     </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Type</p>
+                      <p className="font-medium">
+                        {props.asset?.model?.type
+                          ? props.asset?.model?.type?.name
+                          : "--"}
+                      </p>
+                    </div>
                   </section>
                   <section className="grid grid-cols-4">
                     <div className="col-span-2">
@@ -603,14 +611,6 @@ const AssetDetailsModal = (props: {
                     <p className="font-light">
                       {props.asset?.model?.category
                         ? props.asset?.model?.category?.name
-                        : "--"}
-                    </p>
-                  </div>
-                  <div className="">
-                    <p className="font-medium">Type</p>
-                    <p className="font-light">
-                      {props.asset?.model?.type
-                        ? props.asset?.model?.type?.name
                         : "--"}
                     </p>
                   </div>

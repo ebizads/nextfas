@@ -371,6 +371,7 @@ const CreateAssetAccordion = () => {
 
     return numberArray
   }, [allAssets?.assets, assetsAll])
+
   const asset_number = useMemo(() => {
     const parseId = (id: string | null) => {
       if (!id) {

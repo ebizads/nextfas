@@ -606,7 +606,7 @@ export const CreateVendor = () => {
           </div>
         </div>
 
-        <div className="col-span-6">
+        <div className="col-span-full">
           <Textarea
             placeholder=""
             label="Remarks"

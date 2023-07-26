@@ -6,12 +6,11 @@ import { VendorType } from "../../../types/generic"
 import { useSelectedVendorStore } from "../../../store/useStore"
 
 
-const NewEmp = () => {
+const NewVendor = () => {
 
-    const [date, setDate] = useState<Date>(new Date())
-    const [images, setImage] = useState<ImageJSON[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const { selectedEmp } = useSelectedEmpStore()
+    const { selectedVendor } = useSelectedVendorStore()
+
+    console.log(selectedVendor, "lololololol")
 
     return (
         <DashboardLayout>
@@ -19,7 +18,7 @@ const NewEmp = () => {
                 <h3 className="text-xl font-medium">Vendors</h3>
                 <div className="flex h-fit flex-col gap-2 rounded-md border bg-white p-10">
                     <UpdateVendor
-                        employee={selectedVendor as VendorType}
+                        vendor={selectedVendor as VendorType}
                     // setIsVisible={setUpdateRecord}
                     />
                 </div>
@@ -28,4 +27,4 @@ const NewEmp = () => {
     )
 }
 
-export default NewEmp
+export default NewVendor

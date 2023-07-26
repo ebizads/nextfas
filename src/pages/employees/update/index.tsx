@@ -8,9 +8,6 @@ import { useSelectedEmpStore } from "../../../store/useStore"
 
 const NewEmp = () => {
 
-  const [date, setDate] = useState<Date>(new Date())
-  const [images, setImage] = useState<ImageJSON[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { selectedEmp } = useSelectedEmpStore()
 
   return (

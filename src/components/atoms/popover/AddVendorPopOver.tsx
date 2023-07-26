@@ -1,6 +1,7 @@
 
 import React from "react"
 import { Popover } from "@mantine/core"
+import Link from "next/link"
 
 const AddVendorPopOver = (props: {
     openPopover: boolean
@@ -34,7 +35,9 @@ const AddVendorPopOver = (props: {
             <Popover.Dropdown>
                 <div className="h-2 rounded-t-md bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500"></div>
                 <div className="flex flex-col text-sm">
-                    <button onClick={() => { props.setAddSingleRecord(true) }} className="px-6 py-2 hover:bg-tangerine-100">Add single record</button>
+
+                    <Link href={"/vendors/create"}><button className="px-6 py-2 hover:bg-tangerine-100">Add single record</button></Link>
+                    {/* <button onClick={() => { props.setAddSingleRecord(true) }} className="px-6 py-2 hover:bg-tangerine-100">Add single record</button> */}
                     <button onClick={() => { props.setAddBulkRecord(true) }} className="px-6 py-2 hover:bg-tangerine-100">Add bulk record</button>
                 </div>
             </Popover.Dropdown>

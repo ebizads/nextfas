@@ -1,39 +1,17 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { DatePicker } from "@mantine/dates"
-import { SetStateAction, useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 //import { ImageJSON } from "../../types/table"
 import { trpc } from "../../utils/trpc"
-import AlertInput from "../atoms/forms/AlertInput"
-import { InputField } from "../atoms/forms/InputField"
-import { Select, Textarea } from "@mantine/core"
 //import DropZoneComponent from "../dropzone/DropZoneComponent"
-import { vendorEditInput } from "../../server/schemas/vendor"
-import { ImageJSON } from "../../types/table"
-import DropZoneComponent from "../dropzone/DropZoneComponent"
-import { SelectValueType } from "../atoms/select/TypeSelect"
 import { VendorType } from "../../types/generic"
-import { VendorEditInput } from "../../server/schemas/vendor"
 import { useSelectedVendorStore } from "../../store/useStore"
-import Vendors from "../../pages/vendors"
 import Modal from "../headless/modal/modal"
 import Link from "next/link"
 
 
-// import { useEditableStore } from "../../store/useStore"
 
 
 export const VendorDetailsModal = (props: {
   vendor: VendorType
-  // setImage: React.Dispatch<React.SetStateAction<ImageJSON[]>>
-  // images: ImageJSON[]
-  // setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-  // isLoading: boolean
-  // setEditable: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
-  // isEditable: boolean
-  // handleEdit: boolean
 }) => {
   const address = () => {
     return props.vendor?.address?.country !== null ??
@@ -67,7 +45,7 @@ export const VendorDetailsModal = (props: {
               Personal Information
             </p>
             <div className="mt-4 flex flex-col gap-4 text-sm">
-              <section className="grid grid-cols-4">
+              <section className="grid grid-cols-3">
                 <div className="col-span-1">
                   <p className="font-light">Company Name</p>
                   <p className="font-medium">
@@ -90,67 +68,9 @@ export const VendorDetailsModal = (props: {
                   </p>
                   {/* <p className="font-medium">{props.asset?.name}</p> */}
                 </div>
-                <div className="col-span-1">
-                  <p className="font-light"></p>
-                  <p className="font-medium">
-                    {/* {props.asset?.serial_no !== "" */}
-                    {/* // ? props.asset?.serial_no */}
-                    {/* // : "--"} */}
-                  </p>
-                </div>
-              </section>
-              <section className="grid grid-cols-4">
-                <div className="col-span-1">
-                  <p className="font-light">vendor Number</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.model?.name */}
-                    {/* // ? props.asset?.model?.name
-                      // : "--"} */}
-                    {props.vendor?.vendor_id}
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-light">Team</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.parentId !== 0 */}
-                    {/* // ? props.asset?.parent?.name */}
-                    {/* // : "--"} */}
-                    {props.vendor?.team?.name === null
-                      ? "--"
-                      : props.vendor?.team?.name === undefined
-                        ? "--"
-                        : props.vendor?.team?.name === ""
-                          ? "--"
-                          : props.vendor?.team?.name}
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-light">Department</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.parentId !== 0 */}
-                    {/* // ? props.asset?.parent?.name */}
-                    {/* // : "--"} */}
-                    {props.vendor?.team?.department?.name === null
-                      ? "--"
-                      : props.vendor?.team?.department?.name === undefined
-                        ? "--"
-                        : props.vendor?.team?.department?.name === ""
-                          ? "--"
-                          : props.vendor?.team?.department?.name}
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-light">Designation / Position</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.model?.brand */}
-                    {/* // ? props.asset?.model?.brand
-                      // : "--"} */}
-                    {props.vendor?.position ?? "--"}
-                  </p>
-                </div>
-              </section>
 
-              <section className="grid grid-cols-4">
+              </section>
+              <section className="grid grid-cols-3">
                 <div className="col-span-1">
                   <p className="font-light">Email</p>
                   <p className="font-medium">
@@ -170,21 +90,15 @@ export const VendorDetailsModal = (props: {
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Work Station</p>
+                  <p className="font-light">Fax Number</p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.currency}{" "} */}
                     {/* {props.asset?.management?.residual_value ?? */}
                     {/* // "no information"} */}
-                    {props.vendor?.workStation ?? "--"}
+                    {props.vendor?.fax_no ?? "--"}
                   </p>
                 </div>
-                <div className="col-span-1">
-                  <p className="font-light">Work Mode</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.management?.residual_percentage ?? "--"}% */}
-                    {props.vendor?.workMode ?? "--"}
-                  </p>
-                </div>
+
               </section>
               <section className="grid grid-cols-4">
                 <div className="col-span-4">
@@ -194,6 +108,17 @@ export const VendorDetailsModal = (props: {
                     {/* // ? props.asset?.management?.asset_lifetime
                       // : "--"}{" "} */}
                     {address()}
+                  </p>
+                </div>
+              </section>
+              <section className="grid grid-cols-4">
+                <div className="col-span-4">
+                  <p className="font-light">Remarks</p>
+                  <p className="flex font-medium">
+                    {/* {props.asset?.management?.asset_lifetime */}
+                    {/* // ? props.asset?.management?.asset_lifetime
+                      // : "--"}{" "} */}
+                    {props.vendor?.remarks ?? "--"}
                   </p>
                 </div>
               </section>
@@ -234,7 +159,6 @@ export const VendorDeleteModal = (props: {
       props.setIsVisible(false)
       utils.vendor.findAll.invalidate()
 
-      // window.location.reload()
     },
   })
   const handleDelete = async () => {

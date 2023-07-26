@@ -28,6 +28,8 @@ import all_states from "../../../json/states.json"
 import all_cities from "../../../json/cities.json"
 import { clearAndGoBack } from "../../../lib/functions"
 
+import { Textarea } from "@mantine/core"
+
 export type Vendor = z.infer<typeof VendorEditInput>
 // export type Vendor = z.infer<typeof VendorCreateInput>
 
@@ -50,21 +52,21 @@ export const UpdateVendor = (props: {
     const router = useRouter()
     // date ?? new Date())
     const utils = trpc.useContext()
-    const [images, setImage] = useState<ImageJSON[]>([])
+    // const [images, setImage] = useState<ImageJSON[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
     // const { data: teams } = trpc.team.findAll.useQuery()
     const { editable, setEditable } = useEditableStore()
 
-    const teamList = useMemo(() => {
-        const list = teams?.teams.map(
-            (team: { id: { toString: () => any }; name: any }) => {
-                return { value: team.id.toString(), label: team.name }
-            }
-        ) as SelectValueType[]
-        return list ?? []
-    }, [teams]) as SelectValueType[]
+    // const teamList = useMemo(() => {
+    //     const list = teams?.teams.map(
+    //         (team: { id: { toString: () => any }; name: any }) => {
+    //             return { value: team.id.toString(), label: team.name }
+    //         }
+    //     ) as SelectValueType[]
+    //     return list ?? []
+    // }, [teams]) as SelectValueType[]
 
     const {
         mutate,
@@ -73,10 +75,11 @@ export const UpdateVendor = (props: {
     } = trpc.vendor.edit.useMutation({
         onSuccess() {
             console.log("omsim")
+            // router.push("/vendors")
             // invalidate query of asset id when mutations is successful
             utils.vendor.findAll.invalidate()
-            props.setIsVisible(false)
-            setImage([])
+            setIsVisible(true)
+            // setImage([])
         },
     })
     const {
@@ -118,16 +121,16 @@ export const UpdateVendor = (props: {
         setOpenModalDel(true)
     }
 
-    const handleEditable = () => {
-        setIsEditable(true)
-    }
+    // const handleEditable = () => {
+    //     setIsEditable(true)
+    // }
 
-    const handleIsEditable = () => {
-        if (!updated) {
-            setEditable(true)
-            setUpdated(true)
-        }
-    }
+    // const handleIsEditable = () => {
+    //     if (!updated) {
+    //         setEditable(true)
+    //         setUpdated(true)
+    //     }
+    // }
     const filteredAllCountries = useMemo(() => {
         console.log("checkcount: ", country)
         const countries = all_countries.map((countries) => {
@@ -260,7 +263,7 @@ export const UpdateVendor = (props: {
         return newBarangay
     }, [region, province, city])
 
-    console.log("ALAM MO TONG EMPLOYEE NA TO::::", props.vendor)
+    // console.log("ALAM MO TONG EMPLOYEE NA TO::::", props.vendor)
 
     return (
         <main className="container mx-auto flex flex-col justify-center p-2">
@@ -274,9 +277,10 @@ export const UpdateVendor = (props: {
             >
                 <div className="col-span-9 grid grid-cols-12 gap-7">
                     <div className="col-span-4">
+                        <label className="sm:text-sm">Company Name</label>
                         <InputField
                             register={register}
-                            label="Company Name"
+                            label=""
                             name="name"
                             type="text"
                         />
@@ -310,208 +314,26 @@ export const UpdateVendor = (props: {
                                 },
                             })}
                             variant="unstyled"
-                            className={
-                                isEditable
-                                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent  px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                                    : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                            }
+                            className={"mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-[0.10rem]  px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "}
                         />
                     </div>
                     <div className="col-span-4">
-                        <label className="sm:text-sm">Last Name</label>
+                        <label className="sm:text-sm">Website</label>
                         <InputField
-                            type={"text"}
-                            label={""}
-                            name={"profile.last_name"}
                             register={register}
+                            label=""
+                            name="website"
+                            type="text"
                         />
-                        <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+                        <AlertInput>{errors?.website?.message}</AlertInput>
                     </div>
                 </div>
 
                 <div className="col-span-9 grid grid-cols-12 gap-7">
                     <div className="col-span-4">
                         <label className="flex justify-between pb-1 sm:text-sm">
-                            Vendor Number
-                            <div className="flex items-center gap-2">
-                                <i
-                                    className="fa-light fa-pen-to-square cursor-pointer"
-                                    onClick={() => {
-                                        handleIsEditable()
-                                        handleEditable()
-                                    }}
-                                />
-                            </div>
+                            Email
                         </label>
-                        <InputField
-                            disabled={!isEditable}
-                            type={"text"}
-                            label={""}
-                            name={"vendor_id"}
-                            register={register}
-                        />
-
-                        {/* <p
-              className={
-                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >{`${props.vendor?.vendor_id}`}</p> */}
-                    </div>
-                    <div className="col-span-4">
-                        <label className="sm:text-sm">Designation / Position</label>
-                        <InputField
-                            type={"text"}
-                            label={""}
-                            // placeholder={props.vendor?.}
-                            name={"position"}
-                            register={register}
-                        />
-
-                        <AlertInput>{errors?.position?.message}</AlertInput>
-                    </div>
-                    <div className="col-span-4">
-                        <label className="sm:text-sm">Work Mode</label>
-                        <Select
-                            onChange={(value) => {
-                                setValue("workMode", String(value) ?? "")
-                                onSearchWorkMode(value ?? "")
-                            }}
-                            value={workModeValue}
-                            placeholder="--"
-                            data={["WFH", "Hybrid", "On Site"]}
-                            defaultValue={props.vendor?.workMode ?? "--"}
-                            styles={(theme) => ({
-                                item: {
-                                    // applies styles to selected item
-                                    "&[data-selected]": {
-                                        "&, &:hover": {
-                                            backgroundColor:
-                                                theme.colorScheme === "light"
-                                                    ? theme.colors.orange[3]
-                                                    : theme.colors.orange[1],
-                                            color:
-                                                theme.colorScheme === "dark"
-                                                    ? theme.white
-                                                    : theme.black,
-                                        },
-                                    },
-
-                                    // applies styles to hovered item (with mouse or keyboard)
-                                    "&[data-hovered]": {},
-                                },
-                            })}
-                            variant="unstyled"
-                            className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                        />
-                    </div>
-                </div>
-
-                <div className="col-span-9 grid grid-cols-12 gap-7">
-                    <div className="col-span-6">
-                        <label className="sm:text-sm">Team</label>
-                        <Select
-                            placeholder="Pick one"
-                            onChange={(value) => {
-                                setValue("teamId", Number(value) ?? 0)
-                                onSearchChange(value ?? "0")
-                            }}
-                            value={searchValue}
-                            data={teamList}
-                            styles={(theme) => ({
-                                item: {
-                                    // applies styles to selected item
-                                    "&[data-selected]": {
-                                        "&, &:hover": {
-                                            backgroundColor:
-                                                theme.colorScheme === "light"
-                                                    ? theme.colors.orange[3]
-                                                    : theme.colors.orange[1],
-                                            color:
-                                                theme.colorScheme === "dark"
-                                                    ? theme.white
-                                                    : theme.black,
-                                        },
-                                    },
-
-                                    // applies styles to hovered item (with mouse or keyboard)
-                                    "&[data-hovered]": {},
-                                },
-                            })}
-                            variant="unstyled"
-                            className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                        />
-                        {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
-                    </div>
-
-                    <div className="col-span-6">
-                        <label className="sm:text-sm">Department</label>
-                        {/* <InputField
-              // placeholder={props.vendor?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.vendor?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
-                        <p
-                            className={
-                                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                            }
-                        >{`${props.vendor?.team?.department?.name}`}</p>
-                    </div>
-
-                    {/* <div className="col-span-6">
-            <label className="sm:text-sm">Location</label>
-            <InputField
-              // placeholder={props.vendor?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.vendor?.team?.department?.name}
-              name={"department"}
-              register={register}
-            />
-            <p
-              className={
-                "my-2 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >
-              {"based on workmode (based wer?)"}
-            </p>
-          </div> */}
-                </div>
-
-                <div className="col-span-9 grid grid-cols-12 gap-7">
-                    <div className="col-span-4">
-                        <label className="mb-2 sm:text-sm">Mobile Number</label>
-                        <input
-                            type="number"
-                            pattern="[0-9]*"
-                            defaultValue={props.vendor?.profile?.phone_no ?? "--"}
-                            className="!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                            onKeyDown={(e) => {
-                                if (e.key === "e") {
-                                    e.preventDefault()
-                                }
-                            }}
-                            onChange={(event) => {
-                                if (event.target.value.length > 11) {
-                                    console.log("more than 11")
-                                    event.target.value = event.target.value.slice(0, 11)
-                                }
-                                setValue(
-                                    "profile.phone_no",
-                                    event.currentTarget.value.toString()
-                                )
-                            }}
-                        />
-
-                        <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
-                    </div>
-
-                    <div className="col-span-4">
-                        <label className="sm:text-sm">Email</label>
                         <InputField
                             type={"text"}
                             label={""}
@@ -521,39 +343,60 @@ export const UpdateVendor = (props: {
                         <AlertInput>{errors?.email?.message}</AlertInput>
                     </div>
                     <div className="col-span-4">
-                        <label className="sm:text-sm">Device</label>
-                        <Select
-                            onChange={(value) => {
-                                setValue("workStation", String(value) ?? " ")
-                                onSearchWorkStation(value ?? "")
+                        <label className="sm:text-sm">
+                            Phone Number: {`(use " , " for multiple phone numbers)`}
+                        </label>
+                        <input
+                            className={'!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+
+                            pattern="[0-9]*"
+                            type="text"
+                            onKeyDown={(e) => {
+                                const regex = /^[0-9, ]|Backspace/
+                                if (e.key === "e" || !regex.test(e.key)) {
+                                    e.preventDefault()
+                                }
                             }}
-                            placeholder="--"
-                            value={workStationValue}
-                            defaultValue={props.vendor?.workStation ?? "--"}
-                            data={["Desktop", "Latop"]}
-                            styles={(theme) => ({
-                                item: {
-                                    "&[data-selected]": {
-                                        "&, &:hover": {
-                                            backgroundColor:
-                                                theme.colorScheme === "light"
-                                                    ? theme.colors.orange[3]
-                                                    : theme.colors.orange[1],
-                                            color:
-                                                theme.colorScheme === "dark"
-                                                    ? theme.white
-                                                    : theme.black,
-                                        },
-                                    },
-                                    // applies styles to hovered item (with mouse or keyboard)
-                                    "&[data-hovered]": {},
-                                },
-                            })}
-                            variant="unstyled"
-                            className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-0.5 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                            // onInput={(event) => {
+                            //   const inputValue = event.currentTarget.value
+
+                            // }}
+                            onChange={(event) => {
+                                const convertToArray = event.currentTarget.value
+                                const phonenumString = convertToArray
+                                    .replace(/[^0-9, ]/gi, "")
+                                    .split(",")
+                                setValue("phone_no", phonenumString)
+                            }}
+                            defaultValue={props.vendor?.phone_no ?? "--"}
                         />
+                        <AlertInput>{errors?.phone_no?.message}</AlertInput>
+                    </div>
+                    <div className="col-span-4">
+                        <label className="!mb-2 sm:text-sm">Fax Number</label>
+                        <input
+                            type="number"
+                            pattern="[0-9]*"
+                            defaultValue={props.vendor?.fax_no ?? "--"}
+                            className={'!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 '}
+
+                            onKeyDown={(e) => {
+                                if (e.key === "e") {
+                                    e.preventDefault()
+                                }
+                            }}
+                            onChange={(event) => {
+                                if (event.target.value.length > 8) {
+                                    console.log("more than 8")
+                                    event.target.value = event.target.value.slice(0, 8)
+                                }
+                                setValue("fax_no", event.currentTarget.value.toString())
+                            }}
+                        />
+                        <AlertInput>{errors?.fax_no?.message}</AlertInput>
                     </div>
                 </div>
+
                 <div className="col-span-9 grid grid-cols-8 gap-7">
                     <div className="col-span-2">
                         <label className="sm:text-sm">Country</label>
@@ -822,26 +665,20 @@ export const UpdateVendor = (props: {
                     </div>
                 </div>
 
-                {/* {(
-          <DropZoneComponent
-            setImage={setImage}
-            setIsLoading={setIsLoading}
-            images={images}
-            isLoading={isLoading}
-            acceptingMany={false}
-            setIsVisible={props.setIsVisible}
-          />
-        )} */}
-                <hr className="col-span-full"></hr>
-                {/* <div className="flex w-full justify-end">
-          {<button
-            type="submit"
-            className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={vendorLoading}
-          >
-            {vendorLoading ? "Loading..." : "Save"}
-          </button>}
-        </div> */}
+                <div className="col-span-6">
+                    <Textarea
+                        placeholder=""
+                        label="Remarks"
+                        minRows={6}
+                        maxRows={6}
+                        classNames={{
+                            input:
+                                "w-full border-2 border-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+                            label: "font-sans text-sm text-gray-600 text-light",
+                        }}
+                    />
+                </div>
+
                 <div className="col-span-full">
                     {!(
                         error &&

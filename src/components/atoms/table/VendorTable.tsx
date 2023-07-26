@@ -139,8 +139,8 @@ const VendorTable = (props: {
 
                         setDetails(row)
                         setSelectedVendor(row)
-
                         setUpdateRecord(true)
+                        console.log(selectedVendor, "selected vendor mo to")
                       }}
                     >
                       {getPropertyDisposal(col.value, row) ?? "Invalid data"}

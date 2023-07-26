@@ -42,7 +42,7 @@ export const UpdateVendorModal = (props: {
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-  const { data: teams } = trpc.team.findAll.useQuery()
+  // const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
 
   // const teamList = useMemo(() => {
@@ -140,7 +140,7 @@ export const UpdateVendorModal = (props: {
         <div className="flex w-full flex-wrap gap-4 py-2.5">
           <div className="flex w-[49%] flex-col">
             <InputField
-              disabled={!isEditable}
+
               register={register}
               label="Company Name"
               name="name"
@@ -151,7 +151,7 @@ export const UpdateVendorModal = (props: {
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Vendor Type</label>
             <Select
-              disabled={!isEditable}
+
               defaultValue={props.vendor?.type ?? "--"}
               onChange={(value) => {
                 setValue("type", value ?? "")
@@ -190,7 +190,7 @@ export const UpdateVendorModal = (props: {
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex w-[49%] flex-col">
             <InputField
-              disabled={!isEditable}
+
               type={"text"}
               label={"Email"}
               name={"email"}
@@ -203,7 +203,7 @@ export const UpdateVendorModal = (props: {
               Phone Number: {`(use " , " for multiple phone numbers)`}
             </label>
             <input
-              disabled={!isEditable}
+
               className={
                 isEditable
                   ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
@@ -237,7 +237,7 @@ export const UpdateVendorModal = (props: {
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="my-0.5 flex flex-col sm:w-1/3 md:w-[49%]">
             {/* <InputField
-              disabled={!isEditable}
+              
               register={register}
               label="Fax Number"
               name="fax_no"
@@ -246,7 +246,7 @@ export const UpdateVendorModal = (props: {
             /> */}
             <label className="mb-2 sm:text-sm">Fax Number</label>
             <input
-              disabled={!isEditable}
+
               type="number"
               pattern="[0-9]*"
               defaultValue={props.vendor?.fax_no ?? "--"}
@@ -272,7 +272,7 @@ export const UpdateVendorModal = (props: {
           </div>
           <div className="my-0.5 flex w-[49%] flex-col">
             <InputField
-              disabled={!isEditable}
+
               register={register}
               label="Website"
               name="website"
@@ -290,7 +290,7 @@ export const UpdateVendorModal = (props: {
               label={""}
               name="address.street"
               register={register}
-              disabled={!isEditable}
+
             />
           </div>
           <div className="flex w-[18.4%] flex-col">
@@ -299,7 +299,7 @@ export const UpdateVendorModal = (props: {
               type={"text"}
               label={""}
               name={"address.region"}
-              disabled={!isEditable}
+
               register={register}
             />
 
@@ -312,7 +312,7 @@ export const UpdateVendorModal = (props: {
               type={"text"}
               label={""}
               name={"address.city"}
-              disabled={!isEditable}
+
               register={register}
             />
 
@@ -324,7 +324,7 @@ export const UpdateVendorModal = (props: {
               type={"text"}
               label={""}
               name={"address.zip"}
-              disabled={!isEditable}
+
               register={register}
             />
             <AlertInput>{errors?.address?.zip?.message}</AlertInput>
@@ -335,7 +335,7 @@ export const UpdateVendorModal = (props: {
               type={"text"}
               label={""}
               name={"address.country"}
-              disabled={!isEditable}
+
               register={register}
             />
 
@@ -346,7 +346,7 @@ export const UpdateVendorModal = (props: {
         <div className="flex w-full flex-wrap gap-4">
           <div className="flex w-[99.7%] flex-col">
             <Textarea
-              disabled={!isEditable}
+
               defaultValue={props.vendor?.remarks ?? "--"}
               label="Remarks"
               minRows={6}

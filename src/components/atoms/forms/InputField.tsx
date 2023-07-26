@@ -49,7 +49,7 @@ export const InputField = ({
       <div className="relative z-0 flex">
         <div className="flex flex-1 flex-col gap-2">
           {!className && (
-            <label htmlFor={name} className="text-sm">
+            <label htmlFor={name} className="text-sm pt-1">
               {label}
               {required && <span className="text-sm text-red-500">*</span>}
             </label>

@@ -14,7 +14,7 @@ import { Select } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import { useUserEditableStore } from "../../store/useStore"
 import AlertInput from "../atoms/forms/AlertInput"
-import register from "../../pages/auth/register"
+import register from "../../pages/auth/register/register"
 import InputField from "../atoms/forms/InputField"
 import InputNumberField from "../atoms/forms/InputNumberField"
 

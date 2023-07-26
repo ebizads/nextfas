@@ -239,7 +239,7 @@ const ChangePassModal = (props: {
             <button
               type="submit"
               className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-              onClick={() => console.log(errors)}
+              onClick={() => { console.log(errors), console.log("check", password) }}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Saving..." : "Change"}

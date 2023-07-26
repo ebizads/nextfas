@@ -37,18 +37,18 @@ export const EmployeeDetailsModal = (props: {
     return props.employee?.address?.country !== null ??
       props.employee?.address?.country !== ""
       ? props.employee?.address?.country === "Philippines"
-        ? (props.employee?.address?.street + ", " ?? "") +
-        (props.employee?.address?.baranggay + ", " ?? "") +
-        (props.employee?.address?.city + ", " ?? "") +
-        (props.employee?.address?.province + ", " ?? "") +
-        (props.employee?.address?.region + ", " ?? "") +
-        (props.employee?.address?.country + ", " ?? "") +
+        ? (props.employee?.address?.street ? (props.employee?.address?.street + ", ") : "") +
+        (props.employee?.address?.baranggay ? (props.employee?.address?.baranggay + ", ") : "") +
+        (props.employee?.address?.city ? (props.employee?.address?.city + ", ") : "") +
+        (props.employee?.address?.province ? (props.employee?.address?.province + ", ") : "") +
+        (props.employee?.address?.region ? (props.employee?.address?.region + ", ") : "") +
+        (props.employee?.address?.country ? (props.employee?.address?.country + ", ") : "") +
         (props.employee?.address?.zip ?? "")
         :
-        (props.employee?.address?.street + ", " ?? "") +
-        (props.employee?.address?.city + ", " ?? "") +
-        (props.employee?.address?.province + ", " ?? "") +
-        (props.employee?.address?.country + ", " ?? "") +
+        (props.employee?.address?.street ? (props.employee?.address?.street + ", ") : "") +
+        (props.employee?.address?.city ? (props.employee?.address?.city + ", ") : "") +
+        (props.employee?.address?.province ? (props.employee?.address?.province + ", ") : "") +
+        (props.employee?.address?.country ? (props.employee?.address?.country + ", ") : "") +
         (String(props.employee?.address?.zip) ?? "")
       : "--"
   }

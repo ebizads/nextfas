@@ -17,18 +17,18 @@ export const VendorDetailsModal = (props: {
     return props.vendor?.address?.country !== null ??
       props.vendor?.address?.country !== ""
       ? props.vendor?.address?.country === "Philippines"
-        ? (props.vendor?.address?.street + ", " ?? "") +
-        (props.vendor?.address?.baranggay + ", " ?? "") +
-        (props.vendor?.address?.city + ", " ?? "") +
-        (props.vendor?.address?.province + ", " ?? "") +
-        (props.vendor?.address?.region + ", " ?? "") +
-        (props.vendor?.address?.country + ", " ?? "") +
+        ? (props.vendor?.address?.street ? (props.vendor?.address?.street + ", ") : "") +
+        (props.vendor?.address?.baranggay ? (props.vendor?.address?.baranggay + ", ") : "") +
+        (props.vendor?.address?.city ? (props.vendor?.address?.city + ", ") : "") +
+        (props.vendor?.address?.province ? (props.vendor?.address?.province + ", ") : "") +
+        (props.vendor?.address?.region ? (props.vendor?.address?.region + ", ") : "") +
+        (props.vendor?.address?.country ? (props.vendor?.address?.country + ", ") : "") +
         (props.vendor?.address?.zip ?? "")
         :
-        (props.vendor?.address?.street + ", " ?? "") +
-        (props.vendor?.address?.city + ", " ?? "") +
-        (props.vendor?.address?.province + ", " ?? "") +
-        (props.vendor?.address?.country + ", " ?? "") +
+        (props.vendor?.address?.street ? (props.vendor?.address?.street + ", ") : "") +
+        (props.vendor?.address?.city ? (props.vendor?.address?.city + ", ") : "") +
+        (props.vendor?.address?.province ? (props.vendor?.address?.province + ", ") : "") +
+        (props.vendor?.address?.country ? (props.vendor?.address?.country + ", ") : "") +
         (String(props.vendor?.address?.zip) ?? "")
       : "--"
   }

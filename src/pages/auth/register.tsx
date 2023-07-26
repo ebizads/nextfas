@@ -21,6 +21,10 @@ import { ImageJSON } from "../../types/table"
 import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
 import Employee from "../employees"
 import { clearAndGoBack } from "../../lib/functions"
+import ph_regions from "../../json/ph_regions.json"
+import all_countries from "../../json/countries.json"
+import all_states from "../../json/states.json"
+import all_cities from "../../json/cities.json"
 
 type User = z.infer<typeof CreateUserInput>
 
@@ -33,6 +37,11 @@ const Register2 = () => {
   const [searchValue, onSearchChange] = useState<string>("")
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoadingNow, setIsLoading] = useState<boolean>(false)
+  const [country, setCountry] = useState("")
+  const [region, setRegion] = useState("")
+  const [province, setProvince] = useState("")
+  const [city, setCity] = useState("")
+  const [barangay, setBarangay] = useState("")
   const futureDate = new Date()
   futureDate.setFullYear(futureDate.getFullYear() + 1)
 
@@ -132,6 +141,9 @@ const Register2 = () => {
           country: user.address?.country,
           street: user.address?.street,
           zip: user.address?.zip,
+          baranggay: user.address?.baranggay,
+          region: user.address?.region,
+          province: user.address?.province
         },
         inactivityDate: new Date(),
         passwordAge: new Date(),
@@ -144,6 +156,134 @@ const Register2 = () => {
     console.log(user.validateTable)
     reset()
   }
+
+  const filteredAllCountries = useMemo(() => {
+    const countries = all_countries.map((countries) => { return countries.name })
+    setCountry("")
+    console.log("country", countries)
+    return countries
+
+  }, [])
+
+  const filteredRegion = useMemo(() => {
+
+    const upperLevel = Object.entries(ph_regions)
+      .sort(([key1], [key2]) => {
+        const num1 = parseInt(key1)
+        const num2 = parseInt(key2)
+        return num1 - num2
+      })
+      .map(([key]) => key)
+    setRegion("")
+    console.log("keys:", upperLevel)
+    return upperLevel
+
+
+
+  }, [])
+
+  const filteredProvince = useMemo(() => {
+    const newProvince: Array<string> = []
+    if (country === "Philippines") {
+      if (region === null ?? "") {
+        setProvince("")
+
+        return newProvince
+      }
+      const jsonData = ph_regions
+
+      if (region) {
+        const provinceLevel = Object.keys(
+          (jsonData as Record<string, any>)[region].province_list
+        )
+        console.log("province", provinceLevel)
+        setProvince("")
+
+        return provinceLevel
+      }
+    } else {
+
+      if (country) {
+        const states = all_states
+        console.log("states", all_states)
+        const specStates = states.filter((states) => { return states.country_name === country })
+        const finalStates = specStates.map((states) => { return states.name })
+        if (finalStates.length === 0) {
+          return newProvince
+        }
+        console.log("states:", specStates)
+        return finalStates
+      }
+      return newProvince
+
+    }
+    setProvince("")
+
+    return newProvince
+  }, [country, region])
+
+  const filteredCity = useMemo(() => {
+    const newCity: Array<any> = []
+    if (country === "Philippines") {
+      if (province === null ?? "") {
+        setCity("")
+
+        return newCity
+      }
+
+      if (region && province) {
+        const jsonData = (ph_regions as Record<string, any>)[region].province_list
+
+        const cityLevel = Object.keys(
+          (jsonData as Record<string, any>)[province].municipality_list
+        )
+        console.log("city", cityLevel)
+        setCity("")
+
+        return cityLevel
+      }
+    } else {
+      if (province) {
+        const cities = JSON.parse(JSON.stringify(all_cities))
+        const specCities = cities.filter((city: { state_name: string }) => { return city.state_name === province })
+        const finalCities = specCities.map((city: { name: string }) => { return city.name })
+        console.log("cities", finalCities)
+        setCity("")
+        if (finalCities.length === 0) {
+          return newCity
+        }
+        return finalCities
+      }
+
+    }
+    setCity("")
+
+    return newCity
+  }, [country, province, region])
+
+  const filteredBarangay = useMemo(() => {
+    const newBarangay: Array<any> = []
+    if (city === null ?? "") {
+      setBarangay("")
+
+      return newBarangay
+    }
+
+    if (region && province && city) {
+      const jsonData = (ph_regions as Record<string, any>)[region].province_list
+      const cityData = (jsonData as Record<string, any>)[province]
+        .municipality_list
+      const barangayLevel = (cityData as Record<string, any>)[city]
+        .barangay_list
+      console.log("city", barangayLevel)
+      setBarangay("")
+
+      return barangayLevel
+    }
+    setBarangay("")
+
+    return newBarangay
+  }, [region, province, city])
 
   return (
     <main className="container mx-auto flex flex-col justify-center p-2">
@@ -367,58 +507,263 @@ const Register2 = () => {
             />
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
-          <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[25%] flex-col">
-              <label className="sm:text-sm">Street</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name="address.street"
-                register={register}
+          <div className="col-span-9 grid grid-cols-8 gap-7">
+            <div className="col-span-2">
+              <label className="sm:text-sm">Country</label>
+              <Select
+                name={"address.country"}
+                id="address.country"
+                searchable
+                required
+                placeholder="Country"
+                data={filteredAllCountries}
+                onChange={(value) => {
+                  setValue("address.country", value ?? "")
+                  setCountry(value ?? "")
+                  setRegion("")
+                  setProvince("")
+                  setCity("")
+                  setBarangay("")
+                }}
+                value={country ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                clearable
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
               />
-              <AlertInput>{errors?.address?.street?.message}</AlertInput>
+
+              <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
-            {/* <div className="flex w-[18.94%] flex-col">
-              <label className="sm:text-sm">Barangay</label>
-              <InputField
-                type={"text"}
-                label={""}
+            <div className="col-span-2">
+              <label className="sm:text-sm">Region</label>
+              <Select
                 name={"address.region"}
-                register={register}
+                searchable
+                // required
+                id="address.region"
+                placeholder="Region"
+                data={filteredRegion ?? [""]}
+                disabled={country === "" || country !== "Philippines"}
+                onChange={(value) => {
+                  setValue("address.region", value ?? "")
+                  setRegion(value ?? "")
+                  setProvince("")
+                  setCity("")
+                  setBarangay("")
+                }}
+                value={region ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                clearable
+                nothingFound="No options"
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
               />
+
               <AlertInput>{errors?.address?.region?.message}</AlertInput>
-            </div> */}{" "}
-            <div className="flex w-[20%] flex-col">
-              <label className="sm:text-sm">City</label>
-              <InputField
+            </div>
+
+            <div className="col-span-2">
+              <label className="sm:text-sm">Province/States</label>
+              <Select
+                name={"address.province"}
+                searchable
+                // required
+                id="address.province"
+                placeholder="Province/States"
+                data={filteredProvince}
+                disabled={country === "Philippines " ? (region === "") : country === ""}
+                onChange={(value) => {
+                  setValue("address.province", value ?? "")
+                  setProvince(value ?? "")
+                  setCity("")
+                  setBarangay("")
+                }}
+                value={province ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              />
+              {/* <InputField
                 type={"text"}
                 label={""}
                 name={"address.city"}
                 register={register}
+              /> */}
+
+              <AlertInput>{errors?.address?.province?.message}</AlertInput>
+            </div>
+            <div className="col-span-2">
+              <label className="sm:text-sm">City</label>
+              <Select
+                name={"address.city"}
+                id="address.city"
+                placeholder="City"
+                searchable
+                // required
+                disabled={province === ""}
+                data={filteredCity}
+                onChange={(value) => {
+                  setValue("address.city", value ?? "")
+                  setCity(value ?? "")
+                  setBarangay("")
+                }}
+                value={city ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
               />
+              {/* <InputField
+                type={"text"}
+                label={""}
+                name={"address.city"}
+                register={register}
+              /> */}
 
               <AlertInput>{errors?.address?.city?.message}</AlertInput>
             </div>
-            <div className="flex w-[20%] flex-col">
-              <label className="sm:text-sm">Zip Code</label>
+            <div className=" col-span-2">
+              <label className="sm:text-sm">Barangay</label>
+              <Select
+                name={"address.barangay"}
+                id="address.barangay"
+                placeholder="Barangay"
+                data={filteredBarangay}
+                searchable
+                required
+                disabled={country !== "Philippines"}
+                onChange={(value) => {
+                  setValue("address.baranggay", value ?? "")
+                  setBarangay(value ?? "")
+                }}
+                value={barangay ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
+                    },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
+                  },
+                })}
+                variant="unstyled"
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              />
+              <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
+            </div>
+            <div className="col-span-2">
+              <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
+                Street
+              </label>
+              <InputField
+                type={"text"}
+                label={""}
+                placeholder="Street"
+                disabled={country === ""}
+                name={"address.street"}
+                register={register}
+              />
+              <AlertInput>{errors?.address?.street?.message}</AlertInput>
+            </div>
+
+            <div className="col-span-2">
+              <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
+                Zip Code
+              </label>
               <InputField
                 type={"number"}
                 label={""}
+                disabled={country === ""}
                 name={"address.zip"}
                 register={register}
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
-            </div>
-            <div className="flex w-[20%] flex-col">
-              <label className="sm:text-sm">Country</label>
-              <InputField
-                type={"text"}
-                label={""}
-                name={"address.country"}
-                register={register}
-              />
-
-              <AlertInput>{errors?.address?.country?.message}</AlertInput>
             </div>
           </div>
         </div>

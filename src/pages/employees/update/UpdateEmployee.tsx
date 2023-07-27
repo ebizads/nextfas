@@ -549,7 +549,7 @@ export const UpdateEmployee = (props: {
                 setCity("")
                 setBarangay("")
               }}
-              value={country}
+              value={country ?? ""}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -582,7 +582,7 @@ export const UpdateEmployee = (props: {
             <Select
               name={"address.region"}
               searchable
-              // required = {country !== "" && country === "Philippines"}
+              // required
               id="address.region"
               placeholder={props.employee?.address?.region ?? "Region"}
               data={filteredRegion ?? [""]}
@@ -618,7 +618,7 @@ export const UpdateEmployee = (props: {
               clearable
               nothingFound="No options"
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              className={country === "" || country !== "Philippines" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 pointer-events-none px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
             />
 
             <AlertInput>{errors?.address?.region?.message}</AlertInput>
@@ -631,13 +631,9 @@ export const UpdateEmployee = (props: {
               searchable
               // required
               id="address.province"
-              placeholder={
-                props.employee?.address?.province ?? "Province/States"
-              }
+              placeholder={props.employee?.address?.province ?? "Province/States"}
               data={filteredProvince}
-              disabled={
-                country === "Philippines" ? region === "" : country === ""
-              }
+              disabled={country === "Philippines " ? (region === "") : country === ""}
               onChange={(value) => {
                 setValue("address.province", value ?? "")
                 setProvince(value ?? "")
@@ -666,7 +662,7 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              className={(country === "Philippines " ? (region === "") : country === "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
             />
             {/* <InputField
                 type={"text"}
@@ -714,7 +710,7 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              className={province === "" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
             />
             {/* <InputField
                 type={"text"}
@@ -725,7 +721,7 @@ export const UpdateEmployee = (props: {
 
             <AlertInput>{errors?.address?.city?.message}</AlertInput>
           </div>
-          <div className="col-span-2">
+          <div className=" col-span-2">
             <label className="sm:text-sm">Barangay</label>
             <Select
               name={"address.barangay"}
@@ -734,11 +730,7 @@ export const UpdateEmployee = (props: {
               data={filteredBarangay}
               searchable
               required
-              disabled={
-                country === "Philippines"
-                  ? city === ""
-                  : country !== "Philippines"
-              }
+              disabled={country !== "Philippines"}
               onChange={(value) => {
                 setValue("address.baranggay", value ?? "")
                 setBarangay(value ?? "")
@@ -765,17 +757,14 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-500"
+              className={(country === "Philippines" && city !== "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  " : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"}
             />
             <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
           </div>
           <div className="col-span-2">
-            <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
-              Street
-            </label>
             <InputField
               type={"text"}
-              label={""}
+              label={"Street"}
               placeholder="Street"
               disabled={country === ""}
               name={"address.street"}
@@ -785,12 +774,9 @@ export const UpdateEmployee = (props: {
           </div>
 
           <div className="col-span-2">
-            <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
-              Zip Code
-            </label>
             <InputField
               type={"number"}
-              label={""}
+              label={"Zip Code"}
               disabled={country === ""}
               name={"address.zip"}
               register={register}

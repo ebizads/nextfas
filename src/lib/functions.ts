@@ -132,9 +132,23 @@ export const getAddress = (
       address: Address | null
     })
 ) => {
-  return type?.address?.country === "Philippines"
-    ? ` ${type?.address?.region}, ${type?.address?.street},  ${type?.address?.baranggay},  ${type?.address?.city},  ${type?.address?.province}, ${type?.address?.country} `
-    : ` ${type?.address?.street},  ${type?.address?.city},  ${type?.address?.province}, ${type?.address?.country} `
+  return type?.address?.country !== null ??
+    type?.address?.country !== ""
+    ? type?.address?.country === "Philippines"
+      ? (type?.address?.street ? (type?.address?.street + ", ") : "") +
+      (type?.address?.baranggay ? (type?.address?.baranggay + ", ") : "") +
+      (type?.address?.city ? (type?.address?.city + ", ") : "") +
+      (type?.address?.province ? (type?.address?.province + ", ") : "") +
+      (type?.address?.region ? (type?.address?.region + ", ") : "") +
+      (type?.address?.country ? (type?.address?.country + ", ") : "") +
+      (type?.address?.zip ?? "")
+      :
+      (type?.address?.street ? (type?.address?.street + ", ") : "") +
+      (type?.address?.city ? (type?.address?.city + ", ") : "") +
+      (type?.address?.province ? (type?.address?.province + ", ") : "") +
+      (type?.address?.country ? (type?.address?.country + ", ") : "") +
+      (String(type?.address?.zip) ?? "")
+    : "--"
 }
 
 export const getWorkMode = (type: EmployeeType) => {

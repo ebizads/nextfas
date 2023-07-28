@@ -107,9 +107,9 @@ export const CreateEmployee_new = (props: {
     mutate({
       name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
         }`,
-      employee_id:
-        `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}` +
-        (String(employee.teamId).padStart(2, "0") + props.generateId),
+      // employee_id:
+      //   `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}` +
+      //   (String(employee.teamId).padStart(2, "0") + props.generateId),
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
       //     .replace(" ", "")
@@ -316,20 +316,13 @@ export const CreateEmployee_new = (props: {
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
-          <div className="col-span-4">
+          {/* <div className="col-span-4">
             <label className="sm:text-sm">Employee Number</label>
-            {/* <InputField
-               
-              type={"text"}
-              label={""}
-              name={"employee_id"}
-              register={register}
-            /> */}
             <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
               {`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}${String(searchValue).padStart(2, "0") + props.generateId
                 }`}
             </p>
-          </div>
+          </div> */}
           <div className="col-span-4">
             <label className="sm:text-sm">Designation / Position</label>
             <InputField

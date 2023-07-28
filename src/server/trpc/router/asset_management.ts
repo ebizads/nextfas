@@ -37,7 +37,6 @@ export const assetManagementRouter = t.router({
               depreciation_lifetime: z.number().nullish(),
               depreciation_rule: z.string().nullish(),
               asset_lifetime: z.number().nullish(),
-              asset_quantity: z.number().nullish(),
               asset_location: z.string().nullish(),
               accounting_method: z.string().nullish(),
             })

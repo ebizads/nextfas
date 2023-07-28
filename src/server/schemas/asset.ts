@@ -98,7 +98,7 @@ export const AssetTransformInput = z.object({
 
   assetTagId: z.number(),
   modelId: z.number(),
-  custodianId: z.number(),
+  custodianId: z.number().nullish(),
   departmentId: z.number().nullish(),
   vendorId: z.number(),
   subsidiaryId: z.number().nullish(),

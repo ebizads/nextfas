@@ -57,6 +57,7 @@ const CreateAssetAccordion = () => {
       console.log(JSON.stringify(error))
     },
     onSuccess() {
+      reset()
       router.push("/assets")
     },
   })
@@ -394,7 +395,7 @@ const CreateAssetAccordion = () => {
 
   useEffect(() => {
     if (asset_number) {
-      const id = `${asset_number}` + "-" + `${generateAssetNumber}`
+      const id = `${asset_number}` + "-"
       console.log(id)
       setValue("number", id)
       JsBarcode("#barcode2", id, {
@@ -428,7 +429,6 @@ const CreateAssetAccordion = () => {
         setIsLoading(false)
       }, 3000)
 
-      reset()
       setClassId(null)
       setCategoryId(null)
       setTypeId(null)

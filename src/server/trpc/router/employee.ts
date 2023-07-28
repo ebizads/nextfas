@@ -7,6 +7,7 @@ import { create, map } from "lodash"
 import { useState } from "react"
 import moment from "moment"
 import { env } from "../../../env/client.mjs"
+import { EmployeeType } from "../../../types/generic"
 
 export const employeeRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -487,34 +488,69 @@ export const employeeRouter = t.router({
   create: authedProcedure
     .input(EmployeeCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const { address, profile, ...rest } = input
+      const { address, profile, employee_id, ...rest } = input
 
-      try {
-        await ctx.prisma.employee.create({
-          data: {
-            ...rest,
-            profile: {
-              create: profile ?? undefined,
-            },
-            address: {
-              connectOrCreate: {
-                where: {
-                  id: 0,
+      const allEmp = await ctx.prisma.employee.findMany({
+        include: {
+          address: true,
+          profile: true,
+          team: {
+            include: {
+              department: {
+                include: {
+                  location: true,
                 },
-                create: address,
               },
             },
           },
-        })
+        },
+        where: {
+          id: 999999,
+        },
+      })
 
-        return "User created successfully"
-      } catch (error) {
-        console.log(error)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: JSON.stringify(error),
-        })
+      const empAll: EmployeeType[] = allEmp as EmployeeType[]
+
+      let employeeNumber = ""
+
+      for (
+        let x = 0;
+        x <= (empAll ? empAll?.length : 0) + 1;
+
+      ) {
+        if (
+          empAll?.some((item) =>
+            item?.employee_id?.includes(String(x + 1).padStart(4, "0"))
+          )
+        ) {
+          x++
+        } else {
+          employeeNumber = String(x + 1).padStart(4, "0")
+          break;
+        }
       }
+
+      const id: string = employee_id + employeeNumber
+
+      await ctx.prisma.employee.create({
+        data: {
+          ...rest,
+          employee_id: id,
+          profile: {
+            create: profile ?? undefined,
+          },
+          address: {
+            connectOrCreate: {
+              where: {
+                id: 0,
+              },
+              create: address,
+            },
+          },
+        },
+      })
+
+      return "User created successfully"
     }),
   createMany: authedProcedure
     .input(z.array(EmployeeCreateInput))

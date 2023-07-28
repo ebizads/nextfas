@@ -277,7 +277,6 @@ model AssetManagement {
   remarks               String?
   residual_percentage   Float?
   asset_location        String?
-  asset_quantity        Int?
   asset_lifetime        Int?
   asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
@@ -454,7 +453,7 @@ model Asset {
   departmentId      Int?
   subsidiaryId      Int?
   addedById         Int?
-  status            String?
+  status           String?
   userArchiveId     Int?
   category          Int?
   invoiceNum        String?

@@ -9,6 +9,9 @@ import { TRPCError } from "@trpc/server"
 import { authedProcedure, t } from "../trpc"
 import { VendorEditInput } from "../../schemas/model"
 import { type } from "os"
+import { trpc } from "../../../utils/trpc"
+import { AssetType } from "../../../types/generic"
+import { useMemo } from "react"
 
 export const assetRouter = t.router({
   findOne: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
@@ -392,6 +395,7 @@ export const assetRouter = t.router({
     .input(AssetCreateInput)
     .mutation(async ({ ctx, input }) => {
       const {
+        number,
         management,
         custodianId,
         departmentId,
@@ -405,9 +409,61 @@ export const assetRouter = t.router({
         ...rest
       } = input
 
+      const allAssets = await ctx.prisma.asset.findMany({
+
+        include: {
+          model: {
+            include: {
+              type: true,
+              category: true,
+              class: true,
+            },
+          },
+          custodian: true,
+          department: {
+            include: {
+              location: true,
+              company: true,
+              teams: true,
+            },
+          },
+          assetTag: true,
+          parent: true,
+          project: true,
+          vendor: true,
+          subsidiary: true,
+          management: true,
+          addedBy: true,
+        },
+      })
+
+      const assetsAll: AssetType[] = allAssets as AssetType[]
+
+      let assetNumber = ""
+
+      for (
+        let x = 0;
+        x <= (allAssets ? allAssets?.length : 0) + 1;
+
+      ) {
+        if (
+          assetsAll?.some((item) =>
+            item?.number?.includes(String(x + 1).padStart(4, "0"))
+          )
+        ) {
+          x++
+        } else {
+          assetNumber = String(x + 1).padStart(4, "0")
+          break;
+        }
+      }
+
+      const id: string = number + assetNumber
+
       const asset = await ctx.prisma.asset.create({
         data: {
           ...rest,
+          number: id,
           model: {
             connectOrCreate: {
               where: {

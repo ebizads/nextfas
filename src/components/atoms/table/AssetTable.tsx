@@ -272,7 +272,7 @@ const AssetDetailsModal = (props: {
                   General Information
                 </p>
                 <div className="mt-4 flex flex-col gap-4 text-sm">
-                  <section className="grid grid-cols-4 gap-4">
+                  {/* <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Employee ID</p>
                       <p className="font-medium">
@@ -298,7 +298,7 @@ const AssetDetailsModal = (props: {
                         {emp.data?.team?.name ?? "--"}
                       </p>
                     </div>
-                  </section>
+                  </section> */}
                   <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <p className="font-light">Company</p>
@@ -326,12 +326,12 @@ const AssetDetailsModal = (props: {
                         {props.asset?.department?.name}
                       </p>
                     </div>
-                    <div className="col-span-1">
+                    {/* <div className="col-span-1">
                       <p className="font-light">Asset Location</p>
                       <p className="w-[70%] truncate font-medium">
                         {props.asset?.management?.asset_location}
                       </p>
-                    </div>
+                    </div> */}
                   </section>
                   {/* <section className="grid grid-cols-4 gap-4">
                                         <div className="col-span-1">

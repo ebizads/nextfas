@@ -95,7 +95,7 @@ export const EditUserInput = z.object({
   inactivityDate: z.date().nullish(),
   lockedAt: z.date().nullish(),
   lockedUntil: z.date().nullish(),
-  attemps: z.number().nullish(),
+  attempts: z.number().nullish(),
   lockedReason: z.string().nullish(),
 
   user_Id: z.string().nullish().optional(),

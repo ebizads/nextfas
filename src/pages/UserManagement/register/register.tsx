@@ -90,7 +90,6 @@ const Register2 = () => {
       // },
       // superviseeId: 0,
       email: "",
-      hired_date: new Date(),
       position: "",
       address: {
         city: "",
@@ -126,8 +125,7 @@ const Register2 = () => {
         password: passwordCheck,
         user_Id: env.NEXT_PUBLIC_CLIENT_USER_ID + userId,
         teamId: user.teamId,
-        hired_date: new Date(),
-        position: user.position,
+        position: user.position ?? "",
         profile: {
           first_name: user.profile.first_name,
           middle_name: user.profile.middle_name,
@@ -503,7 +501,6 @@ const Register2 = () => {
               variant="unstyled"
               value={date}
               onChange={(value) => {
-                setValue("hired_date", value)
                 value === null ? setDate(new Date()) : setDate(value)
               }}
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"

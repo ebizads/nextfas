@@ -21,7 +21,7 @@ import all_cities from "../../../json/cities.json"
 import { clearAndGoBack, generateCertificate } from "../../../lib/functions"
 import { EditUserInput } from "../../../server/schemas/user"
 
-export type User = z.infer<typeof EditUserInput>
+type User = z.infer<typeof EditUserInput>
 // export type User = z.infer<typeof UserCreateInput>
 
 export const UpdateUser = (props: {
@@ -42,7 +42,6 @@ export const UpdateUser = (props: {
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [certificateCheck, setCertificate] = useState<string>("")
-  const [date, setDate] = useState(props.user?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -83,7 +82,11 @@ export const UpdateUser = (props: {
       setCompleteModal(true)
       utils.user.findAll.invalidate()
       setImage([])
+      router.back()
     },
+    onError() {
+      console.log(error)
+    }
   })
 
   const {
@@ -99,10 +102,10 @@ export const UpdateUser = (props: {
   useEffect(() => {
     console.log(("test") + JSON.stringify(user))
     reset(props.user as User)
-    setCertificate(generateCertificate)
+    setCertificate(generateCertificate())
 
     console.log("error mo to", JSON.stringify(error))
-  }, [props.user, reset, user])
+  }, [error, props.user, reset, user, setCertificate])
 
   const onSubmit = async (userForm: User) => {
     // Register function
@@ -122,7 +125,7 @@ export const UpdateUser = (props: {
       inactivityDate: new Date(),
       lockedAt: null,
       lockedUntil: null,
-      attemps: null,
+      attempts: 0,
       lockedReason: null,
       teamId: userForm.teamId,
       id: userForm.id,
@@ -162,7 +165,7 @@ export const UpdateUser = (props: {
     setCountry("")
     console.log("country", countries)
     return countries
-  }, [])
+  }, [country])
 
   const filteredRegion = useMemo(() => {
     const upperLevel = Object.entries(ph_regions)
@@ -350,7 +353,7 @@ export const UpdateUser = (props: {
               disabled={!isEditable}
               type={"text"}
               label={""}
-              name={"user_id"}
+              name={"user_Id"}
               register={register}
             />
 

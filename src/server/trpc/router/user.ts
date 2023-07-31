@@ -240,7 +240,7 @@ export const userRouter = t.router({
   update: authedProcedure
     .input(EditUserInput)
     .mutation(async ({ input, ctx }) => {
-      const { address, id, profile, validateTable, ...rest } = input
+      const { address, id, profile, validateTable, attempts, ...rest } = input
       try {
         await ctx.prisma.user.update({
           where: {
@@ -248,7 +248,7 @@ export const userRouter = t.router({
           },
           data: {
             ...rest,
-
+            attempts: attempts ?? 0,
             validateTable: {
               update: validateTable ?? undefined,
             },
@@ -271,34 +271,27 @@ export const userRouter = t.router({
     .input(EditUserInput)
     .mutation(async ({ input, ctx }) => {
       const { address, id, profile, validateTable, ...rest } = input
-      try {
-        await ctx.prisma.user.update({
-          where: {
-            id,
+      await ctx.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          ...rest,
+          lockedAt: null,
+          lockedUntil: null,
+          lockedReason: null,
+          attempts: 0,
+          validateTable: {
+            update: validateTable ?? undefined,
           },
-          data: {
-            ...rest,
-            lockedAt: null,
-            lockedUntil: null,
-            lockedReason: null,
-            attempts: 0,
-            validateTable: {
-              update: validateTable ?? undefined,
-            },
-            address: {
-              update: address ?? undefined,
-            },
-            profile: {
-              update: profile ?? undefined,
-            },
+          address: {
+            update: address ?? undefined,
           },
-        })
-      } catch (error) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: JSON.stringify(error),
-        })
-      }
+          profile: {
+            update: profile ?? undefined,
+          },
+        },
+      })
     }),
   delete: authedProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
     return await ctx.prisma.user.update({

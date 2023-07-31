@@ -43,7 +43,6 @@ const UpdateUserModal = (props: {
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [certificateCheck, setCertificate] = useState<string>("")
-  const [date, setDate] = useState(props.user?.hired_date ?? new Date())
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -123,7 +122,7 @@ const UpdateUserModal = (props: {
       inactivityDate: new Date(),
       lockedAt: null,
       lockedUntil: null,
-      attemps: null,
+      attempts: null,
       lockedReason: null,
       teamId: userForm.teamId,
       id: userForm.id,

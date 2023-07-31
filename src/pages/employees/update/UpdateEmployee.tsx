@@ -129,7 +129,7 @@ export const UpdateEmployee = (props: {
     }
   }
   const filteredAllCountries = useMemo(() => {
-    console.log("checkcount: ", country)
+    // console.log("checkcount: ", country)
     const countries = all_countries.map((countries) => {
       return countries.name
     })
@@ -543,6 +543,11 @@ export const UpdateEmployee = (props: {
               data={filteredAllCountries}
               onChange={(value) => {
                 setValue("address.country", value ?? "")
+                setValue("address.region", "")
+                setValue("address.province", "")
+                setValue("address.city", "")
+                setValue("address.baranggay", "")
+
                 setCountry(value ?? "")
                 setRegion("")
                 setProvince("")
@@ -584,7 +589,7 @@ export const UpdateEmployee = (props: {
               searchable
               // required
               id="address.region"
-              placeholder={props.employee?.address?.region ?? "Region"}
+              placeholder={country ? "Region" : (props.employee?.address?.region ?? "Region")}
               data={filteredRegion ?? [""]}
               disabled={country === "" || country !== "Philippines"}
               onChange={(value) => {
@@ -631,7 +636,7 @@ export const UpdateEmployee = (props: {
               searchable
               // required
               id="address.province"
-              placeholder={props.employee?.address?.province ?? "Province/States"}
+              placeholder={country ? "Province/States" : (props.employee?.address?.province ?? "Province/States")}
               data={filteredProvince}
               disabled={country === "Philippines " ? (region === "") : country === ""}
               onChange={(value) => {
@@ -678,7 +683,7 @@ export const UpdateEmployee = (props: {
             <Select
               name={"address.city"}
               id="address.city"
-              placeholder={props.employee?.address?.city ?? "City"}
+              placeholder={country ? "City" : (props.employee?.address?.city ?? "City")}
               searchable
               // required
               disabled={province === ""}
@@ -726,7 +731,7 @@ export const UpdateEmployee = (props: {
             <Select
               name={"address.barangay"}
               id="address.barangay"
-              placeholder={props.employee?.address?.baranggay ?? "Barangay"}
+              placeholder={country ? "Baranggay" : (props.employee?.address?.baranggay ?? "Barangay")}
               data={filteredBarangay}
               searchable
               required

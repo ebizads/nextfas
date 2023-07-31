@@ -68,6 +68,13 @@ export const CreateEmployee_new = (props: {
     return list ?? []
   }, [teams]) as SelectValueType[]
 
+  const teamList1 = useMemo(() => {
+    const list = teams?.teams.map((team) => {
+      return { value: team.id.toString(), label: team.department?.name }
+    }) as SelectValueType[]
+    return list ?? []
+  }, [teams]) as SelectValueType[]
+
   const {
     register,
     handleSubmit,
@@ -410,20 +417,38 @@ export const CreateEmployee_new = (props: {
           </div>
           <div className="col-span-6">
             <label className="sm:text-sm">Department</label>
-            {/* <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.employee?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
-            <p
-              className={
-                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >{"--"}</p>
+            <Select
+              placeholder="--"
+              onChange={(value) => {
+                setValue("teamId", Number(value))
+                onSearchChange(value ?? "")
+              }}
+              disabled
+              value={searchValue}
+              data={teamList1}
+              styles={(theme) => ({
+                item: {
+                  // applies styles to selected item
+                  "&[data-selected]": {
+                    "&, &:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "light"
+                          ? theme.colors.orange[3]
+                          : theme.colors.orange[1],
+                      color:
+                        theme.colorScheme === "dark"
+                          ? theme.white
+                          : theme.black,
+                    },
+                  },
+
+                  // applies styles to hovered item (with mouse or keyboard)
+                  "&[data-hovered]": {},
+                },
+              })}
+              variant="unstyled"
+              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-2 py-0.5 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  disabled:bg-gray-200 disabled:text-gray-400 "
+            />
           </div>
         </div>
 
@@ -465,16 +490,16 @@ export const CreateEmployee_new = (props: {
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
 
-          <div className="col-span-4">
+          {/* <div className="col-span-4">
             <label className="sm:text-sm">Device</label>
             <Select
-              placeholder="Select Work Location"
+              placeholder="Select Device"
               onChange={(value) => {
                 setValue("workStation", String(value) ?? " ")
                 onSearchWorkStation(value ?? " ")
               }}
               value={workStationValue}
-              data={["Desktop", "Latop"]}
+              data={["Desktop", "Latop", "None"]}
               styles={(theme) => ({
                 item: {
                   // applies styles to selected item
@@ -498,7 +523,7 @@ export const CreateEmployee_new = (props: {
               variant="unstyled"
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
-          </div>
+          </div> */}
 
         </div>
 

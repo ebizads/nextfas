@@ -158,14 +158,14 @@ export const UpdateUser = (props: {
   // useEffect(() => { console.log("department: " + props.user?.team?.department?.name) })
 
   const filteredAllCountries = useMemo(() => {
-    console.log("checkcount: ", country)
+    // console.log("checkcount: ", country)
     const countries = all_countries.map((countries) => {
       return countries.name
     })
     setCountry("")
     console.log("country", countries)
     return countries
-  }, [country])
+  }, [])
 
   const filteredRegion = useMemo(() => {
     const upperLevel = Object.entries(ph_regions)
@@ -202,7 +202,7 @@ export const UpdateUser = (props: {
     } else {
       if (country) {
         const states = all_states
-        console.log("states", all_states)
+        // console.log("states", all_states)
         const specStates = states.filter((states) => {
           return states.country_name === country
         })
@@ -212,7 +212,7 @@ export const UpdateUser = (props: {
         if (finalStates.length === 0) {
           return newProvince
         }
-        console.log("states:", specStates)
+        console.log("states:", finalStates)
         return finalStates
       }
       return newProvince
@@ -579,6 +579,11 @@ export const UpdateUser = (props: {
               data={filteredAllCountries}
               onChange={(value) => {
                 setValue("address.country", value ?? "")
+                setValue("address.region", "")
+                setValue("address.province", "")
+                setValue("address.city", "")
+                setValue("address.baranggay", "")
+
                 setCountry(value ?? "")
                 setRegion("")
                 setProvince("")
@@ -620,7 +625,7 @@ export const UpdateUser = (props: {
               searchable
               // required
               id="address.region"
-              placeholder={props.user?.address?.region ?? "Region"}
+              placeholder={country ? "Region" : (props.user?.address?.region ?? "Region")}
               data={filteredRegion ?? [""]}
               disabled={country === "" || country !== "Philippines"}
               onChange={(value) => {
@@ -667,9 +672,9 @@ export const UpdateUser = (props: {
               searchable
               // required
               id="address.province"
-              placeholder={props.user?.address?.province ?? "Province/States"}
+              placeholder={country ? "Province" : (props.user?.address?.province ?? "Province/States")}
               data={filteredProvince}
-              disabled={country === "Philippines " ? (region === "") : country === ""}
+              disabled={country === "Philippines " ? (region === "") : (country === "" || filteredProvince.length === 0)}
               onChange={(value) => {
                 setValue("address.province", value ?? "")
                 setProvince(value ?? "")
@@ -698,7 +703,7 @@ export const UpdateUser = (props: {
                 },
               })}
               variant="unstyled"
-              className={(country === "Philippines " ? (region === "") : country === "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={(country === "Philippines " ? (region === "") : (country === "" || filteredProvince.length === 0)) ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
             />
             {/* <InputField
                 type={"text"}
@@ -714,7 +719,7 @@ export const UpdateUser = (props: {
             <Select
               name={"address.city"}
               id="address.city"
-              placeholder={props.user?.address?.city ?? "City"}
+              placeholder={country ? "City" : (props.user?.address?.city ?? "City")}
               searchable
               // required
               disabled={province === ""}
@@ -762,7 +767,7 @@ export const UpdateUser = (props: {
             <Select
               name={"address.barangay"}
               id="address.barangay"
-              placeholder={props.user?.address?.baranggay ?? "Barangay"}
+              placeholder={country ? "Barangay" : (props.user?.address?.baranggay ?? "Barangay")}
               data={filteredBarangay}
               searchable
               required

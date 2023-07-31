@@ -92,18 +92,23 @@ export const employeeRouter = t.router({
                 },
               },
               where: {
+                name: {
+                  contains: input?.search?.name,
+                  mode: 'insensitive'
+                },
+
                 NOT: {
                   deleted: true,
 
                 },
                 OR: {
+
                   NOT: {
                     profile: null,
-                  }
+                  },
                 },
                 // hired_date: input?.filter?.hired_date,
-                name: { contains: input?.search?.name, mode: 'insensitive' },
-                employee_id: { contains: input?.search?.employee_id },
+
                 // email: { contains: input?.search?.email },
                 // team: {
                 //   department: {

@@ -38,7 +38,7 @@ import { useUpdateAssetStore } from "../../../store/useStore"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import InputNumberField from "../forms/InputNumberField"
-import { getAddress, getWorkMode } from "../../../lib/functions"
+import { getAddress, getBuilding, getWorkMode } from "../../../lib/functions"
 import { Location } from "@prisma/client"
 import { ticketTableCreate } from "../../../server/schemas/ticket"
 import { clearAndGoBack } from "../../../lib/functions"
@@ -166,6 +166,8 @@ const UpdateAssetAccordion = () => {
   const [typeId, setTypeId] = useState<string | null>(null)
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [departmentId, setDepartmentId] = useState<string | null>(null)
+  const [buildingId, setBuildingId] = useState<string | null>(null)
+
   const [workMode, setWorkMode] = useState<string | null>(null)
   const [employeeId, setEmployeeId] = useState<string | null>(null)
 
@@ -263,6 +265,15 @@ const UpdateAssetAccordion = () => {
     return null
   }, [companyId, departmentData])
 
+  const buildingLocation = useMemo(() => {
+    if (departmentId) {
+      const department = departmentData?.departments.filter(
+        (department) => department.id === Number(departmentId)
+      )[0]
+      return department?.building ?? null
+    }
+  }, [departmentId, departmentData])
+
   const [description, setDescription] = useState<string | null>(
     selectedAsset?.description ?? null
   )
@@ -273,9 +284,6 @@ const UpdateAssetAccordion = () => {
 
   const [period, setPeriod] = useState<number | null>(
     selectedAsset?.management?.depreciation_period ?? null
-  )
-  const [quantity, setQuantity] = useState<number | null>(
-    selectedAsset?.management?.asset_quantity ?? null
   )
 
   const [dep_purchase, setPurchase] = useState<Date | null>(
@@ -421,6 +429,11 @@ const UpdateAssetAccordion = () => {
       })
     }
   }, [assetId, asset_number, companyId, getValues, selectedAsset, setValue])
+
+  useEffect(() => {
+    setBuildingId(String(buildingLocation?.id))
+  }, [buildingLocation])
+
   const employee_workMode = useMemo(() => {
     if (employeeId) {
       const workMode = employeeData?.employees.filter(
@@ -481,6 +494,7 @@ const UpdateAssetAccordion = () => {
       setCategoryId(null)
       setTypeId(null)
       setCompanyId(null)
+      setBuildingId(null)
       setDepartmentId(null)
       setSelectedAsset(null)
       router.push("/assets")
@@ -716,7 +730,7 @@ const UpdateAssetAccordion = () => {
             </Accordion.Control>
             <Accordion.Panel>
               <div className="grid gap-7">
-                <div className="col-span-9 grid grid-cols-9 gap-7">
+                <div className="col-span-9 grid grid-cols-10 gap-7">
                   <div className="col-span-4">
                     <ClassTypeSelect
                       query={companyId}
@@ -731,7 +745,7 @@ const UpdateAssetAccordion = () => {
                     />
                     <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
                   </div>
-                  <div className="col-span-8">
+                  <div className="col-span-4">
                     <div className="text-gray-700">
                       <div className="flex flex-1 flex-col gap-2">
                         <label htmlFor="address" className="text-sm">
@@ -754,27 +768,47 @@ const UpdateAssetAccordion = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-12 grid grid-cols-8 gap-7">
-                    <div className="col-span-2">
-                      <ClassTypeSelect
-                        query={departmentId}
-                        setQuery={setDepartmentId}
-                        required
-                        disabled={!Boolean(companyId)}
-                        name={"departmentId"}
-                        setValue={setValue}
-                        value={getValues("departmentId")?.toString()}
-                        title={"Department"}
-                        placeholder={
-                          !Boolean(companyId)
-                            ? "Select company first"
-                            : "Select department type"
+                  <div className="col-span-4">
+                    <ClassTypeSelect
+                      query={departmentId}
+                      setQuery={setDepartmentId}
+                      required
+                      disabled={!Boolean(companyId)}
+                      name={"departmentId"}
+                      setValue={setValue}
+                      value={getValues("departmentId")?.toString()}
+                      title={"Department"}
+                      placeholder={
+                        !Boolean(companyId)
+                          ? "Select company first"
+                          : "Select department type"
+                      }
+                      data={departmentList ?? []}
+                    />
+                    <AlertInput>{errors?.departmentId?.message}</AlertInput>
+                  </div>
+                  <div className="col-span-12 grid grid-cols-9 gap-7">
+                    <div className="col-span-3">
+                      <label htmlFor="address" className="text-sm">
+                        Building
+                      </label>
+                      <input
+                        type="text"
+                        id={"building"}
+                        className={
+                          "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                         }
-                        data={departmentList ?? []}
+                        placeholder="Building will appear here"
+                        value={
+                          buildingLocation
+                            ? getBuilding(buildingLocation)
+                            : ""
+                        }
+                        disabled
                       />
-                      <AlertInput>{errors?.departmentId?.message}</AlertInput>
+                      <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-3">
                       <div className="text-gray-700">
                         <div className="flex flex-col gap-2">
                           <label htmlFor="floor" className="text-sm">
@@ -799,7 +833,7 @@ const UpdateAssetAccordion = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-3">
                       <div className="text-gray-700">
                         <div className="flex flex-col gap-2">
                           <label htmlFor="address" className="text-sm">
@@ -843,7 +877,7 @@ const UpdateAssetAccordion = () => {
                       />
                       {/* <AlertInput>{errors?.custodianId?.message}</AlertInput> */}
                     </div>
-                    <div className="col-span-2 space-y-1">
+                    {/* <div className="col-span-2 space-y-1">
                       <label htmlFor="workMode" className="text-sm">
                         Work Mode
                       </label>
@@ -861,9 +895,9 @@ const UpdateAssetAccordion = () => {
                         }
                         disabled
                       />
-                    </div>
+                    </div> */}
                   </div>
-                  <div className="col-span-12 grid grid-cols-10 gap-7 ">
+                  <div className="col-span-12 grid grid-cols-6 gap-7 ">
                     <div className="col-span-2">
                       <ClassTypeSelect
                         query={classId}
@@ -918,7 +952,7 @@ const UpdateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-4">
+                    {/* <div className="col-span-4">
                       <InputField
                         register={register}
                         label="Asset Location"
@@ -926,7 +960,7 @@ const UpdateAssetAccordion = () => {
                         name="management.asset_location"
                         required
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="col-span-9 grid grid-cols-10 gap-7">

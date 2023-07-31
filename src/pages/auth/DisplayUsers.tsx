@@ -14,6 +14,7 @@ import PaginationPopOver from "../../components/atoms/popover/PaginationPopOver"
 import FilterPopOver from "../../components/atoms/popover/FilterPopOver"
 import { redirect } from "next/dist/server/api-utils"
 import Link from "next/link"
+import { useSearchStore } from "../../store/useStore"
 
 type SearchType = {
   value: string
@@ -47,8 +48,7 @@ const DisplayUsers = (props: {
   const [date, setDate] = useState<Date>(new Date())
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [search, setSearch] = useState<string>("")
-
+  const { setSearch } = useSearchStore()
   const utils = trpc.useContext()
 
   // const Search = (props: { data: SearchType[] }) => {

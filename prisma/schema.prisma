@@ -69,7 +69,6 @@ model User {
   superviseeId   Int?
   teamId         Int?
   passwordAge    DateTime?
-  hired_date     DateTime?
   position       String?
   user_Id        String?        @unique
   accounts       Account[]
@@ -94,7 +93,6 @@ model UserArchive {
   updatedAt      DateTime  @updatedAt
   deleted        Boolean   @default(false)
   deletedAt      DateTime?
-  hired_date     DateTime?
   old_id         Int       @unique
   position       String?
   teamId         Int?
@@ -453,7 +451,7 @@ model Asset {
   departmentId      Int?
   subsidiaryId      Int?
   addedById         Int?
-  status           String?
+  status            String?
   userArchiveId     Int?
   category          Int?
   invoiceNum        String?

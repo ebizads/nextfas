@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, token }) {
       if (session.user) {
-        session.user.id = token.sub as string
+        session.user.id = Number(token.sub) as number
       }
       return session
     },
@@ -69,6 +69,7 @@ export const authOptions: NextAuthOptions = {
             } else if (dateBetween >= 90) {
               await prisma.userArchive.create({
                 data: {
+
                   user_Id: user?.user_Id ?? "",
                   position: user?.position ?? "",
                   teamId: user?.teamId ?? 0,

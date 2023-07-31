@@ -27,7 +27,7 @@ const DisplayAssets = (props: {
   setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
 
-  const { search, setSearch } = useSearchStore()
+  const { setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)

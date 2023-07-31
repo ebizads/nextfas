@@ -7,7 +7,7 @@ export const userNavigations = [
   {
     name: "User Management",
     icon: "fa-light fa-user-gear",
-    link: "/auth/",
+    link: "/UserManagement/",
     // subType: [
     //   {
     //     icon: "fa-regular fa-users",

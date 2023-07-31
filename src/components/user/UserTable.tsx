@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState } from "react"
-import { useEditableStore, useMinimizeStore } from "../../store/useStore"
+import { useEditableStore, useMinimizeStore, useSelectedUserStore } from "../../store/useStore"
 import { ColumnType } from "../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../headless/modal/modal"
 import { UserType } from "../../types/generic"
 import { userColumns } from "../../lib/table"
 import { getAddressUser, getNameUser, getProperty } from "../../lib/functions"
-import UpdateUserModal from "./UpdateUserModal"
+// import UserDetailsModal from "./UserDetailsModal"
+import { UserDetailsModal } from "./UserDetailsModal"
 import { trpc } from "../../utils/trpc"
 
 const UserTable = (props: {
@@ -18,6 +19,7 @@ const UserTable = (props: {
   columns: ColumnType[]
 }) => {
   const { minimize } = useMinimizeStore()
+  const { selectedUser, setSelectedUser } = useSelectedUserStore()
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [updateRecord, setUpdateRecord] = useState<boolean>(false)
@@ -25,6 +27,8 @@ const UserTable = (props: {
   const [userId, setUserId] = useState<number>(0)
   const { data: user, refetch } = trpc.user.findOne.useQuery(userId)
   const futureDate = new Date()
+
+
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -132,6 +136,7 @@ const UserTable = (props: {
                     onClick={() => {
                       // setIsVisible(setUpdateRecord)
                       setDetails(row)
+                      setSelectedUser(row)
                       setUpdateRecord(true)
                     }}
                   >
@@ -172,20 +177,12 @@ const UserTable = (props: {
 
       {details !== null ? (
         <Modal
-          title={
-            lockedChecker
-              ? editable
-                ? "Update and Validate User Record \uD83D\uDD12"
-                : "User Record \uD83D\uDD12"
-              : editable
-                ? "Update and Validate User Record"
-                : "User Record"
-          }
+          title={"User Record"}
           isVisible={updateRecord}
           setIsVisible={setUpdateRecord}
           className="max-w-4xl"
         >
-          <UpdateUserModal
+          <UserDetailsModal
             user={details as UserType}
             setIsVisible={setUpdateRecord}
           />

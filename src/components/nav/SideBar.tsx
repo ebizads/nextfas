@@ -145,7 +145,7 @@ const SideBar = () => {
             : "text-light-secondary"
             }`}
         >
-          <Link href={"/auth"}>
+          <Link href={"/UserManagement"}>
             <div
               className={`flex items-center ${minimize ? "justify-center" : "justify-start pl-2"
                 } cursor-pointer gap-2 pl-2`}

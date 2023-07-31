@@ -69,7 +69,6 @@ model User {
   superviseeId   Int?
   teamId         Int?
   passwordAge    DateTime?
-  hired_date     DateTime?
   position       String?
   user_Id        String?        @unique
   accounts       Account[]
@@ -94,7 +93,6 @@ model UserArchive {
   updatedAt      DateTime  @updatedAt
   deleted        Boolean   @default(false)
   deletedAt      DateTime?
-  hired_date     DateTime?
   old_id         Int       @unique
   position       String?
   teamId         Int?
@@ -277,7 +275,6 @@ model AssetManagement {
   remarks               String?
   residual_percentage   Float?
   asset_location        String?
-  asset_quantity        Int?
   asset_lifetime        Int?
   asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }

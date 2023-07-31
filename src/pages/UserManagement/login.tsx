@@ -170,7 +170,7 @@ function LoginForm() {
 const Login = () => {
   const router = useRouter();
   function onRegister() {
-    router.push("../auth/register")
+    router.push("../UserManagement/register")
   }
 
   return (

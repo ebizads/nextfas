@@ -742,8 +742,8 @@ const CreateAssetAccordion = () => {
                     />
                     <AlertInput>{errors?.departmentId?.message}</AlertInput>
                   </div>
-                  <div className="col-span-12 grid grid-cols-10 gap-7">
-                    <div className="col-span-2">
+                  <div className="col-span-12 grid grid-cols-9 gap-7">
+                    <div className="col-span-3">
                       <label htmlFor="address" className="text-sm">
                         Building
                       </label>
@@ -764,7 +764,7 @@ const CreateAssetAccordion = () => {
                       <AlertInput>{errors?.subsidiaryId?.message}</AlertInput>
                     </div>
 
-                    <div className="col-span-2">
+                    <div className="col-span-3">
                       <div className="text-gray-700">
                         <div className="flex flex-col gap-2">
                           <label htmlFor="floor" className="text-sm">
@@ -783,7 +783,7 @@ const CreateAssetAccordion = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-3">
                       <div className="text-gray-700">
                         <div className="flex flex-col gap-2">
                           <label htmlFor="address" className="text-sm">
@@ -802,12 +802,13 @@ const CreateAssetAccordion = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-3 hidden">
                       <ClassTypeSelect
                         name={"custodianId"}
                         query={employeeId}
                         setQuery={setEmployeeId}
-                        required
+                        // required
+
                         setValue={setValue}
                         value={getValues("custodianId")?.toString()}
                         title={"Custodian"}
@@ -819,9 +820,9 @@ const CreateAssetAccordion = () => {
                         }
                         data={employeeList ?? []}
                       />
-                      <AlertInput>{errors?.custodianId?.message}</AlertInput>
+                      {/* <AlertInput>{errors?.custodianId?.message}</AlertInput> */}
                     </div>
-                    <div className="col-span-1 flex flex-col gap-2">
+                    <div className="col-span-2 flex flex-col gap-2 hidden">
                       <label htmlFor="workMode" className="text-sm">
                         Work Mode
                       </label>
@@ -845,7 +846,7 @@ const CreateAssetAccordion = () => {
                       />
                     </div>
                   </div>
-                  <div className="col-span-12 grid grid-cols-10 gap-7 ">
+                  <div className="col-span-12 grid grid-cols-6 gap-7 ">
                     <div className="col-span-2">
                       <ClassTypeSelect
                         query={classId}
@@ -900,8 +901,8 @@ const CreateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-4 text-gray-700">
-                      <div className="flex flex-1 flex-col gap-2">
+                    <div className="col-span-4 text-gray-700 hidden">
+                      <div className="flex flex-1 flex-col gap-2 ">
                         <label htmlFor="address" className="text-sm">
                           Asset Location
                         </label>
@@ -1180,7 +1181,7 @@ const CreateAssetAccordion = () => {
                     {errors?.management?.depreciation_period?.message}
                   </AlertInput>
                 </div>
-                <div className="col-span-3">
+                {/* <div className="col-span-3">
                   <InputNumberField
                     register={register}
                     label="Asset Quantity"
@@ -1188,7 +1189,7 @@ const CreateAssetAccordion = () => {
                     value="0"
                     name="management.asset_quantity"
                   />
-                </div>
+                </div> */}
                 <div className="col-span-9">
                   <Textarea
                     placeholder="Remarks"

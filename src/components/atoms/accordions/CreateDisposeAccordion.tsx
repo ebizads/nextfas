@@ -969,14 +969,14 @@ const CreateDisposeAccordion = () => {
                             {asset?.management?.depreciation_period}
                           </p>
                         </div>
-                        <div className="col-span-3">
+                        {/* <div className="col-span-3">
                           <label className="text-sm">
                             Asset Quantity
                           </label>
                           <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
                             {asset?.management?.asset_quantity ?? ""}
                           </p>
-                        </div>
+                        </div> */}
                         <div className="col-span-9">
                           <Textarea
                             value={asset?.remarks ?? ""}

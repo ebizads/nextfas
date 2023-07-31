@@ -9,7 +9,7 @@ export const columns = [
   // { value: "type", name: "Type" },
   { value: "name", name: "Asset Name" },
   // { value: "description", name: "Description" },
-  { value: "custodian", name: "Custodian" },
+  // { value: "custodian", name: "Custodian" },
   // { value: "createdAt", name: "Added Date" },
   { value: "deployment_status", name: "Status" },
   { value: "assetTag", name: "Tag" },

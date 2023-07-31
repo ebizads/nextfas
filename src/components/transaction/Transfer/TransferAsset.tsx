@@ -1262,7 +1262,7 @@ const Transfer = ({ }) => {
                                                     // data={companyList ?? []}
                                                     />
                                                 </div>
-                                                <div className="col-span-3">
+                                                {/* <div className="col-span-3">
                                                     <InputField
                                                         // query={companyId}
                                                         // setQuery={setCompanyId}
@@ -1276,7 +1276,7 @@ const Transfer = ({ }) => {
                                                         disabled
                                                     // data={companyList ?? []}
                                                     />
-                                                </div>
+                                                </div> */}
                                                 <div className="col-span-9">
                                                     <Textarea
                                                         value={asset?.remarks ?? ""}

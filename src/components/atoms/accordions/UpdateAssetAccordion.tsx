@@ -754,7 +754,7 @@ const UpdateAssetAccordion = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-12 grid grid-cols-10 gap-7">
+                  <div className="col-span-12 grid grid-cols-8 gap-7">
                     <div className="col-span-2">
                       <ClassTypeSelect
                         query={departmentId}
@@ -824,13 +824,13 @@ const UpdateAssetAccordion = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-3 hidden">
                       <ClassTypeSelect
                         name={"custodianId"}
                         setValue={setValue}
                         query={employeeId}
                         setQuery={setEmployeeId}
-                        required
+                        // required
                         value={getValues("custodianId")?.toString()}
                         title={"Custodian"}
                         disabled={!Boolean(departmentId)}
@@ -841,9 +841,9 @@ const UpdateAssetAccordion = () => {
                         }
                         data={employeeList ?? []}
                       />
-                      <AlertInput>{errors?.custodianId?.message}</AlertInput>
+                      {/* <AlertInput>{errors?.custodianId?.message}</AlertInput> */}
                     </div>
-                    <div className="col-span-1 space-y-1">
+                    <div className="col-span-2 space-y-1">
                       <label htmlFor="workMode" className="text-sm">
                         Work Mode
                       </label>
@@ -1157,7 +1157,7 @@ const UpdateAssetAccordion = () => {
                     {errors?.management?.depreciation_period?.message}
                   </AlertInput>
                 </div>
-                <div className="col-span-3">
+                {/* <div className="col-span-3">
                   <InputNumberField
                     register={register}
                     value={quantity?.toString() ?? "--"}
@@ -1165,7 +1165,7 @@ const UpdateAssetAccordion = () => {
                     placeholder="Asset Quantity"
                     name="management.asset_quantity"
                   />
-                </div>
+                </div> */}
                 <div className="col-span-9">
                   <Textarea
                     placeholder="Remarks"

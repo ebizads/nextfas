@@ -38,7 +38,7 @@ const Home: NextPage = () => {
             Sign out
           </button>
         ) : (
-          <Link href="/auth/login">
+          <Link href="/UserManagement/login">
             <a className="my-2 rounded bg-amber-300 px-4 py-1 text-white">
               Sign in
             </a>

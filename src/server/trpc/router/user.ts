@@ -66,7 +66,7 @@ export const userRouter = t.router({
             .optional(),
           filter: z
             .object({
-              hired_date: z.date().optional(),
+              // hired_date: z.date().optional(),
               subsidiary: z.string().optional(),
             })
             .optional(),
@@ -219,7 +219,7 @@ export const userRouter = t.router({
             name: user?.name,
             email: user?.email,
             username: user?.username,
-            hired_date: user?.hired_date,
+            // hired_date: user?.hired_date,
             user_type: user?.user_type,
           },
         }),

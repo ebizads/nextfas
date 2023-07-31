@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { Popover } from "@mantine/core"
 import { signOut } from "next-auth/react"
-import ChangePassModal from "../../../pages/auth/ChangePassModal"
+import ChangePassModal from "../../../pages/UserManagement/ChangePassModal"
 import { useSession } from "next-auth/react"
 import { trpc } from "../../../utils/trpc"
 import UserValidateModal from "../../user/UserValidateModal"

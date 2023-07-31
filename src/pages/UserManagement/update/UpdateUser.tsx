@@ -339,7 +339,7 @@ export const UpdateUser = (props: {
           <div className="col-span-4">
             <label className="flex justify-between pb-1 sm:text-sm">
               User Number
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <i
                   className="fa-light fa-pen-to-square cursor-pointer"
                   onClick={() => {
@@ -347,16 +347,20 @@ export const UpdateUser = (props: {
                     handleEditable()
                   }}
                 />
-              </div>
+              </div> */}
             </label>
-            <InputField
+            {/* <InputField
               disabled={!isEditable}
               type={"text"}
               label={""}
               name={"user_Id"}
               register={register}
-            />
-
+            /> */}
+            <p
+              className={
+                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
+            >{`${props.user?.user_Id}`}</p>
             {/* <p
               className={
                 "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
@@ -414,7 +418,8 @@ export const UpdateUser = (props: {
           <div className="col-span-6">
             <label className="sm:text-sm">Team</label>
             <Select
-              placeholder="Pick one"
+              disabled={!isEditable}
+              placeholder={singleTeams?.name ? singleTeams?.name : "Pick One"}
               onChange={(value) => {
                 setValue("teamId", Number(value) ?? 0)
                 onSearchChange(value ?? "0")
@@ -442,7 +447,11 @@ export const UpdateUser = (props: {
                 },
               })}
               variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              className={
+                isEditable
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+              }
             />
             {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
           </div>
@@ -876,7 +885,11 @@ export const UpdateUser = (props: {
                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                 disabled={userLoading}
               >
-                {userLoading ? "Loading..." : "Save"}
+                {userLoading
+                  ? "Loading..."
+                  : lockedChecker
+                    ? "Unlock and save "
+                    : "Save"}
               </button>
             </div>
           }

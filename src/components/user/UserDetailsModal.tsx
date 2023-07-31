@@ -90,11 +90,13 @@ export const UserDetailsModal = (props: {
                   {/* <p className="font-medium">{props.asset?.name}</p> */}
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light"></p>
+                  <p className="font-light">Role</p>
                   <p className="font-medium">
                     {/* {props.asset?.serial_no !== "" */}
                     {/* // ? props.asset?.serial_no */}
                     {/* // : "--"} */}
+                    {props.user?.user_type ?? "--"}
+
                   </p>
                 </div>
               </section>
@@ -105,7 +107,7 @@ export const UserDetailsModal = (props: {
                     {/* {props.asset?.model?.name */}
                     {/* // ? props.asset?.model?.name
                       // : "--"} */}
-                    {/* {props.user?.user_id} */}
+                    {props.user?.user_Id}
                   </p>
                 </div>
                 <div className="col-span-1">
@@ -114,13 +116,13 @@ export const UserDetailsModal = (props: {
                     {/* {props.asset?.parentId !== 0 */}
                     {/* // ? props.asset?.parent?.name */}
                     {/* // : "--"} */}
-                    {/* {props.user?.Userteam.name === null
+                    {props.user?.Userteam?.name === null
                       ? "--"
                       : props.user?.Userteam?.name === undefined
                         ? "--"
                         : props.user?.Userteam?.name === ""
                           ? "--"
-                          : props.user?.Userteam?.name} */}
+                          : props.user?.Userteam?.name}
                   </p>
                 </div>
                 <div className="col-span-1">
@@ -169,7 +171,7 @@ export const UserDetailsModal = (props: {
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Work Station</p>
+                  <p className="font-light"></p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.currency}{" "} */}
                     {/* {props.asset?.management?.residual_value ?? */}
@@ -178,7 +180,7 @@ export const UserDetailsModal = (props: {
                   </p>
                 </div>
                 <div className="col-span-1">
-                  <p className="font-light">Work Mode</p>
+                  <p className="font-light"></p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.residual_percentage ?? "--"}% */}
                     {/* {props.user?.workMode ?? "--"} */}

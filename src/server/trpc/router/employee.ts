@@ -102,7 +102,6 @@ export const employeeRouter = t.router({
 
                 },
                 OR: {
-
                   NOT: {
                     profile: null,
                   },
@@ -127,6 +126,11 @@ export const employeeRouter = t.router({
               where: {
                 NOT: {
                   deleted: true,
+                },
+                OR: {
+                  NOT: {
+                    profile: null,
+                  },
                 },
               },
             }),

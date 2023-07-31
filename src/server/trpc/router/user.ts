@@ -103,6 +103,9 @@ export const userRouter = t.router({
               NOT: {
                 deleted: true,
               },
+              OR: {
+                NOT: { profile: null }
+              }
               // hired_date: input?.filter?.hired_date,
               // name: { contains: input?.search?.name },
               // employee_id: { contains: input?.search?.employee_id },
@@ -125,6 +128,9 @@ export const userRouter = t.router({
               NOT: {
                 deleted: true,
               },
+              OR: {
+                NOT: { profile: null }
+              }
             },
           }),
         ]

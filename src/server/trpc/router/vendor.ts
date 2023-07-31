@@ -110,6 +110,11 @@ export const vendorRouter = t.router({
                 NOT: {
                   deleted: true,
                 },
+                OR: {
+                  NOT: {
+                    address: null,
+                  }
+                }
               },
             }),
           ],

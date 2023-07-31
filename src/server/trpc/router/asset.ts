@@ -145,6 +145,11 @@ export const assetRouter = t.router({
             NOT: {
               deleted: true,
             },
+            OR: {
+              NOT: {
+                id: 999999,
+              }
+            },
           },
         }),
       ])

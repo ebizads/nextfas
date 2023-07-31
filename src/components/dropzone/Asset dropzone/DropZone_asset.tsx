@@ -128,17 +128,15 @@ export default function DropZone_asset({
       const data_structure = {
         id: (ast as (string | number | null)[])[0] as number,
         name: (ast as (string | number | null)[])[1] as string,
-        number: ast[2]
-          ? ((ast as (string | number | null)[])[2] as string)
-          : ((parseId(
-            transformNumber((ast as (string | number | null)[])[13] as number)
+        number: ((parseId(
+          transformNumber((ast as (string | number | null)[])[13] as number)
+        ) +
+          parseId(
+            transformNumber(
+              (ast as (string | number | null)[])[63] as number
+            )
           ) +
-            parseId(
-              transformNumber(
-                (ast as (string | number | null)[])[63] as number
-              )
-            ) +
-            assetId) as string),
+          assetId) as string),
         alt_number: (ast as (string | number | null)[])[3] as string,
         serial_number: (ast as (string | number | null)[])[4] as string,
         barcode: (ast as (string | number | null)[])[5] as string,
@@ -361,8 +359,6 @@ export default function DropZone_asset({
               duplicatedAssets[i]?.management?.residual_percentage ?? 0,
             asset_location:
               duplicatedAssets[i]?.management?.asset_location ?? "",
-            asset_quantity:
-              duplicatedAssets[i]?.management?.asset_quantity ?? 1,
             asset_lifetime:
               duplicatedAssets[i]?.management?.asset_lifetime ?? 0,
             id: duplicatedAssets[i]?.management?.id ?? 0,

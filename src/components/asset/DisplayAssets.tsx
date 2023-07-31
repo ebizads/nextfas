@@ -85,7 +85,7 @@ const DisplayAssets = (props: {
           </div>
           <div className="flex items-center gap-2">
 
-            <button onClick={() => {
+            {/* <button onClick={() => {
               const downloadableAssets = props.assetsSample.map((assets) => {
                 console.log("TRIAl: " + JSON.stringify(assets))
                 if (assets?.['model'] && assets?.['management']) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
@@ -127,7 +127,7 @@ const DisplayAssets = (props: {
             }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
               <i className="fa-solid fa-print text-xs" />
               Download Template
-            </button>
+            </button> */}
             <button onClick={() => {
 
               const downloadableAssets = props.assets.map((assets) => {

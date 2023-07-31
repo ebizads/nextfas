@@ -173,7 +173,7 @@ const Vendors = () => {
                 <i className="fa-solid fa-print text-xs" />
                 Print CVs
               </button> */}
-              <button
+              {/* <button
                 onClick={() => {
                   const downloadableVendors = vendorsSample.map(
                     (vendor) => {
@@ -201,7 +201,7 @@ const Vendors = () => {
               >
                 <i className="fa-solid fa-print text-xs" />
                 Download Template
-              </button>
+              </button> */}
               <button
                 onClick={() => {
                   const downloadableVendors = vendors.map(

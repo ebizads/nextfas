@@ -116,7 +116,7 @@ const DisplayEmployees = (props: {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button
+            {/* <button
               onClick={() => {
                 const downloadableEmployees = props.sampleEmployee.map(
                   (employee) => {
@@ -147,7 +147,7 @@ const DisplayEmployees = (props: {
             >
               <i className="fa-solid fa-print text-xs" />
               Download Template
-            </button>
+            </button> */}
             <button
               onClick={() => {
                 const downloadableEmployees = props.employees.map(

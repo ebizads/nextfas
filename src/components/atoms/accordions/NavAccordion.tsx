@@ -9,11 +9,11 @@ export const navigations = [
     icon: "fa-light fa-boxes-packing",
     link: "#",
     subType: [
-      {
-        name: "Issuance",
-        icon: "fa-light fa-hand-holding-box",
-        link: "/issuance",
-      },
+//      {
+//        name: "Issuance",
+//        icon: "fa-light fa-hand-holding-box",
+//        link: "/issuance",
+//      },
       {
         icon: "fa-light fa-arrow-right-arrow-left",
         name: "Transfer",

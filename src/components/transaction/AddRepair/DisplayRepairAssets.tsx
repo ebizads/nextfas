@@ -11,6 +11,7 @@ import Modal from '../../headless/modal/modal';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
 import { useGenerateStore, useRepairAssetStore, useSearchStore } from '../../../store/useStore';
+import FilterPopOver from '../../atoms/popover/FilterPopOver';
 // import { number } from 'zod';
 
 const DisplayRepairAssets = (props: {
@@ -25,6 +26,7 @@ const DisplayRepairAssets = (props: {
 	// const [ openPopover, setOpenPopover ] = useState<boolean>(false);
 	const [paginationPopover, setPaginationPopover] = useState<boolean>(false);
 	const [openModalDel, setOpenModalDel] = useState<boolean>(false);
+	const [openPopover, setOpenPopover] = useState<boolean>(false)
 
 	const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value));
 
@@ -87,58 +89,16 @@ const DisplayRepairAssets = (props: {
 					<div className="flex items-center gap-2">
 						<div className="flex w-fit items-center gap-2">
 							<div className="flex-1">
-								<div className="w-full py-4">
-									<div className="flex flex-row bg-[#F2F2F2] w-80 border border-[#F2F2F2] rounded-sm py-2">
-										<input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset" onChange={(e) => setSearch(e.currentTarget.value)}>
-										</input>
-										{/* <input
-											type="text"
-											onChange={(event) => {
-												setSearchAsset(event.currentTarget.value);
-												console.log('search value: ' + event.currentTarget.value);
-											}}
-											placeholder="Search/Input Asset Number"
-											className="bg-transparent w-[100%] outlinex-none focus:outline-none text-sm"
-										/>
-										<button
-											onClick={() => {
-												setAssetNumber(searchAsset);
-												console.log('search: ', searchAsset);
-											}}
-										>
-											<Search className="bg-transparent outline-none focus:outline-none" />
-										</button> */}
-									</div>
-								</div>
-
-								<Modal
-									className="max-w-lg"
-									isVisible={searchModal}
-									setIsVisible={setSearchModal}
-									title="NOTICE!!"
-								>
-									<div className="py-2">
-										<p className="text-center text-lg font-semibold">No Data Found!</p>
-									</div>
-								</Modal>
-								<Modal
-									className="max-w-lg"
-									isVisible={validateModal}
-									setIsVisible={setValidateModal}
-									title="NOTICE!!"
-								>
-									<div className="py-2">
-										<p className="text-center text-lg font-semibold">{validateString}</p>
-									</div>
-								</Modal>
+								<input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset Name" onChange={(e) => setSearch(e.currentTarget.value)}>
+								</input>
 							</div>
-							{/* <FilterPopOver
+							<FilterPopOver
 								openPopover={openPopover}
 								setOpenPopover={setOpenPopover}
 								filterBy={filterBy}
 								setFilterBy={setFilterBy}
 								columns={columns}
-							/> */}
+							/>
 						</div>
 						{/* {checkboxes.length > 0 && (
 							<button

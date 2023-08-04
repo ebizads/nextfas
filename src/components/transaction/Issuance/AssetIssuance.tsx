@@ -2,56 +2,33 @@ import { Pagination, Select, Tabs } from "@mantine/core";
 import Link from "next/link";
 import React, { useState, useEffect } from "react"
 //import { downloadExcel } from "../../lib/functions";
-import { disposalColumn } from "../../../lib/table";
+import { issuanceColumn } from "../../../lib/table";
 //import { ExcelExportType } from "../../types/employee";
 import FilterPopOver from "../../atoms/popover/FilterPopOver";
 import PaginationPopOver from "../../atoms/popover/PaginationPopOver";
-import DisposalTable from "../../atoms/table/DisposalTable";
-import { DisposeType } from "../../../types/generic";
-import { useDisposalStatusStore } from "../../../store/useStore";
-// type SearchType = {
-//     value: string
-//     label: string
-// }
+import { IssuanceType } from "../../../types/generic";
+import { useIssuanceStatusStore } from "../../../store/useStore";
+import IssuanceTable from "../../atoms/table/IssuanceTable";
 
-// const Search = (props: { data: SearchType[] }) => {
-//     const [value, setValue] = useState<string | null>(null)
-//     return (
-//         <Select
-//             value={value}
-//             placeholder="Search"
-//             searchable
-//             nothingFound={`Cannot find option`}
-//             onChange={setValue}
-//             clearable
-//             data={[...props.data]}
-//             icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
-//         />
-//     )
-// }
-
-
-const Dispose = (props: {
+const Issuance = (props: {
     total: number
-    asset: DisposeType[]
+    assets: IssuanceType[]
     assetPage: number
     page: number
     setPage: React.Dispatch<React.SetStateAction<number>>
     limit: number
     setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-    // const [checkboxes, setCheckboxes] = useState<number[]>([])
-    // const [openPopover, setOpenPopover] = useState<boolean>(false)
     const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
-    const [filterBy, setFilterBy] = useState<string[]>(disposalColumn.map((i) => i.value))
 
-    const [activeTab, setActiveTab] = useState<string | null>('pending')
-    const { setStatus } = useDisposalStatusStore()
+    const [filterBy] = useState<string[]>(issuanceColumn.map((i) => i.value))
+    const [activeTab, setActiveTab] = useState<string | null>("notissued")
 
+    const { setStatus } = useIssuanceStatusStore()
     useEffect(() => {
-        setStatus(activeTab ?? "pending")
-    }, [activeTab, setStatus])
-
+        setStatus(activeTab ?? "notissued")
+    }, [activeTab, setStatus]
+    )
 
     return (
         <div className="space-y-4">
@@ -91,34 +68,23 @@ const Dispose = (props: {
                     <div className="px-4">
                         <Tabs value={activeTab} onTabChange={setActiveTab} color="yellow">
                             <Tabs.List>
-                                <Tabs.Tab value="pending"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'pending' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Pending</p></div></Tabs.Tab>
-                                <Tabs.Tab value="approved"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'approved' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Approved</p></div></Tabs.Tab>
-                                <Tabs.Tab value="rejected"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'rejected' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Rejected</p></div></Tabs.Tab>
-                                <Tabs.Tab value="cancelled"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'cancelled' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Cancelled</p></div></Tabs.Tab>
-                                <Tabs.Tab value="done"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'done' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Completed</p></div></Tabs.Tab>
+                                <Tabs.Tab value="notissued"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'notissued' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Not Issued</p></div></Tabs.Tab>
+                                <Tabs.Tab value="issued"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'issued' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Issued</p></div></Tabs.Tab>
 
                             </Tabs.List>
                         </Tabs>
                         <div className="py-4">
-                            <DisposalTable
+                            <IssuanceTable
                                 // checkboxes={checkboxes}
                                 // setCheckboxes={setCheckboxes}
-                                rows={props.asset}
+                                rows={props.assets}
                                 filterBy={filterBy}
-                                columns={disposalColumn.filter((col) => filterBy.includes(col.value))}
+                                columns={issuanceColumn.filter((col) => filterBy.includes(col.value))}
                             // status={activeTab ?? "pending"}
                             />
                         </div>
                     </div>
                 </div>
-
-                {/* <EmployeeTable
-                    checkboxes={checkboxes}
-                    setCheckboxes={setCheckboxes}
-                    rows={props.employees}
-                    filterBy={filterBy}
-                    columns={disposalColumn.filter((col) => filterBy.includes(col.value))}
-                /> */}
             </section>
             <section className="mt-8 flex justify-between px-4">
                 <div className="flex items-center gap-2">
@@ -146,10 +112,4 @@ const Dispose = (props: {
     )
 
 }
-
-export default Dispose
-
-
-
-// <div><p className="text-white rounded-full px-2 py-0.5 bg-tangerine-500">1</p></div>
-
+export default Issuance

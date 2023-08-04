@@ -12,7 +12,7 @@ export const navigations = [
       {
         name: "Issuance",
         icon: "fa-light fa-hand-holding-box",
-        link: "/issuance",
+        link: "/transactions/issuance",
       },
       {
         icon: "fa-light fa-arrow-right-arrow-left",

@@ -74,6 +74,7 @@ model User {
   accounts       Account[]
   address        Address?
   created_assets Asset[]
+  IssuedBy       Issuance[]     @relation("Issuedby")
   profile        Profile?
   sessions       Session[]
   Usersupervisee Team?          @relation("Usersupervisors", fields: [superviseeId], references: [id])
@@ -109,23 +110,25 @@ model validateTable {
 }
 
 model Employee {
-  id           Int       @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   name         String?
   position     String?
-  employee_id  String?   @unique
-  email        String?   @unique
+  employee_id  String?    @unique
+  email        String?    @unique
   teamId       Int?
   superviseeId Int?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deleted      Boolean   @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deleted      Boolean    @default(false)
   deletedAt    DateTime?
   workMode     String?
   workStation  String?
   address      Address?
   owned_assets Asset[]
-  supervisee   Team?     @relation("supervisors", fields: [superviseeId], references: [id])
-  team         Team?     @relation("members", fields: [teamId], references: [id])
+  supervisee   Team?      @relation("supervisors", fields: [superviseeId], references: [id])
+  team         Team?      @relation("members", fields: [teamId], references: [id])
+  issuedTo     Issuance[] @relation("Issuedto")
+  pastIssuance Issuance[] @relation("Pastissuance")
   profile      Profile?
 }
 
@@ -472,8 +475,29 @@ model Asset {
   management        AssetManagement?
   AssetRepair       AssetRepair?
   AssetTransfer     AssetTransfer?
+  AssetIssuance     Issuance?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
+}
+
+model Issuance {
+  id             Int       @id @unique @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  deleted        Boolean   @default(false)
+  pastIssuanceId Int?
+  returnedAt     DateTime?
+  issuedById     Int?
+  issuedToId     Int?
+  issuanceStatus String?
+  issuanceDate   DateTime?
+  assetId        Int?      @unique
+  remarks        String?
+  asset          Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  issuedBy       User?     @relation("Issuedby", fields: [issuedById], references: [id], onDelete: Cascade)
+  issuedTo       Employee? @relation("Issuedto", fields: [issuedToId], references: [id], onDelete: Cascade)
+  pastIssuance   Employee? @relation("Pastissuance", fields: [pastIssuanceId], references: [id], onDelete: Cascade)
 }
 
 model ticketTable {

@@ -54,6 +54,13 @@ export const disposalColumn = [
   { value: "disposalType.name", name: "Disposal Method" },
 ] as ColumnType[]
 
+export const issuanceColumn = [
+  { value: "asset.number", name: "Asset No." },
+  { value: "asset.name", name: "Asset Name" },
+  { value: "issuanceDate", name: "Issuance Date" },
+  { value: "pastIssuance.name", name: "Past Issuance" },
+] as ColumnType[]
+
 export const transferColumn = [
   { value: "asset.number", name: "Asset No." },
   { value: "asset.name", name: "Asset Name" },

@@ -10,6 +10,7 @@ import {
 import { EmployeeCreateInput } from "../server/schemas/employee"
 import { AppRouter } from "../server/trpc/router"
 
+
 //dynamic inference of type
 export type AssetType = inferProcedureOutput<AppRouter["asset"]["findOne"]>
 export type AssetTypeTable = inferProcedureOutput<AppRouter["asset"]["findOneTable"]>
@@ -40,6 +41,10 @@ export type EmployeeType = inferProcedureOutput<
 
 export type DisposeType = inferProcedureOutput<
   AppRouter["assetDisposal"]["findOne"]
+>
+
+export type IssuanceType = inferProcedureOutput<
+  AppRouter["assetIssuance"]["findOne"]
 >
 
 //employee field types

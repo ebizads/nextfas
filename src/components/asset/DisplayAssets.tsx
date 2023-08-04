@@ -41,14 +41,6 @@ const DisplayAssets = (props: {
   const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
   console.log("check", filterBy)
 
-  useEffect(
-    () => {
-      setSearch("");
-
-    },
-    [setSearch]
-
-  );
 
   useEffect(() => {
     setSearch("")

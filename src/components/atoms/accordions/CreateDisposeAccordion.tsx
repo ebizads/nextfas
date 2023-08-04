@@ -99,6 +99,7 @@ const CreateDisposeAccordion = () => {
       ...asset,
       id: asset?.id ?? 0,
       status: "disposal",
+
     })
 
     reset()

@@ -10,7 +10,7 @@ const AssetDisposal = () => {
   const [limit, setLimit] = useState(10)
 
   const { status } = useDisposalStatusStore()
-  const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
+  const { setDisposeAsset } = useDisposeAssetStore()
 
   const { data } = trpc.assetDisposal.findAll.useQuery({
     search: {

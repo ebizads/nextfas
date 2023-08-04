@@ -392,12 +392,7 @@ const DisposeAssetDetailsModal = (props: {
                                                 Months
                                             </p>
                                         </div>
-                                        <div className="col-span-1">
-                                            <p className="font-light">Quantity</p>
-                                            <p className="font-medium">
-                                                {props.asset?.management?.asset_quantity ?? "--"} Units
-                                            </p>
-                                        </div>
+
                                     </section>
                                     <section className="grid grid-cols-4 gap-4">
                                         <div className="col-span-1">
@@ -755,21 +750,7 @@ const DisposeAssetTable = (props: {
                                             {getProperty(col.value, row)}
                                         </td>
                                     ))}
-                                {/* <td className="max-w-[10rem] space-x-2 text-center">
-                <Link href={"/assets/update"} onClick={() => {
-                  setSelectedAsset(row)
-                }}>
-                  <i className="fa-light fa-pen-to-square" />
-                </Link>
-                <button
-                  onClick={() => {
-                    setOpenModalDel(true)
-                    props.setCheckboxes([row?.id ?? idx])
-                  }}
-                >
-                  <i className="fa-light fa-trash-can text-red-500" />{" "}
-                </button>
-              </td> */}
+
                             </tr>
                         ))}
                 </tbody>

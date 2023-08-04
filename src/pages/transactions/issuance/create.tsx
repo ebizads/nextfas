@@ -4,13 +4,13 @@ import CreateDisposeAccordion from "../../../components/atoms/accordions/CreateD
 import Modal from "../../../components/headless/modal/modal";
 import DisplayDisposeAssets from "../../../components/transaction/Disposal/DisplayDisposeAssets";
 import DashboardLayout from "../../../layouts/DashboardLayout";
-import { useDisposeAssetStore, useIssuanceStore } from "../../../store/useStore";
+import { useIssuanceAssetStore } from "../../../store/useStore";
 import { AssetType } from '../../../types/generic';
 import { trpc } from '../../../utils/trpc';
 import { useSearchStore } from "../../../store/useStore";
 
 
-const DisposeNew = () => {
+const IssueNew = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const router = useRouter();
@@ -25,15 +25,15 @@ const DisposeNew = () => {
     const [assets, setAssets] = useState<AssetType[]>([]);
     const [accessiblePage, setAccessiblePage] = useState<number>(0);
 
-    const { issuanceState, setIssuanceState } = useIssuanceStore()
+    const { issuanceAsset, setIssuanceAsset } = useIssuanceAssetStore()
 
     const [validateString, setValidateString] = useState<string>("")
     const [validateModal, setValidateModal] = useState<boolean>(false)
 
 
     useEffect(() => {
-        setIssuanceState(null);
-    }, [setIssuanceState])
+        setIssuanceAsset(null);
+    }, [setIssuanceAsset])
 
 
 
@@ -52,27 +52,27 @@ const DisposeNew = () => {
     );
 
     useEffect(() => {
-        if (issuanceState !== null) {
-            if (issuanceState === null || issuanceState?.deleted === true) {
-                setIssuanceState(null)
-            } else if (issuanceState?.status === "disposal") {
+        if (issuanceAsset !== null) {
+            if (issuanceAsset === null || issuanceAsset?.deleted === true) {
+                setIssuanceAsset(null)
+            } else if (issuanceAsset?.status === "disposal") {
                 setValidateString("The asset is already in for disposal")
                 setValidateModal(true)
-                setIssuanceState(null)
-            } else if (issuanceState?.status === "repair") {
+                setIssuanceAsset(null)
+            } else if (issuanceAsset?.status === "repair") {
                 setValidateString("The asset is in for repair.")
                 setValidateModal(true)
-                setIssuanceState(null)
-            } else if (issuanceState?.status === "transfer") {
+                setIssuanceAsset(null)
+            } else if (issuanceAsset?.status === "transfer") {
                 setValidateString("The asset is being transferred.")
                 setValidateModal(true)
-                setIssuanceState(null)
+                setIssuanceAsset(null)
             }
             else {
-                setIssuanceState(issuanceState);
+                setIssuanceAsset(issuanceAsset);
             }
         }
-    }, [issuanceState, setIssuanceState])
+    }, [issuanceAsset, setIssuanceAsset])
 
     return (
         <DashboardLayout>
@@ -83,8 +83,8 @@ const DisposeNew = () => {
             </div> */}
 
             <div>
-                {issuanceState && <CreateDisposeAccordion />}
-                {!issuanceState && <DisplayDisposeAssets
+                {issuanceAsset && <CreateDisposeAccordion />}
+                {!issuanceAsset && <DisplayDisposeAssets
                     total={data?.count ?? 0}
                     assets={assets}
                     accessiblePage={accessiblePage}
@@ -109,4 +109,4 @@ const DisposeNew = () => {
 
 }
 
-export default DisposeNew
+export default IssueNew

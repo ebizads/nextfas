@@ -725,6 +725,7 @@ export const assetRouter = t.router({
             management: {
               update: management,
             }
+
           },
         })
 

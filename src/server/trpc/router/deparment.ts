@@ -46,8 +46,13 @@ export const departmentRouter = t.router({
               include: {
                 company: true,
                 location: true,
-                teams: true,
+                teams: {
+                  include: {
+                    department: true
+                  }
+                },
                 building: true,
+
 
               },
               skip: input?.page ? input.page * (input.limit ?? 10) : 0,

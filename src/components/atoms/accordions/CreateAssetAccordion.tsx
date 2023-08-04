@@ -190,6 +190,7 @@ const CreateAssetAccordion = () => {
 
   //gets and sets all employee
   const { data: employeeData } = trpc.employee.findAllCustodians.useQuery()
+
   const employeeList = useMemo(
     () =>
       employeeData?.employees

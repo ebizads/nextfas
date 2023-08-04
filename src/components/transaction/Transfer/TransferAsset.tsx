@@ -8,6 +8,7 @@ import {
     CircleNumber2,
     CircleNumber3,
 } from "tabler-icons-react"
+import TypeSelect, { ClassTypeSelect } from "../../atoms/select/TypeSelect"
 import { Accordion, Checkbox, Select, Textarea } from "@mantine/core"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../atoms/forms/InputField"
@@ -37,7 +38,7 @@ const Transfer = ({ }) => {
     const { data: departmentData } = trpc.department.findAll.useQuery()
 
     const [selectedDept, setSelectedDept] = useState<string>("")
-    const [selectedEMP, setSelectedEMP] = useState<string>("")
+    const [selectedEMP, setSelectedEMP] = useState<string | null>("")
 
     const [searchModal, setSearchModal] = useState<boolean>(false)
     const [completeModal, setCompleteModal] = useState<boolean>(false)
@@ -75,6 +76,16 @@ const Transfer = ({ }) => {
         }) as SelectValueType[]
         return list ?? []
     }, [departmentData]) as SelectValueType[]
+
+    const specificDepartment = useMemo(() => {
+        if (selectedEMP) {
+            const department = departmentData?.departments.filter(
+                (department) => department.id === (employee?.team?.department?.id)
+            )[0]
+            setSelectedDept(String(department?.id))
+            return department?.name ?? null
+        }
+    }, [departmentData?.departments, employee?.team?.department?.id, selectedEMP])
 
     useMemo(() => {
         if (asset === null && assetNumber !== "") {
@@ -134,7 +145,12 @@ const Transfer = ({ }) => {
                 ...asset,
                 id: asset?.id ?? 0,
                 status: "transfer",
-                custodianId: Number(selectedEMP)
+                custodianId: Number(selectedEMP),
+                assetTagId: asset?.assetTagId,
+                management: {
+                    id: asset?.management?.id ?? 0
+
+                }
             })
             reset()
         }
@@ -1338,44 +1354,8 @@ const Transfer = ({ }) => {
                             <div className="flex flex-wrap py-2">
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                                     <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Department</label>
-                                        <Select
-                                            disabled={checked}
-                                            placeholder="Select Department"
-                                            onChange={(value) => {
-                                                setSelectedDept(value ?? "")
-                                                setSelectedEMP("")
-                                                setValue("departmentCode", String(value))
-                                                console.log("TEST: " + employeeData)
-                                            }}
-                                            value={selectedDept ?? ""}
-                                            data={departmentList}
-                                            styles={(theme) => ({
-                                                item: {
-                                                    // applies styles to selected item
-                                                    "&[data-selected]": {
-                                                        "&, &:hover": {
-                                                            backgroundColor:
-                                                                theme.colorScheme === "light"
-                                                                    ? theme.colors.orange[3]
-                                                                    : theme.colors.orange[1],
-                                                            color:
-                                                                theme.colorScheme === "dark"
-                                                                    ? theme.white
-                                                                    : theme.black,
-                                                        },
-                                                    },
-
-                                                    // applies styles to hovered item (with mouse or keyboard)
-                                                    "&[data-hovered]": {},
-                                                },
-                                            })}
-                                            variant="unstyled"
-                                            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                                        />
-                                    </div>
-                                    <div className="flex w-full flex-col py-2">
                                         <label className="font-semibold">Employee</label>
+
                                         <Select
                                             disabled={checked}
                                             placeholder="Select Employee"
@@ -1384,6 +1364,7 @@ const Transfer = ({ }) => {
                                                 console.log(employeeList)
                                                 setValue("custodianId", Number(value))
                                             }}
+
                                             value={selectedEMP}
                                             data={employeeList}
                                             styles={(theme) => ({
@@ -1409,6 +1390,24 @@ const Transfer = ({ }) => {
                                             variant="unstyled"
                                             className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                                         />
+                                    </div>
+                                    <div className="flex w-full flex-col">
+                                        <label className="font-semibold py-2">Department</label>
+                                        <input
+                                            type="text"
+                                            id={"department"}
+                                            className={
+                                                "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                                            }
+                                            placeholder="Select an employee"
+                                            value={
+                                                specificDepartment
+                                                    ? (specificDepartment ?? "--")
+                                                    : ""
+                                            }
+                                            disabled
+                                        />
+
                                     </div>
 
                                 </div>
@@ -1476,7 +1475,7 @@ const Transfer = ({ }) => {
                                             setValue("departmentCode", "0")
                                             setValue("custodianId", 0)
                                             setSelectedDept("")
-                                            setSelectedEMP("")
+                                            // setSelectedEMP("")
                                         }}
                                         label="Return Asset"
                                         color="orange"
@@ -1485,7 +1484,7 @@ const Transfer = ({ }) => {
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                                     <div className="flex w-full flex-col py-2">
                                         <div className="flex flex-row gap-2 mb-2">
-                                            <label className="font-semibold w-full">Baranggay</label>
+                                            <label className="font-semibold w-full">Barangay</label>
                                             <label className="font-semibold w-full">City</label>
                                             <label className="font-semibold w-full">State</label>
                                             <label className="font-semibold w-full">Country</label>
@@ -1500,8 +1499,8 @@ const Transfer = ({ }) => {
                                                 className={
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
-                                                placeholder="Baranggay"
-                                                value={department?.company?.address?.street ?? ""}
+                                                placeholder="Barangay"
+                                                value={employee?.address?.street ?? ""}
                                                 disabled
                                             />
 
@@ -1512,7 +1511,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="City"
-                                                value={department?.company?.address?.city ?? ""}
+                                                value={employee?.address?.city ?? ""}
                                                 disabled
                                             />
                                             <input
@@ -1522,7 +1521,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="State"
-                                                value={department?.company?.address?.region ?? ""}
+                                                value={employee?.address?.region ?? ""}
                                                 disabled
                                             />
                                             <input
@@ -1532,7 +1531,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="Country"
-                                                value={department?.company?.address?.country ?? ""}
+                                                value={employee?.address?.country ?? ""}
                                                 disabled
                                             />
                                             <input
@@ -1542,7 +1541,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="Zip"
-                                                value={department?.company?.address?.zip ?? ""}
+                                                value={employee?.address?.zip ?? ""}
                                                 disabled
                                             />
                                         </div>

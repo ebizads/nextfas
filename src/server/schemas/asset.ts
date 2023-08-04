@@ -73,8 +73,8 @@ export const AssetEditInput = z.object({
   subsidiaryId: z.number().optional().nullish(),
   assetProjectId: z.number().optional().nullish(),
   parentId: z.number().optional().nullish(),
-  assetTagId: z.number().optional(),
-  management: ManagementEditInput.optional(),
+  assetTagId: z.number().nullish().optional(),
+  management: ManagementEditInput,
   // model: ModelEditInput.optional(),
 })
 

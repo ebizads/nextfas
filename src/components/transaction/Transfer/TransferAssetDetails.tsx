@@ -393,12 +393,6 @@ const TransferAssetDetailsModal = (props: {
                         Months
                       </p>
                     </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Quantity</p>
-                      <p className="font-medium">
-                        {props.asset?.management?.asset_quantity ?? "--"} Units
-                      </p>
-                    </div>
                   </section>
                   <section className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">

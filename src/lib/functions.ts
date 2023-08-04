@@ -42,9 +42,9 @@ export const getProperty = (
     const getObj = filter.split(".")
 
     const property =
-      Object.getOwnPropertyDescriptor(type, getObj[0] ?? "")?.value ?? "--"
+      Object.getOwnPropertyDescriptor(type, getObj[0] ?? "--")?.value ?? "--"
     const value =
-      Object.getOwnPropertyDescriptor(property, getObj[1] ?? "")?.value ?? "--"
+      Object.getOwnPropertyDescriptor(property, getObj[1] ?? "--")?.value ?? "--"
 
     return Object.getOwnPropertyDescriptor(value, "name")?.value ?? "--"
   }
@@ -60,7 +60,7 @@ export const getProperty = (
 
   //dig deeper if obj is an actual obj
   return property
-    ? Object.getOwnPropertyDescriptor(property, "name")?.value
+    ? (Object.getOwnPropertyDescriptor(property, "name")?.value ?? "--")
     : "--"
 }
 export const getPropertyIssuance = (

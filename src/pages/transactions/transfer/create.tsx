@@ -36,7 +36,7 @@ const TransferNew = () => {
 
   useEffect(() => {
     setTransferAsset(null);
-  }, [])
+  }, [setTransferAsset])
 
 
 

@@ -42,7 +42,7 @@ type DisposeAssetState = {
   setDisposeAsset: (newAsset: AssetType) => void
 }
 
-type IssuanceState = {
+type IssuanceAssetState = {
   issuanceAsset: AssetType
   setIssuanceAsset: (newAsset: AssetType) => void
 }
@@ -130,7 +130,7 @@ export const useDisposeAssetStore = create<DisposeAssetState>((set) => ({
   setDisposeAsset: (newAsset: AssetType) => set({ disposeAsset: newAsset }),
 }))
 
-export const useIssuanceAssetStore = create<IssuanceState>((set) => ({
+export const useIssuanceAssetStore = create<IssuanceAssetState>((set) => ({
   issuanceAsset: null,
   setIssuanceAsset: (newAsset: AssetType) => set({ issuanceAsset: newAsset }),
 }))
@@ -166,7 +166,7 @@ export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
 }))
 
 
-export const useIssuanceStatusState = create<IssuanceStatusState>((set) => ({
+export const useIssuanceStatusStore = create<IssuanceStatusState>((set) => ({
   status: "notissued",
   setStatus: (newStatus: string) => set({ status: newStatus }),
 }))

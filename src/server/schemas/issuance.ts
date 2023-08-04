@@ -3,7 +3,6 @@ import { z } from "zod"
 export const initialIssuance = z.object({
     issuedToId: z.number().nullish(),
     issuanceStatus: z.string(),
-    assetId: z.number(),
 })
 
 export const createIssuance = z.object({

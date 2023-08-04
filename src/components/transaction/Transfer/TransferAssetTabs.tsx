@@ -47,7 +47,7 @@ const DisplayTransferAsset_new = (props: {
     // const [accessiblePage, setAccessiblePage] = useState<number>(0);
 
     const [activeTab, setActiveTab] = useState<string | null>("pending")
-    const { status, setStatus } = useTranferStatusStore()
+    const { setStatus } = useTranferStatusStore()
 
     useEffect(() => {
         setStatus(activeTab ?? "pending")

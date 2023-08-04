@@ -423,7 +423,10 @@ const CreateAssetAccordion = () => {
       console.error("Form Error:", error)
     } else {
       form_data.addedById = Number(session?.user?.id)
+      form_data
       console.log("Submitting: ", form_data)
+      setValue("issuance.issuanceStatus", "notissued")
+      setValue("issuance.issuedToId", null)
       mutate(form_data)
 
       setTimeout(function () {

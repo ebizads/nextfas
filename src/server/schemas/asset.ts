@@ -14,6 +14,7 @@ import { VendorTableEditInput } from "./vendor"
 import { CompanyTableEditInput } from "./company"
 import { EditUserInput } from "./user"
 import { EmployeeEditInput, EmployeeTableEditInput } from "./employee"
+import { createIssuance, initialIssuance } from "./issuance"
 
 //only creates Assets
 // export const AssetOnlyInput = z.object({
@@ -50,6 +51,7 @@ export const AssetCreateInput = z.object({
   parentId: z.number().optional(),
   addedById: z.number().optional(),
   management: ManagementCreateInput,
+  issuance: initialIssuance
 })
 
 export const AssetEditInput = z.object({
@@ -73,8 +75,9 @@ export const AssetEditInput = z.object({
   subsidiaryId: z.number().optional().nullish(),
   assetProjectId: z.number().optional().nullish(),
   parentId: z.number().optional().nullish(),
-  assetTagId: z.number().nullish().optional(),
-  management: ManagementEditInput,
+  assetTagId: z.number().optional(),
+  management: ManagementEditInput.optional(),
+  issuance: createIssuance.optional()
   // model: ModelEditInput.optional(),
 })
 
@@ -106,7 +109,7 @@ export const AssetTransformInput = z.object({
   parentId: z.number().nullish(),
   management: ManagementEditInput,
   model: ModelEditTableInput,
-
+  issuance: createIssuance
 })
 
 export const AssetUpdateInput = z.object({
@@ -133,6 +136,7 @@ export const AssetUpdateInput = z.object({
   assetTagId: z.number().optional(),
   management: ManagementEditInput,
   model: ModelEditInput,
+  issuance: createIssuance,
 })
 
 export const AssetDisposalCreateInput = z.object({

@@ -13,7 +13,7 @@ import IssuanceTable from "../../atoms/table/IssuanceTable";
 const Issuance = (props: {
     total: number
     assets: IssuanceType[]
-    assetPage: number
+    accessiblePage: number
     page: number
     setPage: React.Dispatch<React.SetStateAction<number>>
     limit: number
@@ -22,13 +22,13 @@ const Issuance = (props: {
     const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
 
     const [filterBy] = useState<string[]>(issuanceColumn.map((i) => i.value))
-    const [activeTab, setActiveTab] = useState<string | null>("notissued")
+    const [activeTab, setActiveTab] = useState<string | null>("pending")
 
     const { setStatus } = useIssuanceStatusStore()
     useEffect(() => {
-        setStatus(activeTab ?? "notissued")
-    }, [activeTab, setStatus]
-    )
+        setStatus(activeTab ?? "pending")
+    }, [activeTab, setStatus])
+
 
     return (
         <div className="space-y-4">
@@ -68,9 +68,81 @@ const Issuance = (props: {
                     <div className="px-4">
                         <Tabs value={activeTab} onTabChange={setActiveTab} color="yellow">
                             <Tabs.List>
-                                <Tabs.Tab value="notissued"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'notissued' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Not Issued</p></div></Tabs.Tab>
-                                <Tabs.Tab value="issued"><div className="w-full flex flex-row"><p className={"text-lg uppercase py-2 px-4 " + `${activeTab === 'issued' ? "text-tangerine-500 font-semibold" : "text-[#8F8F8F] font-semibold "}`}>Issued</p></div></Tabs.Tab>
-
+                                <Tabs.Tab value="pending">
+                                    <div className="flex w-full flex-row">
+                                        <p
+                                            className={
+                                                "py-2 px-4 text-lg uppercase " +
+                                                `${activeTab === "pending"
+                                                    ? "font-semibold text-tangerine-500"
+                                                    : "font-semibold text-[#8F8F8F] "
+                                                }`
+                                            }
+                                        >
+                                            Pending
+                                        </p>{" "}
+                                    </div>
+                                </Tabs.Tab>
+                                <Tabs.Tab value="approved">
+                                    <div className="flex w-full flex-row">
+                                        <p
+                                            className={
+                                                "py-2 px-4 text-lg uppercase " +
+                                                `${activeTab === "approved"
+                                                    ? "font-semibold text-tangerine-500"
+                                                    : "font-semibold text-[#8F8F8F] "
+                                                }`
+                                            }
+                                        >
+                                            Approved
+                                        </p>{" "}
+                                    </div>
+                                </Tabs.Tab>
+                                <Tabs.Tab value="rejected">
+                                    <div className="flex w-full flex-row">
+                                        <p
+                                            className={
+                                                "py-2 px-4 text-lg uppercase " +
+                                                `${activeTab === "rejected"
+                                                    ? "font-semibold text-tangerine-500"
+                                                    : "font-semibold text-[#8F8F8F] "
+                                                }`
+                                            }
+                                        >
+                                            Rejected
+                                        </p>{" "}
+                                    </div>
+                                </Tabs.Tab>
+                                <Tabs.Tab value="cancelled">
+                                    <div className="flex w-full flex-row">
+                                        <p
+                                            className={
+                                                "py-2 px-4 text-lg uppercase " +
+                                                `${activeTab === "cancelled"
+                                                    ? "font-semibold text-tangerine-500"
+                                                    : "font-semibold text-[#8F8F8F] "
+                                                }`
+                                            }
+                                        >
+                                            Cancelled
+                                        </p>{" "}
+                                    </div>
+                                </Tabs.Tab>
+                                <Tabs.Tab value="done">
+                                    <div className="flex w-full flex-row">
+                                        <p
+                                            className={
+                                                "py-2 px-4 text-lg uppercase " +
+                                                `${activeTab === "done"
+                                                    ? "font-semibold text-tangerine-500"
+                                                    : "font-semibold text-[#8F8F8F] "
+                                                }`
+                                            }
+                                        >
+                                            Completed
+                                        </p>{" "}
+                                    </div>
+                                </Tabs.Tab>
                             </Tabs.List>
                         </Tabs>
                         <div className="py-4">
@@ -102,7 +174,7 @@ const Issuance = (props: {
                 <Pagination
                     page={props.page}
                     onChange={props.setPage}
-                    total={props.assetPage}
+                    total={props.accessiblePage}
                     classNames={{
                         item: "bg-transparent selected-page:bg-tangerine-500 border-none",
                     }}

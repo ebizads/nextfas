@@ -84,6 +84,7 @@ export const assetIssuanceRouter = t.router({
 
             return {
                 assetIssuance,
+                count,
                 pages: Math.ceil(count / (input?.limit ?? 0)),
                 total: count,
             }
@@ -91,7 +92,7 @@ export const assetIssuanceRouter = t.router({
     create: authedProcedure
         .input(initialIssuance)
         .mutation(async ({ ctx, input }) => {
-            const { issuedToId, assetId, ...rest } = input
+            const { issuedToId, ...rest } = input
 
             const assetIssuance = await ctx.prisma.assetIssuance.create({
                 data: {
@@ -100,11 +101,11 @@ export const assetIssuanceRouter = t.router({
                             id: issuedToId ?? 0
                         }
                     },
-                    asset: {
-                        connect: {
-                            id: assetId
-                        }
-                    },
+                    // asset: {
+                    //     connect: {
+                    //         id: assetId
+                    //     }
+                    // },
                     ...rest,
                 },
                 include: {

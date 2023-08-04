@@ -13,20 +13,7 @@ import Transfer from "../../../components/transaction/Transfer/TransferAsset";
 
 
 
-const TransferNew = () =>
-// {
-//   return (
-//     <DashboardLayout>
-//       <div className="shadow-mg flex h-full flex-col gap-2 rounded-md border bg-white p-4 shadow-lg">
-//         <div className="py-2">
-//           <AddRepairForm />
-//         </div>
-//       </div>
-//     </DashboardLayout>
-//   )
-// }
-
-{
+const TransferNew = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const router = useRouter();

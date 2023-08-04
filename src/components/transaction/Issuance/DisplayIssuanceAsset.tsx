@@ -10,7 +10,7 @@ import DisposeAssetTable from '../../atoms/table/DisposeAssetTable';
 import Modal from '../../headless/modal/modal';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
-import { useDisposeAssetStore, useSearchStore, useGenerateStore, useIssuanceStore } from '../../../store/useStore';
+import { useDisposeAssetStore, useSearchStore, useGenerateStore, useIssuanceAssetStore } from '../../../store/useStore';
 // import IssuanceTable from '../../atoms/table/IssuanceTable';
 // import { number } from 'zod';
 
@@ -39,7 +39,7 @@ const DisplayIssuanceAsset = (props: {
     const [searchModal, setSearchModal] = useState<boolean>(false);
     const [validateModal, setValidateModal] = useState<boolean>(false)
 
-    const { setIssuanceState } = useIssuanceStore();
+    const { setIssuanceAsset } = useIssuanceAssetStore();
     const { setSearch } = useSearchStore();
     const { generate, setGenerate } = useGenerateStore()
 
@@ -56,7 +56,7 @@ const DisplayIssuanceAsset = (props: {
                 setSearchModal(true)
                 setAssetNumber("")
             } else if (asset?.status === "disposal") {
-                setValidateString("The asset is already in for disposal")
+                setValidateString("The asset is in for disposal")
                 setValidateModal(true)
                 setAssetNumber("")
             } else if (asset?.status === "repair") {
@@ -68,13 +68,18 @@ const DisplayIssuanceAsset = (props: {
                 setValidateModal(true)
                 setAssetNumber("")
             }
+            else if (asset?.AssetIssuance?.issuanceStatus === "issued") {
+                setValidateString("The asset is already issued.")
+                setValidateModal(true)
+                setAssetNumber("")
+            }
             else {
-                setIssuanceState(asset as AssetType);
+                setIssuanceAsset(asset as AssetType);
             }
         }
         // setGenerate(false);
         setSearch("");
-    }, [asset, assetNumber, assetId, setSearch, setIssuanceState])
+    }, [asset, assetNumber, assetId, setSearch, setIssuanceAsset])
 
     return (
         <div className="space-y-4">

@@ -28,6 +28,7 @@ export const assetRouter = t.router({
         management: true,
         addedBy: true,
         assetTag: true,
+        AssetIssuance: true,
         model: {
           include: {
             type: true,
@@ -122,6 +123,8 @@ export const assetRouter = t.router({
             management: true,
             addedBy: true,
             assetTag: true,
+            AssetIssuance: true,
+
           },
           where: {
             NOT: {
@@ -215,6 +218,8 @@ export const assetRouter = t.router({
             management: true,
             addedBy: true,
             assetTag: true,
+            AssetIssuance: true,
+
           },
           where: {
             NOT: {
@@ -303,6 +308,8 @@ export const assetRouter = t.router({
             management: true,
             addedBy: true,
             assetTag: true,
+            AssetIssuance: true,
+
           },
           where: {
             id: 999999,
@@ -406,6 +413,7 @@ export const assetRouter = t.router({
         parentId,
         addedById,
         assetTagId,
+        issuance,
         ...rest
       } = input
 
@@ -434,6 +442,8 @@ export const assetRouter = t.router({
           subsidiary: true,
           management: true,
           addedBy: true,
+          AssetIssuance: true,
+
         },
       })
 
@@ -470,6 +480,14 @@ export const assetRouter = t.router({
                 id: 0,
               },
               create: model,
+            },
+          },
+          AssetIssuance: {
+            connectOrCreate: {
+              where: {
+                id: 0
+              },
+              create: issuance,
             },
           },
           management: {
@@ -532,6 +550,7 @@ export const assetRouter = t.router({
           management: true,
           addedBy: true,
           assetTag: true,
+          AssetIssuance: true,
         },
       })
       return asset
@@ -551,16 +570,26 @@ export const assetRouter = t.router({
             assetProjectId,
             parentId,
             addedById,
+            issuance,
             ...rest
           } = asset
           return {
             ...rest,
+
             model: {
               connectOrCreate: {
                 where: {
                   id: 0,
                 },
                 create: model,
+              },
+            },
+            AssetIssuance: {
+              connectOrCreate: {
+                where: {
+                  id: 0
+                },
+                create: issuance,
               },
             },
             management: {
@@ -610,8 +639,7 @@ export const assetRouter = t.router({
   createOrUpdate: authedProcedure
     .input(AssetTransformInput)
     .mutation(async ({ ctx, input }) => {
-      const { management, model, number, id, ...rest } = input
-      console.log("MODEL:", model)
+      const { management, model, number, id, issuance, ...rest } = input
 
       const existAssets = await ctx.prisma?.asset.findFirst({
         where: {
@@ -657,6 +685,7 @@ export const assetRouter = t.router({
             number: number,
             vendorId: rest.vendorId ?? 0,
             management: { update: management },
+            AssetIssuance: { update: issuance },
             modelId: modelId,
           }
         })
@@ -714,7 +743,7 @@ export const assetRouter = t.router({
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, management, ...rest } = input
+      const { id, management, issuance, ...rest } = input
       try {
         await ctx.prisma.asset.update({
           where: {
@@ -724,6 +753,9 @@ export const assetRouter = t.router({
             ...rest,
             management: {
               update: management,
+            },
+            AssetIssuance: {
+              update: issuance,
             }
 
           },
@@ -751,6 +783,7 @@ export const assetRouter = t.router({
         assetProjectId,
         parentId,
         assetTagId,
+        issuance,
         purchaseOrder,
         invoiceNum,
         deployment_status,
@@ -768,6 +801,9 @@ export const assetRouter = t.router({
             },
             management: {
               update: management,
+            },
+            AssetIssuance: {
+              update: issuance,
             },
             vendor: {
               connect: {

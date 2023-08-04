@@ -1,8 +1,12 @@
 import { z } from "zod"
 
 export const initialIssuance = z.object({
+    issuedById: z.number(),
     issuedToId: z.number().nullish(),
-    issuanceStatus: z.string(),
+    issuanceStatus: z.string().nullish(),
+    issuanceDate: z.date().default(new Date()),
+    assetId: z.number(),
+    remarks: z.string(),
 })
 
 export const createIssuance = z.object({

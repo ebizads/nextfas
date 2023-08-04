@@ -146,7 +146,7 @@ const Transfer = ({ }) => {
                 id: asset?.id ?? 0,
                 status: "transfer",
                 custodianId: Number(selectedEMP),
-                assetTagId: asset?.assetTagId,
+                assetTagId: asset?.assetTagId ?? 0,
                 management: {
                     id: asset?.management?.id ?? 0
 

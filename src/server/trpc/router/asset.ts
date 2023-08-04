@@ -413,7 +413,6 @@ export const assetRouter = t.router({
         parentId,
         addedById,
         assetTagId,
-        issuance,
         ...rest
       } = input
 
@@ -482,14 +481,6 @@ export const assetRouter = t.router({
               create: model,
             },
           },
-          AssetIssuance: {
-            connectOrCreate: {
-              where: {
-                id: 0
-              },
-              create: issuance,
-            },
-          },
           management: {
             connectOrCreate: {
               where: {
@@ -550,7 +541,6 @@ export const assetRouter = t.router({
           management: true,
           addedBy: true,
           assetTag: true,
-          AssetIssuance: true,
         },
       })
       return asset
@@ -570,7 +560,6 @@ export const assetRouter = t.router({
             assetProjectId,
             parentId,
             addedById,
-            issuance,
             ...rest
           } = asset
           return {
@@ -582,14 +571,6 @@ export const assetRouter = t.router({
                   id: 0,
                 },
                 create: model,
-              },
-            },
-            AssetIssuance: {
-              connectOrCreate: {
-                where: {
-                  id: 0
-                },
-                create: issuance,
               },
             },
             management: {

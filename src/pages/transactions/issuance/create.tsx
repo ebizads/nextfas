@@ -77,7 +77,7 @@ const IssueNew = () => {
                 setValidateString("The asset is already being transferred.")
                 setValidateModal(true)
                 setIssuanceAsset(null)
-            } else if (issuanceAsset?.AssetIssuance?.issuanceStatus === "issued") {
+            } else if (issuanceAsset?.AssetIssuance?.issuanceStatus) {
                 setValidateString("The asset is already issued.")
                 setValidateModal(true)
                 setIssuanceAsset(null)

@@ -134,7 +134,11 @@ const Issue = ({ }) => {
                 ...asset,
                 id: asset?.id ?? 0,
                 status: "transfer",
-                custodianId: Number(selectedEMP)
+                custodianId: Number(selectedEMP),
+                assetTagId: asset?.assetTagId ?? 0,
+                management: {
+                    id: asset?.management?.id ?? 0,
+                }
             })
             reset()
         }

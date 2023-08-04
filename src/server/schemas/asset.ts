@@ -51,7 +51,6 @@ export const AssetCreateInput = z.object({
   parentId: z.number().optional(),
   addedById: z.number().optional(),
   management: ManagementCreateInput,
-  issuance: initialIssuance
 })
 
 export const AssetEditInput = z.object({

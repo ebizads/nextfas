@@ -19,7 +19,7 @@ export const IssuanceDetailsModal = (props: {
     const [stats, setStats] = useState<string>(props.asset?.issuanceStatus ?? "pending");
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const utils = trpc.useContext()
-    const [remarks] = useState<string | null>(null)
+    const [remarks, setRemarks] = useState<string | null>(null)
 
 
     const {
@@ -142,30 +142,109 @@ export const IssuanceDetailsModal = (props: {
                         </div>
 
                         <hr className="w-full"></hr>
-                        {(props.asset?.issuanceStatus === "notissued") && <div className="flex w-full justify-end py-3 gap-2">
+
+                        {(props.asset?.issuanceStatus === "pending") && <div className="flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full">
+                                <label className="font-semibold">Comments</label >
+                                <Textarea
+                                    defaultValue={props.asset?.remarks ?? ""}
+                                    onChange={(event) => {
+                                        const text = event.currentTarget.value
+                                        setRemarks(text)
+                                        setValue("remarks", text)
+                                    }}
+                                    placeholder={props.asset?.remarks ?? "Remarks"}
+                                    minRows={6}
+                                    maxRows={6}
+                                    classNames={{
+                                        input:
+                                            "w-full border-2 border-gray-400 outline-none text-lg ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+                                    }}
+                                />
+                            </div>
+                        </div>}
+
+                        {(props.asset?.issuanceStatus === "approved") && <div className="flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full">
+                                <label className="font-semibold">Comments</label >
+                                <Textarea
+                                    defaultValue={props.asset?.remarks ?? ""}
+                                    onChange={(event) => {
+                                        const text = event.currentTarget.value
+                                        setRemarks(text)
+                                        setValue("remarks", text)
+                                    }}
+                                    placeholder={props.asset?.remarks ?? "Remarks"}
+                                    minRows={6}
+                                    maxRows={6}
+                                    classNames={{
+                                        input:
+                                            "w-full border-2 border-gray-400 outline-none text-lg ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+                                    }}
+                                />
+                            </div>
+                        </div>}
+
+                        {(props.asset?.issuanceStatus === "rejected" || props.asset?.issuanceStatus === "done" || props.asset?.issuanceStatus === "cancelled") && <div className="flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full">
+                                <label className="font-semibold">Comments</label >
+                                <Textarea
+                                    disabled
+                                    // value={remarks ?? ""}
+                                    // onChange={(event) => {
+                                    //     const text = props.asset?.remarks ?? ""
+                                    //     // setDisposalDesc(text)
+                                    //     setValue("remarks", text)
+                                    // }}
+                                    defaultValue={props.asset?.remarks ?? ""}
+                                    minRows={6}
+                                    maxRows={6}
+                                    classNames={{
+                                        input:
+                                            "w-full border-2 border-gray-400 outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2 text-lg",
+                                    }}
+                                />
+                            </div>
+                        </div>}
 
 
-
+                        <hr className="w-full"></hr>
+                        {(props.asset?.issuanceStatus === "pending" || props.asset?.issuanceStatus === "approved") && <div className="flex w-full justify-end py-3 gap-2">
                             <button
-                                type="button"
+                                type="submit"
                                 className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                                 onClick={() => {
-                                    props.setCloseModal(false)
+                                    props.asset?.issuanceStatus === "pending" ?
+                                        setStats("rejected")
+                                        : props.asset?.issuanceStatus === "approved" ? setStats("cancelled") : setStats("done")
                                 }}
                             >
-                                Cancel
+                                {
+                                    props.asset?.issuanceStatus === "pending" ?
+                                        "Reject"
+                                        : props.asset?.issuanceStatus === "approved" ? "Cancel Repair" : "Confirm"
+                                }
                             </button>
                             <button
                                 type="submit"
                                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                                 onClick={() => {
-                                    setStats("issued")
+                                    props.asset?.issuanceStatus === "pending" ?
+                                        setStats("approved")
+                                        : setStats("done")
                                 }}
                             >
-                                Confirm
+                                {
+                                    props.asset?.issuanceStatus === "pending" ?
+                                        "Approve"
+                                        : "Confirm"
+                                }
                             </button>
+
+
                         </div>
                         }
+
 
                     </div>
                 </div>

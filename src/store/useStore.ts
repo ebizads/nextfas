@@ -73,7 +73,7 @@ type DisposalStatusState = {
 }
 
 type IssuanceStatusState = {
-  status: string
+  status: string | null
   setStatus: (newStatus: string) => void
 }
 
@@ -167,7 +167,7 @@ export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
 
 
 export const useIssuanceStatusStore = create<IssuanceStatusState>((set) => ({
-  status: "notissued",
+  status: null,
   setStatus: (newStatus: string) => set({ status: newStatus }),
 }))
 

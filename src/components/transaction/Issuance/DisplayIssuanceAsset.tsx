@@ -11,7 +11,7 @@ import Modal from '../../headless/modal/modal';
 import { Search } from 'tabler-icons-react';
 import { trpc } from '../../../utils/trpc';
 import { useDisposeAssetStore, useSearchStore, useGenerateStore, useIssuanceStore } from '../../../store/useStore';
-import IssuanceTable from '../../atoms/table/IssuanceTable';
+// import IssuanceTable from '../../atoms/table/IssuanceTable';
 // import { number } from 'zod';
 
 const DisplayIssuanceAsset = (props: {

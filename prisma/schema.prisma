@@ -44,21 +44,21 @@ model VerificationToken {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   name           String
-  email          String         @unique
+  email          String          @unique
   recovery_email String?
-  username       String?        @unique
+  username       String?         @unique
   password       String
   user_type      String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   emailVerified  DateTime?
   image          String?
-  deleted        Boolean        @default(false)
+  deleted        Boolean         @default(false)
   deletedAt      DateTime?
   lockedUntil    DateTime?
-  attempts       Int            @default(0)
+  attempts       Int             @default(0)
   attemptDate    DateTime?
   oldPassword    String[]
   firstLogin     Boolean?
@@ -70,15 +70,15 @@ model User {
   teamId         Int?
   passwordAge    DateTime?
   position       String?
-  user_Id        String?        @unique
+  user_Id        String?         @unique
   accounts       Account[]
   address        Address?
   created_assets Asset[]
-  IssuedBy       Issuance[]     @relation("Issuedby")
+  IssuedBy       AssetIssuance[] @relation("Issuedby")
   profile        Profile?
   sessions       Session[]
-  Usersupervisee Team?          @relation("Usersupervisors", fields: [superviseeId], references: [id])
-  Userteam       Team?          @relation("Usermembers", fields: [teamId], references: [id])
+  Usersupervisee Team?           @relation("Usersupervisors", fields: [superviseeId], references: [id])
+  Userteam       Team?           @relation("Usermembers", fields: [teamId], references: [id])
   ticketTable    ticketTable[]
   validateTable  validateTable?
 }
@@ -110,25 +110,25 @@ model validateTable {
 }
 
 model Employee {
-  id           Int        @id @default(autoincrement())
+  id           Int             @id @default(autoincrement())
   name         String?
   position     String?
-  employee_id  String?    @unique
-  email        String?    @unique
+  employee_id  String?         @unique
+  email        String?         @unique
   teamId       Int?
   superviseeId Int?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  deleted      Boolean    @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  deleted      Boolean         @default(false)
   deletedAt    DateTime?
   workMode     String?
   workStation  String?
   address      Address?
   owned_assets Asset[]
-  supervisee   Team?      @relation("supervisors", fields: [superviseeId], references: [id])
-  team         Team?      @relation("members", fields: [teamId], references: [id])
-  issuedTo     Issuance[] @relation("Issuedto")
-  pastIssuance Issuance[] @relation("Pastissuance")
+  issuedTo     AssetIssuance[] @relation("Issuedto")
+  pastIssuance AssetIssuance[] @relation("Pastissuance")
+  supervisee   Team?           @relation("supervisors", fields: [superviseeId], references: [id])
+  team         Team?           @relation("members", fields: [teamId], references: [id])
   profile      Profile?
 }
 
@@ -472,15 +472,15 @@ model Asset {
   subsidiary        Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor            Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   AssetDisposal     AssetDisposal?
+  AssetIssuance     AssetIssuance?
   management        AssetManagement?
   AssetRepair       AssetRepair?
   AssetTransfer     AssetTransfer?
-  AssetIssuance     Issuance?
 
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }
 
-model Issuance {
+model AssetIssuance {
   id             Int       @id @unique @default(autoincrement())
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt

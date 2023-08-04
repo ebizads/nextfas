@@ -6,7 +6,7 @@ import { createIssuance, initialIssuance, returnAsset } from "../../schemas/issu
 
 export const assetIssuanceRouter = t.router({
     findOne: authedProcedure.input(z.number()).query(async ({ ctx, input }) => {
-        const assetDisposal = await ctx.prisma.issuance.findUnique({
+        const assetDisposal = await ctx.prisma.assetIssuance.findUnique({
             where: {
                 id: input,
             },
@@ -48,7 +48,7 @@ export const assetIssuanceRouter = t.router({
         )
         .query(async ({ ctx, input }) => {
             const [assetIssuance, count] = await ctx.prisma.$transaction([
-                ctx.prisma.issuance.findMany({
+                ctx.prisma.assetIssuance.findMany({
                     orderBy: {
                         createdAt: "asc",
                     },
@@ -73,7 +73,7 @@ export const assetIssuanceRouter = t.router({
                         : undefined,
                     take: input?.limit ?? 10,
                 }),
-                ctx.prisma.issuance.count({
+                ctx.prisma.assetIssuance.count({
                     where: {
                         NOT: {
                             deleted: true,
@@ -93,7 +93,7 @@ export const assetIssuanceRouter = t.router({
         .mutation(async ({ ctx, input }) => {
             const { issuedToId, assetId, ...rest } = input
 
-            const assetIssuance = await ctx.prisma.issuance.create({
+            const assetIssuance = await ctx.prisma.assetIssuance.create({
                 data: {
                     issuedTo: {
                         connect: {
@@ -123,7 +123,7 @@ export const assetIssuanceRouter = t.router({
         .mutation(async ({ ctx, input }) => {
             const { id, issuedById, issuedToId, assetId, ...rest } = input
             try {
-                await ctx.prisma.issuance.update({
+                await ctx.prisma.assetIssuance.update({
                     where: {
                         id,
                     },
@@ -169,7 +169,7 @@ export const assetIssuanceRouter = t.router({
         .mutation(async ({ ctx, input }) => {
             const { id, assetId, issuedById, issuedToId, pastIssuanceId, ...rest } = input
             try {
-                await ctx.prisma.issuance.update({
+                await ctx.prisma.assetIssuance.update({
                     where: {
                         id,
                     },

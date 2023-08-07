@@ -25,15 +25,17 @@ const AssetDisposal = () => {
 
   return (
     <DashboardLayout>
-      <Dispose
-        total={data?.total ?? 0}
-        asset={data?.assetDisposals ?? []}
-        assetPage={data?.pages ?? 0}
-        page={page}
-        setPage={setPage}
-        limit={limit}
-        setLimit={setLimit}
-      />
+      <div>
+        <h3 className="text-xl font-medium px-1">Disposal</h3>
+        <Dispose
+          total={data?.total ?? 0}
+          asset={data?.assetDisposals ?? []}
+          assetPage={data?.pages ?? 0}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          setLimit={setLimit}
+        /></div>
     </DashboardLayout>
   )
 }

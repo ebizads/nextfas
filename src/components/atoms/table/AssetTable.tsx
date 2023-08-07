@@ -634,25 +634,25 @@ const AssetDetailsModal = (props: {
                     <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
                   </button>
                   <p className="font-medium xl:text-lg">Asset Options</p>
-                  {(props.asset?.AssetIssuance?.issuanceStatus === null || props.asset?.AssetIssuance === null) && props.asset?.status === null && <Link href="/assets/update">
+                  {(props.asset?.AssetIssuance?.issuanceStatus === null || props.asset?.AssetIssuance === null) && props.asset?.status === null && <Link href="/transactions/issuance/create">
                     <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid fa-hand-holding-box"} />
                       Assign
                     </div>
                   </Link>}
-                  {props.asset?.AssetIssuance?.issuanceStatus && props.asset?.status === null && <Link href="/assets/update">
+                  {props.asset?.AssetIssuance?.issuanceStatus && props.asset?.status === null && <Link href="/transactions/transfer/create">
                     <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid fa-arrow-right-arrow-left"} />
                       Transfer
                     </div>
                   </Link>}
-                  {props.asset?.status === null && <Link href="/assets/update">
+                  {props.asset?.status === null && <Link href="/transactions/repair/create">
                     <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid  fa-screwdriver-wrench"} />
                       Repair
                     </div>
                   </Link>}
-                  {props.asset?.status === null && <Link href="/assets/update">
+                  {props.asset?.status === null && <Link href="/transactions/disposal/create">
                     <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid fa-trash-can"} />
                       Dispose
@@ -895,11 +895,12 @@ const AssetTable = (props: {
                       onClick={() => {
                         setOpenModalDesc(true)
                         setSelectedAsset(row)
-                        setIssuanceAsset(selectedAsset)
-                        setDisposeAsset(selectedAsset)
-                        setTransferAsset(selectedAsset)
-                        setRepairAsset(selectedAsset)
-                        console.log("chek", row)
+                        setIssuanceAsset(row)
+                        setDisposeAsset(row)
+                        setTransferAsset(row)
+                        setRepairAsset(row)
+                        console.log("repaur", repairAsset)
+
                       }}
                     >
                       {getProperty(col.value, row)}

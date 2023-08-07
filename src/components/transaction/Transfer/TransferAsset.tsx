@@ -25,6 +25,7 @@ import { DatePicker } from "@mantine/dates"
 import { AssetTransfer } from "@prisma/client"
 import { AssetTransferValues } from "../../../types/generic"
 import { stringify } from "superjson"
+import router from "next/router"
 
 export type Transfer = z.infer<typeof AssetTransferCreateInput>
 
@@ -212,6 +213,7 @@ const Transfer = ({ }) => {
 
     const resetTransferAsset = () => {
         setTransferAsset(null)
+        router.push("/assets")
         console.log("dapat wala na")
     }
 

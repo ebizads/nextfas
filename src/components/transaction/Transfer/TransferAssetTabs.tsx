@@ -76,12 +76,12 @@ const DisplayTransferAsset_new = (props: {
             )} */}
                     </div>
                     <div className="flex items-center gap-2">
-                        <Link href={"/transactions/transfer/create"}>
+                        {/* <Link href={"/transactions/transfer/create"}>
                             <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
                                 <i className="fa-regular fa-plus text-xs" />
                                 <p>Add New</p>
                             </div>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
 

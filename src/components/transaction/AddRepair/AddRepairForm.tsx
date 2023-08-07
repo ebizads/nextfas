@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import Modal from "../../headless/modal/modal"
 import Link from "next/link"
 import { useRepairAssetStore } from "../../../store/useStore"
+import router from "next/router"
 
 export type Repair = z.infer<typeof AssetRepairCreateInput>
 
@@ -90,6 +91,7 @@ const AddRepairForm = () => {
 
   const resetRepairAsset = () => {
     setRepairAsset(null)
+    router.push("/assets")
     console.log("dapat wala na")
   }
 

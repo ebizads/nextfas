@@ -45,9 +45,9 @@ const RepairNew = () =>
   const [validateModal, setValidateModal] = useState<boolean>(false)
 
 
-  useEffect(() => {
-    setRepairAsset(null);
-  }, [])
+  // useEffect(() => {
+  //   setRepairAsset(null);
+  // }, [])
 
 
 

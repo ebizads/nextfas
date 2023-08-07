@@ -97,8 +97,8 @@ const RepairNew = () =>
           </div> */}
 
       <div>
-        {repairAsset && <AddRepairForm />}
-        {!repairAsset && <DisplayRepairAssets
+        <AddRepairForm />
+        {/* {!repairAsset && <DisplayRepairAssets
           total={data?.count ?? 0}
           assets={assets}
           accessiblePage={accessiblePage}
@@ -106,8 +106,8 @@ const RepairNew = () =>
           setPage={setPage}
           limit={limit}
           setLimit={setLimit}
-        />}
-        <Modal
+        />} */}
+        {/* <Modal
           className="max-w-lg"
           isVisible={validateModal}
           setIsVisible={setValidateModal}
@@ -117,7 +117,7 @@ const RepairNew = () =>
             <p className=" text-center text-lg font-semibold">{validateString}</p>
 
           </div>
-        </Modal>
+        </Modal> */}
       </div>
     </DashboardLayout>
   )

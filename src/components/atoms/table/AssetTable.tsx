@@ -57,6 +57,13 @@ const AssetDetailsModal = (props: {
 
   const emp = trpc.employee.findOne.useQuery(props.asset?.custodianId ?? 0)
 
+  const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
+  const { repairAsset, setRepairAsset } = useRepairAssetStore()
+  const { transferAsset, setTransferAsset } = useTransferAssetStore()
+  const { issuanceAsset, setIssuanceAsset } = useIssuanceAssetStore()
+  const [validateModal, setValidateModal] = useState<boolean>(false)
+  const [validateString, setValidateString] = useState<string>("")
+
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
     setGenBarcode(true)
@@ -107,10 +114,7 @@ const AssetDetailsModal = (props: {
   }, [props.openModalDesc])
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
-  const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
-  const { repairAsset, setRepairAsset } = useRepairAssetStore()
-  const { transferAsset, setTransferAsset } = useTransferAssetStore()
-  const { issuanceAsset, setIssuanceAsset } = useIssuanceAssetStore()
+
   // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
   return (
     <>
@@ -634,25 +638,29 @@ const AssetDetailsModal = (props: {
                     <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
                   </button>
                   <p className="font-medium xl:text-lg">Asset Options</p>
-                  {props.asset?.AssetIssuance?.issuanceStatus === "notissued" && props.asset?.status === null && <Link href="/assets/update">
-                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                      <i className={"fa-solid fa-hand-holding-box"} />
-                      Assign
-                    </div>
-                  </Link>}
-                  {props.asset?.AssetIssuance?.issuanceStatus === "issued" && props.asset?.status === null && <Link href="/assets/update">
-                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                      <i className={"fa-solid fa-arrow-right-arrow-left"} />
-                      Transfer
-                    </div>
-                  </Link>}
-                  {props.asset?.status === null && <Link href="/assets/update">
+                  {(props.asset?.AssetIssuance === null) && (disposeAsset || repairAsset || transferAsset)?.status === ("" || null) &&
+                    <Link
+                      href="/transactions/issuance/create" >
+                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                        <i className={"fa-solid fa-hand-holding-box"} />
+                        Assign
+                      </div>
+                    </Link>}
+                  {props.asset?.AssetIssuance?.issuanceStatus && (disposeAsset || repairAsset || transferAsset)?.status === ("" || null) &&
+                    <Link
+                      href="/transactions/transfer/create">
+                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                        <i className={"fa-solid fa-arrow-right-arrow-left"} />
+                        Transfer
+                      </div>
+                    </Link>}
+                  {(disposeAsset || repairAsset || transferAsset)?.status === ("" || null) && <Link href="/transactions/repair/create">
                     <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid  fa-screwdriver-wrench"} />
                       Repair
                     </div>
                   </Link>}
-                  {props.asset?.status === null && <Link href="/assets/update">
+                  {(disposeAsset || repairAsset || transferAsset)?.status === ("" || null) && <Link href="/transactions/disposal/create">
                     <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid fa-trash-can"} />
                       Dispose
@@ -689,6 +697,17 @@ const AssetDetailsModal = (props: {
           </div>
         </div>
       </Modal >
+      <Modal
+        size={8}
+        className="max-w-lg"
+        isOpen={validateModal}
+        setIsOpen={setValidateModal}
+      >
+        <div className="py-2">
+          <p className=" text-center text-lg font-semibold">{validateString}</p>
+
+        </div>
+      </Modal>
     </>
   )
 }
@@ -797,13 +816,14 @@ const AssetTable = (props: {
 
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-  // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
-
-  const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
   const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
   const { repairAsset, setRepairAsset } = useRepairAssetStore()
   const { transferAsset, setTransferAsset } = useTransferAssetStore()
   const { issuanceAsset, setIssuanceAsset } = useIssuanceAssetStore()
+  // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
+
+  const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
       props.setCheckboxes(props.rows.map((row, idx) => row?.id ?? idx))
@@ -821,6 +841,13 @@ const AssetTable = (props: {
     // adds id
     props.setCheckboxes((prev) => [...prev, id])
   }
+
+  useEffect(() => {
+    setIssuanceAsset(selectedAsset)
+    setDisposeAsset(selectedAsset)
+    setTransferAsset(selectedAsset)
+    setRepairAsset(selectedAsset)
+  }, [selectedAsset, setDisposeAsset, setIssuanceAsset, setRepairAsset, setTransferAsset])
 
   return (
     <div
@@ -894,11 +921,9 @@ const AssetTable = (props: {
                       className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
                       onClick={() => {
                         setOpenModalDesc(true)
+                        setSelectedAsset(null)
                         setSelectedAsset(row)
-                        setIssuanceAsset(selectedAsset)
-                        setDisposeAsset(selectedAsset)
-                        setTransferAsset(selectedAsset)
-                        setRepairAsset(selectedAsset)
+
                         console.log("chek", row)
                       }}
                     >

@@ -83,8 +83,8 @@ const DisposeNew = () => {
             </div> */}
 
             <div>
-                {disposeAsset && <CreateDisposeAccordion />}
-                {!disposeAsset && <DisplayDisposeAssets
+                <CreateDisposeAccordion />
+                {/* {!disposeAsset && <DisplayDisposeAssets
                     total={data?.count ?? 0}
                     assets={assets}
                     accessiblePage={accessiblePage}
@@ -92,8 +92,8 @@ const DisposeNew = () => {
                     setPage={setPage}
                     limit={limit}
                     setLimit={setLimit}
-                />}
-                <Modal
+                />} */}
+                {/* <Modal
                     className="max-w-lg"
                     isVisible={validateModal}
                     setIsVisible={setValidateModal}
@@ -102,7 +102,7 @@ const DisposeNew = () => {
                     <div className="py-2">
                         <p className="text-center text-lg font-semibold">{validateString}</p>
                     </div>
-                </Modal>
+                </Modal> */}
             </div>
         </DashboardLayout>
     )

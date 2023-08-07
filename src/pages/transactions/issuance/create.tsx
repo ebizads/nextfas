@@ -59,34 +59,34 @@ const IssueNew = () => {
 
 
 
-    useEffect(() => {
+    // useEffect(() => {
 
 
-        if (issuanceAsset !== null) {
-            if (issuanceAsset === null || issuanceAsset?.deleted === true) {
-                setIssuanceAsset(null)
-            } else if (issuanceAsset?.status === "disposal") {
-                setValidateString("The asset is in for disposal")
-                setValidateModal(true)
-                setIssuanceAsset(null)
-            } else if (issuanceAsset?.status === "repair") {
-                setValidateString("The asset is in for repair.")
-                setValidateModal(true)
-                setIssuanceAsset(null)
-            } else if (issuanceAsset?.status === "transfer") {
-                setValidateString("The asset is already being transferred.")
-                setValidateModal(true)
-                setIssuanceAsset(null)
-            } else if (issuanceAsset?.AssetIssuance?.issuanceStatus === "issued") {
-                setValidateString("The asset is already issued.")
-                setValidateModal(true)
-                setIssuanceAsset(null)
-            }
-            else {
-                setIssuanceAsset(issuanceAsset);
-            }
-        }
-    }, [setIssuanceAsset, issuanceAsset])
+    //     if (issuanceAsset !== null) {
+    //         if (issuanceAsset === null || issuanceAsset?.deleted === true) {
+    //             setIssuanceAsset(null)
+    //         } else if (issuanceAsset?.status === "disposal") {
+    //             setValidateString("The asset is in for disposal")
+    //             setValidateModal(true)
+    //             setIssuanceAsset(null)
+    //         } else if (issuanceAsset?.status === "repair") {
+    //             setValidateString("The asset is in for repair.")
+    //             setValidateModal(true)
+    //             setIssuanceAsset(null)
+    //         } else if (issuanceAsset?.status === "transfer") {
+    //             setValidateString("The asset is already being transferred.")
+    //             setValidateModal(true)
+    //             setIssuanceAsset(null)
+    //         } else if (issuanceAsset?.AssetIssuance?.issuanceStatus) {
+    //             setValidateString("The asset is already issued.")
+    //             setValidateModal(true)
+    //             setIssuanceAsset(null)
+    //         }
+    //         else {
+    //             setIssuanceAsset(issuanceAsset);
+    //         }
+    //     }
+    // }, [setIssuanceAsset, issuanceAsset])
     return (
         <DashboardLayout>
             {/* <div className="rounded-lg p-8 m-2 bg-white">
@@ -96,8 +96,8 @@ const IssueNew = () => {
           </div> */}
 
             <div>
-                <Issue />
-                <Modal
+                {<Issue />}
+                {/* <Modal
                     className="max-w-lg"
                     isVisible={validateModal}
                     setIsVisible={setValidateModal}
@@ -107,7 +107,7 @@ const IssueNew = () => {
                         <p className=" text-center text-lg font-semibold">{validateString}</p>
 
                     </div>
-                </Modal>
+                </Modal> */}
             </div>
         </DashboardLayout>
     )

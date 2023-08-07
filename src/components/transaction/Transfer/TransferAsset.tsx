@@ -29,7 +29,8 @@ import { stringify } from "superjson"
 export type Transfer = z.infer<typeof AssetTransferCreateInput>
 
 const Transfer = ({ }) => {
-    const [assetNumber, setAssetNumber] = useState<string>("")
+    const { transferAsset, setTransferAsset } = useTransferAssetStore()
+    const [assetNumber, setAssetNumber] = useState<string>(transferAsset?.number ?? "")
     const [searchAsset, setSearchAsset] = useState<string>("")
 
     const [checked, setChecked] = useState(false)
@@ -207,7 +208,6 @@ const Transfer = ({ }) => {
         steps,
     })
 
-    const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
 
     const resetTransferAsset = () => {
@@ -219,10 +219,11 @@ const Transfer = ({ }) => {
     const { data: companyData } = trpc.company.findAll.useQuery()
 
     useEffect(() => {
+        console.log(JSON.stringify(transferAsset))
         setAssetNumber(transferAsset?.number ?? "")
         setCompanyId(asset?.subsidiaryId?.toString() ?? "")
 
-    }, [asset?.subsidiaryId, transferAsset?.number])
+    }, [asset?.subsidiaryId, transferAsset, transferAsset?.number])
 
 
 

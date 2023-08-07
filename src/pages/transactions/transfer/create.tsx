@@ -90,14 +90,16 @@ const TransferNew = () => {
           </div> */}
 
       <div>
-        {(transferAsset?.number === "" || transferAsset?.number === null || transferAsset?.number === undefined) ? <DisplayTransferAssets
+        {/* {(transferAsset?.number === "" || transferAsset?.number === null || transferAsset?.number === undefined) ? <DisplayTransferAssets
           total={data?.count ?? 0}
           assets={assets}
           accessiblePage={accessiblePage}
           page={page}
           setPage={setPage}
           limit={limit}
-          setLimit={setLimit} /> : <Transfer />}
+          setLimit={setLimit} /> : */}
+        <Transfer />
+        {/* } */}
         <Modal
           className="max-w-lg"
           isVisible={validateModal}

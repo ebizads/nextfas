@@ -47,7 +47,7 @@ const AssetTransfer = () => {
 			setAssets(data.assetTransfers as AssetTransferType[])
 			setAccessiblePage(Math.ceil(data.count / limit))
 		}
-	}, [data, limit])
+	}, [data, limit, transferAsset])
 
 
 	useEffect(() => {

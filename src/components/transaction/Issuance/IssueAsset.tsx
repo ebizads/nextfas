@@ -24,12 +24,17 @@ import { DatePicker } from "@mantine/dates"
 import { AssetTransfer } from "@prisma/client"
 import { AssetTransferValues } from "../../../types/generic"
 import { stringify } from "superjson"
+import { useSession } from "next-auth/react"
 
 export type Transfer = z.infer<typeof AssetTransferCreateInput>
 
 const Issue = ({ }) => {
     const [assetNumber, setAssetNumber] = useState<string>("")
     const [searchAsset, setSearchAsset] = useState<string>("")
+    const [userId, setUserId] = useState<number>(0)
+    const { data: session } = useSession()
+    const [issuedTo, setIssuedTo] = useState<number>(0)
+
 
     const [checked, setChecked] = useState(false)
 
@@ -92,10 +97,15 @@ const Issue = ({ }) => {
         },
     })
 
+
     const { register, handleSubmit, reset, setValue, formState: { errors }, } = useForm<Transfer>({
         resolver: zodResolver(AssetTransferCreateInput),
     })
 
+    useEffect(() => {
+        setUserId(Number(session?.user?.id))
+
+    }, [session?.user?.id])
 
 
     // useEffect(() => reset(asset as unknown as Transfer), [asset, reset])
@@ -135,6 +145,9 @@ const Issue = ({ }) => {
                 id: asset?.id ?? 0,
                 status: "transfer",
                 custodianId: Number(selectedEMP),
+                pastIssuanceId: asset?.issuedToId ?? 0,
+                issuedToId: issuedTo,
+                issuedById: userId,
                 assetTagId: asset?.id ?? 0,
                 management: {
                     id: asset?.management?.id ?? 0
@@ -1386,7 +1399,7 @@ const Issue = ({ }) => {
                                             onChange={(value) => {
                                                 setSelectedEMP(value ?? "")
                                                 console.log(employeeList)
-                                                setValue("custodianId", Number(value))
+                                                setIssuedTo(Number(value))
                                             }}
                                             value={selectedEMP}
                                             data={employeeList}

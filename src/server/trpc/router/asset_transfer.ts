@@ -13,7 +13,14 @@ export const assetTransferRouter = t.router({
         id: input,
       },
       include: {
-        asset: true,
+        asset: {
+          include: {
+            pastIssuance: true,
+            issuedBy: true,
+            issuedTo: true,
+          }
+        },
+
       },
     })
     return assetTransfer
@@ -103,7 +110,13 @@ export const assetTransferRouter = t.router({
           ...rest,
         },
         include: {
-          asset: true,
+          asset: {
+            include: {
+              pastIssuance: true,
+              issuedBy: true,
+              issuedTo: true,
+            }
+          },
         },
       })
       return assetTransfer
@@ -120,6 +133,15 @@ export const assetTransferRouter = t.router({
           data: {
             ...rest,
           },
+          include: {
+            asset: {
+              include: {
+                pastIssuance: true,
+                issuedBy: true,
+                issuedTo: true,
+              }
+            }
+          }
         })
 
         return "Asset updated successfully"

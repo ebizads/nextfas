@@ -18,7 +18,9 @@ export const assetRouter = t.router({
     const asset = await ctx.prisma.asset.findUnique({
       where: {
         number: input,
+
       },
+
       include: {
         custodian: true,
         parent: true,
@@ -29,6 +31,9 @@ export const assetRouter = t.router({
         addedBy: true,
         assetTag: true,
         AssetIssuance: true,
+        pastIssuance: true,
+        issuedBy: true,
+        issuedTo: true,
         model: {
           include: {
             type: true,
@@ -764,7 +769,7 @@ export const assetRouter = t.router({
         assetProjectId,
         parentId,
         assetTagId,
-        issuance,
+        AssetIssuance,
         purchaseOrder,
         invoiceNum,
         deployment_status,
@@ -784,7 +789,7 @@ export const assetRouter = t.router({
               update: management,
             },
             AssetIssuance: {
-              update: issuance,
+              update: AssetIssuance,
             },
             vendor: {
               connect: {

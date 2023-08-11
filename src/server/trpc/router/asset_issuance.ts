@@ -11,12 +11,13 @@ export const assetIssuanceRouter = t.router({
                 id: input,
             },
             include: {
-                issuedBy: true,
-                issuedTo: true,
-                pastIssuance: true,
+
                 asset: {
                     include: {
                         department: true,
+                        pastIssuance: true,
+                        issuedBy: true,
+                        issuedTo: true,
                     },
                 },
             },
@@ -56,11 +57,12 @@ export const assetIssuanceRouter = t.router({
                         asset: {
                             include: {
                                 department: true,
+                                pastIssuance: true,
+                                issuedBy: true,
+                                issuedTo: true,
                             },
                         },
-                        issuedBy: true,
-                        issuedTo: true,
-                        pastIssuance: true,
+
                     },
                     where: {
                         issuanceStatus: input?.search?.issuanceStatus,
@@ -92,37 +94,27 @@ export const assetIssuanceRouter = t.router({
     create: authedProcedure
         .input(initialIssuance)
         .mutation(async ({ ctx, input }) => {
-            const { issuedToId, issuedById, assetId, ...rest } = input
+            const { assetId, ...rest } = input
 
             const assetIssuance = await ctx.prisma.assetIssuance.create({
                 data: {
-                    issuedTo: {
-                        connect: {
-                            id: issuedToId ?? 0
-                        }
-                    },
-                    issuedBy: {
-                        connect: {
-                            id: issuedById ?? 0,
-                        }
-                    },
+
                     asset: {
                         connect: {
-                            id: assetId ?? 0
+                            id: assetId ?? 0,
                         }
+
                     },
-                    // asset: {
-                    //     connect: {
-                    //         id: assetId
-                    //     }
-                    // },
+
                     ...rest,
                 },
                 include: {
-                    issuedTo: true,
                     asset: {
                         include: {
                             department: true,
+                            pastIssuance: true,
+                            issuedBy: true,
+                            issuedTo: true,
                         },
                     },
                 },
@@ -132,36 +124,29 @@ export const assetIssuanceRouter = t.router({
     edit: authedProcedure
         .input(createIssuance)
         .mutation(async ({ ctx, input }) => {
-            const { id, issuedById, issuedToId, assetId, ...rest } = input
+            const { id, assetId, ...rest } = input
             try {
                 await ctx.prisma.assetIssuance.update({
                     where: {
                         id,
                     },
                     data: {
-                        issuedTo: {
-                            connect: {
-                                id: issuedToId
-                            },
-                        },
-                        issuedBy: {
-                            connect: {
-                                id: issuedById
-                            },
-                        },
                         asset: {
                             connect: {
                                 id: assetId
-                            }
+                            },
+
                         },
                         ...rest
                     },
                     include: {
-                        issuedTo: true,
-                        issuedBy: true,
+
                         asset: {
                             include: {
                                 department: true,
+                                pastIssuance: true,
+                                issuedBy: true,
+                                issuedTo: true,
                             },
                         },
                     },
@@ -178,28 +163,14 @@ export const assetIssuanceRouter = t.router({
     return: authedProcedure
         .input(returnAsset)
         .mutation(async ({ ctx, input }) => {
-            const { id, assetId, issuedById, issuedToId, pastIssuanceId, ...rest } = input
+            const { id, assetId, ...rest } = input
             try {
                 await ctx.prisma.assetIssuance.update({
                     where: {
                         id,
                     },
                     data: {
-                        issuedTo: {
-                            connect: {
-                                id: issuedToId ?? 0
-                            },
-                        },
-                        issuedBy: {
-                            connect: {
-                                id: issuedById ?? 0
-                            },
-                        },
-                        pastIssuance: {
-                            connect: {
-                                id: pastIssuanceId ?? 0
-                            }
-                        },
+
                         asset: {
                             connect: {
                                 id: assetId
@@ -208,12 +179,12 @@ export const assetIssuanceRouter = t.router({
                         ...rest
                     },
                     include: {
-                        issuedTo: true,
-                        issuedBy: true,
-                        pastIssuance: true,
                         asset: {
                             include: {
                                 department: true,
+                                pastIssuance: true,
+                                issuedBy: true,
+                                issuedTo: true,
                             },
                         },
                     },

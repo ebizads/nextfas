@@ -22,10 +22,11 @@ export const TransferDetailsModal = (props: {
     const utils = trpc.useContext()
     const [remarks, setRemarks] = useState<string | null>(null)
 
+    const { data: asset } = trpc.asset.findOne.useQuery(String(props.asset?.asset?.number.toUpperCase()))
 
     const {
         mutate,
-    } = trpc.assetIssuance.edit.useMutation({
+    } = trpc.assetTransfer.edit.useMutation({
         onSuccess() {
             setIsVisible(true);
             // invalidate query of asset id when mutations is successful
@@ -40,14 +41,15 @@ export const TransferDetailsModal = (props: {
         handleSubmit,
         reset,
         setValue,
-    } = useForm<AssetTransferType>({
+    } = useForm<TransferEdit>({
         resolver: zodResolver(AssetTransferEditInput),
     })
 
-    const onSubmit = (transfer: AssetTransferEditInput) => {
+    const onSubmit = (transfer: TransferEdit) => {
 
         mutate({
-            ...issuance,
+            ...transfer,
+
             id: props.asset?.id ?? 0,
             transferStatus: stats,
         })
@@ -74,18 +76,18 @@ export const TransferDetailsModal = (props: {
                         <div className="py-2 flex flex-row justify-between w-full gap-7">
                             <div className="flex flex-col w-full py-2">
                                 <label className="font-semibold">Issued by</label >
-                                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{props.asset?.issuedBy?.name ?? "--"}</p>
+                                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{asset?.issuedBy?.name ?? "--"}</p>
 
                             </div>
 
                             <div className="flex flex-col w-full py-2">
                                 <label className="font-semibold">Issued to</label >
-                                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{props.asset?.issuedTo?.name ?? "--"}</p>
+                                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{asset?.issuedTo?.name ?? "--"}</p>
                             </div>
 
                             <div className="flex flex-col w-full py-2">
                                 <label className="font-semibold">Past Issuance</label >
-                                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{props.asset?.pastIssuance?.name ?? "--"}</p>
+                                <p className="w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 my-2 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 placeholder:text-sm h-11">{asset?.pastIssuance?.name ?? "--"}</p>
 
                             </div>
                         </div>

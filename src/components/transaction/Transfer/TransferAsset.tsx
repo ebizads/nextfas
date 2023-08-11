@@ -26,18 +26,24 @@ import { AssetTransfer } from "@prisma/client"
 import { AssetTransferValues } from "../../../types/generic"
 import { stringify } from "superjson"
 import router from "next/router"
+import { useSession } from "next-auth/react"
 
 export type Transfer = z.infer<typeof AssetTransferCreateInput>
 
 const Transfer = ({ }) => {
     const { transferAsset, setTransferAsset } = useTransferAssetStore()
+    const { data: session } = useSession()
     const [assetNumber, setAssetNumber] = useState<string>(transferAsset?.number ?? "")
     const [searchAsset, setSearchAsset] = useState<string>("")
+    const [userId, setUserId] = useState<number>(0)
+
 
     const [checked, setChecked] = useState(false)
 
     const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
     const { data: departmentData } = trpc.department.findAll.useQuery()
+
+    const [issuedTo, setIssuedTo] = useState<number>(0)
 
     const [selectedDept, setSelectedDept] = useState<string>("")
     const [selectedEMP, setSelectedEMP] = useState<string | null>("")
@@ -47,7 +53,6 @@ const Transfer = ({ }) => {
     const [validateModal, setValidateModal] = useState<boolean>(false)
 
     const [validateString, setValidateString] = useState<string>("")
-
 
 
     const { data: employeeData } = trpc.employee.findAll.useQuery({
@@ -65,6 +70,10 @@ const Transfer = ({ }) => {
         Number(selectedDept)
     )
 
+    useEffect(() => {
+        setUserId(Number(session?.user?.id))
+
+    }, [session?.user?.id, userId])
     const employeeList = useMemo(() => {
         const list = employeeData?.employees.map((employee) => {
             return { value: employee.id.toString(), label: employee.name }
@@ -140,8 +149,10 @@ const Transfer = ({ }) => {
         if (asset?.status === null || asset?.status === undefined || asset?.status === "") {
             mutate({
                 ...transfer,
+
                 transferStatus: "pending",
-                assetId: asset?.id ?? 0
+                assetId: asset?.id ?? 0,
+
             })
             updateAsset.mutate({
                 ...asset,
@@ -149,9 +160,11 @@ const Transfer = ({ }) => {
                 status: "transfer",
                 custodianId: Number(selectedEMP),
                 assetTagId: asset?.assetTagId ?? 0,
+                pastIssuanceId: asset?.issuedToId ?? 0,
+                issuedToId: issuedTo,
+                issuedById: userId,
                 management: {
                     id: asset?.management?.id ?? 0
-
                 }
             })
             reset()
@@ -1365,7 +1378,7 @@ const Transfer = ({ }) => {
                                             onChange={(value) => {
                                                 setSelectedEMP(value ?? "")
                                                 console.log(employeeList)
-                                                setValue("custodianId", Number(value))
+                                                setIssuedTo(Number(value))
                                             }}
 
                                             value={selectedEMP}

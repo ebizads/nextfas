@@ -74,7 +74,7 @@ model User {
   accounts       Account[]
   address        Address?
   created_assets Asset[]
-  IssuedBy       AssetIssuance[] @relation("Issuedby")
+  IssuedBy       Asset[] @relation("Issuedby")
   profile        Profile?
   sessions       Session[]
   Usersupervisee Team?           @relation("Usersupervisors", fields: [superviseeId], references: [id])
@@ -125,8 +125,8 @@ model Employee {
   workStation  String?
   address      Address?
   owned_assets Asset[]
-  issuedTo     AssetIssuance[] @relation("Issuedto")
-  pastIssuance AssetIssuance[] @relation("Pastissuance")
+  issuedTo     Asset[] @relation("Issuedto")
+  pastIssuance Asset[] @relation("Pastissuance")
   supervisee   Team?           @relation("supervisors", fields: [superviseeId], references: [id])
   team         Team?           @relation("members", fields: [teamId], references: [id])
   profile      Profile?
@@ -307,6 +307,8 @@ model AssetDisposal {
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }
 
+
+
 model AssetTransfer {
   id               Int       @id @default(autoincrement())
   transferDate     DateTime?
@@ -325,6 +327,7 @@ model AssetTransfer {
   custodianId      Int?
   assetId          Int?      @unique
   asset            Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
 }
 
 model AssetRepair {
@@ -461,6 +464,13 @@ model Asset {
   purchaseOrder     String?
   deployment_status String?
   assetTagId        Int?
+  pastIssuanceId Int?
+  issuedById     Int?
+  issuedToId     Int?
+  issuedBy       User?     @relation("Issuedby", fields: [issuedById], references: [id], onDelete: Cascade)
+  issuedTo       Employee? @relation("Issuedto", fields: [issuedToId], references: [id], onDelete: Cascade)
+  pastIssuance   Employee? @relation("Pastissuance", fields: [pastIssuanceId], references: [id], onDelete: Cascade)
+
   addedBy           User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project           AssetProject?    @relation(fields: [assetProjectId], references: [id])
   assetTag          assetTag?        @relation(fields: [assetTagId], references: [id], onDelete: Cascade)
@@ -486,19 +496,13 @@ model AssetIssuance {
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
   deleted        Boolean   @default(false)
-  pastIssuanceId Int?
-  returnedAt     DateTime?
-  issuedById     Int?
-  issuedToId     Int?
+  returnedAt     DateTime?  
   issuanceStatus String?
   issuanceDate   DateTime?
   assetId        Int?      @unique
   remarks        String?
   asset          Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
-  issuedBy       User?     @relation("Issuedby", fields: [issuedById], references: [id], onDelete: Cascade)
-  issuedTo       Employee? @relation("Issuedto", fields: [issuedToId], references: [id], onDelete: Cascade)
-  pastIssuance   Employee? @relation("Pastissuance", fields: [pastIssuanceId], references: [id], onDelete: Cascade)
-}
+  }
 
 model ticketTable {
   id            Int       @id @default(autoincrement())

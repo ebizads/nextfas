@@ -6,17 +6,18 @@ import InputField from "../../atoms/forms/InputField";
 import { trpc } from "../../../utils/trpc";
 import { useState } from "react";
 import Modal from "../../headless/modal/modal";
-import { IssuanceType } from "../../../types/generic";
+import { AssetTransferType } from "../../../types/generic";
 import { Textarea } from "@mantine/core";
+import { AssetTransferEditInput } from "../../../server/schemas/asset";
 
-export type IssuanceEdit = z.infer<typeof createIssuance>
+export type TransferEdit = z.infer<typeof AssetTransferEditInput>
 
-export const IssuanceDetailsModal = (props: {
-    asset: IssuanceType,
+export const TransferDetailsModal = (props: {
+    asset: AssetTransferType,
     setCloseModal: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
 
-    const [stats, setStats] = useState<string>(props.asset?.issuanceStatus ?? "pending");
+    const [stats, setStats] = useState<string>(props.asset?.transferStatus ?? "pending");
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const utils = trpc.useContext()
     const [remarks, setRemarks] = useState<string | null>(null)
@@ -39,16 +40,16 @@ export const IssuanceDetailsModal = (props: {
         handleSubmit,
         reset,
         setValue,
-    } = useForm<IssuanceEdit>({
-        resolver: zodResolver(createIssuance),
+    } = useForm<AssetTransferType>({
+        resolver: zodResolver(AssetTransferEditInput),
     })
 
-    const onSubmit = (issuance: IssuanceEdit) => {
+    const onSubmit = (transfer: AssetTransferEditInput) => {
 
         mutate({
             ...issuance,
             id: props.asset?.id ?? 0,
-            issuanceStatus: stats,
+            transferStatus: stats,
         })
     }
 
@@ -110,13 +111,13 @@ export const IssuanceDetailsModal = (props: {
                         < div className="flex flex-col w-full">
                             <label className="font-semibold">Remarks</label >
                             <Textarea
-                                disabled
-                                // value={remarks ?? ""}
-                                // onChange={(event) => {
-                                //     const text = props.asset?.remarks ?? ""
-                                //     // setDisposalDesc(text)
-                                //     setValue("remarks", text)
-                                // }}
+                                // disabled
+                                value={remarks ?? ""}
+                                onChange={(event) => {
+                                    const text = props.asset?.remarks ?? ""
+                                    // setDisposalDesc(text)
+                                    setValue("remarks", text)
+                                }}
                                 placeholder={props.asset?.remarks ?? ""}
                                 minRows={3}
                                 maxRows={3}
@@ -142,8 +143,29 @@ export const IssuanceDetailsModal = (props: {
                         </div>
 
                         <hr className="w-full"></hr>
+                        {/* 
+                        {(props.asset?.transferStatus === "pending") && <div className="flex flex-row justify-between w-full gap-7">
+                            <div className="flex flex-col w-full">
+                                <label className="font-semibold">Comments</label >
+                                <Textarea
+                                    defaultValue={props.asset?.remarks ?? ""}
+                                    onChange={(event) => {
+                                        const text = event.currentTarget.value
+                                        setRemarks(text)
+                                        setValue("remarks", text)
+                                    }}
+                                    placeholder={props.asset?.remarks ?? "Remarks"}
+                                    minRows={6}
+                                    maxRows={6}
+                                    classNames={{
+                                        input:
+                                            "w-full border-2 border-gray-400 outline-none text-lg ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
+                                    }}
+                                />
+                            </div>
+                        </div>} */}
 
-                        {(props.asset?.issuanceStatus === "pending") && <div className="flex flex-row justify-between w-full gap-7">
+                        {(props.asset?.transferStatus === "approved") && <div className="flex flex-row justify-between w-full gap-7">
                             <div className="flex flex-col w-full">
                                 <label className="font-semibold">Comments</label >
                                 <Textarea
@@ -164,28 +186,7 @@ export const IssuanceDetailsModal = (props: {
                             </div>
                         </div>}
 
-                        {(props.asset?.issuanceStatus === "approved") && <div className="flex flex-row justify-between w-full gap-7">
-                            <div className="flex flex-col w-full">
-                                <label className="font-semibold">Comments</label >
-                                <Textarea
-                                    defaultValue={props.asset?.remarks ?? ""}
-                                    onChange={(event) => {
-                                        const text = event.currentTarget.value
-                                        setRemarks(text)
-                                        setValue("remarks", text)
-                                    }}
-                                    placeholder={props.asset?.remarks ?? "Remarks"}
-                                    minRows={6}
-                                    maxRows={6}
-                                    classNames={{
-                                        input:
-                                            "w-full border-2 border-gray-400 outline-none text-lg ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 mt-2",
-                                    }}
-                                />
-                            </div>
-                        </div>}
-
-                        {(props.asset?.issuanceStatus === "rejected" || props.asset?.issuanceStatus === "done" || props.asset?.issuanceStatus === "cancelled") && <div className="flex flex-row justify-between w-full gap-7">
+                        {(props.asset?.transferStatus === "rejected" || props.asset?.transferStatus === "done" || props.asset?.transferStatus === "cancelled") && <div className="flex flex-row justify-between w-full gap-7">
                             <div className="flex flex-col w-full">
                                 <label className="font-semibold">Comments</label >
                                 <Textarea
@@ -209,33 +210,33 @@ export const IssuanceDetailsModal = (props: {
 
 
                         <hr className="w-full"></hr>
-                        {(props.asset?.issuanceStatus === "pending" || props.asset?.issuanceStatus === "approved") && <div className="flex w-full justify-end py-3 gap-2">
+                        {(props.asset?.transferStatus === "pending" || props.asset?.transferStatus === "approved") && <div className="flex w-full justify-end py-3 gap-2">
                             <button
                                 type="submit"
                                 className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                                 onClick={() => {
-                                    props.asset?.issuanceStatus === "pending" ?
+                                    props.asset?.transferStatus === "pending" ?
                                         setStats("rejected")
-                                        : props.asset?.issuanceStatus === "approved" ? setStats("cancelled") : setStats("done")
+                                        : props.asset?.transferStatus === "approved" ? setStats("cancelled") : setStats("done")
                                 }}
                             >
                                 {
-                                    props.asset?.issuanceStatus === "pending" ?
+                                    props.asset?.transferStatus === "pending" ?
                                         "Reject"
-                                        : props.asset?.issuanceStatus === "approved" ? "Cancel Repair" : "Confirm"
+                                        : props.asset?.transferStatus === "approved" ? "Cancel Repair" : "Confirm"
                                 }
                             </button>
                             <button
                                 type="submit"
                                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                                 onClick={() => {
-                                    props.asset?.issuanceStatus === "pending" ?
+                                    props.asset?.transferStatus === "pending" ?
                                         setStats("approved")
                                         : setStats("done")
                                 }}
                             >
                                 {
-                                    props.asset?.issuanceStatus === "pending" ?
+                                    props.asset?.transferStatus === "pending" ?
                                         "Approve"
                                         : "Confirm"
                                 }

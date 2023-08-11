@@ -74,7 +74,7 @@ model User {
   accounts       Account[]
   address        Address?
   created_assets Asset[]
-  AssetIssuance  AssetIssuance[]
+  IssuedBy       AssetIssuance[] @relation("Issuedby")
   profile        Profile?
   sessions       Session[]
   Usersupervisee Team?           @relation("Usersupervisors", fields: [superviseeId], references: [id])
@@ -110,26 +110,26 @@ model validateTable {
 }
 
 model Employee {
-  id                                                   Int             @id @default(autoincrement())
-  name                                                 String?
-  position                                             String?
-  employee_id                                          String?         @unique
-  email                                                String?         @unique
-  teamId                                               Int?
-  superviseeId                                         Int?
-  createdAt                                            DateTime        @default(now())
-  updatedAt                                            DateTime        @updatedAt
-  deleted                                              Boolean         @default(false)
-  deletedAt                                            DateTime?
-  workMode                                             String?
-  workStation                                          String?
-  address                                              Address?
-  owned_assets                                         Asset[]
-  AssetIssuance_AssetIssuance_issuedToIdToEmployee     AssetIssuance[] @relation("AssetIssuance_issuedToIdToEmployee")
-  AssetIssuance_AssetIssuance_pastIssuanceIdToEmployee AssetIssuance[] @relation("AssetIssuance_pastIssuanceIdToEmployee")
-  supervisee                                           Team?           @relation("supervisors", fields: [superviseeId], references: [id])
-  team                                                 Team?           @relation("members", fields: [teamId], references: [id])
-  profile                                              Profile?
+  id           Int             @id @default(autoincrement())
+  name         String?
+  position     String?
+  employee_id  String?         @unique
+  email        String?         @unique
+  teamId       Int?
+  superviseeId Int?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  deleted      Boolean         @default(false)
+  deletedAt    DateTime?
+  workMode     String?
+  workStation  String?
+  address      Address?
+  owned_assets Asset[]
+  issuedTo     AssetIssuance[] @relation("Issuedto")
+  pastIssuance AssetIssuance[] @relation("Pastissuance")
+  supervisee   Team?           @relation("supervisors", fields: [superviseeId], references: [id])
+  team         Team?           @relation("members", fields: [teamId], references: [id])
+  profile      Profile?
 }
 
 model Profile {
@@ -480,6 +480,26 @@ model Asset {
   @@unique([parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }
 
+model AssetIssuance {
+  id             Int       @id @unique @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  deleted        Boolean   @default(false)
+  pastIssuanceId Int?
+  returnedAt     DateTime?
+  issuedById     Int?
+  issuedToId     Int?
+  issuanceStatus String?
+  issuanceDate   DateTime?
+  assetId        Int?      @unique
+  remarks        String?
+  asset          Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  issuedBy       User?     @relation("Issuedby", fields: [issuedById], references: [id], onDelete: Cascade)
+  issuedTo       Employee? @relation("Issuedto", fields: [issuedToId], references: [id], onDelete: Cascade)
+  pastIssuance   Employee? @relation("Pastissuance", fields: [pastIssuanceId], references: [id], onDelete: Cascade)
+}
+
 model ticketTable {
   id            Int       @id @default(autoincrement())
   action        String?
@@ -494,24 +514,4 @@ model ticketTable {
   updatedAt     DateTime  @updatedAt
   userArchiveId Int?
   modifiedBy    User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
-}
-
-model AssetIssuance {
-  id                                              Int       @id @unique @default(autoincrement())
-  createdAt                                       DateTime  @default(now())
-  updatedAt                                       DateTime
-  deletedAt                                       DateTime?
-  deleted                                         Boolean   @default(false)
-  pastIssuanceId                                  Int?
-  returnedAt                                      DateTime?
-  issuedById                                      Int?
-  issuedToId                                      Int?
-  issuanceStatus                                  String?
-  issuanceDate                                    DateTime?
-  assetId                                         Int?      @unique
-  remarks                                         String?
-  Asset                                           Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
-  User                                            User?     @relation(fields: [issuedById], references: [id], onDelete: Cascade)
-  Employee_AssetIssuance_issuedToIdToEmployee     Employee? @relation("AssetIssuance_issuedToIdToEmployee", fields: [issuedToId], references: [id], onDelete: Cascade)
-  Employee_AssetIssuance_pastIssuanceIdToEmployee Employee? @relation("AssetIssuance_pastIssuanceIdToEmployee", fields: [pastIssuanceId], references: [id], onDelete: Cascade)
 }

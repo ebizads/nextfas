@@ -23,6 +23,7 @@ import { SelectValueType } from "../select/TypeSelect"
 import Link from "next/link"
 import AlertInput from "../forms/AlertInput"
 import { useDisposeAssetStore } from "../../../store/useStore"
+import router from "next/router"
 // import { AssetFieldValues } from "../../../types/generic"
 
 export type Dispose = z.infer<typeof AssetDisposalCreateInput>
@@ -180,6 +181,7 @@ const CreateDisposeAccordion = () => {
 
   const resetDisposeAsset = () => {
     setDisposeAsset(null)
+    router.push("/assets")
     console.log("dapat wala na")
   }
 

@@ -92,13 +92,23 @@ export const assetIssuanceRouter = t.router({
     create: authedProcedure
         .input(initialIssuance)
         .mutation(async ({ ctx, input }) => {
-            const { issuedToId, ...rest } = input
+            const { issuedToId, issuedById, assetId, ...rest } = input
 
             const assetIssuance = await ctx.prisma.assetIssuance.create({
                 data: {
                     issuedTo: {
                         connect: {
                             id: issuedToId ?? 0
+                        }
+                    },
+                    issuedBy: {
+                        connect: {
+                            id: issuedById ?? 0,
+                        }
+                    },
+                    asset: {
+                        connect: {
+                            id: assetId ?? 0
                         }
                     },
                     // asset: {

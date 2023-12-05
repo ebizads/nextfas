@@ -18,7 +18,9 @@ export const assetRouter = t.router({
     const asset = await ctx.prisma.asset.findUnique({
       where: {
         number: input,
+
       },
+
       include: {
         custodian: true,
         parent: true,
@@ -28,6 +30,10 @@ export const assetRouter = t.router({
         management: true,
         addedBy: true,
         assetTag: true,
+        AssetIssuance: true,
+        pastIssuance: true,
+        issuedBy: true,
+        issuedTo: true,
         model: {
           include: {
             type: true,
@@ -122,6 +128,8 @@ export const assetRouter = t.router({
             management: true,
             addedBy: true,
             assetTag: true,
+            AssetIssuance: true,
+
           },
           where: {
             NOT: {
@@ -220,6 +228,8 @@ export const assetRouter = t.router({
             management: true,
             addedBy: true,
             assetTag: true,
+            AssetIssuance: true,
+
           },
           where: {
             NOT: {
@@ -308,6 +318,8 @@ export const assetRouter = t.router({
             management: true,
             addedBy: true,
             assetTag: true,
+            AssetIssuance: true,
+
           },
           where: {
             id: 999999,
@@ -439,6 +451,8 @@ export const assetRouter = t.router({
           subsidiary: true,
           management: true,
           addedBy: true,
+          AssetIssuance: true,
+
         },
       })
 
@@ -560,6 +574,7 @@ export const assetRouter = t.router({
           } = asset
           return {
             ...rest,
+
             model: {
               connectOrCreate: {
                 where: {
@@ -615,8 +630,7 @@ export const assetRouter = t.router({
   createOrUpdate: authedProcedure
     .input(AssetTransformInput)
     .mutation(async ({ ctx, input }) => {
-      const { management, model, number, id, ...rest } = input
-      console.log("MODEL:", model)
+      const { management, model, number, id, issuance, ...rest } = input
 
       const existAssets = await ctx.prisma?.asset.findFirst({
         where: {
@@ -662,6 +676,7 @@ export const assetRouter = t.router({
             number: number,
             vendorId: rest.vendorId ?? 0,
             management: { update: management },
+            AssetIssuance: { update: issuance },
             modelId: modelId,
           }
         })
@@ -719,7 +734,7 @@ export const assetRouter = t.router({
   edit: authedProcedure
     .input(AssetEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, management, ...rest } = input
+      const { id, management, issuance, ...rest } = input
       try {
         await ctx.prisma.asset.update({
           where: {
@@ -729,7 +744,11 @@ export const assetRouter = t.router({
             ...rest,
             management: {
               update: management,
+            },
+            AssetIssuance: {
+              update: issuance,
             }
+
           },
         })
 
@@ -755,6 +774,7 @@ export const assetRouter = t.router({
         assetProjectId,
         parentId,
         assetTagId,
+        AssetIssuance,
         purchaseOrder,
         invoiceNum,
         deployment_status,
@@ -772,6 +792,9 @@ export const assetRouter = t.router({
             },
             management: {
               update: management,
+            },
+            AssetIssuance: {
+              update: AssetIssuance,
             },
             vendor: {
               connect: {

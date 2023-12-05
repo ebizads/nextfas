@@ -9,11 +9,11 @@ export const navigations = [
     icon: "fa-light fa-boxes-packing",
     link: "#",
     subType: [
-//      {
-//        name: "Issuance",
-//        icon: "fa-light fa-hand-holding-box",
-//        link: "/issuance",
-//      },
+      //      {
+      //        name: "Issuance",
+      //        icon: "fa-light fa-hand-holding-box",
+      //        link: "/issuance",
+      //      },
       {
         icon: "fa-light fa-arrow-right-arrow-left",
         name: "Transfer",
@@ -135,14 +135,16 @@ const NavAccordion = (props: {
             .map((page, idx) => (
               <Accordion.Item key={idx} value={page.name.toUpperCase()}>
                 <Accordion.Control
-                  className={`m-0 py-4 px-4 ${props.paths[0]?.toUpperCase() === page.name.toUpperCase()
-                    ? "bg-tangerine-50 font-medium text-tangerine-500"
-                    : "text-light-secondary"
-                    }`}
+                  className={`m-0 py-4 px-4 ${
+                    props.paths[0]?.toUpperCase() === page.name.toUpperCase()
+                      ? "bg-tangerine-50 font-medium text-tangerine-500"
+                      : "text-light-secondary"
+                  }`}
                 >
                   <div
-                    className={`flex items-center gap-2 ${props.minimize ? "justify-center" : ""
-                      }`}
+                    className={`flex items-center gap-2 ${
+                      props.minimize ? "justify-center" : ""
+                    }`}
                   >
                     <i className={page.icon + " w-8 text-left "} />
                     <p className=" font-sans text-base text-light-primary">
@@ -156,12 +158,13 @@ const NavAccordion = (props: {
                       {page.subType.map((type, idx) => (
                         <Link key={idx} href={type.link}>
                           <a
-                            className={`pl-4 ${props.paths[
-                              props.paths.length - 1
-                            ]?.toUpperCase() === type.name.toUpperCase()
-                              ? "bg-tangerine-100"
-                              : ""
-                              } flex items-center gap-4 py-1 duration-150 hover:bg-tangerine-50 hover:text-tangerine-600`}
+                            className={`pl-4 ${
+                              props.paths[
+                                props.paths.length - 1
+                              ]?.toUpperCase() === type.name.toUpperCase()
+                                ? "bg-tangerine-100"
+                                : ""
+                            } flex items-center gap-4 py-1 duration-150 hover:bg-tangerine-50 hover:text-tangerine-600`}
                           >
                             <i className={type.icon + " text-gray-400"} />
                             <p>{type.name}</p>
@@ -179,10 +182,11 @@ const NavAccordion = (props: {
           {navigations.map((page, idx) => (
             <button
               key={idx}
-              className={`w-full  py-4 text-center ${props.paths[0]?.toUpperCase() === page.name.toUpperCase()
-                ? "bg-tangerine-50 text-tangerine-500"
-                : "text-light-secondary"
-                }`}
+              className={`w-full  py-4 text-center ${
+                props.paths[0]?.toUpperCase() === page.name.toUpperCase()
+                  ? "bg-tangerine-50 text-tangerine-500"
+                  : "text-light-secondary"
+              }`}
               onClick={() => {
                 props.setMinimize(false)
               }}

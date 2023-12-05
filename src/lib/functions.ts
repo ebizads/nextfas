@@ -10,6 +10,7 @@ import {
   DepartmentType,
   BuildingType,
   AssetDevice,
+  IssuanceType,
 } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
@@ -41,9 +42,9 @@ export const getProperty = (
     const getObj = filter.split(".")
 
     const property =
-      Object.getOwnPropertyDescriptor(type, getObj[0] ?? "")?.value ?? "--"
+      Object.getOwnPropertyDescriptor(type, getObj[0] ?? "--")?.value ?? "--"
     const value =
-      Object.getOwnPropertyDescriptor(property, getObj[1] ?? "")?.value ?? "--"
+      Object.getOwnPropertyDescriptor(property, getObj[1] ?? "--")?.value ?? "--"
 
     return Object.getOwnPropertyDescriptor(value, "name")?.value ?? "--"
   }
@@ -59,8 +60,37 @@ export const getProperty = (
 
   //dig deeper if obj is an actual obj
   return property
-    ? Object.getOwnPropertyDescriptor(property, "name")?.value
+    ? (Object.getOwnPropertyDescriptor(property, "name")?.value ?? "--")
     : "--"
+}
+export const getPropertyIssuance = (
+  filter: string,
+  type: IssuanceType | UserType | EmployeeType
+  //subfilter?: string
+) => {
+  //get object property
+
+  if (filter.includes(".")) {
+    const getObj = filter.split(".")
+
+    const property =
+      Object.getOwnPropertyDescriptor(type, getObj[0] ?? "")?.value ?? "--"
+
+    const value =
+      Object.getOwnPropertyDescriptor(property, getObj[1] ?? "")?.value ?? "--"
+
+    return value ?? "--"
+  }
+  const property = Object.getOwnPropertyDescriptor(type, filter)?.value ?? "--"
+
+  //returns the actual property as string
+  if (typeof property === "string" || typeof property === "number") {
+    const value = property.toString()
+    return value.length > 0 ? property.toString() : "--"
+  }
+
+  //dig deeper if obj is an actual obj
+  return property.toString() ?? "--"
 }
 
 export const getPropertyDisposal = (

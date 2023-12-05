@@ -190,6 +190,7 @@ const CreateAssetAccordion = () => {
 
   //gets and sets all employee
   const { data: employeeData } = trpc.employee.findAllCustodians.useQuery()
+
   const employeeList = useMemo(
     () =>
       employeeData?.employees
@@ -397,8 +398,9 @@ const CreateAssetAccordion = () => {
     if (asset_number) {
       const id = `${asset_number}` + "-"
       console.log(id)
+      const barcodeId = id + generateAssetNumber
       setValue("number", id)
-      JsBarcode("#barcode2", id, {
+      JsBarcode("#barcode2", barcodeId, {
         textAlign: "left",
         textPosition: "bottom",
         fontOptions: "",

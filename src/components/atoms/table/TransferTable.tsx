@@ -5,6 +5,8 @@ import { ColumnType } from "../../../types/table"
 import { transferColumn } from "../../../lib/table"
 import { getPropertyDisposal } from "../../../lib/functions"
 import { AssetTransferType } from "../../../types/generic"
+import Modal from "../../headless/modal/modal"
+import { TransferDetailsModal } from "../../transaction/Transfer/Modal"
 
 const TransferAssetTable_new = (props: {
   // checkboxes: number[]
@@ -113,12 +115,12 @@ const TransferAssetTable_new = (props: {
           ))}
         </tbody>
       </table>
-      {/* <Modal title="Asset"
+      <Modal title="Transfer"
         isVisible={isVisible}
         setIsVisible={setIsVisible}
         className="max-w-4xl">
-        <RepairDetailsModal asset={details as AssetRepairType} setCloseModal={setIsVisible} />
-      </Modal> */}
+        <TransferDetailsModal asset={details as AssetTransferType} setCloseModal={setIsVisible} />
+      </Modal>
     </div>
   )
 }

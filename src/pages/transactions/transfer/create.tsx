@@ -13,20 +13,7 @@ import Transfer from "../../../components/transaction/Transfer/TransferAsset";
 
 
 
-const TransferNew = () =>
-// {
-//   return (
-//     <DashboardLayout>
-//       <div className="shadow-mg flex h-full flex-col gap-2 rounded-md border bg-white p-4 shadow-lg">
-//         <div className="py-2">
-//           <AddRepairForm />
-//         </div>
-//       </div>
-//     </DashboardLayout>
-//   )
-// }
-
-{
+const TransferNew = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const router = useRouter();
@@ -49,7 +36,7 @@ const TransferNew = () =>
 
   useEffect(() => {
     setTransferAsset(null);
-  }, [])
+  }, [setTransferAsset])
 
 
 
@@ -103,14 +90,16 @@ const TransferNew = () =>
           </div> */}
 
       <div>
-        {(transferAsset?.number === "" || transferAsset?.number === null || transferAsset?.number === undefined) ? <DisplayTransferAssets
+        {/* {(transferAsset?.number === "" || transferAsset?.number === null || transferAsset?.number === undefined) ? <DisplayTransferAssets
           total={data?.count ?? 0}
           assets={assets}
           accessiblePage={accessiblePage}
           page={page}
           setPage={setPage}
           limit={limit}
-          setLimit={setLimit} /> : <Transfer />}
+          setLimit={setLimit} /> : */}
+        <Transfer />
+        {/* } */}
         <Modal
           className="max-w-lg"
           isVisible={validateModal}

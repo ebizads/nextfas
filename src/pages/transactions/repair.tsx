@@ -49,15 +49,18 @@ const AssetRepair = () => {
 
   return (
     <DashboardLayout>
-      <RepairAsset
-        total={data?.total ?? 0}
-        assets={assets}
-        accessiblePage={accessiblePage}
-        page={page}
-        setPage={setPage}
-        limit={limit}
-        setLimit={setLimit}
-      />
+      <div>
+        <h3 className="text-xl font-medium px-1">Repair</h3>
+        <RepairAsset
+          total={data?.total ?? 0}
+          assets={assets}
+          accessiblePage={accessiblePage}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          setLimit={setLimit}
+        />
+      </div>
       {/* <pre>{JSON.stringify(data?.assetRepairs, null, 2)}</pre> */}
     </DashboardLayout>
   )

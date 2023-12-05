@@ -46,7 +46,7 @@ const Dispose = (props: {
     const [filterBy, setFilterBy] = useState<string[]>(disposalColumn.map((i) => i.value))
 
     const [activeTab, setActiveTab] = useState<string | null>('pending')
-    const { status, setStatus } = useDisposalStatusStore()
+    const { setStatus } = useDisposalStatusStore()
 
     useEffect(() => {
         setStatus(activeTab ?? "pending")
@@ -76,14 +76,14 @@ const Dispose = (props: {
                             <i className="fa-solid fa-print text-xs" />
                             Generate CVs
                         </button> */}
-                        <Link href={"/transactions/disposal/create"}>
+                        {/* <Link href={"/transactions/disposal/create"}>
                             <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
 
                                 <i className="fa-regular fa-plus text-xs" />
                                 <p>Add New</p>
 
                             </div>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
 

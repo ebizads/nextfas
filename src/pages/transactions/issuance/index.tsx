@@ -5,61 +5,63 @@ import Transfer from "../../../components/transaction/Transfer/TransferAsset"
 import DashboardLayout from "../../../layouts/DashboardLayout"
 import {
 	useSearchStore,
-	useTransferAssetStore,
-	useTranferStatusStore,
+	useIssuanceAssetStore,
+	useIssuanceStatusStore,
 } from "../../../store/useStore"
-import { AssetTransferType, AssetType } from "../../../types/generic"
+import { IssuanceType, AssetType } from "../../../types/generic"
 import { trpc } from "../../../utils/trpc"
 import DisplayTransferAsset_new from "../../../components/transaction/Transfer/TransferAssetTabs"
+// import AssetIssuance from "../../../components/transaction/Issuance/AssetIssuance"
+import Issuance from "../../../components/transaction/Issuance/AssetIssuance"
 
-const AssetTransfer = () => {
+const NewIssuance = () => {
 	const [page, setPage] = useState(1)
 	const [limit, setLimit] = useState(10)
 
-	const { status } = useTranferStatusStore();
+	const { status } = useIssuanceStatusStore();
 
-	const [assets, setAssets] = useState<AssetTransferType[]>([])
+	const [assets, setAssets] = useState<IssuanceType[]>([])
 	const [accessiblePage, setAccessiblePage] = useState<number>(0)
 
-	const { transferAsset, setTransferAsset } = useTransferAssetStore()
+	const { issuanceAsset, setIssuanceAsset } = useIssuanceAssetStore()
 
 
-	const { data } = trpc.assetTransfer.findAll.useQuery({
+	const { data } = trpc.assetIssuance.findAll.useQuery({
 		search: {
-			transferStatus: status
+			issuanceStatus: status
 		},
 		limit,
 		page,
 	})
 
 	useEffect(() => {
-		setTransferAsset(null)
-		console.log(transferAsset)
+		setIssuanceAsset(null)
+		console.log(issuanceAsset)
 	}, [])
 
-	// console.log("transfer asset number: "+ transferAsset?.number);
+	// console.log("transfer asset number: "+ issuanceAsset?.number);
 
 	useEffect(() => {
-		console.log("transfer asset: " + transferAsset)
+		// console.log("transfer asset: " + issuanceAsset)
 
 		//get and parse all data
 		if (data) {
-			setAssets(data.assetTransfers as AssetTransferType[])
+			setAssets(data.assetIssuance as IssuanceType[])
 			setAccessiblePage(Math.ceil(data.count / limit))
 		}
-	}, [data, limit, transferAsset])
+	}, [data, limit])
 
 
 	useEffect(() => {
 		console.log(status, limit, page);
 	}, [status, limit, page]);
 
-	// console.log(transferAsset)
+	// console.log(issuanceAsset)
 	return (
 		<DashboardLayout>
 			<div className="">
-				<h3 className="text-xl font-medium px-1">Transfer</h3>
-				<DisplayTransferAsset_new
+				<h3 className="text-xl font-medium px-1">Issuance</h3>
+				<Issuance
 					total={data?.total ?? 0}
 					assets={assets}
 					accessiblePage={accessiblePage}
@@ -73,4 +75,4 @@ const AssetTransfer = () => {
 	)
 }
 
-export default AssetTransfer
+export default NewIssuance

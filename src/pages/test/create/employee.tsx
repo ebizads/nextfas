@@ -27,27 +27,27 @@ const Register = () => {
     },
   })
 
-  const onSubmit = async (employee: Employee) => {
-    // Register function
-    // console.log(employee);
+  // const onSubmit = async (employee: Employee) => {
+  //   // Register function
+  //   // console.log(employee);
 
-    mutate({
-      name: `${employee.profile.first_name} ${employee.profile.last_name}`,
-      employee_id: employee.employee_id,
-      email: employee.email,
-      profile: {
-        first_name: employee.profile.first_name,
-        last_name: employee.profile.last_name,
-      },
-      address: {
-        city: "Manila",
-        country: "Philippines",
-        state: "Metro Manila",
-        zip: "1000",
-      },
-    })
-    reset()
-  }
+  //   mutate({
+  //     name: `${employee.profile?.first_name} ${employee.profile?.last_name}`,
+  //     employee_id: employee.employee_id,
+  //     email: employee.email,
+  //     profile: {
+  //       first_name: employee.profile?.first_name ?? "",
+  //       last_name: employee.profile?.last_name ?? "",
+  //     },
+  //     address: {
+  //       city: "Manila",
+  //       country: "Philippines",
+  //       state: "Metro Manila",
+  //       zip: 1000,
+  //     },
+  //   })
+  //   reset()
+  // }
 
   return (
     <>
@@ -61,7 +61,7 @@ const Register = () => {
           Create Employee
         </h3>
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          // onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col space-y-4"
           noValidate
         >

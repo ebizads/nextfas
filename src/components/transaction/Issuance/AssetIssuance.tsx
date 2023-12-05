@@ -1,91 +1,70 @@
-import { Pagination, Tabs } from "@mantine/core"
-import Link from "next/link"
-import React, { useEffect, useState } from "react"
-import PaginationPopOver from "../../atoms/popover/PaginationPopOver"
-import TransferAssetTable_new from "../../atoms/table/TransferTable"
-import { transferColumn } from "../../../lib/table"
-import { AssetTransferType } from "../../../types/generic"
-import { useTranferStatusStore } from "../../../store/useStore"
+import { Pagination, Select, Tabs } from "@mantine/core";
+import Link from "next/link";
+import React, { useState, useEffect } from "react"
+//import { downloadExcel } from "../../lib/functions";
+import { issuanceColumn } from "../../../lib/table";
+//import { ExcelExportType } from "../../types/employee";
+import FilterPopOver from "../../atoms/popover/FilterPopOver";
+import PaginationPopOver from "../../atoms/popover/PaginationPopOver";
+import { IssuanceType } from "../../../types/generic";
+import { useIssuanceStatusStore } from "../../../store/useStore";
+import IssuanceTable from "../../atoms/table/IssuanceTable";
 
-// type SearchType = {
-//   value: string
-//   label: string
-// }
-
-// const Search = (props: { data: SearchType[] }) => {
-//   const [value, setValue] = useState<string | null>(null)
-//   return (
-//     <Select
-//       value={value}
-//       placeholder="Search"
-//       searchable
-//       nothingFound={`Cannot find option`}
-//       onChange={setValue}
-//       clearable
-//       data={[...props.data]}
-//       icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
-//     />
-//   )
-// }
-
-const DisplayTransferAsset_new = (props: {
+const Issuance = (props: {
     total: number
-    assets: AssetTransferType[]
+    assets: IssuanceType[]
     accessiblePage: number
     page: number
     setPage: React.Dispatch<React.SetStateAction<number>>
     limit: number
     setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-    // const [checkboxes, setCheckboxes] = useState<number[]>([])
-    // const [openPopover, setOpenPopover] = useState<boolean>(false)
     const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
-    const [filterBy, setFilterBy] = useState<string[]>(
-        transferColumn.map((i) => i.value)
-    )
-    // const [assets, setAssets] = useState<AssetType[]>([]);
-    // const [accessiblePage, setAccessiblePage] = useState<number>(0);
 
+    const [filterBy] = useState<string[]>(issuanceColumn.map((i) => i.value))
     const [activeTab, setActiveTab] = useState<string | null>("pending")
-    const { setStatus } = useTranferStatusStore()
 
+    const { setStatus } = useIssuanceStatusStore()
     useEffect(() => {
         setStatus(activeTab ?? "pending")
     }, [activeTab, setStatus])
 
-    useEffect(() => {
-        console.log(
-            "page: " + props.page,
-            "limit: " + props.limit,
-            "total: " + props.accessiblePage,
-
-        )
-    })
 
     return (
         <div className="space-y-4">
             <section className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
+                        <div className="flex w-fit items-center gap-2">
+
+                        </div>
                         {/* {checkboxes.length > 0 && (
-              <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
-                {checkboxes.includes(-1)
-                  ? `Delete all record/s ( ${props.asset.length} ) ?`
-                  : `Delete selected record/s ( ${checkboxes.length} )`}
-              </button>
-            )} */}
+                            <button className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none">
+                                {checkboxes.includes(-1)
+                                    ? `Delete all record/s ( ${props.asset.length} ) ?`
+                                    : `Delete selected record/s ( ${checkboxes.length} )`}
+                            </button>
+                        )} */}
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* <Link href={"/transactions/transfer/create"}>
+                        {/* <button
+                            className="-md flex gap-2 bg-tangerine-500 py-2 px-4 text-xs rounded-md text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none"
+                        >
+                            <i className="fa-solid fa-print text-xs" />
+                            Generate CVs
+                        </button> */}
+                        {/* <Link href={"/transactions/disposal/create"}>
                             <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
+
                                 <i className="fa-regular fa-plus text-xs" />
                                 <p>Add New</p>
+
                             </div>
                         </Link> */}
                     </div>
                 </div>
 
-                <div className="w-full rounded-md bg-white drop-shadow-lg">
+                <div className="bg-white rounded-md drop-shadow-lg w-full">
                     <div className="px-4">
                         <Tabs value={activeTab} onTabChange={setActiveTab} color="yellow">
                             <Tabs.List>
@@ -167,14 +146,13 @@ const DisplayTransferAsset_new = (props: {
                             </Tabs.List>
                         </Tabs>
                         <div className="py-4">
-                            <TransferAssetTable_new
+                            <IssuanceTable
                                 // checkboxes={checkboxes}
                                 // setCheckboxes={setCheckboxes}
                                 rows={props.assets}
                                 filterBy={filterBy}
-                                columns={transferColumn.filter((col) =>
-                                    filterBy.includes(col.value)
-                                )}
+                                columns={issuanceColumn.filter((col) => filterBy.includes(col.value))}
+                            // status={activeTab ?? "pending"}
                             />
                         </div>
                     </div>
@@ -182,7 +160,7 @@ const DisplayTransferAsset_new = (props: {
             </section>
             <section className="mt-8 flex justify-between px-4">
                 <div className="flex items-center gap-2">
-                    <p>Showing up to</p>
+                    <p>Showing up to </p>
                     <PaginationPopOver
                         paginationPopover={paginationPopover}
                         setPaginationPopover={setPaginationPopover}
@@ -204,6 +182,6 @@ const DisplayTransferAsset_new = (props: {
             </section>
         </div>
     )
-}
 
-export default DisplayTransferAsset_new
+}
+export default Issuance

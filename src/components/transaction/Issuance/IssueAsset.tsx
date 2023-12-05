@@ -8,7 +8,6 @@ import {
     CircleNumber2,
     CircleNumber3,
 } from "tabler-icons-react"
-import TypeSelect, { ClassTypeSelect } from "../../atoms/select/TypeSelect"
 import { Accordion, Checkbox, Select, Textarea } from "@mantine/core"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../atoms/forms/InputField"
@@ -25,17 +24,16 @@ import { DatePicker } from "@mantine/dates"
 import { AssetTransfer } from "@prisma/client"
 import { AssetTransferValues } from "../../../types/generic"
 import { stringify } from "superjson"
-import router from "next/router"
 import { useSession } from "next-auth/react"
 
 export type Transfer = z.infer<typeof AssetTransferCreateInput>
 
-const Transfer = ({ }) => {
-    const { transferAsset, setTransferAsset } = useTransferAssetStore()
-    const { data: session } = useSession()
-    const [assetNumber, setAssetNumber] = useState<string>(transferAsset?.number ?? "")
+const Issue = ({ }) => {
+    const [assetNumber, setAssetNumber] = useState<string>("")
     const [searchAsset, setSearchAsset] = useState<string>("")
     const [userId, setUserId] = useState<number>(0)
+    const { data: session } = useSession()
+    const [issuedTo, setIssuedTo] = useState<number>(0)
 
 
     const [checked, setChecked] = useState(false)
@@ -43,16 +41,15 @@ const Transfer = ({ }) => {
     const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
     const { data: departmentData } = trpc.department.findAll.useQuery()
 
-    const [issuedTo, setIssuedTo] = useState<number>(0)
-
     const [selectedDept, setSelectedDept] = useState<string>("")
-    const [selectedEMP, setSelectedEMP] = useState<string | null>("")
+    const [selectedEMP, setSelectedEMP] = useState<string>("")
 
     const [searchModal, setSearchModal] = useState<boolean>(false)
     const [completeModal, setCompleteModal] = useState<boolean>(false)
     const [validateModal, setValidateModal] = useState<boolean>(false)
 
     const [validateString, setValidateString] = useState<string>("")
+
 
 
     const { data: employeeData } = trpc.employee.findAll.useQuery({
@@ -70,10 +67,6 @@ const Transfer = ({ }) => {
         Number(selectedDept)
     )
 
-    useEffect(() => {
-        setUserId(Number(session?.user?.id))
-
-    }, [session?.user?.id, userId])
     const employeeList = useMemo(() => {
         const list = employeeData?.employees.map((employee) => {
             return { value: employee.id.toString(), label: employee.name }
@@ -87,16 +80,6 @@ const Transfer = ({ }) => {
         }) as SelectValueType[]
         return list ?? []
     }, [departmentData]) as SelectValueType[]
-
-    const specificDepartment = useMemo(() => {
-        if (selectedEMP) {
-            const department = departmentData?.departments.filter(
-                (department) => department.id === (employee?.team?.department?.id)
-            )[0]
-            setSelectedDept(String(department?.id))
-            return department?.name ?? null
-        }
-    }, [departmentData?.departments, employee?.team?.department?.id, selectedEMP])
 
     useMemo(() => {
         if (asset === null && assetNumber !== "") {
@@ -114,10 +97,15 @@ const Transfer = ({ }) => {
         },
     })
 
+
     const { register, handleSubmit, reset, setValue, formState: { errors }, } = useForm<Transfer>({
         resolver: zodResolver(AssetTransferCreateInput),
     })
 
+    useEffect(() => {
+        setUserId(Number(session?.user?.id))
+
+    }, [session?.user?.id])
 
 
     // useEffect(() => reset(asset as unknown as Transfer), [asset, reset])
@@ -149,20 +137,18 @@ const Transfer = ({ }) => {
         if (asset?.status === null || asset?.status === undefined || asset?.status === "") {
             mutate({
                 ...transfer,
-
                 transferStatus: "pending",
-                assetId: asset?.id ?? 0,
-
+                assetId: asset?.id ?? 0
             })
             updateAsset.mutate({
                 ...asset,
                 id: asset?.id ?? 0,
                 status: "transfer",
                 custodianId: Number(selectedEMP),
-                assetTagId: asset?.assetTagId ?? 0,
                 pastIssuanceId: asset?.issuedToId ?? 0,
                 issuedToId: issuedTo,
                 issuedById: userId,
+                assetTagId: asset?.id ?? 0,
                 management: {
                     id: asset?.management?.id ?? 0
                 }
@@ -197,7 +183,7 @@ const Transfer = ({ }) => {
                 ),
             },
             {
-                label: "Transfer Asset",
+                label: "Issue Asset",
                 icon: (
                     <>
                         {" "}
@@ -222,11 +208,11 @@ const Transfer = ({ }) => {
         steps,
     })
 
+    const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
 
     const resetTransferAsset = () => {
         setTransferAsset(null)
-        router.push("/assets")
         console.log("dapat wala na")
     }
 
@@ -234,11 +220,10 @@ const Transfer = ({ }) => {
     const { data: companyData } = trpc.company.findAll.useQuery()
 
     useEffect(() => {
-        console.log(JSON.stringify(transferAsset))
         setAssetNumber(transferAsset?.number ?? "")
         setCompanyId(asset?.subsidiaryId?.toString() ?? "")
 
-    }, [asset?.subsidiaryId, transferAsset, transferAsset?.number])
+    }, [asset?.subsidiaryId, transferAsset?.number])
 
 
 
@@ -1365,13 +1350,49 @@ const Transfer = ({ }) => {
 
                         <div className="p-5">
                             <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text p-2 font-sans text-xl font-semibold uppercase text-transparent">
-                                Transfer Details
+                                Issuance Details
                             </p>
                             <div className="flex flex-wrap py-2">
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                                     <div className="flex w-full flex-col py-2">
-                                        <label className="font-semibold">Employee</label>
+                                        <label className="font-semibold">Department</label>
+                                        <Select
+                                            disabled={checked}
+                                            placeholder="Select Department"
+                                            onChange={(value) => {
+                                                setSelectedDept(value ?? "")
+                                                setSelectedEMP("")
+                                                setValue("departmentCode", String(value))
+                                                console.log("TEST: " + employeeData)
+                                            }}
+                                            value={selectedDept ?? ""}
+                                            data={departmentList}
+                                            styles={(theme) => ({
+                                                item: {
+                                                    // applies styles to selected item
+                                                    "&[data-selected]": {
+                                                        "&, &:hover": {
+                                                            backgroundColor:
+                                                                theme.colorScheme === "light"
+                                                                    ? theme.colors.orange[3]
+                                                                    : theme.colors.orange[1],
+                                                            color:
+                                                                theme.colorScheme === "dark"
+                                                                    ? theme.white
+                                                                    : theme.black,
+                                                        },
+                                                    },
 
+                                                    // applies styles to hovered item (with mouse or keyboard)
+                                                    "&[data-hovered]": {},
+                                                },
+                                            })}
+                                            variant="unstyled"
+                                            className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                                        />
+                                    </div>
+                                    <div className="flex w-full flex-col py-2">
+                                        <label className="font-semibold">Employee</label>
                                         <Select
                                             disabled={checked}
                                             placeholder="Select Employee"
@@ -1380,7 +1401,6 @@ const Transfer = ({ }) => {
                                                 console.log(employeeList)
                                                 setIssuedTo(Number(value))
                                             }}
-
                                             value={selectedEMP}
                                             data={employeeList}
                                             styles={(theme) => ({
@@ -1406,24 +1426,6 @@ const Transfer = ({ }) => {
                                             variant="unstyled"
                                             className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                                         />
-                                    </div>
-                                    <div className="flex w-full flex-col">
-                                        <label className="font-semibold py-2">Department</label>
-                                        <input
-                                            type="text"
-                                            id={"department"}
-                                            className={
-                                                "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                                            }
-                                            placeholder="Select an employee"
-                                            value={
-                                                specificDepartment
-                                                    ? (specificDepartment ?? "--")
-                                                    : ""
-                                            }
-                                            disabled
-                                        />
-
                                     </div>
 
                                 </div>
@@ -1491,7 +1493,7 @@ const Transfer = ({ }) => {
                                             setValue("departmentCode", "0")
                                             setValue("custodianId", 0)
                                             setSelectedDept("")
-                                            // setSelectedEMP("")
+                                            setSelectedEMP("")
                                         }}
                                         label="Return Asset"
                                         color="orange"
@@ -1500,7 +1502,7 @@ const Transfer = ({ }) => {
                                 <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                                     <div className="flex w-full flex-col py-2">
                                         <div className="flex flex-row gap-2 mb-2">
-                                            <label className="font-semibold w-full">Barangay</label>
+                                            <label className="font-semibold w-full">Baranggay</label>
                                             <label className="font-semibold w-full">City</label>
                                             <label className="font-semibold w-full">State</label>
                                             <label className="font-semibold w-full">Country</label>
@@ -1515,8 +1517,8 @@ const Transfer = ({ }) => {
                                                 className={
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
-                                                placeholder="Barangay"
-                                                value={employee?.address?.street ?? ""}
+                                                placeholder="Baranggay"
+                                                value={department?.company?.address?.street ?? ""}
                                                 disabled
                                             />
 
@@ -1527,7 +1529,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="City"
-                                                value={employee?.address?.city ?? ""}
+                                                value={department?.company?.address?.city ?? ""}
                                                 disabled
                                             />
                                             <input
@@ -1537,7 +1539,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="State"
-                                                value={employee?.address?.region ?? ""}
+                                                value={department?.company?.address?.region ?? ""}
                                                 disabled
                                             />
                                             <input
@@ -1547,7 +1549,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="Country"
-                                                value={employee?.address?.country ?? ""}
+                                                value={department?.company?.address?.country ?? ""}
                                                 disabled
                                             />
                                             <input
@@ -1557,7 +1559,7 @@ const Transfer = ({ }) => {
                                                     "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                                                 }
                                                 placeholder="Zip"
-                                                value={employee?.address?.zip ?? ""}
+                                                value={department?.company?.address?.zip ?? ""}
                                                 disabled
                                             />
                                         </div>
@@ -1675,7 +1677,7 @@ const Transfer = ({ }) => {
     )
 }
 
-export default Transfer
+export default Issue
 
 //{<i className={`fa-sharp fa-solid fa-arrow-right-arrow-left ${active == 1 ? "text-tangerine-600" : ""}`}
 //E0E0E0

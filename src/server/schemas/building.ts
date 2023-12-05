@@ -6,4 +6,5 @@ export const BuildingCreateInput = z.object({
 export const BuildingEditInput = z.object({
   id: z.number(),
   name: z.string().optional(),
+
 })

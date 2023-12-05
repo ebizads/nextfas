@@ -3,66 +3,37 @@ import React, { useState } from "react"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
-import { disposalColumn } from "../../../lib/table";
-import { getPropertyDisposal } from "../../../lib/functions"
-import { DisposeType } from "../../../types/generic";
+import { disposalColumn, issuanceColumn } from "../../../lib/table";
+import { getPropertyDisposal, getPropertyIssuance } from "../../../lib/functions"
+import { DisposeType, IssuanceType } from "../../../types/generic";
 import Modal from "../../headless/modal/modal";
-import { DisposeDetailsModal } from "../../transaction/Disposal/Modal";
-
-const DisposalTable = (props: {
+import { IssuanceDetailsModal } from "../../transaction/Issuance/Modal";
+const IssuanceTable = (props: {
     // checkboxes: number[]
     // setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
     filterBy: string[]
-    rows: DisposeType[]
+    rows: IssuanceType[]
     columns: ColumnType[]
     // status: string
 }) => {
 
     const [isVisible, setIsVisible] = useState<boolean>(false)
-    const [details, setDetails] = useState<DisposeType>(null)
+    const [details, setDetails] = useState<IssuanceType>(null)
 
     const { minimize } = useMinimizeStore()
 
-    // const selectAllCheckboxes = () => {
-    //     if (props.checkboxes.length === 0) {
-    //         props.setCheckboxes([-1])
-    //     } else {
-    //         props.setCheckboxes([])
-    //     }
-    // }
-
-    // const toggleCheckbox = async (id: number) => {
-    //     if (props.checkboxes.includes(id)) {
-    //         // removes id if not selected
-    //         props.setCheckboxes((prev) => prev.filter((e) => e !== id))
-    //         return
-    //     }
-    //     // adds id
-    //     props.setCheckboxes((prev) => [...prev, id])
-    // }
 
     return (
         <div
             className={`max-w-[88vw] overflow-x-auto ${minimize ? "xl:w-[86vw]" : "xl:w-full"
                 } relative border shadow-md sm:rounded-lg`}
         >
-            {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
             <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
                 <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
                     <tr>
                         <th scope="col" className="py-1">
                             <div className="flex items-center justify-center">
-                                {/* <Checkbox
-                                    color={"orange"}
-                                    onChange={() => {
-                                        selectAllCheckboxes()
-                                    }}
-                                    checked={props.checkboxes.length > 0 ? true : false}
-                                    classNames={{
-                                        input:
-                                            "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                                    }}
-                                /> */}
+
                             </div>
                         </th>
                         {props.columns.filter((col) => props.filterBy.includes(col.value))
@@ -76,9 +47,6 @@ const DisposalTable = (props: {
                                 </th>
                             ))}
 
-                        {/* <th scope="col" className="p-4 text-center">
-                            Action
-                        </th> */}
                     </tr>
                 </thead>
                 <tbody>
@@ -89,24 +57,10 @@ const DisposalTable = (props: {
                         >
                             <td className="w-4 p-2">
                                 <div className="flex items-center justify-center">
-                                    {/* <Checkbox
-                                        value={row?.id ?? idx}
-                                        color={"orange"}
-                                        onChange={(e) => {
-                                            toggleCheckbox(Number(e.target.value))
-                                        }}
-                                        checked={
-                                            props.checkboxes.includes(row?.id ?? idx) ||
-                                            props.checkboxes.includes(-1)
-                                        }
-                                        classNames={{
-                                            input:
-                                                "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                                        }}
-                                    /> */}
+
                                 </div>
                             </td>
-                            {disposalColumn
+                            {issuanceColumn
                                 .filter((col) => props.filterBy.includes(col.value))
                                 .map((col) => (
                                     <td
@@ -118,7 +72,7 @@ const DisposalTable = (props: {
                                         }}
                                     >
                                         {
-                                            getPropertyDisposal(col.value, row)
+                                            getPropertyIssuance(col.value, row)
                                         }
                                     </td>
                                 ))}
@@ -132,15 +86,15 @@ const DisposalTable = (props: {
                 </tbody>
             </table>
 
-            <Modal title="Dispose"
+            <Modal title="Issuance"
                 isVisible={isVisible}
                 setIsVisible={setIsVisible}
                 className="max-w-4xl">
-                <DisposeDetailsModal asset={details as DisposeType} setCloseModal={setIsVisible} />
+                <IssuanceDetailsModal asset={details as IssuanceType} setCloseModal={setIsVisible} />
             </Modal>
         </div>
     )
 }
 
-export default DisposalTable
+export default IssuanceTable
 

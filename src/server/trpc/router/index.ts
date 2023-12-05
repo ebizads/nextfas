@@ -3,6 +3,7 @@ import { assetRouter } from "./asset"
 import { assetCategoryRouter } from "./asset_category"
 import { assetClassRouter } from "./asset_class"
 import { assetDisposalRouter } from "./asset_disposal"
+import { assetIssuanceRouter } from "./asset_issuance"
 import { assetProjectRouter } from "./asset_project"
 import { assetRepairRouter } from "./asset_repair"
 import { assetTagRouter } from "./asset_tag"
@@ -34,6 +35,7 @@ export const appRouter = t.router({
   assetCategory: assetCategoryRouter,
   assetType: assetTypeRouter,
   assetDisposal: assetDisposalRouter,
+  assetIssuance: assetIssuanceRouter,
   assetTransfer: assetTransferRouter,
   disposalType: disposalTypeRouter,
   assetRepair: assetRepairRouter,

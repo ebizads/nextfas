@@ -44,21 +44,21 @@ model VerificationToken {
 }
 
 model User {
-  id             Int             @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   name           String
-  email          String          @unique
+  email          String         @unique
   recovery_email String?
-  username       String?         @unique
+  username       String?        @unique
   password       String
   user_type      String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   emailVerified  DateTime?
   image          String?
-  deleted        Boolean         @default(false)
+  deleted        Boolean        @default(false)
   deletedAt      DateTime?
   lockedUntil    DateTime?
-  attempts       Int             @default(0)
+  attempts       Int            @default(0)
   attemptDate    DateTime?
   oldPassword    String[]
   firstLogin     Boolean?
@@ -70,15 +70,15 @@ model User {
   teamId         Int?
   passwordAge    DateTime?
   position       String?
-  user_Id        String?         @unique
+  user_Id        String?        @unique
   accounts       Account[]
   address        Address?
   created_assets Asset[]
-  IssuedBy       Asset[] @relation("Issuedby")
+  IssuedBy       Asset[]        @relation("Issuedby")
   profile        Profile?
   sessions       Session[]
-  Usersupervisee Team?           @relation("Usersupervisors", fields: [superviseeId], references: [id])
-  Userteam       Team?           @relation("Usermembers", fields: [teamId], references: [id])
+  Usersupervisee Team?          @relation("Usersupervisors", fields: [superviseeId], references: [id])
+  Userteam       Team?          @relation("Usermembers", fields: [teamId], references: [id])
   ticketTable    ticketTable[]
   validateTable  validateTable?
 }
@@ -110,25 +110,25 @@ model validateTable {
 }
 
 model Employee {
-  id           Int             @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   name         String?
   position     String?
-  employee_id  String?         @unique
-  email        String?         @unique
+  employee_id  String?   @unique
+  email        String?   @unique
   teamId       Int?
   superviseeId Int?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  deleted      Boolean         @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deleted      Boolean   @default(false)
   deletedAt    DateTime?
   workMode     String?
   workStation  String?
   address      Address?
   owned_assets Asset[]
-  issuedTo     Asset[] @relation("Issuedto")
-  pastIssuance Asset[] @relation("Pastissuance")
-  supervisee   Team?           @relation("supervisors", fields: [superviseeId], references: [id])
-  team         Team?           @relation("members", fields: [teamId], references: [id])
+  issuedTo     Asset[]   @relation("Issuedto")
+  pastIssuance Asset[]   @relation("Pastissuance")
+  supervisee   Team?     @relation("supervisors", fields: [superviseeId], references: [id])
+  team         Team?     @relation("members", fields: [teamId], references: [id])
   profile      Profile?
 }
 
@@ -307,8 +307,6 @@ model AssetDisposal {
   disposalType   DisposalType? @relation(fields: [disposalTypeId], references: [id])
 }
 
-
-
 model AssetTransfer {
   id               Int       @id @default(autoincrement())
   transferDate     DateTime?
@@ -327,7 +325,6 @@ model AssetTransfer {
   custodianId      Int?
   assetId          Int?      @unique
   asset            Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
-
 }
 
 model AssetRepair {
@@ -464,21 +461,20 @@ model Asset {
   purchaseOrder     String?
   deployment_status String?
   assetTagId        Int?
-  pastIssuanceId Int?
-  issuedById     Int?
-  issuedToId     Int?
-  issuedBy       User?     @relation("Issuedby", fields: [issuedById], references: [id], onDelete: Cascade)
-  issuedTo       Employee? @relation("Issuedto", fields: [issuedToId], references: [id], onDelete: Cascade)
-  pastIssuance   Employee? @relation("Pastissuance", fields: [pastIssuanceId], references: [id], onDelete: Cascade)
-
+  issuedById        Int?
+  issuedToId        Int?
+  pastIssuanceId    Int?
   addedBy           User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project           AssetProject?    @relation(fields: [assetProjectId], references: [id])
   assetTag          assetTag?        @relation(fields: [assetTagId], references: [id], onDelete: Cascade)
   custodian         Employee?        @relation(fields: [custodianId], references: [id], onDelete: Cascade)
   department        Department?      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  issuedBy          User?            @relation("Issuedby", fields: [issuedById], references: [id], onDelete: Cascade)
+  issuedTo          Employee?        @relation("Issuedto", fields: [issuedToId], references: [id], onDelete: Cascade)
   model             Model?           @relation(fields: [modelId], references: [id], onDelete: Cascade)
   parent            Asset?           @relation("children", fields: [parentId], references: [id], onDelete: Cascade)
   children          Asset[]          @relation("children")
+  pastIssuance      Employee?        @relation("Pastissuance", fields: [pastIssuanceId], references: [id], onDelete: Cascade)
   subsidiary        Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
   vendor            Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   AssetDisposal     AssetDisposal?
@@ -496,13 +492,13 @@ model AssetIssuance {
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
   deleted        Boolean   @default(false)
-  returnedAt     DateTime?  
+  returnedAt     DateTime?
   issuanceStatus String?
   issuanceDate   DateTime?
   assetId        Int?      @unique
   remarks        String?
   asset          Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)
-  }
+}
 
 model ticketTable {
   id            Int       @id @default(autoincrement())

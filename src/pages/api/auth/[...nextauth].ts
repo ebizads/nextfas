@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth/login",
+    signIn: "/UserManagement/login",
   },
   session: { strategy: "jwt" },
   secret: env.NEXTAUTH_SECRET,
@@ -28,6 +28,7 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
+      id: "credentials",
       name: "credentials",
       credentials: {
         username: { type: "text" },
@@ -46,7 +47,7 @@ export const authOptions: NextAuthOptions = {
           if (Boolean(user?.inactivityDate)) {
             const dateBetween = Number(
               (dateNow.getTime() - (user?.inactivityDate?.getTime() ?? 0)) /
-              (1000 * 60 * 60 * 24)
+                (1000 * 60 * 60 * 24)
             )
             console.log("Date: " + dateBetween)
             //throw new Error(dateBetween.toString())
@@ -69,7 +70,6 @@ export const authOptions: NextAuthOptions = {
             } else if (dateBetween >= 90) {
               await prisma.userArchive.create({
                 data: {
-
                   user_Id: user?.user_Id ?? "",
                   position: user?.position ?? "",
                   teamId: user?.teamId ?? 0,
@@ -77,14 +77,13 @@ export const authOptions: NextAuthOptions = {
                   name: user?.name ?? "",
                   email: user?.email ?? "",
                   username: user?.username ?? "",
-                  user_type: user?.user_type ?? ""
-
+                  user_type: user?.user_type ?? "",
                 },
               }),
                 await prisma.user.delete({
                   where: {
-                    id: user?.id
-                  }
+                    id: user?.id,
+                  },
                 })
               throw new Error(
                 `This user is deleted in the database. Please contact administrator.`

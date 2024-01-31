@@ -1,4 +1,4 @@
-import NextAuth, { type NextAuthOptions } from "next-auth"
+import NextAuth, { User, type NextAuthOptions } from "next-auth"
 
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
@@ -130,7 +130,10 @@ export const authOptions: NextAuthOptions = {
               },
               data: { attempts: 0, inactivityDate: new Date() },
             })
-            return user
+            return {
+              ...user,
+              id: user.id.toString(), // Ensure id is a string
+            } as User
           }
           let data = {}
           if (Boolean(user.lockedUntil)) {

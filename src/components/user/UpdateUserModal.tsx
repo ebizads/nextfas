@@ -54,9 +54,7 @@ const UpdateUserModal = (props: {
   const [city, setCity] = useState("")
   const [barangay, setBarangay] = useState("")
 
-  const { data: user } = trpc.user.findOne.useQuery(
-    Number(props.user?.id) ?? 0
-  )
+  const { data: user } = trpc.user.findOne.useQuery(Number(props.user?.id) ?? 0)
   const { data: singleTeams } = trpc.team.findOne.useQuery(
     props.user?.teamId ?? 0
   )
@@ -97,7 +95,7 @@ const UpdateUserModal = (props: {
   })
 
   useEffect(() => {
-    console.log(("test") + JSON.stringify(user))
+    console.log("test" + JSON.stringify(user))
     reset(props.user as User)
     setCertificate(generateCertificate)
 
@@ -109,16 +107,17 @@ const UpdateUserModal = (props: {
     console.log(userForm)
     console.log("error na nga to anoba", JSON.stringify(error))
 
-
     mutate({
       ...userForm,
-      name: `${userForm.profile?.first_name
-        ? userForm.profile?.first_name
-        : user?.profile?.first_name
-        } ${userForm.profile?.last_name
+      name: `${
+        userForm.profile?.first_name
+          ? userForm.profile?.first_name
+          : user?.profile?.first_name
+      } ${
+        userForm.profile?.last_name
           ? userForm.profile?.last_name
           : user?.profile?.last_name
-        }`,
+      }`,
       inactivityDate: new Date(),
       lockedAt: null,
       lockedUntil: null,
@@ -477,7 +476,6 @@ const UpdateUserModal = (props: {
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-
           <div className="flex w-[49%] flex-col">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
@@ -596,7 +594,11 @@ const UpdateUserModal = (props: {
                 clearable
                 nothingFound="No options"
                 variant="unstyled"
-                className={country === "" || country !== "Philippines" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 pointer-events-none px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+                className={
+                  country === "" || country !== "Philippines"
+                    ? "pointer-events-none mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                }
               />
 
               <AlertInput>{errors?.address?.region?.message}</AlertInput>
@@ -611,7 +613,9 @@ const UpdateUserModal = (props: {
                 id="address.province"
                 placeholder={props.user?.address?.province ?? "Province/States"}
                 data={filteredProvince}
-                disabled={country === "Philippines " ? (region === "") : country === ""}
+                disabled={
+                  country === "Philippines " ? region === "" : country === ""
+                }
                 onChange={(value) => {
                   setValue("address.province", value ?? "")
                   setProvince(value ?? "")
@@ -640,7 +644,11 @@ const UpdateUserModal = (props: {
                   },
                 })}
                 variant="unstyled"
-                className={(country === "Philippines " ? (region === "") : country === "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+                className={
+                  (country === "Philippines " ? region === "" : country === "")
+                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                }
               />
               {/* <InputField
                 type={"text"}
@@ -688,7 +696,11 @@ const UpdateUserModal = (props: {
                   },
                 })}
                 variant="unstyled"
-                className={province === "" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+                className={
+                  province === ""
+                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                }
               />
               {/* <InputField
                 type={"text"}
@@ -735,7 +747,11 @@ const UpdateUserModal = (props: {
                   },
                 })}
                 variant="unstyled"
-                className={(country === "Philippines" && city !== "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  " : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"}
+                className={
+                  country === "Philippines" && city !== ""
+                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                }
               />
               <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
             </div>
@@ -790,7 +806,6 @@ const UpdateUserModal = (props: {
               <pre className="mt-2 text-sm italic text-red-500">
                 Something went wrong!
               </pre>
-
             )
           )}
           <Modal
@@ -840,8 +855,8 @@ const UpdateUserModal = (props: {
                 {userLoading
                   ? "Loading..."
                   : lockedChecker
-                    ? "Unlock and save "
-                    : "Save"}
+                  ? "Unlock and save "
+                  : "Save"}
               </button>
             </div>
           )}
@@ -883,7 +898,6 @@ export const UserDeleteModal = (props: {
       props.setIsLoading(false)
       props.setIsVisible(false)
       utils.user.findAll.invalidate()
-
     },
   })
   const handleDelete = async () => {
@@ -918,7 +932,7 @@ export const UserDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete record
             </button>

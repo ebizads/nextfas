@@ -38,7 +38,9 @@ export const CreateUserInput = z.object({
   user_Id: z.string().nullish(),
   inactivityDate: z.date().nullish(),
   passwordAge: z.date().nullish(),
-  position: z.string({ required_error: "Position is required" }).min(1, { message: "Position is required" }),
+  position: z
+    .string({ required_error: "Position is required" })
+    .min(1, { message: "Position is required" }),
   address: AddressCreateInput,
   teamId: z.number({ required_error: "Team is required" }),
 })
@@ -74,20 +76,24 @@ export const EditUserInput = z.object({
   email: z.string().optional(),
   user_type: z.string().nullish(),
   image: z.string().nullish(),
-  profile: z.object({
-    first_name: z.string().min(1),
-    last_name: z.string().min(1),
-    middle_name: z.string().nullish(),
-    suffix: z.string().nullish(),
-    date_of_birth: z.date().nullish(),
-    phone_no: z.string().nullish(),
-    gender: z.string().nullish(),
-    image: z.string().nullish(),
-  }).optional(),
-  validateTable: z.object({
-    certificate: z.string().nullish(),
-    validationDate: z.date().nullish(),
-  }).optional(),
+  profile: z
+    .object({
+      first_name: z.string().min(1),
+      last_name: z.string().min(1),
+      middle_name: z.string().nullish(),
+      suffix: z.string().nullish(),
+      date_of_birth: z.date().nullish(),
+      phone_no: z.string().nullish(),
+      gender: z.string().nullish(),
+      image: z.string().nullish(),
+    })
+    .optional(),
+  validateTable: z
+    .object({
+      certificate: z.string().nullish(),
+      validationDate: z.date().nullish(),
+    })
+    .optional(),
   passwordAge: z.date().nullish(),
   position: z.string().nullish(),
   address: AddressEditInput,
@@ -104,4 +110,3 @@ export const EditUserInput = z.object({
 export const IdUser = z.object({
   id: z.number(),
 })
-

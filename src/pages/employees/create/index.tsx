@@ -4,8 +4,8 @@ import { CreateEmployee_new } from "./CreateNewEmp"
 import { ImageJSON } from "../../../types/table"
 import { trpc } from "../../../utils/trpc"
 import { EmployeeType } from "../../../types/generic"
-const NewEmp = () => {
 
+const NewEmp = () => {
   const [date, setDate] = useState<Date>(new Date())
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)

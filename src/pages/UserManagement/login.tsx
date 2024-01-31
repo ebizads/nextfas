@@ -47,10 +47,8 @@ export function Alert({
 }
 
 function LoginForm() {
-
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
-
 
   //get client ip address
   // const { data } = useQuery(["ip"], async () => {
@@ -73,8 +71,6 @@ function LoginForm() {
       password: "",
     },
   })
-
-
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
@@ -168,7 +164,7 @@ function LoginForm() {
 }
 
 const Login = () => {
-  const router = useRouter();
+  const router = useRouter()
   function onRegister() {
     router.push("../UserManagement/register")
   }
@@ -197,8 +193,7 @@ const Login = () => {
           onClick={() => {
             onRegister()
           }}
-        >
-        </button>
+        ></button>
       </main>
     </>
   )

@@ -102,7 +102,8 @@ export const useEditableStore = create<EditableState>((set) => ({
 
 export const useUserEditableStore = create<UserEditableState>((set) => ({
   userEditable: false,
-  setUserEditable: () => set((state) => ({ userEditable: !state.userEditable })),
+  setUserEditable: () =>
+    set((state) => ({ userEditable: !state.userEditable })),
 }))
 
 export const useGenerateStore = create<GenerateState>((set) => ({
@@ -147,12 +148,14 @@ export const useRepairAssetStore = create<RepairAssetState>((set) => ({
 
 export const useSelectedEmpStore = create<SelectedEmpState>((set) => ({
   selectedEmp: null,
-  setSelectedEmp: (newEmployee: EmployeeType) => set({ selectedEmp: newEmployee }),
+  setSelectedEmp: (newEmployee: EmployeeType) =>
+    set({ selectedEmp: newEmployee }),
 }))
 
 export const useSelectedVendorStore = create<SelectedVendorState>((set) => ({
   selectedVendor: null,
-  setSelectedVendor: (newVendor: VendorType) => set({ selectedVendor: newVendor }),
+  setSelectedVendor: (newVendor: VendorType) =>
+    set({ selectedVendor: newVendor }),
 }))
 
 export const useSelectedUserStore = create<SelectedUserState>((set) => ({
@@ -164,7 +167,6 @@ export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
   status: "pending",
   setStatus: (newStatus: string) => set({ status: newStatus }),
 }))
-
 
 export const useIssuanceStatusStore = create<IssuanceStatusState>((set) => ({
   status: null,
@@ -188,5 +190,6 @@ export const useSearchStore = create<SearchState>((set) => ({
 
 export const useCounterValidateStore = create<counterValidateState>((set) => ({
   counterCheck: false,
-  setCounterCheck: (counterStatus: boolean) => set({ counterCheck: counterStatus }),
+  setCounterCheck: (counterStatus: boolean) =>
+    set({ counterCheck: counterStatus }),
 }))

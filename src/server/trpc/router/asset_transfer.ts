@@ -18,9 +18,8 @@ export const assetTransferRouter = t.router({
             pastIssuance: true,
             issuedBy: true,
             issuedTo: true,
-          }
+          },
         },
-
       },
     })
     return assetTransfer
@@ -62,7 +61,7 @@ export const assetTransferRouter = t.router({
       const [assetTransfers, count] = await ctx.prisma.$transaction([
         ctx.prisma.assetTransfer.findMany({
           orderBy: {
-            createdAt: "asc",
+            createdAt: "desc",
           },
           include: {
             asset: true,
@@ -115,7 +114,7 @@ export const assetTransferRouter = t.router({
               pastIssuance: true,
               issuedBy: true,
               issuedTo: true,
-            }
+            },
           },
         },
       })
@@ -139,9 +138,9 @@ export const assetTransferRouter = t.router({
                 pastIssuance: true,
                 issuedBy: true,
                 issuedTo: true,
-              }
-            }
-          }
+              },
+            },
+          },
         })
 
         return "Asset updated successfully"

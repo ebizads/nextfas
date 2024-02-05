@@ -18,15 +18,11 @@ const TransferAssetTable_new = (props: {
 }) => {
   const { minimize } = useMinimizeStore()
 
-
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [details, setDetails] = useState<AssetTransferType>(null)
 
   useEffect(() => {
-    console.log(
-
-      "filter   :::" + props.filterBy
-    )
+    console.log("filter   :::" + props.filterBy)
   })
 
   // const selectAllCheckboxes = () => {
@@ -49,8 +45,9 @@ const TransferAssetTable_new = (props: {
 
   return (
     <div
-      className={`max-w-[88vw] overflow-x-auto ${minimize ? "xl:w-[86vw]" : "xl:w-full"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-w-[88vw] overflow-x-auto ${
+        minimize ? "xl:w-[86vw]" : "xl:w-full"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(assetRepair, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -82,7 +79,6 @@ const TransferAssetTable_new = (props: {
                   {col.name}
                 </th>
               ))}
-
           </tr>
         </thead>
         <tbody>
@@ -92,9 +88,7 @@ const TransferAssetTable_new = (props: {
               className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
             >
               <td className="w-4 p-2">
-                <div className="flex items-center justify-center">
-
-                </div>
+                <div className="flex items-center justify-center"></div>
               </td>
               {transferColumn
                 .filter((col) => props.filterBy.includes(col.value))
@@ -110,16 +104,20 @@ const TransferAssetTable_new = (props: {
                     {getPropertyDisposal(col.value, row)}
                   </td>
                 ))}
-
             </tr>
           ))}
         </tbody>
       </table>
-      <Modal title="Transfer"
+      <Modal
+        title="Transfer"
         isVisible={isVisible}
         setIsVisible={setIsVisible}
-        className="max-w-4xl">
-        <TransferDetailsModal asset={details as AssetTransferType} setCloseModal={setIsVisible} />
+        className="max-w-4xl"
+      >
+        <TransferDetailsModal
+          asset={details as AssetTransferType}
+          setCloseModal={setIsVisible}
+        />
       </Modal>
     </div>
   )

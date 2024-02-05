@@ -67,7 +67,7 @@ export const transferColumn = [
   { value: "transferDate", name: "Transfer Date" },
   { value: "transferStatus", name: "Status" },
   { value: "transferLocation", name: "Location" },
-  { value: "custodian", name: "Recipient" },
+  // { value: "custodian", name: "Recipient" },
 ] as ColumnType[]
 
 export const repairColumn = [

@@ -70,9 +70,6 @@ const SideBar = () => {
           </Link>
         </div>
       </div> */}
-
-      {/* //TODO:  Fix this when we have Asset Issuance & Transfer READY */}
-
       <div className="flex w-full flex-col">
         {!minimize && (
           <p className="px-2 text-xs capitalize text-light-secondary">

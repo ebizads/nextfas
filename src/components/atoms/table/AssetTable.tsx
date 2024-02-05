@@ -638,7 +638,7 @@ const AssetDetailsModal = (props: {
                     <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
                   </button>
                   <p className="font-medium xl:text-lg">Asset Options</p>
-                  {/* {props.asset?.AssetIssuance === null &&
+                  {props.asset?.AssetIssuance === null &&
                     (disposeAsset || repairAsset || transferAsset)?.status ===
                       ("" || null) && (
                       <Link href="/transactions/issuance/create">
@@ -647,19 +647,18 @@ const AssetDetailsModal = (props: {
                           Assign
                         </div>
                       </Link>
-                    )} */}
+                    )}
 
                   {/* //TODO:  Fix this when we have Asset Issuance READY */}
-                  {props.asset?.AssetIssuance?.issuanceStatus &&
-                    (disposeAsset || repairAsset || transferAsset)?.status ===
-                      ("" || null) && (
-                      <Link href="/transactions/transfer/create">
-                        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                          <i className={"fa-solid fa-arrow-right-arrow-left"} />
-                          Transfer
-                        </div>
-                      </Link>
-                    )}
+                  {(disposeAsset || repairAsset || transferAsset)?.status ===
+                    ("" || null) && (
+                    <Link href="/transactions/transfer/create">
+                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                        <i className={"fa-solid fa-arrow-right-arrow-left"} />
+                        Transfer
+                      </div>
+                    </Link>
+                  )}
                   {(disposeAsset || repairAsset || transferAsset)?.status ===
                     ("" || null) && (
                     <Link href="/transactions/repair/create">

@@ -9,16 +9,16 @@ export const navigations = [
     icon: "fa-light fa-boxes-packing",
     link: "#",
     subType: [
-      // {
-      //   name: "Issuance",
-      //   icon: "fa-light fa-hand-holding-box",
-      //   link: "/transactions/issuance",
-      // },
-      // {
-      //   icon: "fa-light fa-arrow-right-arrow-left",
-      //   name: "Transfer",
-      //   link: "/transactions/transfer",
-      // },
+      {
+        name: "Issuance",
+        icon: "fa-light fa-hand-holding-box",
+        link: "/transactions/issuance",
+      },
+      {
+        icon: "fa-light fa-arrow-right-arrow-left",
+        name: "Transfer",
+        link: "/transactions/transfer",
+      },
       // {
       //   icon: "fa-solid fa-file-dashed-line",
       //   name: "Split",

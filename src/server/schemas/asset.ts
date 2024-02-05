@@ -1,20 +1,12 @@
 import { z } from "zod"
 import {
-  CustodianEditInput,
   ManagementCreateInput,
   ManagementEditInput,
-  ManagementTableEditInput,
   ModelCreateInput,
   ModelEditInput,
   ModelEditTableInput,
-  ProjectEditInput,
-
 } from "./model"
-import { VendorTableEditInput } from "./vendor"
-import { CompanyTableEditInput } from "./company"
-import { EditUserInput } from "./user"
-import { EmployeeEditInput, EmployeeTableEditInput } from "./employee"
-import { createIssuance, initialIssuance } from "./issuance"
+import { createIssuance } from "./issuance"
 
 //only creates Assets
 // export const AssetOnlyInput = z.object({
@@ -79,7 +71,7 @@ export const AssetEditInput = z.object({
   issuedById: z.number().optional().nullish(),
   issuedToId: z.number().optional().nullish(),
   management: ManagementEditInput.optional(),
-  issuance: createIssuance.optional()
+  issuance: createIssuance.optional(),
   // model: ModelEditInput.optional(),
 })
 
@@ -111,7 +103,7 @@ export const AssetTransformInput = z.object({
   parentId: z.number().nullish(),
   management: ManagementEditInput,
   model: ModelEditTableInput,
-  issuance: createIssuance
+  issuance: createIssuance,
 })
 
 export const AssetUpdateInput = z.object({
@@ -196,19 +188,18 @@ export const AssetTransferCreateInput = z.object({
   remarks: z.string().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
-
 })
 
 export const AssetTransferEditInput = z.object({
   id: z.number().optional(),
   transferDate: z.date().nullish(),
-  transferStatus: z.string().optional(),
-  transferLocation: z.string().optional(),
+  transferStatus: z.string().optional().nullish(),
+  transferLocation: z.string().optional().nullish(),
   departmentCode: z.string().nullish().optional(),
   remarks: z.string().nullish().optional(),
-  custodianId: z.number().optional(),
-  assetId: z.number().optional(),
-  issuance: createIssuance
+  custodianId: z.number().optional().nullish(),
+  assetId: z.number().optional().nullish(),
+  issuance: createIssuance.nullish(),
 })
 
 export const AssetRepairCreateInput = z.object({

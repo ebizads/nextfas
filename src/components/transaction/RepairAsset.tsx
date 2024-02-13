@@ -94,9 +94,10 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${activeTab === "pending"
-                          ? "font-semibold text-tangerine-500"
-                          : "font-semibold text-[#8F8F8F] "
+                        `${
+                          activeTab === "pending"
+                            ? "font-semibold text-tangerine-500"
+                            : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >
@@ -109,9 +110,10 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${activeTab === "approved"
-                          ? "font-semibold text-tangerine-500"
-                          : "font-semibold text-[#8F8F8F] "
+                        `${
+                          activeTab === "approved"
+                            ? "font-semibold text-tangerine-500"
+                            : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >
@@ -124,9 +126,10 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${activeTab === "rejected"
-                          ? "font-semibold text-tangerine-500"
-                          : "font-semibold text-[#8F8F8F] "
+                        `${
+                          activeTab === "rejected"
+                            ? "font-semibold text-tangerine-500"
+                            : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >
@@ -139,9 +142,10 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${activeTab === "cancelled"
-                          ? "font-semibold text-tangerine-500"
-                          : "font-semibold text-[#8F8F8F] "
+                        `${
+                          activeTab === "cancelled"
+                            ? "font-semibold text-tangerine-500"
+                            : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >
@@ -154,9 +158,10 @@ const RepairAsset = (props: {
                     <p
                       className={
                         "py-2 px-4 text-lg uppercase " +
-                        `${activeTab === "done"
-                          ? "font-semibold text-tangerine-500"
-                          : "font-semibold text-[#8F8F8F] "
+                        `${
+                          activeTab === "done"
+                            ? "font-semibold text-tangerine-500"
+                            : "font-semibold text-[#8F8F8F] "
                         }`
                       }
                     >

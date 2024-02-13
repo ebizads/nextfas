@@ -225,17 +225,15 @@ const CreateAssetAccordion = () => {
     return department?.location
   }, [departmentId, departmentData]) as Location
 
-
-
-
-
-  const assetTagList = useMemo(() =>
-    assetTagData?.assetTag.
-      filter((item) => item.id != 0)
-      .map((assetTag) => {
-        return { value: assetTag.id.toString(), label: assetTag.name }
-      }),
-    [assetTagData]) as SelectValueType[] | undefined
+  const assetTagList = useMemo(
+    () =>
+      assetTagData?.assetTag
+        .filter((item) => item.id != 0)
+        .map((assetTag) => {
+          return { value: assetTag.id.toString(), label: assetTag.name }
+        }),
+    [assetTagData]
+  ) as SelectValueType[] | undefined
 
   const departmentList = useMemo(() => {
     if (companyId) {
@@ -270,7 +268,6 @@ const CreateAssetAccordion = () => {
   useEffect(() => {
     setBuildingId(String(buildingLocation?.id))
   }, [buildingLocation])
-
 
   //asset description
   const [description, setDescription] = useState<string | null>(null)
@@ -348,6 +345,7 @@ const CreateAssetAccordion = () => {
     `-${moment().format("YYMDhms")}`
   )
 
+  const [number, setNumber] = useState<string | null>(null)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const generateAssetNumber = useMemo(() => {
@@ -375,6 +373,11 @@ const CreateAssetAccordion = () => {
   }, [allAssets?.assets, assetsAll])
 
   const asset_number = useMemo(() => {
+    console.log("aaa typeId", typeId)
+    console.log("aaa departmentId", departmentId)
+    console.log("aaa buildingId", buildingId)
+    console.log("aaa floorId", floorId)
+    console.log("aaa assetTag", assetTag)
     const parseId = (id: string | null) => {
       if (!id) {
         return "00"
@@ -387,30 +390,55 @@ const CreateAssetAccordion = () => {
     }
 
     if (typeId && departmentId && buildingId && floorId && assetTag) {
-      console.log(parseId(departmentId) + parseId(buildingId) + parseId(floorId) + "-" + parseId(assetTag))
-      return parseId(departmentId) + parseId(buildingId) + parseId(floorId) + "-" + parseId(assetTag)
+      console.log(
+        "AAAA parse",
+        parseId(departmentId) +
+          parseId(buildingId) +
+          parseId(floorId) +
+          "-" +
+          parseId(assetTag)
+      )
+      return (
+        parseId(departmentId) +
+        parseId(buildingId) +
+        parseId(floorId) +
+        "-" +
+        parseId(assetTag)
+      )
     }
 
     return null
   }, [typeId, departmentId, buildingId, floorId, assetTag]) as string | null
 
   useEffect(() => {
-    if (asset_number) {
-      const id = `${asset_number}` + "-"
-      console.log(id)
-      const barcodeId = id + generateAssetNumber
-      setValue("number", id)
-      JsBarcode("#barcode2", barcodeId, {
-        textAlign: "left",
-        textPosition: "bottom",
-        fontOptions: "",
-        fontSize: 12,
-        textMargin: 6,
-        height: 50,
-        width: 1,
-      })
+    const checker = asset_number
+    const assetNum = generateAssetNumber
+
+    if (checker && assetNum) {
+      const id = `${checker}` + "-"
+
+      if (!number) {
+        setNumber(id + assetNum)
+      }
+      setValue("number", id!)
+      console.log(assetNum, "CHECK Gen", id, id + assetNum)
+      // setValue("number", id + assetNum)
+      console.log(number, "hhhhhh")
+      if (id + assetNum) {
+        setTimeout(() => {
+          JsBarcode("#barcode", id + assetNum, {
+            textAlign: "left",
+            textPosition: "bottom",
+            fontOptions: "",
+            fontSize: 12,
+            textMargin: 6,
+            height: 50,
+            width: 1,
+          })
+        }, 1000)
+      }
     }
-  }, [assetId, asset_number, generateAssetNumber, setValue])
+  }, [assetId, asset_number, generateAssetNumber, number])
 
   const { data: session } = useSession()
 
@@ -467,7 +495,7 @@ const CreateAssetAccordion = () => {
         <Accordion
           transitionDuration={300}
           multiple={true}
-          defaultValue={["1", "2", "3"]}
+          defaultValue={["1", "2", "3", "4"]}
           classNames={{}}
         >
           <Accordion.Item value={"1"} className="">
@@ -757,9 +785,7 @@ const CreateAssetAccordion = () => {
                         }
                         placeholder="Building will appear here"
                         value={
-                          buildingLocation
-                            ? getBuilding(buildingLocation)
-                            : ""
+                          buildingLocation ? getBuilding(buildingLocation) : ""
                         }
                         disabled
                       />
@@ -824,7 +850,7 @@ const CreateAssetAccordion = () => {
                       />
                       {/* <AlertInput>{errors?.custodianId?.message}</AlertInput> */}
                     </div>
-                    <div className="col-span-2 flex flex-col gap-2 hidden">
+                    <div className="col-span-2  hidden flex-col gap-2">
                       <label htmlFor="workMode" className="text-sm">
                         Work Mode
                       </label>
@@ -903,7 +929,7 @@ const CreateAssetAccordion = () => {
                       />
                       <AlertInput>{errors?.model?.typeId?.message}</AlertInput>
                     </div>
-                    <div className="col-span-4 text-gray-700 hidden">
+                    <div className="col-span-4 hidden text-gray-700">
                       <div className="flex flex-1 flex-col gap-2 ">
                         <label htmlFor="address" className="text-sm">
                           Asset Location
@@ -921,18 +947,18 @@ const CreateAssetAccordion = () => {
                                 ? getAddress(company_address)
                                 : ""
                               : employee_workMode?.workMode === "WFH"
-                                ? employee_workMode.address
-                                  ? getAddress(employee_workMode)
-                                  : ""
-                                : employee_workMode?.workMode === "Hybrid"
-                                  ? (company_address?.address
-                                    ? "[" + getAddress(company_address) + "]"
-                                    : "") +
-                                  " & " +
-                                  (employee_workMode.address
-                                    ? "[" + getAddress(employee_workMode) + "]"
-                                    : "")
-                                  : "--"
+                              ? employee_workMode.address
+                                ? getAddress(employee_workMode)
+                                : ""
+                              : employee_workMode?.workMode === "Hybrid"
+                              ? (company_address?.address
+                                  ? "[" + getAddress(company_address) + "]"
+                                  : "") +
+                                " & " +
+                                (employee_workMode.address
+                                  ? "[" + getAddress(employee_workMode) + "]"
+                                  : "")
+                              : "--"
                           }
                           disabled
                         />
@@ -1215,9 +1241,10 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Panel>
           </Accordion.Item>
+
           <Accordion.Item value={"4"} className="">
             <Accordion.Control
-              disabled={!Boolean(typeId) || !Boolean(departmentId)}
+              // disabled={!Boolean(typeId) || !Boolean(departmentId)}
               className="uppercase outline-none focus:outline-none active:outline-none"
             >
               <div className="flex items-center gap-2 text-gray-700">
@@ -1228,42 +1255,47 @@ const CreateAssetAccordion = () => {
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="flex items-center justify-center">
-                {!Boolean(typeId) || !Boolean(departmentId) ? (
-                  <div
-                    id="printableArea"
-                    className="flex h-[10rem] w-[25rem] items-center justify-center rounded-md border-2 border-dashed border-neutral-400"
-                  >
+              <div className="flex flex-col items-center justify-center">
+                <div
+                  id="printableArea"
+                  className="flex min-h-[10rem] w-[25rem] flex-col items-center justify-center rounded-md border-2 border-dashed border-neutral-400"
+                >
+                  <div id="printSVG" ref={componentRef}>
+                    <svg id="barcode" />
+                  </div>
+                  {!Boolean(typeId) || !Boolean(departmentId) ? (
                     <p className="text-center italic text-neutral-400">
-                      Barcode will appear here, please select `company a`nd
+                      Barcode will appear here, please select company and
                       department
                     </p>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="space-y-2">
-                      <div id="printSVG" ref={componentRef}>
-                        <svg id="barcode2" />
-                      </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          handlePrint()
-                          console.log("printing barcode")
-                        }}
-                        disabled={!Boolean(typeId) || !Boolean(departmentId)}
-                        className="m-2 flex items-center justify-center gap-2 rounded-md bg-tangerine-300 py-1 px-4 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-                      >
-                        <p>Print Barcode</p> <i className="fa-solid fa-print" />
-                      </button>
-                    </div>
+                <div>
+                  {/* <div id="printSVG" ref={componentRef}>
+                    <svg id="barcode" />
+                  </div> */}
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handlePrint()
+                        console.log("printing barcode")
+                      }}
+                      // disabled={!Boolean(typeId) || !Boolean(departmentId)}
+                      className="m-2 flex items-center justify-center gap-2 rounded-md bg-tangerine-300 py-1 px-4 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+                    >
+                      <p>Print Barcode</p> <i className="fa-solid fa-print" />
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>
+
         <div className="mt-2 flex w-full justify-end gap-2 text-lg">
           <button
             type="button"
@@ -1276,7 +1308,9 @@ const CreateAssetAccordion = () => {
             type="submit"
             disabled={(!isValid && !isDirty) || isLoading}
             className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-            onClick={() => { console.log("id", assetTag), console.log(errors) }}
+            onClick={() => {
+              console.log("id", assetTag), console.log(errors)
+            }}
           >
             {isLoading || loading ? "Saving..." : "Save"}
           </button>

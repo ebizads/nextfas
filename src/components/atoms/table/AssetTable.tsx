@@ -6,7 +6,7 @@ import {
   useDisposeAssetStore,
   useRepairAssetStore,
   useIssuanceAssetStore,
-  useTransferAssetStore
+  useTransferAssetStore,
 } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
@@ -21,6 +21,7 @@ import JsBarcode from "jsbarcode"
 import Link from "next/link"
 import { useSearchStore } from "../../../store/useStore"
 import QRCode from "react-qr-code"
+import { Asset } from "tabler-icons-react"
 const AssetDetailsModal = (props: {
   asset: AssetType | null
   openModalDesc: boolean
@@ -638,34 +639,42 @@ const AssetDetailsModal = (props: {
                     <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
                   </button>
                   <p className="font-medium xl:text-lg">Asset Options</p>
-                  {(props.asset?.AssetIssuance === null) && (disposeAsset || repairAsset || transferAsset)?.status === ("" || null) &&
-                    <Link
-                      href="/transactions/issuance/create" >
-                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                        <i className={"fa-solid fa-hand-holding-box"} />
-                        Assign
-                      </div>
-                    </Link>}
-                  {props.asset?.AssetIssuance?.issuanceStatus && (disposeAsset || repairAsset || transferAsset)?.status === ("" || null) &&
-                    <Link
-                      href="/transactions/transfer/create">
+                  {(props.asset?.AssetIssuance?.deleted ||
+                    props.asset?.AssetIssuance === null) &&
+                    props.asset?.status === ("" || null) && (
+                      <Link href="/transactions/issuance/create">
+                        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                          <i className={"fa-solid fa-hand-holding-box"} />
+                          Assign
+                        </div>
+                      </Link>
+                    )}
+
+                  {/* //TODO:  Fix this when we have Asset Issuance READY */}
+                  {props.asset?.status === ("" || null) && (
+                    <Link href="/transactions/transfer/create">
                       <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                         <i className={"fa-solid fa-arrow-right-arrow-left"} />
                         Transfer
                       </div>
-                    </Link>}
-                  {(disposeAsset || repairAsset || transferAsset)?.status === ("" || null) && <Link href="/transactions/repair/create">
-                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                      <i className={"fa-solid  fa-screwdriver-wrench"} />
-                      Repair
-                    </div>
-                  </Link>}
-                  {(disposeAsset || repairAsset || transferAsset)?.status === ("" || null) && <Link href="/transactions/disposal/create">
-                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                      <i className={"fa-solid fa-trash-can"} />
-                      Dispose
-                    </div>
-                  </Link>}
+                    </Link>
+                  )}
+                  {props.asset?.status === ("" || null) && (
+                    <Link href="/transactions/repair/create">
+                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                        <i className={"fa-solid  fa-screwdriver-wrench"} />
+                        Repair
+                      </div>
+                    </Link>
+                  )}
+                  {props.asset?.status === ("" || null) && (
+                    <Link href="/transactions/disposal/create">
+                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                        <i className={"fa-solid fa-trash-can"} />
+                        Dispose
+                      </div>
+                    </Link>
+                  )}
                   <Link href="/assets/update">
                     <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid fa-pen-to-square"} />
@@ -696,7 +705,7 @@ const AssetDetailsModal = (props: {
             </div>
           </div>
         </div>
-      </Modal >
+      </Modal>
       <Modal
         size={8}
         className="max-w-lg"
@@ -705,7 +714,6 @@ const AssetDetailsModal = (props: {
       >
         <div className="py-2">
           <p className=" text-center text-lg font-semibold">{validateString}</p>
-
         </div>
       </Modal>
     </>
@@ -755,8 +763,9 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}{" "}
               {props.checkboxes.length > 1 ? "records" : "record"}{" "}
               <i
-                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
-                  }`}
+                className={`fa-solid ${
+                  showList ? " fa-caret-up" : " fa-caret-down"
+                }`}
               />
             </button>{" "}
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -793,7 +802,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete record/s
             </button>
@@ -847,12 +856,19 @@ const AssetTable = (props: {
     setDisposeAsset(selectedAsset)
     setTransferAsset(selectedAsset)
     setRepairAsset(selectedAsset)
-  }, [selectedAsset, setDisposeAsset, setIssuanceAsset, setRepairAsset, setTransferAsset])
+  }, [
+    selectedAsset,
+    setDisposeAsset,
+    setIssuanceAsset,
+    setRepairAsset,
+    setTransferAsset,
+  ])
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-full"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">

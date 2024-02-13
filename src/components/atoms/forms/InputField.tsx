@@ -36,7 +36,7 @@ export const InputField = ({
   defaultValue,
 }: // displayOnly
 
-  InputFieldType) => {
+InputFieldType) => {
   const [inputType, setInputType] = useState<string>(type ?? "text")
   useEffect(() => {
     if (Boolean(!value)) {
@@ -49,7 +49,7 @@ export const InputField = ({
       <div className="relative z-0 flex">
         <div className="flex flex-1 flex-col gap-2">
           {!className && (
-            <label htmlFor={name} className="text-sm pt-1">
+            <label htmlFor={name} className="pt-1 text-sm font-semibold">
               {label}
               {required && <span className="text-sm text-red-500">*</span>}
             </label>
@@ -66,7 +66,7 @@ export const InputField = ({
             className={
               className
                 ? className +
-                " peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0  text-sm text-gray-900 placeholder:text-sm focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                  " peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0  text-sm text-gray-900 placeholder:text-sm focus:border-tangerine-500 focus:outline-none focus:ring-0"
                 : "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
             }
             placeholder={placeholder ?? "--"}

@@ -1,90 +1,92 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { AssetType } from '../../../types/generic';
-import { columns } from '../../../lib/table';
-import PaginationPopOver from '../../atoms/popover/PaginationPopOver';
+import React, { useEffect, useState } from "react"
+import Link from "next/link"
+import { AssetType } from "../../../types/generic"
+import { columns } from "../../../lib/table"
+import PaginationPopOver from "../../atoms/popover/PaginationPopOver"
 // import FilterPopOver from '../../atoms/popover/FilterPopOver';
-import TransferAssetTable from './TransferAssetDetails';
-import Modal from '../../headless/modal/modal';
-import { useGenerateStore, useSearchStore } from '../../../store/useStore';
-import { Pagination, Tooltip } from '@mantine/core';
-import { Search } from 'tabler-icons-react';
-import { trpc } from '../../../utils/trpc';
-import { useTransferAssetStore } from '../../../store/useStore';
+import TransferAssetTable from "./TransferAssetDetails"
+import Modal from "../../headless/modal/modal"
+import { useGenerateStore, useSearchStore } from "../../../store/useStore"
+import { Pagination, Tooltip } from "@mantine/core"
+import { Search } from "tabler-icons-react"
+import { trpc } from "../../../utils/trpc"
+import { useTransferAssetStore } from "../../../store/useStore"
 // import { number } from 'zod';
 
 const DisplayTransferAssets = (props: {
-    total: number;
-    assets: AssetType[];
-    accessiblePage: number;
-    page: number;
-    setPage: React.Dispatch<React.SetStateAction<number>>;
-    limit: number;
-    setLimit: React.Dispatch<React.SetStateAction<number>>;
+  total: number
+  assets: AssetType[]
+  accessiblePage: number
+  page: number
+  setPage: React.Dispatch<React.SetStateAction<number>>
+  limit: number
+  setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-    // const [checkboxes, setCheckboxes] = useState<number[]>([]);
-    // const [ openPopover, setOpenPopover ] = useState<boolean>(false);
-    const [paginationPopover, setPaginationPopover] = useState<boolean>(false);
-    const [openModalDel, setOpenModalDel] = useState<boolean>(false);
+  // const [checkboxes, setCheckboxes] = useState<number[]>([]);
+  // const [ openPopover, setOpenPopover ] = useState<boolean>(false);
+  const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
+  const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
-    const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value));
+  const [filterBy, setFilterBy] = useState<string[]>(
+    columns.map((i) => i.value)
+  )
 
-    const [assetNumber, setAssetNumber] = useState<string>('');
-    const [searchAsset, setSearchAsset] = useState<string>('');
+  const [assetNumber, setAssetNumber] = useState<string>("")
+  const [searchAsset, setSearchAsset] = useState<string>("")
 
-    const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase());
+  const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
 
-    const [validateString, setValidateString] = useState<string>("")
+  const [validateString, setValidateString] = useState<string>("")
 
-    const [assetId, setAssetId] = useState<number>(0)
+  const [assetId, setAssetId] = useState<number>(0)
 
+  const [validateModal, setValidateModal] = useState<boolean>(false)
 
-    const [validateModal, setValidateModal] = useState<boolean>(false)
+  const { search, setSearch } = useSearchStore()
+  const [searchModal, setSearchModal] = useState<boolean>(false)
+  const { transferAsset, setTransferAsset } = useTransferAssetStore()
+  const { generate, setGenerate } = useGenerateStore()
 
-    const { search, setSearch } = useSearchStore()
-    const [searchModal, setSearchModal] = useState<boolean>(false);
-    const { transferAsset, setTransferAsset } = useTransferAssetStore();
-    const { generate, setGenerate } = useGenerateStore()
+  // useEffect(
+  // 	() => {
+  // 		setTransferAsset(asset as AssetType);
+  // 	},
+  // 	[setTransferAsset, asset]
+  // );
 
+  useEffect(() => {
+    if (assetNumber !== "") {
+      if (asset === null || asset?.deleted === true) {
+        setSearchModal(true)
+        setAssetNumber("")
+      } else if (asset?.status === "disposal") {
+        setValidateString("The asset is in for disposal")
+        setValidateModal(true)
+        setAssetNumber("")
+      } else if (asset?.status === "repair") {
+        setValidateString("The asset is already in for repair.")
+        setValidateModal(true)
+        setAssetNumber("")
+      } else if (asset?.status === "issuance") {
+        setValidateString("The asset is being issued.")
+        setValidateModal(true)
+        setAssetNumber("")
+      } else if (asset?.status === "transfer") {
+        setValidateString("The asset is currently being transferred.")
+        setValidateModal(true)
+        setAssetNumber("")
+      } else {
+        setTransferAsset(asset as AssetType)
+      }
 
-    // useEffect(
-    // 	() => {
-    // 		setTransferAsset(asset as AssetType);
-    // 	},
-    // 	[setTransferAsset, asset]
-    // );
+      setSearch("")
+    }
+    // setGenerate(false);
+  }, [setTransferAsset, asset, assetNumber, assetId, setSearch])
 
-    useEffect(() => {
-        if (assetNumber !== "") {
-            if (asset === null || asset?.deleted === true) {
-                setSearchModal(true)
-                setAssetNumber("")
-            } else if (asset?.status === "disposal") {
-                setValidateString("The asset is in for disposal")
-                setValidateModal(true)
-                setAssetNumber("")
-            } else if (asset?.status === "repair") {
-                setValidateString("The asset is already in for repair.")
-                setValidateModal(true)
-                setAssetNumber("")
-            }
-            else if (asset?.status === "transfer") {
-                setValidateString("The asset is currently being transferred.")
-                setValidateModal(true)
-                setAssetNumber("")
-            }
-            else {
-                setTransferAsset(asset as AssetType);
-            }
-
-            setSearch("");
-        }
-        // setGenerate(false);
-    }, [setTransferAsset, asset, assetNumber, assetId, setSearch])
-
-    return (
-        <div className="space-y-4">
-            {/* <section className="space-y-4">
+  return (
+    <div className="space-y-4">
+      {/* <section className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="flex w-fit items-center gap-2">
@@ -127,14 +129,14 @@ const DisplayTransferAssets = (props: {
                     </div>
                 </div>
             </section> */}
-            <TransferAssetTable
-                // checkboxes={checkboxes}
-                // setCheckboxes={setCheckboxes}
-                rows={props.assets}
-                filterBy={filterBy}
-                columns={columns.filter((col) => filterBy.includes(col.value))}
-            />
-            {/* <section className="mt-8 flex justify-between px-4">
+      <TransferAssetTable
+        // checkboxes={checkboxes}
+        // setCheckboxes={setCheckboxes}
+        rows={props.assets}
+        filterBy={filterBy}
+        columns={columns.filter((col) => filterBy.includes(col.value))}
+      />
+      {/* <section className="mt-8 flex justify-between px-4">
                 <div className="flex items-center gap-2">
                     <p>Showing up to</p>
                     <PaginationPopOver
@@ -164,15 +166,15 @@ const DisplayTransferAssets = (props: {
                     />
                 </div>
             </section> */}
-            {/* <AssetDeleteModal
+      {/* <AssetDeleteModal
                 checkboxes={checkboxes}
                 setCheckboxes={setCheckboxes}
                 assets={props.assets}
                 openModalDel={openModalDel}
                 setOpenModalDel={setOpenModalDel}
             /> */}
-        </div>
-    );
-};
+    </div>
+  )
+}
 
-export default DisplayTransferAssets;
+export default DisplayTransferAssets

@@ -17,10 +17,8 @@ const AddRepairForm = () => {
   const [assetNumber, setAssetNumber] = useState<string>("")
   const [validateString, setValidateString] = useState<string>("")
 
-
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [validateModal, setValidateModal] = useState<boolean>(false)
-
 
   const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
 
@@ -34,7 +32,6 @@ const AddRepairForm = () => {
 
   const { mutate } = trpc.assetRepair.create.useMutation({
     onSuccess() {
-
       setCompleteModal(true)
       // invalidate query of asset id when mutations is successful
       // utils.asset.findAll.invalidate()
@@ -49,15 +46,18 @@ const AddRepairForm = () => {
     formState: { errors },
   } = useForm<Repair>({
     resolver: zodResolver(AssetRepairCreateInput),
-
   })
 
   const onSubmit = (repair: Repair) => {
-    if (asset?.status === null || asset?.status === undefined || asset?.status === "") {
+    if (
+      asset?.status === null ||
+      asset?.status === undefined ||
+      asset?.status === ""
+    ) {
       mutate({
         ...repair,
         repairStatus: "pending",
-        assetId: asset?.id ?? 0
+        assetId: asset?.id ?? 0,
       })
 
       updateAsset.mutate({
@@ -67,8 +67,7 @@ const AddRepairForm = () => {
       })
 
       reset()
-    }
-    else {
+    } else {
       if (asset?.status === "disposal") {
         setValidateString("The asset is in for disposal")
         setValidateModal(true)
@@ -79,6 +78,10 @@ const AddRepairForm = () => {
         setAssetNumber("")
       } else if (asset?.status === "transfer") {
         setValidateString("The asset is being transferred.")
+        setValidateModal(true)
+        setAssetNumber("")
+      } else if (asset?.status === "issuance") {
+        setValidateString("The asset is being issued.")
         setValidateModal(true)
         setAssetNumber("")
       }
@@ -95,7 +98,6 @@ const AddRepairForm = () => {
     console.log("dapat wala na")
   }
 
-
   return (
     <div id="contents">
       <form
@@ -110,7 +112,9 @@ const AddRepairForm = () => {
           title="NOTICE!!"
         >
           <div className="py-2">
-            <p className="text-center text-lg font-semibold">{validateString}</p>
+            <p className="text-center text-lg font-semibold">
+              {validateString}
+            </p>
           </div>
         </Modal>
         <div className="flex items-center gap-2 text-gray-700">
@@ -134,20 +138,12 @@ const AddRepairForm = () => {
           </div>
           <div className="flex w-full flex-row justify-between gap-7 px-2">
             <div className="flex w-full flex-col py-2">
-              <label className="font-semibold">
-                Asset Name
-              </label>
-              <p className="text-base ">
-                {asset?.name ?? "---"}
-              </p>
+              <label className="font-semibold">Asset Name</label>
+              <p className="text-base ">{asset?.name ?? "---"}</p>
             </div>
             <div className="flex w-full flex-col py-2">
-              <label className="font-semibold">
-                Alternate Number
-              </label>
-              <p className="text-base">
-                {asset?.alt_number ?? "---"}
-              </p>
+              <label className="font-semibold">Alternate Number</label>
+              <p className="text-base">{asset?.alt_number ?? "---"}</p>
             </div>
           </div>
           <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
@@ -172,7 +168,7 @@ const AddRepairForm = () => {
               </label>
               <textarea
                 onChange={(event) => {
-                  setValue("notes", event.currentTarget.value);
+                  setValue("notes", event.currentTarget.value)
                 }}
                 rows={7}
                 className="resize-none rounded-md border-2 border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
@@ -182,24 +178,25 @@ const AddRepairForm = () => {
 
           <AlertInput>{errors?.notes?.message}</AlertInput>
         </div>
-        {asset !== null && <div className="pt-2 pl-2 flex w-full justify-end gap-2 text-lg">
-
-          <button
-            type="submit"
-            className="rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-          >
-            Submit
-          </button>
-          <div className="flex w-full ">
+        {asset !== null && (
+          <div className="flex w-full justify-end gap-2 pt-2 pl-2 text-lg">
             <button
-              type="button"
-              className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
-              onClick={resetRepairAsset}
+              type="submit"
+              className="rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             >
-              Cancel Process
+              Submit
             </button>
+            <div className="flex w-full ">
+              <button
+                type="button"
+                className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                onClick={resetRepairAsset}
+              >
+                Cancel Process
+              </button>
+            </div>
           </div>
-        </div>}
+        )}
         {/*
         <Modal isVisible={submitting} setIsVisible={setSubmitting} title="Confirm details" className="w-fit h-fit p-4">
           <div>
@@ -218,7 +215,7 @@ const AddRepairForm = () => {
             </div>
           </div>
         </Modal> */}
-      </form >
+      </form>
 
       <Modal
         isVisible={completeModal}
@@ -241,7 +238,7 @@ const AddRepairForm = () => {
           </div>
         </div>
       </Modal>
-    </div >
+    </div>
   )
 }
 

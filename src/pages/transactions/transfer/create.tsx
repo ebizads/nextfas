@@ -1,65 +1,47 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
-import Modal from "../../../components/headless/modal/modal";
-import AddRepairForm from "../../../components/transaction/AddRepair/AddRepairForm"
+import Modal from "../../../components/headless/modal/modal"
 import DashboardLayout from "../../../layouts/DashboardLayout"
-import { useSearchStore, useTransferAssetStore } from "../../../store/useStore";
-import { AssetType } from '../../../types/generic';
-import { trpc } from '../../../utils/trpc';
-import TransferAssetTable from "../../../components/transaction/Transfer/TransferAssetDetails";
-import TransferAsset from "../../../components/transaction/Transfer/TransferAsset";
-import DisplayTransferAssets from "../../../components/transaction/Transfer/DisplayTransferAssets";
-import Transfer from "../../../components/transaction/Transfer/TransferAsset";
-
-
+import { useSearchStore, useTransferAssetStore } from "../../../store/useStore"
+import { AssetType } from "../../../types/generic"
+import { trpc } from "../../../utils/trpc"
+import Transfer from "../../../components/transaction/Transfer/TransferAsset"
 
 const TransferNew = () => {
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const router = useRouter();
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const router = useRouter()
   const { search } = useSearchStore()
 
   const { data } = trpc.asset.findAll.useQuery({
     search: { number: search },
     limit,
-    page
-  });
+    page,
+  })
 
-  const [assets, setAssets] = useState<AssetType[]>([]);
-  const [accessiblePage, setAccessiblePage] = useState<number>(0);
+  const [assets, setAssets] = useState<AssetType[]>([])
+  const [accessiblePage, setAccessiblePage] = useState<number>(0)
 
   const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
   const [validateString, setValidateString] = useState<string>("")
   const [validateModal, setValidateModal] = useState<boolean>(false)
 
-
   useEffect(() => {
-    setTransferAsset(null);
+    setTransferAsset(null)
   }, [setTransferAsset])
-
-
 
   // console.log("transfer asset number: "+ transferAsset?.number);
 
-
-  useEffect(
-    () => {
-
-      //get and parse all data
-      if (data) {
-        setAssets(data.assets as AssetType[]);
-        setAccessiblePage(Math.ceil(data.count / limit));
-      }
-    },
-    [data, limit, router]
-  );
-
-
+  useEffect(() => {
+    //get and parse all data
+    if (data) {
+      setAssets(data.assets as AssetType[])
+      setAccessiblePage(Math.ceil(data.count / limit))
+    }
+  }, [data, limit, router])
 
   useEffect(() => {
-
-
     if (transferAsset !== null) {
       if (transferAsset === null || transferAsset?.deleted === true) {
         setTransferAsset(null)
@@ -75,10 +57,15 @@ const TransferNew = () => {
         setValidateString("The asset is already being transferred.")
         setValidateModal(true)
         setTransferAsset(null)
+      } else {
+        setTransferAsset(transferAsset)
       }
-      else {
-        setTransferAsset(transferAsset);
-      }
+    } else if (transferAsset == null) {
+      setValidateString("No asset selected")
+      setValidateModal(true)
+      setTimeout(() => {
+        router.push("/assets")
+      }, 3000)
     }
   }, [setTransferAsset, transferAsset])
   return (
@@ -107,14 +94,14 @@ const TransferNew = () => {
           title="NOTICE!!"
         >
           <div className="py-2">
-            <p className=" text-center text-lg font-semibold">{validateString}</p>
-
+            <p className=" text-center text-lg font-semibold">
+              {validateString}
+            </p>
           </div>
         </Modal>
       </div>
     </DashboardLayout>
   )
-
 }
 
 export default TransferNew

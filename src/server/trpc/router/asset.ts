@@ -18,7 +18,6 @@ export const assetRouter = t.router({
     const asset = await ctx.prisma.asset.findUnique({
       where: {
         number: input,
-
       },
 
       include: {
@@ -49,24 +48,24 @@ export const assetRouter = t.router({
             building: true,
           },
         },
-
       },
     })
     return asset
   }),
-  findOneTable: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const asset = await ctx.prisma.asset.findUnique({
-      where: {
-        number: input,
-      },
-      include: {
-        management: true,
-        model: true,
-
-      },
-    })
-    return asset
-  }),
+  findOneTable: authedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const asset = await ctx.prisma.asset.findUnique({
+        where: {
+          number: input,
+        },
+        include: {
+          management: true,
+          model: true,
+        },
+      })
+      return asset
+    }),
   findAll: authedProcedure
     .input(
       z
@@ -129,7 +128,6 @@ export const assetRouter = t.router({
             addedBy: true,
             assetTag: true,
             AssetIssuance: true,
-
           },
           where: {
             NOT: {
@@ -138,10 +136,10 @@ export const assetRouter = t.router({
             OR: {
               NOT: {
                 id: 999999,
-              }
+              },
             },
-            name: { contains: input?.search?.name, mode: 'insensitive' },
-            number: { contains: input?.search?.number, mode: 'insensitive' },
+            name: { contains: input?.search?.name, mode: "insensitive" },
+            number: { contains: input?.search?.number, mode: "insensitive" },
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)
@@ -229,14 +227,13 @@ export const assetRouter = t.router({
             addedBy: true,
             assetTag: true,
             AssetIssuance: true,
-
           },
           where: {
             NOT: {
               id: 999999,
             },
-            name: { contains: input?.search?.name, mode: 'insensitive' },
-            number: { contains: input?.search?.number, mode: 'insensitive' },
+            name: { contains: input?.search?.name, mode: "insensitive" },
+            number: { contains: input?.search?.number, mode: "insensitive" },
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)
@@ -319,11 +316,9 @@ export const assetRouter = t.router({
             addedBy: true,
             assetTag: true,
             AssetIssuance: true,
-
           },
           where: {
             id: 999999,
-
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)
@@ -352,7 +347,7 @@ export const assetRouter = t.router({
           const assets = await ctx.prisma.asset.findMany({
             where: {
               number: {
-                in: input
+                in: input,
               },
             },
             include: {
@@ -394,7 +389,7 @@ export const assetRouter = t.router({
           const assets = await ctx.prisma.asset.findMany({
             where: {
               number: {
-                in: input
+                in: input,
               },
             },
             include: {
@@ -427,7 +422,6 @@ export const assetRouter = t.router({
       } = input
 
       const allAssets = await ctx.prisma.asset.findMany({
-
         include: {
           model: {
             include: {
@@ -452,7 +446,6 @@ export const assetRouter = t.router({
           management: true,
           addedBy: true,
           AssetIssuance: true,
-
         },
       })
 
@@ -460,11 +453,7 @@ export const assetRouter = t.router({
 
       let assetNumber = ""
 
-      for (
-        let x = 0;
-        x <= (allAssets ? allAssets?.length : 0) + 1;
-
-      ) {
+      for (let x = 0; x <= (allAssets ? allAssets?.length : 0) + 1; ) {
         if (
           assetsAll?.some((item) =>
             item?.number?.includes(String(x + 1).padStart(4, "0"))
@@ -473,7 +462,7 @@ export const assetRouter = t.router({
           x++
         } else {
           assetNumber = String(x + 1).padStart(4, "0")
-          break;
+          break
         }
       }
 
@@ -537,8 +526,8 @@ export const assetRouter = t.router({
           assetTag: {
             connect: {
               id: assetTagId ?? 0,
-            }
-          }
+            },
+          },
         },
         include: {
           model: true,
@@ -634,8 +623,8 @@ export const assetRouter = t.router({
 
       const existAssets = await ctx.prisma?.asset.findFirst({
         where: {
-          number: number
-        }
+          number: number,
+        },
       })
 
       let modelId = null
@@ -648,28 +637,28 @@ export const assetRouter = t.router({
           // return { pumasok: existModel?.id }
           await ctx.prisma?.model.update({
             where: {
-              id: model.id
-            }, data: {
-              ...model
-            }
+              id: model.id,
+            },
+            data: {
+              ...model,
+            },
           })
           modelId = existModel?.id
         } else {
           // return { indiPumasok: existModel?.id }
           const newModel = await ctx.prisma?.model.create({
             data: {
-              ...model
-            }
+              ...model,
+            },
           })
           modelId = newModel.id
         }
       }
 
-
       if (existAssets?.id) {
         await ctx.prisma?.asset.update({
           where: {
-            number: number
+            number: number,
           },
           data: {
             ...rest,
@@ -678,7 +667,7 @@ export const assetRouter = t.router({
             management: { update: management },
             AssetIssuance: { update: issuance },
             modelId: modelId,
-          }
+          },
         })
       } else {
         await ctx.prisma?.asset.create({
@@ -695,7 +684,7 @@ export const assetRouter = t.router({
               },
             },
             modelId: modelId,
-          }
+          },
         })
       }
 
@@ -717,7 +706,6 @@ export const assetRouter = t.router({
       //       },
       //     },
       //   },
-
 
       //   // update: {
       //   //   ...rest,
@@ -747,8 +735,7 @@ export const assetRouter = t.router({
             },
             AssetIssuance: {
               update: issuance,
-            }
-
+            },
           },
         })
 
@@ -774,7 +761,7 @@ export const assetRouter = t.router({
         assetProjectId,
         parentId,
         assetTagId,
-        AssetIssuance,
+        // AssetIssuance,
         purchaseOrder,
         invoiceNum,
         deployment_status,
@@ -793,9 +780,9 @@ export const assetRouter = t.router({
             management: {
               update: management,
             },
-            AssetIssuance: {
-              update: AssetIssuance,
-            },
+            // AssetIssuance: {
+            //   update: AssetIssuance,
+            // },
             vendor: {
               connect: {
                 id: vendorId ?? 0,

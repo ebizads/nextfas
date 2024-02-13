@@ -72,7 +72,7 @@ const DisplayIssuanceAsset = (props: {
         setValidateString("The asset is being transferred.")
         setValidateModal(true)
         setAssetNumber("")
-      } else if (asset?.AssetIssuance?.issuanceStatus === "issued") {
+      } else if (asset?.AssetIssuance?.issuanceStatus === "done") {
         setValidateString("The asset is already issued.")
         setValidateModal(true)
         setAssetNumber("")

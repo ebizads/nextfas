@@ -131,11 +131,11 @@ export const assetIssuanceRouter = t.router({
             id,
           },
           data: {
-            asset: {
-              connect: {
-                id: assetId,
-              },
-            },
+            // asset: {
+            //   connect: {
+            //     id: assetId,
+            //   },
+            // },
             ...rest,
           },
           include: {
@@ -143,6 +143,7 @@ export const assetIssuanceRouter = t.router({
               include: {
                 department: true,
                 pastIssuance: true,
+
                 issuedBy: true,
                 issuedTo: true,
               },

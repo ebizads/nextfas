@@ -45,18 +45,25 @@ const Transfer = ({}) => {
   const [checked, setChecked] = useState(false)
 
   const { data: asset } = trpc.asset.findOne.useQuery(assetNumber.toUpperCase())
+  // const { data: asset_transfer } = trpc.assetTransfer.findOne.useQuery(assetNumber.toUpperCase())
   const { data: departmentData } = trpc.department.findAll.useQuery()
 
   const [issuedTo, setIssuedTo] = useState<number>(0)
 
   const [selectedDept, setSelectedDept] = useState<string>("")
   const [selectedEMP, setSelectedEMP] = useState<string | null>("")
+  const [selectedCustodian, setSelectedCustodian] = useState<number | null>(
+    null
+  )
 
   const [searchModal, setSearchModal] = useState<boolean>(false)
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [validateModal, setValidateModal] = useState<boolean>(false)
+  const [deletedAt, setDeletedAt] = useState<boolean>(false)
 
   const [validateString, setValidateString] = useState<string>("")
+  const [transferStat, setTransferStat] = useState<string | null>("")
+  const [transferAssetId, setTransferAssetId] = useState<number | null>(null)
 
   const { data: employeeData } = trpc.employee.findAll.useQuery({
     search: {
@@ -126,7 +133,7 @@ const Transfer = ({}) => {
 
   const updateAsset = trpc.asset.edit.useMutation({
     onSuccess() {
-      console.log("omsim")
+      console.log("omsim uuuu")
     },
   })
   const updateDept = trpc.employee.edit.useMutation({
@@ -141,25 +148,52 @@ const Transfer = ({}) => {
       asset?.status === undefined ||
       asset?.status === ""
     ) {
+      console.log(deletedAt, "uuuuuuuu")
+
       mutate({
         ...transfer,
 
+        // custodianId: Number(selectedEMP),
         transferStatus: "pending",
         assetId: asset?.id ?? 0,
       })
-      updateAsset.mutate({
-        ...asset,
-        id: asset?.id ?? 0,
-        status: "transfer",
-        custodianId: Number(selectedEMP),
-        assetTagId: asset?.assetTagId ?? 0,
-        pastIssuanceId: asset?.issuedToId ?? 0,
-        issuedToId: issuedTo,
-        issuedById: userId,
-        management: {
-          id: asset?.management?.id ?? 0,
-        },
-      })
+      
+      if(checked){
+    
+        updateAsset.mutate({
+          ...asset,
+          id: asset?.id ?? 0,
+          status: "transfer",
+          assetTagId: asset?.assetTagId ?? 0,
+          pastIssuanceId: asset?.issuedToId ?? 0,
+          custodianId: 0,
+          issuedToId: issuedTo,
+          issuedById: userId,
+          issuance: {
+            deleted: deletedAt,
+          },
+          management: {
+            id: asset?.management?.id ?? 0,
+          },
+        })
+      }
+      else{
+        updateAsset.mutate({
+          ...asset,
+          id: asset?.id ?? 0,
+          status: "transfer",
+          assetTagId: asset?.assetTagId ?? 0,
+          pastIssuanceId: asset?.issuedToId ?? 0,
+          issuedToId: issuedTo,
+          issuedById: userId,
+          issuance: {
+            deleted: deletedAt,
+          },
+          management: {
+            id: asset?.management?.id ?? 0,
+          },
+        })
+      }
       reset()
     } else {
       if (asset?.status === "disposal") {
@@ -252,6 +286,15 @@ const Transfer = ({}) => {
 
   const [transfer_date, setTransfer_date] = useState<Date | null>(null)
   const [transfer_location, setTransfer_location] = useState<string>("")
+
+  useEffect(() => {
+    if (selectedEMP !== null) {
+      setSelectedCustodian(
+        employeeList.findIndex((employee) => employee.value === selectedEMP)
+      )
+      console.log(selectedCustodian, "sss")
+    }
+  }, [])
 
   // console.log(company_address);
   return (
@@ -364,8 +407,8 @@ const Transfer = ({}) => {
                     </Accordion.Control>
                     <Accordion.Panel>
                       <div className="grid grid-cols-9 gap-7">
-                        <div className="col-span-9 grid grid-cols-8 gap-7">
-                          <div className="col-span-4">
+                        <div className="col-span-9 grid grid-cols-9 gap-7">
+                          <div className="col-span-3">
                             <InputField
                               register={register}
                               label="Name"
@@ -377,12 +420,12 @@ const Transfer = ({}) => {
                             />
                             {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
                           </div>
-                          <div className="col-span-4">
+                          <div className="col-span-3">
                             <InputField
                               register={register}
                               label="Alternate Asset Number"
                               placeholder={
-                                asset?.alt_number == "0" || null || undefined
+                                asset?.alt_number == "" || null || undefined
                                   ? "--"
                                   : asset?.alt_number ?? "--"
                               }
@@ -391,6 +434,18 @@ const Transfer = ({}) => {
                             />
                             {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
                           </div>
+                          <div className="col-span-3">
+                            <InputField
+                              register={register}
+                              label="Tag"
+                              name="asset_num"
+                              placeholder={asset?.assetTag?.name}
+                              // className="placeholder:font-semibold"
+                              disabled
+                              // required
+                            />
+                            {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                          </div>{" "}
                           {/* <div className="col-span-2">
                                                         <InputField
                                                             register={register}
@@ -405,7 +460,7 @@ const Transfer = ({}) => {
                           <InputField
                             register={register}
                             label="Serial Number"
-                            placeholder={String(asset?.serial_no) ?? "--"}
+                            placeholder={asset?.serial_no ?? "--"}
                             name="serial_no"
                             disabled
                           />
@@ -1477,65 +1532,7 @@ const Transfer = ({}) => {
               <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text p-2 font-sans text-xl font-semibold uppercase text-transparent">
                 Transfer Details
               </p>
-              <div className=" grid grid-flow-row grid-cols-12 grid-rows-[110px_minmax(110px,_1fr)_30px]  py-2">
-                <div className="col-span-6 py-2 px-2">
-                  <div className=" flex flex-col py-2">
-                    <label className="font-semibold">Employee</label>
-
-                    <Select
-                      disabled={checked}
-                      placeholder="Select Employee"
-                      onChange={(value) => {
-                        setSelectedEMP(value ?? "")
-                        console.log(employeeList)
-                        setIssuedTo(Number(value))
-                        setValue("custodianId", issuedTo)
-                        console.log(transfer_date, "aaaaa")
-                        console.log(issuedTo)
-                      }}
-                      value={selectedEMP}
-                      data={employeeList}
-                      styles={(theme) => ({
-                        item: {
-                          // applies styles to selected item
-                          "&[data-selected]": {
-                            "&, &:hover": {
-                              backgroundColor:
-                                theme.colorScheme === "light"
-                                  ? theme.colors.orange[3]
-                                  : theme.colors.orange[1],
-                              color:
-                                theme.colorScheme === "dark"
-                                  ? theme.white
-                                  : theme.black,
-                            },
-                          },
-
-                          // applies styles to hovered item (with mouse or keyboard)
-                          "&[data-hovered]": {},
-                        },
-                      })}
-                      variant="unstyled"
-                      className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                    />
-                    {/* <div className="flex w-full flex-col">
-                    <label className="py-2 font-semibold">Department</label>
-                    <input
-                      type="text"
-                      id={"department"}
-                      className={
-                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                      }
-                      placeholder="Select an employee"
-                      value={
-                        specificDepartment ? specificDepartment ?? "--" : ""
-                      }
-                      disabled
-                    />
-                  </div> */}
-                  </div>
-                </div>
-                <div className="col-span-6 py-2 px-2"></div>
+              <div className=" grid grid-flow-row grid-cols-12  py-2">
                 <div className="col-span-6 py-2 px-2">
                   {/* <div className="flex w-full flex-col py-2">
                     <div className="mb-2 flex flex-row gap-2">
@@ -1575,7 +1572,11 @@ const Transfer = ({}) => {
                         placeholder={"Enter Location Here"}
                         onChange={(event) => {
                           const { value } = event.target
-                          setTransfer_location(value)
+                          setTransfer_location(
+                            checked ? "To be returned" : value
+                          )
+
+                          console.log(transfer_location, "sss")
                           setValue("transferLocation", value)
                         }}
                         className={
@@ -1596,8 +1597,11 @@ const Transfer = ({}) => {
                     <label className="font-semibold">Transfer Date</label>
                     <div className="relative py-2">
                       <DatePicker
-                        disabled={checked}
-                        placeholder={""}
+                        // disabled={checked}
+                        defaultValue={transfer_date || null}
+                        placeholder={
+                          transfer_date ? transfer_date?.toDateString() : ""
+                        }
                         allowFreeInput
                         size="sm"
                         onChange={(value) => {
@@ -1618,23 +1622,28 @@ const Transfer = ({}) => {
                     </div>
                   </div>
                 </div>
-                <div className=" col-span-4 py-2 px-2">
-                  {" "}
-                  <div className="flex flex-row  ">
-                    <Checkbox
-                      checked={checked}
-                      onChange={(event) => {
-                        setChecked(event.currentTarget.checked)
-                        setValue("departmentCode", "0")
-                        setValue("custodianId", 0)
-                        setSelectedDept("")
-                        // setSelectedEMP("")
-                      }}
-                      label="Return Asset"
-                      color="orange"
-                    />
+                {asset?.custodianId !== (null || undefined || 0) && (
+                  <div className=" col-span-4 py-2 px-2">
+                    <div className="flex flex-row  ">
+                      <Checkbox
+                        checked={checked}
+                        onChange={(event) => {
+                          setChecked(event.currentTarget.checked)
+                          setValue("departmentCode", "0")
+                          setValue("custodianId", 0)
+                          setDeletedAt(true)
+                          setSelectedDept("")
+                          setSelectedEMP("")
+                          setTransferStat(null)
+                          setTransfer_location("To be returned")
+                          setValue("transferLocation", null)
+                        }}
+                        label="Return Asset"
+                        color="orange"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
@@ -1746,36 +1755,211 @@ const Transfer = ({}) => {
         {state.currentStep == 2 && (
           <div className="rounded-md bg-white drop-shadow-lg">
             <div className="p-5">
-              <div className="flex flex-wrap py-2">
-                <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
-                  <div className="flex w-full justify-center gap-3">
-                    <button
-                      type="button"
-                      className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                      onClick={prevStep}
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                      onClick={() => {
-                        console.log("jejeje" + stringify(errors))
-                      }}
-                    >
-                      Submit
-                    </button>
+              <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text p-2 font-sans text-xl font-semibold uppercase text-transparent">
+                Confirmation
+              </p>
+              <div className="flex items-center justify-around">
+                <div className=" col-span-4 grid w-2/5 grid-cols-4 gap-5 p-2">
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Name"
+                      name="name"
+                      placeholder={asset?.name}
+                      // className="placeholder:font-semibold"
+                      disabled
+                      // required
+                    />
+                    {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
                   </div>
-                  <div className="flex w-full justify-center">
-                    <button
-                      type="button"
-                      className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
-                      onClick={resetTransferAsset}
-                    >
-                      Cancel Process
-                    </button>
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Alternate Asset Number"
+                      placeholder={
+                        asset?.alt_number == "" || null || undefined
+                          ? "--"
+                          : asset?.alt_number ?? "--"
+                      }
+                      name="alt_number"
+                      disabled
+                    />
+                    {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
+                  </div>
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Tag"
+                      name="assettag"
+                      placeholder={asset?.assetTag?.name}
+                      // className="placeholder:font-semibold"
+                      disabled
+                      // required
+                    />
+                    {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                  </div>{" "}
+                  <div className="col-span-4 ">
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold">Current Location</label>
+                      <div className="relative ">
+                        <input
+                          disabled
+                          placeholder={"--"}
+                          className={
+                            "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-span-4">
+                    <div className="invisible flex flex-col gap-2">
+                      <label className="font-semibold">Transfer Date</label>
+                      <div className="relative ">
+                        <DatePicker
+                          disabled
+                          placeholder={
+                            transfer_date
+                              ? transfer_date?.toDateString()
+                              : "Month, Day, Year"
+                          }
+                          allowFreeInput
+                          size="sm"
+                          classNames={{
+                            input:
+                              "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-100",
+                          }}
+                        />
+                        <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                          <span className="opacity-50">
+                            {transfer_date ? "" : "Month, Day, Year"}
+                          </span>
+                          <span className="pointer-events-none pr-3">📅</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <div className="flex flex-col gap-10">
+                  {/* <div className="thick-arrow-right "></div> */}
+                  <div className="thick-arrow-right "></div>
+                  {/* <div className="thick-arrow-right "></div> */}
+                </div>
+
+                <div className=" col-span-4 grid w-2/5 grid-cols-4 gap-5 p-2">
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Name"
+                      name="name"
+                      placeholder={asset?.name}
+                      // className="placeholder:font-semibold"
+                      disabled
+                      // required
+                    />
+                    {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                  </div>
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Alternate Asset Number"
+                      placeholder={
+                        asset?.alt_number == "" || null || undefined
+                          ? "--"
+                          : asset?.alt_number ?? "--"
+                      }
+                      name="alt_number"
+                      disabled
+                    />
+                    {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
+                  </div>
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Tag"
+                      name="assettag"
+                      placeholder={asset?.assetTag?.name}
+                      // className="placeholder:font-semibold"
+                      disabled
+                      // required
+                    />
+                    {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                  </div>{" "}
+                  <div className="col-span-4 ">
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold">Transfer Location</label>
+                      <div className="relative ">
+                        <input
+                          disabled
+                          placeholder={transfer_location || "--"}
+                          // onChange={(event) => {
+                          //   const { value } = event.target
+                          //   setTransfer_location(value)
+                          //   setValue("transferLocation", value)
+                          // }}
+                          className={
+                            "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-span-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold">Transfer Date</label>
+                      <div className="relative ">
+                        <DatePicker
+                          disabled
+                          placeholder={transfer_date?.toDateString() || ""}
+                          allowFreeInput
+                          size="sm"
+                          classNames={{
+                            input:
+                              "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-100",
+                          }}
+                        />
+                        <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                          <span className="opacity-50">
+                            {transfer_date ? "" : "Month, Day, Year"}
+                          </span>
+                          <span className="pointer-events-none pr-3">📅</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr className="w-full"></hr>
+
+            <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+              <div className="flex w-full justify-center gap-3">
+                <button
+                  type="button"
+                  className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={prevStep}
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={() => {
+                    console.log("jejeje" + stringify(errors))
+                  }}
+                >
+                  Submit
+                </button>
+              </div>
+              <div className="flex w-full justify-center">
+                <button
+                  type="button"
+                  className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={resetTransferAsset}
+                >
+                  Cancel Process
+                </button>
               </div>
             </div>
           </div>

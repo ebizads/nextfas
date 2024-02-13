@@ -6,7 +6,7 @@ import {
   ModelEditInput,
   ModelEditTableInput,
 } from "./model"
-import { createIssuance } from "./issuance"
+import { createIssuance, initialIssuance } from "./issuance"
 
 //only creates Assets
 // export const AssetOnlyInput = z.object({
@@ -55,9 +55,9 @@ export const AssetEditInput = z.object({
   description: z.string().optional().nullish(),
   remarks: z.string().nullish().optional(),
   status: z.string().nullish().optional(),
-  invoiceNum: z.string().nullish(),
-  purchaseOrder: z.string().nullish(),
-  deployment_status: z.string().nullish(),
+  invoiceNum: z.string().nullish().optional(),
+  purchaseOrder: z.string().nullish().optional(),
+  deployment_status: z.string().nullish().optional(),
 
   modelId: z.number().optional().nullish(),
   custodianId: z.number().optional().nullish(),
@@ -127,10 +127,10 @@ export const AssetUpdateInput = z.object({
   subsidiaryId: z.number().nullish(),
   assetProjectId: z.number().nullish(),
   parentId: z.number().nullish(),
-  assetTagId: z.number().optional(),
+  assetTagId: z.number().optional().nullish(),
   management: ManagementEditInput,
   model: ModelEditInput,
-  AssetIssuance: createIssuance,
+  // AssetIssuance: createIssuance,
 })
 
 export const AssetDisposalCreateInput = z.object({
@@ -182,24 +182,25 @@ export const AssetDisposalEditInput = z.object({
 
 export const AssetTransferCreateInput = z.object({
   transferDate: z.date().default(new Date()).nullish().optional(),
-  transferStatus: z.string().default("pending"),
-  transferLocation: z.string().optional(),
-  departmentCode: z.string().nullish(),
-  remarks: z.string().optional(),
-  custodianId: z.number().optional(),
+  transferStatus: z.string().nullish().optional(),
+  transferLocation: z.string().optional().nullish(),
+  departmentCode: z.string().nullish().optional(),
+  remarks: z.string().optional().nullish(),
+  custodianId: z.number().optional().nullish(),
   assetId: z.number().optional(),
+  issuance: initialIssuance.optional(),
 })
 
 export const AssetTransferEditInput = z.object({
   id: z.number().optional(),
-  transferDate: z.date().nullish(),
+  transferDate: z.date().nullish().optional(),
   transferStatus: z.string().optional().nullish(),
   transferLocation: z.string().optional().nullish(),
   departmentCode: z.string().nullish().optional(),
   remarks: z.string().nullish().optional(),
   custodianId: z.number().optional().nullish(),
   assetId: z.number().optional().nullish(),
-  issuance: createIssuance.nullish(),
+  issuance: createIssuance.optional(),
 })
 
 export const AssetRepairCreateInput = z.object({

@@ -12,10 +12,7 @@ import { Accordion, Checkbox, Select, Textarea } from "@mantine/core"
 import { trpc } from "../../../utils/trpc"
 import { InputField } from "../../atoms/forms/InputField"
 import { zodResolver } from "@hookform/resolvers/zod"
-import {
-  AssetEditInput,
-  AssetTransferCreateInput,
-} from "../../../server/schemas/asset"
+import { initialIssuance } from "../../../server/schemas/issuance"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { z } from "zod"
 import { SelectValueType } from "../../atoms/select/TypeSelect"
@@ -28,8 +25,8 @@ import { AssetTransfer } from "@prisma/client"
 import { AssetTransferValues } from "../../../types/generic"
 import { stringify } from "superjson"
 import { useSession } from "next-auth/react"
-
-export type Transfer = z.infer<typeof AssetTransferCreateInput>
+import router from "next/router"
+export type Issuance = z.infer<typeof initialIssuance>
 
 const Issue = ({}) => {
   const [assetNumber, setAssetNumber] = useState<string>("")
@@ -45,6 +42,8 @@ const Issue = ({}) => {
 
   const [selectedDept, setSelectedDept] = useState<string>("")
   const [selectedEMP, setSelectedEMP] = useState<string>("")
+
+  const [selectedCustodian, setSelectedCustodian] = useState<string>("")
 
   const [searchModal, setSearchModal] = useState<boolean>(false)
   const [completeModal, setCompleteModal] = useState<boolean>(false)
@@ -69,7 +68,11 @@ const Issue = ({}) => {
 
   const employeeList = useMemo(() => {
     const list = employeeData?.employees.map((employee) => {
-      return { value: employee.id.toString(), label: employee.name }
+      return {
+        value: employee.id.toString(),
+        label: employee.name,
+        emp_id: employee.employee_id,
+      }
     }) as SelectValueType[]
     return list ?? []
   }, [employeeData]) as SelectValueType[]
@@ -89,7 +92,7 @@ const Issue = ({}) => {
 
   // const utils = trpc.useContext()
 
-  const { mutate } = trpc.assetTransfer.create.useMutation({
+  const { mutate } = trpc.assetIssuance.create.useMutation({
     onSuccess() {
       setCompleteModal(true)
       // invalidate query of asset id when mutations is successful
@@ -103,17 +106,17 @@ const Issue = ({}) => {
     reset,
     setValue,
     formState: { errors },
-  } = useForm<Transfer>({
-    resolver: zodResolver(AssetTransferCreateInput),
+  } = useForm<Issuance>({
+    resolver: zodResolver(initialIssuance),
   })
 
   useEffect(() => {
     setUserId(Number(session?.user?.id))
   }, [session?.user?.id])
 
-  // useEffect(() => reset(asset as unknown as Transfer), [asset, reset])
+  // useEffect(() => reset(asset as unknown as Issuance), [asset, reset])
 
-  // const onSubmit = (asset: Transfer) => {
+  // const onSubmit = (asset: Issuance) => {
   //     // Register function
   //     console.log("oms")
   //     mutate({
@@ -129,32 +132,29 @@ const Issue = ({}) => {
       console.log("omsim")
     },
   })
-  const updateDept = trpc.employee.edit.useMutation({
-    onSuccess() {
-      console.log("omsim")
-    },
-  })
 
-  const onSubmit = (transfer: Transfer) => {
+  const onSubmit = (issue: Issuance) => {
     if (
       asset?.status === null ||
       asset?.status === undefined ||
       asset?.status === ""
     ) {
       mutate({
-        ...transfer,
-        transferStatus: "pending",
+        ...issue,
+        issuanceDate: transfer_date,
+        issuanceStatus: "pending",
         assetId: asset?.id ?? 0,
       })
+      console.log(asset, "asset  mo to")
       updateAsset.mutate({
         ...asset,
         id: asset?.id ?? 0,
-        status: "transfer",
+        status: "issuance",
         custodianId: Number(selectedEMP),
         pastIssuanceId: asset?.issuedToId ?? 0,
         issuedToId: issuedTo,
         issuedById: userId,
-        assetTagId: asset?.id ?? 0,
+        assetTagId: asset?.assetTagId ?? 0,
         management: {
           id: asset?.management?.id ?? 0,
         },
@@ -171,6 +171,10 @@ const Issue = ({}) => {
         setAssetNumber("")
       } else if (asset?.status === "transfer") {
         setValidateString("The asset is being transferred.")
+        setValidateModal(true)
+        setAssetNumber("")
+      } else if (asset?.status === "issuance") {
+        setValidateString("The asset is being issued.")
         setValidateModal(true)
         setAssetNumber("")
       }
@@ -216,6 +220,7 @@ const Issue = ({}) => {
   const { transferAsset, setTransferAsset } = useTransferAssetStore()
 
   const resetTransferAsset = () => {
+    router.push("/assets")
     setTransferAsset(null)
     console.log("dapat wala na")
   }
@@ -236,16 +241,6 @@ const Issue = ({}) => {
       return address ?? null
     }
   }, [companyId, companyData])
-
-  const companyList = useMemo(
-    () =>
-      companyData?.companies
-        .filter((item: { id: number }) => item.id != 0)
-        .map((company: { id: { toString: () => any }; name: any }) => {
-          return { value: company.id.toString(), label: company.name }
-        }),
-    [companyData]
-  ) as SelectValueType[] | undefined
 
   const [transfer_date, setTransfer_date] = useState<Date | null>(null)
 
@@ -360,8 +355,8 @@ const Issue = ({}) => {
                     </Accordion.Control>
                     <Accordion.Panel>
                       <div className="grid grid-cols-9 gap-7">
-                        <div className="col-span-9 grid grid-cols-8 gap-7">
-                          <div className="col-span-4">
+                        <div className="col-span-9 grid grid-cols-9 gap-7">
+                          <div className="col-span-3">
                             <InputField
                               register={register}
                               label="Name"
@@ -373,12 +368,12 @@ const Issue = ({}) => {
                             />
                             {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
                           </div>
-                          <div className="col-span-4">
+                          <div className="col-span-3">
                             <InputField
                               register={register}
                               label="Alternate Asset Number"
                               placeholder={
-                                asset?.alt_number == "0" || null || undefined
+                                asset?.alt_number == "" || null || undefined
                                   ? "--"
                                   : asset?.alt_number ?? "--"
                               }
@@ -387,6 +382,18 @@ const Issue = ({}) => {
                             />
                             {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
                           </div>
+                          <div className="col-span-3">
+                            <InputField
+                              register={register}
+                              label="Tag"
+                              name="asset_num"
+                              placeholder={asset?.assetTag?.name}
+                              // className="placeholder:font-semibold"
+                              disabled
+                              // required
+                            />
+                            {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                          </div>{" "}
                           {/* <div className="col-span-2">
                                                         <InputField
                                                             register={register}
@@ -401,7 +408,7 @@ const Issue = ({}) => {
                           <InputField
                             register={register}
                             label="Serial Number"
-                            placeholder={String(asset?.serial_no) ?? "--"}
+                            placeholder={asset?.serial_no ?? "--"}
                             name="serial_no"
                             disabled
                           />
@@ -1473,54 +1480,21 @@ const Issue = ({}) => {
               <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text p-2 font-sans text-xl font-semibold uppercase text-transparent">
                 Issuance Details
               </p>
-              <div className="flex flex-wrap py-2">
-                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                  <div className="flex w-full flex-col py-2">
-                    <label className="font-semibold">Department</label>
-                    <Select
-                      disabled={checked}
-                      placeholder="Select Department"
-                      onChange={(value) => {
-                        setSelectedDept(value ?? "")
-                        setSelectedEMP("")
-                        setValue("departmentCode", String(value))
-                        console.log("TEST: " + employeeData)
-                      }}
-                      value={selectedDept ?? ""}
-                      data={departmentList}
-                      styles={(theme) => ({
-                        item: {
-                          // applies styles to selected item
-                          "&[data-selected]": {
-                            "&, &:hover": {
-                              backgroundColor:
-                                theme.colorScheme === "light"
-                                  ? theme.colors.orange[3]
-                                  : theme.colors.orange[1],
-                              color:
-                                theme.colorScheme === "dark"
-                                  ? theme.white
-                                  : theme.black,
-                            },
-                          },
-
-                          // applies styles to hovered item (with mouse or keyboard)
-                          "&[data-hovered]": {},
-                        },
-                      })}
-                      variant="unstyled"
-                      className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-                    />
-                  </div>
-                  <div className="flex w-full flex-col py-2">
+              <div className=" grid grid-flow-row grid-cols-12  py-2">
+                <div className="col-span-6 py-2 px-2">
+                  <div className=" flex flex-col py-2">
                     <label className="font-semibold">Employee</label>
+
                     <Select
                       disabled={checked}
                       placeholder="Select Employee"
                       onChange={(value) => {
                         setSelectedEMP(value ?? "")
-                        console.log(employeeList)
+                        console.log(employeeList, "aaaa list")
                         setIssuedTo(Number(value))
+                        console.log(transfer_date, "aaaaa")
+                        console.log(issuedTo, "aaaa issued to")
+                        setSelectedCustodian(value ?? "")
                       }}
                       value={selectedEMP}
                       data={employeeList}
@@ -1547,53 +1521,40 @@ const Issue = ({}) => {
                       variant="unstyled"
                       className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
                     />
+                    {/* <div className="flex w-full flex-col">
+                    <label className="py-2 font-semibold">Department</label>
+                    <input
+                      type="text"
+                      id={"department"}
+                      className={
+                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                      }
+                      placeholder="Select an employee"
+                      value={
+                        specificDepartment ? specificDepartment ?? "--" : ""
+                      }
+                      disabled
+                    />
+                  </div> */}
                   </div>
                 </div>
-                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
-                  <div className="flex w-full flex-col py-2">
-                    <div className="mb-2 flex flex-row gap-2">
-                      <label className="w-full font-semibold">Floor</label>
-                      <label className="w-full font-semibold">Room</label>
-                    </div>
 
-                    <div className="flex flex-row gap-2">
-                      <input
-                        type="text"
-                        id={"floor"}
-                        className={
-                          "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                        }
-                        placeholder="Floor no."
-                        value={department?.location?.floor ?? ""}
-                        disabled
-                      />
-
-                      <input
-                        type="text"
-                        id={"floor"}
-                        className={
-                          "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
-                        }
-                        placeholder="Room no."
-                        value={department?.location?.room ?? ""}
-                        disabled
-                      />
-                    </div>
-                  </div>
-                  <div className="flex w-full flex-col py-2">
-                    <label className="font-semibold">Transfer Date</label>
+                <div className="col-span-6 py-2 px-2">
+                  <div className="flex flex-col py-2">
+                    <label className="font-semibold">Issuance Date</label>
                     <div className="relative py-2">
                       <DatePicker
+                        disabled={checked}
                         placeholder={""}
                         allowFreeInput
                         size="sm"
                         onChange={(value) => {
                           setTransfer_date(value),
-                            setValue("transferDate", value)
+                            setValue("issuanceDate", value)
                         }}
                         classNames={{
                           input:
-                            "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
+                            "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-100",
                         }}
                       />
                       <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
@@ -1605,29 +1566,18 @@ const Issue = ({}) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex w-full flex-row justify-between gap-7 px-4">
-                  <Checkbox
-                    checked={checked}
-                    onChange={(event) => {
-                      setChecked(event.currentTarget.checked)
-                      setValue("departmentCode", "0")
-                      setValue("custodianId", 0)
-                      setSelectedDept("")
-                      setSelectedEMP("")
-                    }}
-                    label="Return Asset"
-                    color="orange"
-                  />
-                </div>
-                <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
+              </div>
+
+              {/* <div className="flex w-full flex-row justify-between gap-7 py-2 px-2">
                   <div className="flex w-full flex-col py-2">
                     <div className="mb-2 flex flex-row gap-2">
-                      <label className="w-full font-semibold">Baranggay</label>
+                      <label className="w-full font-semibold">Barangay</label>
                       <label className="w-full font-semibold">City</label>
                       <label className="w-full font-semibold">State</label>
                       <label className="w-full font-semibold">Country</label>
                       <label className="w-full font-semibold">Zip</label>
                     </div>
+
                     <div className="flex flex-row gap-2">
                       <input
                         type="text"
@@ -1635,10 +1585,11 @@ const Issue = ({}) => {
                         className={
                           "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                         }
-                        placeholder="Baranggay"
-                        value={department?.company?.address?.street ?? ""}
+                        placeholder="Barangay"
+                        value={employee?.address?.street ?? ""}
                         disabled
                       />
+
                       <input
                         type="text"
                         id={"city"}
@@ -1646,7 +1597,7 @@ const Issue = ({}) => {
                           "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                         }
                         placeholder="City"
-                        value={department?.company?.address?.city ?? ""}
+                        value={employee?.address?.city ?? ""}
                         disabled
                       />
                       <input
@@ -1656,7 +1607,7 @@ const Issue = ({}) => {
                           "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                         }
                         placeholder="State"
-                        value={department?.company?.address?.region ?? ""}
+                        value={employee?.address?.region ?? ""}
                         disabled
                       />
                       <input
@@ -1666,7 +1617,7 @@ const Issue = ({}) => {
                           "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                         }
                         placeholder="Country"
-                        value={department?.company?.address?.country ?? ""}
+                        value={employee?.address?.country ?? ""}
                         disabled
                       />
                       <input
@@ -1676,30 +1627,30 @@ const Issue = ({}) => {
                           "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                         }
                         placeholder="Zip"
-                        value={department?.company?.address?.zip ?? ""}
+                        value={employee?.address?.zip ?? ""}
                         disabled
                       />
                     </div>
                   </div>
-                </div>
-                {/* <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
+                </div> */}
+              {/* <div className="py-2 px-2 flex flex-row justify-between w-full gap-7">
                                 <div className="flex flex-col w-[60%] py-2">
                                     <label className="font-semibold">Remarks</label >
                                     <textarea rows={6} className="rounded-md border-2 resize-none border-gray-400 bg-transparent px-2 py-1 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"></textarea>
                                 </div>
                             </div> */}
-              </div>
-              <hr className="w-full"></hr>
-              <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
-                <div className="flex w-full justify-center gap-3">
-                  <button
-                    type="button"
-                    className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={prevStep}
-                  >
-                    Back
-                  </button>
-                  {/* {((selectedEMP !== "") || checked) && ( //TODO: add transfer_date to schema and to this conditional statement */}
+            </div>
+            <hr className="w-full"></hr>
+            <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+              <div className="flex w-full justify-center gap-3">
+                <button
+                  type="button"
+                  className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={prevStep}
+                >
+                  Back
+                </button>
+                {(transfer_date && selectedEMP) !== null && (
                   <button
                     type="button"
                     className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -1707,17 +1658,16 @@ const Issue = ({}) => {
                   >
                     Next
                   </button>
-                  {/* )} */}
-                </div>
-                <div className="flex w-full justify-center">
-                  <button
-                    type="button"
-                    className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
-                    onClick={resetTransferAsset}
-                  >
-                    Cancel Process
-                  </button>
-                </div>
+                )}
+              </div>
+              <div className="flex w-full justify-center">
+                <button
+                  type="button"
+                  className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={resetTransferAsset}
+                >
+                  Cancel Process
+                </button>
               </div>
             </div>
           </div>
@@ -1726,36 +1676,231 @@ const Issue = ({}) => {
         {state.currentStep == 2 && (
           <div className="rounded-md bg-white drop-shadow-lg">
             <div className="p-5">
-              <div className="flex flex-wrap py-2">
-                <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
-                  <div className="flex w-full justify-center gap-3">
-                    <button
-                      type="button"
-                      className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                      onClick={prevStep}
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                      onClick={() => {
-                        console.log("jejeje" + stringify(errors))
-                      }}
-                    >
-                      Submit
-                    </button>
+              <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text p-2 font-sans text-xl font-semibold uppercase text-transparent">
+                Confirmation
+              </p>
+              <div className="flex items-center justify-around">
+                <div className=" col-span-4 grid w-2/5 grid-cols-4 gap-5 p-2">
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Name"
+                      name="name"
+                      placeholder={asset?.name}
+                      // className="placeholder:font-semibold"
+                      disabled
+                      // required
+                    />
+                    {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
                   </div>
-                  <div className="flex w-full justify-center">
-                    <button
-                      type="button"
-                      className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
-                      onClick={resetTransferAsset}
-                    >
-                      Cancel Process
-                    </button>
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Alternate Asset Number"
+                      placeholder={
+                        asset?.alt_number == "" || null || undefined
+                          ? "--"
+                          : asset?.alt_number ?? "--"
+                      }
+                      name="alt_number"
+                      disabled
+                    />
+                    {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
+                  </div>
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Tag"
+                      name="assettag"
+                      placeholder={asset?.assetTag?.name}
+                      // className="placeholder:font-semibold"
+                      disabled
+                      // required
+                    />
+                    {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                  </div>{" "}
+                  <div className="col-span-4 ">
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold">
+                        Currently Issued to:
+                      </label>
+                      <div className="relative ">
+                        <input
+                          disabled
+                          placeholder={
+                            (asset?.custodian?.name ?? "Not Assigned") +
+                              " | " +
+                              asset?.custodian?.employee_id ?? "--"
+                          }
+                          className={
+                            "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-span-4">
+                    <div className="invisible flex flex-col gap-2">
+                      <label className="font-semibold">Transfer Date</label>
+                      <div className="relative ">
+                        <DatePicker
+                          disabled
+                          placeholder={
+                            transfer_date
+                              ? transfer_date?.toDateString()
+                              : "Month, Day, Year"
+                          }
+                          allowFreeInput
+                          size="sm"
+                          classNames={{
+                            input:
+                              "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-100",
+                          }}
+                        />
+                        <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                          <span className="opacity-50">
+                            {transfer_date ? "" : "Month, Day, Year"}
+                          </span>
+                          <span className="pointer-events-none pr-3">📅</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <div className="flex flex-col gap-10">
+                  {/* <div className="thick-arrow-right "></div> */}
+                  <div className="thick-arrow-right "></div>
+                  {/* <div className="thick-arrow-right "></div> */}
+                </div>
+
+                <div className=" col-span-4 grid w-2/5 grid-cols-4 gap-5 p-2">
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Name"
+                      name="name"
+                      placeholder={asset?.name}
+                      // className="placeholder:font-semibold"
+                      disabled
+                      // required
+                    />
+                    {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                  </div>
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Alternate Asset Number"
+                      placeholder={
+                        asset?.alt_number == "" || null || undefined
+                          ? "--"
+                          : asset?.alt_number ?? "--"
+                      }
+                      name="alt_number"
+                      disabled
+                    />
+                    {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
+                  </div>
+                  <div className="col-span-4 ">
+                    <InputField
+                      register={register}
+                      label="Tag"
+                      name="assettag"
+                      placeholder={asset?.assetTag?.name}
+                      // className="placeholder:font-semibold"
+                      disabled
+                      // required
+                    />
+                    {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
+                  </div>{" "}
+                  <div className="col-span-4 ">
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold">To be issued to:</label>
+                      <div className="relative ">
+                        <input
+                          disabled
+                          placeholder={
+                            (employeeList[
+                              employeeList.findIndex(
+                                (employee) =>
+                                  employee.value === selectedCustodian
+                              )
+                            ]?.label ?? "--") +
+                            " | " +
+                            (employeeList[
+                              employeeList.findIndex(
+                                (employee) =>
+                                  employee.value === selectedCustodian
+                              )
+                            ]?.emp_id ?? "--")
+                          }
+                          // onChange={(event) => {
+                          //   const { value } = event.target
+                          //   setTransfer_location(value)
+                          //   setValue("transferLocation", value)
+                          // }}
+                          className={
+                            "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-span-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold">Issuance Date</label>
+                      <div className="relative ">
+                        <DatePicker
+                          disabled
+                          placeholder={transfer_date?.toDateString() || ""}
+                          allowFreeInput
+                          size="sm"
+                          classNames={{
+                            input:
+                              "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-100",
+                          }}
+                        />
+                        <div className="pointer-events-none absolute top-0 flex h-full w-full items-center justify-between px-3 align-middle text-sm text-gray-700 ">
+                          <span className="opacity-50">
+                            {transfer_date ? "" : "Month, Day, Year"}
+                          </span>
+                          <span className="pointer-events-none pr-3">📅</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr className="w-full"></hr>
+
+            <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
+              <div className="flex w-full justify-center gap-3">
+                <button
+                  type="button"
+                  className="rounded bg-tangerine-700 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={prevStep}
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={() => {
+                    console.log("jejeje" + stringify(errors))
+                  }}
+                >
+                  Submit
+                </button>
+              </div>
+              <div className="flex w-full justify-center">
+                <button
+                  type="button"
+                  className=" px-4 py-1 font-medium text-gray-900 duration-150 hover:underline disabled:bg-gray-300 disabled:text-gray-500"
+                  onClick={resetTransferAsset}
+                >
+                  Cancel Process
+                </button>
               </div>
             </div>
           </div>
@@ -1771,7 +1916,7 @@ const Issue = ({}) => {
         <div className="flex w-full flex-col items-center px-4 py-2">
           <div>
             <p className="text-center text-lg font-semibold">
-              Asset Transfer successful.
+              Asset Issued successfuly.
             </p>
           </div>
           <div className=" flex justify-end pt-2">
@@ -1803,7 +1948,7 @@ export default Issue
 //         size={35}
 //         strokeWidth={2}
 //         color={active === 1 ? '#F59E0B' : "#E0E0E0"}
-//     />} label="Transfer Asset" description="Verify email" />
+//     />} label="Issuance Asset" description="Verify email" />
 //     <Stepper.Step icon={<Checks
 //         size={35}
 //         strokeWidth={2}

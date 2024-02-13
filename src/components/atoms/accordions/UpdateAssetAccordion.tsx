@@ -61,7 +61,19 @@ export const FormErrorMessage = (props: {
 }
 
 const UpdateAssetAccordion = () => {
-  const { mutate, isLoading, error } = trpc.asset.update.useMutation()
+  const router = useRouter()
+
+  const { mutate, isLoading, error } = trpc.asset.update.useMutation({
+    onError() {
+      console.log("YAYEET")
+      console.log(JSON.stringify(error))
+    },
+    onSuccess() {
+      console.log("OHOOOOOO")
+      reset()
+      router.push("/assets")
+    },
+  })
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
@@ -74,48 +86,48 @@ const UpdateAssetAccordion = () => {
     setValue,
     getValues,
     // watch,
-    formState: { errors, isDirty, isValid },
+    formState: { errors },
   } = useForm<AssetEditFieldValues>({
     resolver: zodResolver(AssetUpdateInput),
-    // defaultValues: {
-    //   name: selectedAsset?.name,
-    //   alt_number: selectedAsset?.alt_number,
-    //   // barcode: "",
-    //   custodianId: selectedAsset?.custodianId ?? undefined,
-    //   departmentId: selectedAsset?.departmentId ?? undefined,
-    //   description: selectedAsset?.description,
-    //   // model: {
-    //   //   name: "",
-    //   //   brand: "",
-    //   //   number: "",
-    //   // asset_category: {
-    //   //   name: ""
-    //   // },
-    //   // asset_class: {
-    //   //   name: ""
-    //   // },
-    //   // typeId: 0,
-    //   // asset_type: {
-    //   //   name: ""
-    //   // },
-    //   //   typeId: 0,
-    //   //   categoryId: 0,
-    //   //   classId: 0,
-    //   // },
-    //   number: selectedAsset?.number,
-    //   parentId: selectedAsset?.parentId ?? undefined,
-    //   assetProjectId: selectedAsset?.parent?.assetassetProjectId ?? undefined,
-    //   remarks: selectedAsset?.remarks,
-    //   serial_no: selectedAsset?.serial_no,
-    //   subsidiaryId: selectedAsset?.subsidiaryId ?? undefined,
-    //   vendorId: selectedAsset?.vendorId ?? undefined,
-    //   management: {
-    //     original_cost: selectedAsset?.management?.original_cost,
-    //     current_cost: selectedAsset?.management?.current_cost,
-    //     residual_value: selectedAsset?.management?.residual_value,
-    //     depreciation_period: selectedAsset?.management?.depreciation_period,
-    //   },
-    // },
+    defaultValues: {
+      //   name: selectedAsset?.name,
+      //   alt_number: selectedAsset?.alt_number,
+      //   // barcode: "",
+      //   custodianId: selectedAsset?.custodianId ?? undefined,
+      //   departmentId: selectedAsset?.departmentId ?? undefined,
+      //   description: selectedAsset?.description,
+      //   // model: {
+      //   //   name: "",
+      //   //   brand: "",
+      //   //   number: "",
+      //   // asset_category: {
+      //   //   name: ""
+      //   // },
+      //   // asset_class: {
+      //   //   name: ""
+      //   // },
+      //   // typeId: 0,
+      //   // asset_type: {
+      //   //   name: ""
+      //   // },
+      //   //   typeId: 0,
+      //   //   categoryId: 0,
+      //   //   classId: 0,
+      //   // },
+      //   number: selectedAsset?.number,
+      //   parentId: selectedAsset?.parentId ?? undefined,
+      //   assetProjectId: selectedAsset?.parent?.assetassetProjectId ?? undefined,
+      //   remarks: selectedAsset?.remarks,
+      //   serial_no: selectedAsset?.serial_no,
+      //   subsidiaryId: selectedAsset?.subsidiaryId ?? undefined,
+      //   vendorId: selectedAsset?.vendorId ?? undefined,
+      //   management: {
+      //     original_cost: selectedAsset?.management?.original_cost,
+      //     current_cost: selectedAsset?.management?.current_cost,
+      //     residual_value: selectedAsset?.management?.residual_value,
+      //     depreciation_period: selectedAsset?.management?.depreciation_period,
+      //   },
+    },
   })
 
   useEffect(() => {
@@ -416,17 +428,28 @@ const UpdateAssetAccordion = () => {
     setClassId(getValues("model.classId")?.toString() ?? " ")
 
     if (asset_number) {
-      const id = `${asset_number}${assetId}`
-      setValue("number", id)
-      JsBarcode("#barcode2", id, {
-        textAlign: "left",
-        textPosition: "bottom",
-        fontOptions: "",
-        fontSize: 12,
-        textMargin: 6,
-        height: 50,
-        width: 1,
-      })
+      const id = selectedAsset?.number
+      console.log(selectedAsset?.number, "jjjjjjj", id, "llllll")
+      // setValue("number", id)
+      if (id !== undefined && id !== null) {
+        console.log(selectedAsset?.number, "jjjjjjj", id, "llllll")
+        setValue("number", id)
+
+        JsBarcode("#barcode", id, {
+          textAlign: "left",
+          textPosition: "bottom",
+          fontOptions: "",
+          fontSize: 12,
+          textMargin: 6,
+          height: 50,
+          width: 1,
+        })
+      } else {
+        console.warn(
+          "jjj Barcode data (id) is undefined or null. Barcode generation skipped."
+        )
+        // Handle the case where id is undefined or null, e.g., show a message or take appropriate action.
+      }
     }
   }, [assetId, asset_number, companyId, getValues, selectedAsset, setValue])
 
@@ -437,13 +460,11 @@ const UpdateAssetAccordion = () => {
   const employee_workMode = useMemo(() => {
     if (employeeId) {
       const workMode = employeeData?.employees.filter(
-        (employee) => employee.id === Number(employeeId)
+        (employee: { id: number }) => employee.id === Number(employeeId)
       )[0]
       return workMode ?? null
     }
   }, [employeeId, employeeData])
-
-  const router = useRouter()
 
   // const ticketHandler = useMemo(() => {
   //   //
@@ -490,14 +511,14 @@ const UpdateAssetAccordion = () => {
       }, 3000)
 
       reset()
-      setClassId(null)
-      setCategoryId(null)
-      setTypeId(null)
-      setCompanyId(null)
-      setBuildingId(null)
-      setDepartmentId(null)
-      setSelectedAsset(null)
-      router.push("/assets")
+      // setClassId(null)
+      // setCategoryId(null)
+      // setTypeId(null)
+      // setCompanyId(null)
+      // setBuildingId(null)
+      // setDepartmentId(null)
+      // setSelectedAsset(null)
+      // router.push("/assets")
     }
   }
 
@@ -525,7 +546,7 @@ const UpdateAssetAccordion = () => {
         <Accordion
           transitionDuration={300}
           multiple={true}
-          defaultValue={["1", "2", "3"]}
+          defaultValue={["1", "2", "3", "4"]}
           classNames={{}}
         >
           <Accordion.Item value={"1"} className="">
@@ -800,9 +821,7 @@ const UpdateAssetAccordion = () => {
                         }
                         placeholder="Building will appear here"
                         value={
-                          buildingLocation
-                            ? getBuilding(buildingLocation)
-                            : ""
+                          buildingLocation ? getBuilding(buildingLocation) : ""
                         }
                         disabled
                       />
@@ -828,7 +847,7 @@ const UpdateAssetAccordion = () => {
                             }
                             // placeholder="Floor no."
                             value={selectedDepartment?.floor ?? ""}
-                          // disabled
+                            // disabled
                           />
                         </div>
                       </div>
@@ -853,7 +872,7 @@ const UpdateAssetAccordion = () => {
                             }
                             // placeholder="Room no."
                             value={selectedDepartment?.room ?? ""}
-                          // disabled
+                            // disabled
                           />
                         </div>
                       </div>
@@ -1176,7 +1195,7 @@ const UpdateAssetAccordion = () => {
                         "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400",
                     }}
 
-                  // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                    // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                   />
                 </div>
                 <div className="col-span-3">
@@ -1236,38 +1255,42 @@ const UpdateAssetAccordion = () => {
               </div>
             </Accordion.Control>
             <Accordion.Panel>
-              <div className="flex items-center justify-center">
-                {!Boolean(typeId) || !Boolean(departmentId) ? (
-                  <div
-                    id="printableArea"
-                    className="flex h-[10rem] w-[25rem] items-center justify-center rounded-md border-2 border-dashed border-neutral-400"
-                  >
+              <div className="flex flex-col items-center justify-center">
+                <div
+                  id="printableArea"
+                  className="flex h-[10rem] w-[25rem] flex-col items-center justify-center rounded-md border-2 border-dashed border-neutral-400"
+                >
+                  <div id="printSVG" ref={componentRef}>
+                    <svg id="barcode" />
+                  </div>
+                  {!Boolean(typeId) || !Boolean(departmentId) ? (
                     <p className="text-center italic text-neutral-400">
-                      Barcode will appear here, please select `company a`nd
+                      Barcode will appear here, please select company and
                       department
                     </p>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="space-y-2">
-                      <div id="printSVG" ref={componentRef}>
-                        <svg id="barcode2" />
-                      </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          handlePrint()
-                          console.log("printing barcode")
-                        }}
-                        disabled={!Boolean(typeId) || !Boolean(departmentId)}
-                        className="m-2 flex items-center justify-center gap-2 rounded-md bg-tangerine-300 py-1 px-4 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-                      >
-                        <p>Print Barcode</p> <i className="fa-solid fa-print" />
-                      </button>
-                    </div>
+                <div>
+                  {/* <div id="printSVG" ref={componentRef}>
+                    <svg id="barcode" />
+                  </div> */}
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handlePrint()
+                        console.log("printing barcode")
+                      }}
+                      // disabled={!Boolean(typeId) || !Boolean(departmentId)}
+                      className="m-2 flex items-center justify-center gap-2 rounded-md bg-tangerine-300 py-1 px-4 outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+                    >
+                      <p>Print Barcode</p> <i className="fa-solid fa-print" />
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             </Accordion.Panel>
           </Accordion.Item>

@@ -14,3 +14,14 @@
     -moz-appearance: textfield !important;
   }
 }
+
+.thick-arrow-right {
+  width: 25px;
+  height: 25px;
+  border: 10px solid #eab308;
+  border-left: 0;
+  border-top: 0;
+  margin-right: 0.5rem;
+
+  transform: rotate(315deg);
+}

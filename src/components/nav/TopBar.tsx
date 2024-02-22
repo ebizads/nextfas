@@ -29,7 +29,6 @@ const TopBar = () => {
 
   const [sessionName, setSessionName] = useState<string>("")
 
-
   const dateNow = new Date()
   let dayNow = 0
   let validateDate = 0
@@ -68,7 +67,7 @@ const TopBar = () => {
     //   refetch()
     //   console.log("userId: " + userId)
     // }, 5000)
-    
+
     console.log("first login: " + user?.firstLogin?.toString())
   }, [
     session,
@@ -167,7 +166,6 @@ const TopBar = () => {
           setOpenPopover={setOpenLogoutPopover}
           isVisible={openChangePass}
           setIsVisible={setOpenChangePass}
-          
         />
       </div>
     </div>

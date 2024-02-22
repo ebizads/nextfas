@@ -104,8 +104,9 @@ export const CreateEmployee = (props: {
     // Register function
 
     mutate({
-      name: `${employee.profile?.first_name ?? ""} ${employee.profile?.last_name ?? ""
-        }`,
+      name: `${employee.profile?.first_name ?? ""} ${
+        employee.profile?.last_name ?? ""
+      }`,
       employee_id:
         `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}` +
         (String(employee.teamId).padStart(2, "0") + props.generateId),
@@ -148,15 +149,15 @@ export const CreateEmployee = (props: {
   }
 
   const filteredAllCountries = useMemo(() => {
-    const countries = all_countries.map((countries) => { return countries.name })
+    const countries = all_countries.map((countries) => {
+      return countries.name
+    })
     setCountry("")
     console.log("country", countries)
     return countries
-
   }, [])
 
   const filteredRegion = useMemo(() => {
-
     const upperLevel = Object.entries(ph_regions)
       .sort(([key1], [key2]) => {
         const num1 = parseInt(key1)
@@ -167,9 +168,6 @@ export const CreateEmployee = (props: {
     setRegion("")
     console.log("keys:", upperLevel)
     return upperLevel
-
-
-
   }, [])
 
   const filteredProvince = useMemo(() => {
@@ -192,12 +190,15 @@ export const CreateEmployee = (props: {
         return provinceLevel
       }
     } else {
-
       if (country) {
         const states = all_states
         console.log("states", all_states)
-        const specStates = states.filter((states) => { return states.country_name === country })
-        const finalStates = specStates.map((states) => { return states.name })
+        const specStates = states.filter((states) => {
+          return states.country_name === country
+        })
+        const finalStates = specStates.map((states) => {
+          return states.name
+        })
         if (finalStates.length === 0) {
           return newProvince
         }
@@ -205,7 +206,6 @@ export const CreateEmployee = (props: {
         return finalStates
       }
       return newProvince
-
     }
     setProvince("")
 
@@ -222,7 +222,8 @@ export const CreateEmployee = (props: {
       }
 
       if (region && province) {
-        const jsonData = (ph_regions as Record<string, any>)[region].province_list
+        const jsonData = (ph_regions as Record<string, any>)[region]
+          .province_list
 
         const cityLevel = Object.keys(
           (jsonData as Record<string, any>)[province].municipality_list
@@ -235,8 +236,12 @@ export const CreateEmployee = (props: {
     } else {
       if (province) {
         const cities = JSON.parse(JSON.stringify(all_cities))
-        const specCities = cities.filter((city: { state_name: string }) => { return city.state_name === province })
-        const finalCities = specCities.map((city: { name: string }) => { return city.name })
+        const specCities = cities.filter((city: { state_name: string }) => {
+          return city.state_name === province
+        })
+        const finalCities = specCities.map((city: { name: string }) => {
+          return city.name
+        })
         console.log("cities", finalCities)
         setCity("")
         if (finalCities.length === 0) {
@@ -244,7 +249,6 @@ export const CreateEmployee = (props: {
         }
         return finalCities
       }
-
     }
     setCity("")
 
@@ -359,8 +363,9 @@ export const CreateEmployee = (props: {
               register={register}
             /> */}
             <p className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2">
-              {`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}${String(searchValue).padStart(2, "0") + props.generateId
-                }`}
+              {`${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}${
+                String(searchValue).padStart(2, "0") + props.generateId
+              }`}
             </p>
           </div>
           <div className="flex w-[32%] flex-col">
@@ -472,7 +477,6 @@ export const CreateEmployee = (props: {
               onChange={(value) => {
                 setValue("workMode", String(value) ?? " ")
                 onSearchWorkMode(value ?? " ")
-
               }}
               value={workModeValue ?? ""}
               data={["WFH", "Hybrid", "On-Site"]}
@@ -602,7 +606,9 @@ export const CreateEmployee = (props: {
                 id="address.province"
                 placeholder="Province/States"
                 data={filteredProvince}
-                disabled={country === "Philippines " ? (region === "") : country === ""}
+                disabled={
+                  country === "Philippines " ? region === "" : country === ""
+                }
                 onChange={(value) => {
                   setValue("address.province", value ?? "")
                   setProvince(value ?? "")

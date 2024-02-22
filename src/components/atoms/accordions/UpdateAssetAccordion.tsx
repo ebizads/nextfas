@@ -15,7 +15,7 @@ import {
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
-} from "../select/TypeSelect"
+} from "../select/TypeSfelect"
 import { Textarea } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"
@@ -800,9 +800,7 @@ const UpdateAssetAccordion = () => {
                         }
                         placeholder="Building will appear here"
                         value={
-                          buildingLocation
-                            ? getBuilding(buildingLocation)
-                            : ""
+                          buildingLocation ? getBuilding(buildingLocation) : ""
                         }
                         disabled
                       />
@@ -828,7 +826,7 @@ const UpdateAssetAccordion = () => {
                             }
                             // placeholder="Floor no."
                             value={selectedDepartment?.floor ?? ""}
-                          // disabled
+                            // disabled
                           />
                         </div>
                       </div>
@@ -853,7 +851,7 @@ const UpdateAssetAccordion = () => {
                             }
                             // placeholder="Room no."
                             value={selectedDepartment?.room ?? ""}
-                          // disabled
+                            // disabled
                           />
                         </div>
                       </div>
@@ -1176,7 +1174,7 @@ const UpdateAssetAccordion = () => {
                         "w-full rounded-md border-2 border-gray-500 bg-transparent px-4 py-5 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-300 disabled:text-gray-400",
                     }}
 
-                  // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
+                    // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                   />
                 </div>
                 <div className="col-span-3">

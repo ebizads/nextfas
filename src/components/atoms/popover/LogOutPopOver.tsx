@@ -35,9 +35,11 @@ const LogOutPopOver = (props: {
     //setOpenChangePass(props.isVisible)
   }, [userEditable, props, session, setUserEditable, user, validateIsVisible])
 
-
   useEffect(() => {
-    console.log("userEditable: " + userEditable, "validatevisible: " + validateIsVisible)
+    console.log(
+      "userEditable: " + userEditable,
+      "validatevisible: " + validateIsVisible
+    )
   })
 
   return (

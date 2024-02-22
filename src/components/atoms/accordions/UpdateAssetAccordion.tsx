@@ -15,7 +15,7 @@ import {
 import TypeSelect, {
   ClassTypeSelect,
   SelectValueType,
-} from "../select/TypeSelect"
+} from "../select/TypeSfelect"
 import { Textarea } from "@mantine/core"
 import { DatePicker } from "@mantine/dates"
 import { trpc } from "../../../utils/trpc"

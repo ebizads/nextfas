@@ -5,7 +5,6 @@ import { ImageJSON } from "../../../types/table"
 import { trpc } from "../../../utils/trpc"
 import { EmployeeType } from "../../../types/generic"
 const NewEmp = () => {
-
   const [date, setDate] = useState<Date>(new Date())
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -14,13 +13,9 @@ const NewEmp = () => {
   function generateEmployeeId() {
     let numberArray = ""
 
-    for (
-      let x = 0;
-      x <= (allEmp?.employees ? allEmp?.employees?.length : 0) + 1;
-
-    ) {
+    for (let x = 0; x <= (employeesAll ? employeesAll?.length : 0) + 1; ) {
       if (
-        employeesAll.some((item) =>
+        employeesAll.find((item) =>
           item?.employee_id?.includes(String(x + 1).padStart(4, "0"))
         )
       ) {

@@ -2,7 +2,12 @@ import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { authedProcedure, t } from "../trpc"
-import { EmployeeCreateInput, EmployeeDeleteInput, EmployeeEditInput, EmployeeTableEditInput } from "../../schemas/employee"
+import {
+  EmployeeCreateInput,
+  EmployeeDeleteInput,
+  EmployeeEditInput,
+  EmployeeTableEditInput,
+} from "../../schemas/employee"
 import { create, map } from "lodash"
 import { useState } from "react"
 import moment from "moment"
@@ -14,7 +19,6 @@ export const employeeRouter = t.router({
     const employee = await ctx.prisma.employee.findUnique({
       where: { id: input },
       include: {
-
         address: true,
         profile: true,
         team: {
@@ -94,15 +98,13 @@ export const employeeRouter = t.router({
               where: {
                 name: {
                   contains: input?.search?.name,
-                  mode: 'insensitive'
+                  mode: "insensitive",
                 },
 
                 NOT: {
                   deleted: true,
-
                 },
                 OR: {
-
                   NOT: {
                     profile: null,
                   },
@@ -240,7 +242,7 @@ export const employeeRouter = t.router({
 
         return {
           employees,
-          total: count
+          total: count,
         }
       } catch (error) {
         console.log(error)
@@ -310,7 +312,7 @@ export const employeeRouter = t.router({
                   deleted: true,
                 },
                 // hired_date: input?.filter?.hired_date,
-                name: { contains: input?.search?.name, mode: 'insensitive' },
+                name: { contains: input?.search?.name, mode: "insensitive" },
                 employee_id: { contains: input?.search?.employee_id },
                 // email: { contains: input?.search?.email },
                 // team: {
@@ -409,7 +411,7 @@ export const employeeRouter = t.router({
               where: {
                 id: 999999,
                 // hired_date: input?.filter?.hired_date,
-                name: { contains: input?.search?.name, mode: 'insensitive' },
+                name: { contains: input?.search?.name, mode: "insensitive" },
                 // employee_id: { contains: input?.search?.employee_id },
                 // email: { contains: input?.search?.email },
                 // team: {
@@ -447,18 +449,22 @@ export const employeeRouter = t.router({
         })
       }
     }),
-  checkUnique: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const employee = await ctx.prisma.employee.findFirst({
-      where: {
-        employee_id: {
-          contains: input,
+  checkUnique: authedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const employee = await ctx.prisma.employee.findFirst({
+        where: {
+          employee_id: {
+            contains: input,
+          },
         },
-      },
-    })
-    if (employee) {
-      return employee
-    } else { return null }
-  }),
+      })
+      if (employee) {
+        return employee
+      } else {
+        return null
+      }
+    }),
   checkDuplicates: authedProcedure
     .input(z.array(z.number()))
     .query(async ({ ctx, input }) => {
@@ -518,44 +524,46 @@ export const employeeRouter = t.router({
 
       let employeeNumber = ""
 
-      for (
-        let x = 0;
-        x <= (empAll ? empAll?.length : 0) + 1;
-
-      ) {
+      for (let x = 0; x <= (empAll ? empAll?.length : 0) + 1; ) {
         if (
-          empAll?.some((item) =>
+          empAll?.find((item) =>
             item?.employee_id?.includes(String(x + 1).padStart(4, "0"))
           )
         ) {
           x++
         } else {
           employeeNumber = String(x + 1).padStart(4, "0")
-          break;
+          break
         }
       }
 
       const id: string = employee_id + employeeNumber
-
-      await ctx.prisma.employee.create({
-        data: {
-          ...rest,
-          employee_id: id,
-          profile: {
-            create: profile ?? undefined,
-          },
-          address: {
-            connectOrCreate: {
-              where: {
-                id: 0,
+      try {
+        await ctx.prisma.employee.create({
+          data: {
+            ...rest,
+            employee_id: id,
+            profile: {
+              create: profile ?? undefined,
+            },
+            address: {
+              connectOrCreate: {
+                where: {
+                  id: 0,
+                },
+                create: address,
               },
-              create: address,
             },
           },
-        },
-      })
+        })
 
-      return "User created successfully"
+        return "User created successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
     }),
   createMany: authedProcedure
     .input(z.array(EmployeeCreateInput))
@@ -594,9 +602,7 @@ export const employeeRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       const empId = moment().format("YY-")
 
-
       const { id, address, profile, employee_id, ...rest } = input
-
 
       await ctx.prisma.employee.upsert({
         where: {
@@ -616,10 +622,10 @@ export const employeeRouter = t.router({
           profile: {
             connectOrCreate: {
               where: {
-                id: 0
+                id: 0,
               },
               create: profile,
-            }
+            },
           },
         },
         update: {
@@ -628,8 +634,7 @@ export const employeeRouter = t.router({
           profile: { update: profile },
         },
       })
-      return (profile)
-
+      return profile
     }),
   edit: authedProcedure
     .input(EmployeeEditInput)
@@ -697,7 +702,8 @@ export const employeeRouter = t.router({
         })
       }
     }),
-  delete: authedProcedure.input(EmployeeDeleteInput)
+  delete: authedProcedure
+    .input(EmployeeDeleteInput)
     .mutation(async ({ ctx, input }) => {
       const { id } = input
       try {

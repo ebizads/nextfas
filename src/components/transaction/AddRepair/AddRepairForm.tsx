@@ -64,6 +64,11 @@ const AddRepairForm = () => {
         ...asset,
         id: asset?.id ?? 0,
         status: "repair",
+        assetTagId: asset?.assetTagId ?? 0,
+        pastIssuanceId: asset?.issuedToId ?? 0,
+        management: {
+          id: asset?.management?.id ?? 0,
+        },
       })
 
       reset()

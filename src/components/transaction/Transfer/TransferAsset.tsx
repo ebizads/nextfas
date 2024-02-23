@@ -150,34 +150,38 @@ const Transfer = ({}) => {
     ) {
       console.log(deletedAt, "uuuuuuuu")
 
-      mutate({
-        ...transfer,
-
-        // custodianId: Number(selectedEMP),
-        transferStatus: "pending",
-        assetId: asset?.id ?? 0,
-      })
+     
       
       if(checked){
-    
+        mutate({
+          ...transfer,
+  
+          // custodianId: Number(selectedEMP)
+          transferStatus: "pending",
+          assetId: asset?.id ?? 0,
+        })
         updateAsset.mutate({
           ...asset,
           id: asset?.id ?? 0,
           status: "transfer",
+          remarks:"For return",
           assetTagId: asset?.assetTagId ?? 0,
           pastIssuanceId: asset?.issuedToId ?? 0,
-          custodianId: 0,
           issuedToId: issuedTo,
           issuedById: userId,
-          issuance: {
-            deleted: deletedAt,
-          },
           management: {
             id: asset?.management?.id ?? 0,
           },
         })
       }
       else{
+        mutate({
+          ...transfer,
+  
+          // custodianId: Number(selectedEMP),
+          transferStatus: "pending",
+          assetId: asset?.id ?? 0,
+        })
         updateAsset.mutate({
           ...asset,
           id: asset?.id ?? 0,
@@ -186,9 +190,6 @@ const Transfer = ({}) => {
           pastIssuanceId: asset?.issuedToId ?? 0,
           issuedToId: issuedTo,
           issuedById: userId,
-          issuance: {
-            deleted: deletedAt,
-          },
           management: {
             id: asset?.management?.id ?? 0,
           },
@@ -1603,6 +1604,7 @@ const Transfer = ({}) => {
                           transfer_date ? transfer_date?.toDateString() : ""
                         }
                         allowFreeInput
+                        dropdownPosition="bottom-start"
                         size="sm"
                         onChange={(value) => {
                           setTransfer_date(value),
@@ -1970,7 +1972,7 @@ const Transfer = ({}) => {
         isVisible={completeModal}
         setIsVisible={setCompleteModal}
         className="max-w-2xl"
-        title="Transfer Complete"
+        title="Transfer Asset"
       >
         <div className="flex w-full flex-col items-center px-4 py-2">
           <div>

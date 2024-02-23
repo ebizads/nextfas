@@ -38,7 +38,7 @@ export const TransferDetailsModal = (props: {
   const { handleSubmit, reset, setValue } = useForm<TransferEdit>({
     resolver: zodResolver(AssetTransferEditInput),
   })
-  const changeStats = trpc.asset.changeStatus.useMutation({
+  const changeStats = trpc.asset.edit.useMutation({
     onSuccess() {
       console.log("omsim")
     },
@@ -65,7 +65,18 @@ export const TransferDetailsModal = (props: {
       })
     }
 
-    reset()
+    if(props.asset?.asset?.remarks?.toLowerCase().includes('for return') && stats === "done"){
+      changeStats.mutate({
+        id: props.asset?.assetId ?? 0,
+        custodianId: 0,
+        status: null,
+      })
+    }
+
+    // console.log(props.asset?.asset?.remarks);
+    
+
+    // reset()
   }
 
   return (

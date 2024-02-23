@@ -22,7 +22,7 @@ const Issuance = (props: {
     const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
 
     const [filterBy] = useState<string[]>(issuanceColumn.map((i) => i.value))
-    const [activeTab, setActiveTab] = useState<string | null>("pending")
+    const [activeTab, setActiveTab] = useState<string | null>("done")
 
     const { setStatus } = useIssuanceStatusStore()
     useEffect(() => {
@@ -68,7 +68,7 @@ const Issuance = (props: {
                     <div className="px-4">
                         <Tabs value={activeTab} onTabChange={setActiveTab} color="yellow">
                             <Tabs.List>
-                                <Tabs.Tab value="pending">
+                                {/* <Tabs.Tab value="pending">
                                     <div className="flex w-full flex-row">
                                         <p
                                             className={
@@ -127,7 +127,7 @@ const Issuance = (props: {
                                             Cancelled
                                         </p>{" "}
                                     </div>
-                                </Tabs.Tab>
+                                </Tabs.Tab> */}
                                 <Tabs.Tab value="done">
                                     <div className="flex w-full flex-row">
                                         <p

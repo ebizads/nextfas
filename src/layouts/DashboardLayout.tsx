@@ -24,7 +24,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
         <AnimatePresence mode="wait">
           <AnimatedPage>
-            <section className={`flex w-full flex-1 flex-col p-4 overflow-x-hidden`}>
+            <section className={`flex w-full h-full flex-1 flex-col p-4 overflow-hidden`}>
               {children}
             </section>
           </AnimatedPage>

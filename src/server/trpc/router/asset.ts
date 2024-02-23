@@ -831,13 +831,14 @@ export const assetRouter = t.router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, status } = input
+      const { id, status, ...rest } = input
       try {
         await ctx.prisma.asset.update({
           where: {
             id,
           },
           data: {
+            ...rest,
             status: status,
           },
         })

@@ -76,7 +76,7 @@ const TransferNew = () => {
               </div>
           </div> */}
 
-      <div>
+      <div className="h-full">
         {/* {(transferAsset?.number === "" || transferAsset?.number === null || transferAsset?.number === undefined) ? <DisplayTransferAssets
           total={data?.count ?? 0}
           assets={assets}

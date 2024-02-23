@@ -5,7 +5,7 @@ import { UseFormSetValue } from "react-hook-form"
 export type SelectValueType = {
   value: string
   label: string
-  emp_id: string
+  emp_id?: string
 }
 
 /* tslint:disable-next-line */

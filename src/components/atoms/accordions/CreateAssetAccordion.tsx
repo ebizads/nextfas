@@ -631,7 +631,8 @@ const CreateAssetAccordion = () => {
                 </div>
                 <div className="col-span-9 grid grid-cols-12 gap-7">
                   <div className="col-span-3">
-                    <InputNumberField
+                  <InputField
+                      type="number"
                       register={register}
                       label="Original Cost"
                       placeholder="Original Cost"
@@ -643,7 +644,8 @@ const CreateAssetAccordion = () => {
                     </AlertInput>
                   </div>
                   <div className="col-span-3">
-                    <InputNumberField
+                  <InputField
+                      type="number"
                       register={register}
                       label="Current Cost"
                       placeholder="Current Cost"
@@ -656,7 +658,8 @@ const CreateAssetAccordion = () => {
                   </div>
 
                   <div className="col-span-3">
-                    <InputNumberField
+                  <InputField
+                      type="number"
                       register={register}
                       label="Residual Value"
                       placeholder="Residual Value"

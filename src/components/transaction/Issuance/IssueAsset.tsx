@@ -142,14 +142,13 @@ const Issue = ({}) => {
       mutate({
         ...issue,
         issuanceDate: transfer_date,
-        issuanceStatus: "pending",
+        issuanceStatus: "done",
         assetId: asset?.id ?? 0,
       })
       console.log(asset, "asset  mo to")
       updateAsset.mutate({
         ...asset,
         id: asset?.id ?? 0,
-        status: "issuance",
         custodianId: Number(selectedEMP),
         pastIssuanceId: asset?.issuedToId ?? 0,
         issuedToId: issuedTo,
@@ -1911,7 +1910,7 @@ const Issue = ({}) => {
         isVisible={completeModal}
         setIsVisible={setCompleteModal}
         className="max-w-2xl"
-        title="Transfer Complete"
+        title="Issue Asset"
       >
         <div className="flex w-full flex-col items-center px-4 py-2">
           <div>

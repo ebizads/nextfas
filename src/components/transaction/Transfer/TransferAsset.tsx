@@ -52,9 +52,7 @@ const Transfer = ({}) => {
 
   const [selectedDept, setSelectedDept] = useState<string>("")
   const [selectedEMP, setSelectedEMP] = useState<string | null>("")
-  const [selectedCustodian, setSelectedCustodian] = useState<number | null>(
-    null
-  )
+  const [selectedCustodian, setSelectedCustodian] = useState<string>("")
 
   const [searchModal, setSearchModal] = useState<boolean>(false)
   const [completeModal, setCompleteModal] = useState<boolean>(false)
@@ -84,11 +82,13 @@ const Transfer = ({}) => {
     setUserId(Number(session?.user?.id))
   }, [session?.user?.id, userId])
   const employeeList = useMemo(() => {
-    const list = employeeData?.employees.map(
-      (employee: { id: { toString: () => any }; name: any }) => {
-        return { value: employee.id.toString(), label: employee.name }
+    const list = employeeData?.employees.map((employee) => {
+      return {
+        value: employee.id.toString(),
+        label: employee.name,
+        emp_id: employee.employee_id,
       }
-    ) as SelectValueType[]
+    }) as SelectValueType[]
     return list ?? []
   }, [employeeData]) as SelectValueType[]
 
@@ -136,11 +136,6 @@ const Transfer = ({}) => {
       console.log("omsim uuuu")
     },
   })
-  const updateDept = trpc.employee.edit.useMutation({
-    onSuccess() {
-      console.log("omsim")
-    },
-  })
 
   const onSubmit = (transfer: Transfer) => {
     if (
@@ -150,21 +145,25 @@ const Transfer = ({}) => {
     ) {
       console.log(deletedAt, "uuuuuuuu")
 
-     
-      
-      if(checked){
+      if (checked) {
         mutate({
           ...transfer,
-  
-          // custodianId: Number(selectedEMP)
+
+          custodianId: 0,
           transferStatus: "pending",
           assetId: asset?.id ?? 0,
+          transferLocation:"",
+
+          // issuance:{
+          //   issuanceStatus:'pending',
+          //   assetId:asset?.id ?? 0,
+          // }
         })
         updateAsset.mutate({
           ...asset,
           id: asset?.id ?? 0,
           status: "transfer",
-          remarks:"For return",
+          remarks: "For return",
           assetTagId: asset?.assetTagId ?? 0,
           pastIssuanceId: asset?.issuedToId ?? 0,
           issuedToId: issuedTo,
@@ -173,12 +172,11 @@ const Transfer = ({}) => {
             id: asset?.management?.id ?? 0,
           },
         })
-      }
-      else{
+      } else {
         mutate({
           ...transfer,
-  
-          // custodianId: Number(selectedEMP),
+
+          custodianId: Number(selectedEMP),
           transferStatus: "pending",
           assetId: asset?.id ?? 0,
         })
@@ -186,6 +184,7 @@ const Transfer = ({}) => {
           ...asset,
           id: asset?.id ?? 0,
           status: "transfer",
+          remarks: null,
           assetTagId: asset?.assetTagId ?? 0,
           pastIssuanceId: asset?.issuedToId ?? 0,
           issuedToId: issuedTo,
@@ -288,14 +287,14 @@ const Transfer = ({}) => {
   const [transfer_date, setTransfer_date] = useState<Date | null>(null)
   const [transfer_location, setTransfer_location] = useState<string>("")
 
-  useEffect(() => {
-    if (selectedEMP !== null) {
-      setSelectedCustodian(
-        employeeList.findIndex((employee) => employee.value === selectedEMP)
-      )
-      console.log(selectedCustodian, "sss")
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (selectedEMP !== null) {
+  //     setSelectedCustodian(
+  //       employeeList.findIndex((employee) => employee.value === selectedEMP)
+  //     )
+  //     console.log(selectedCustodian, "sss")
+  //   }
+  // }, [])
 
   // console.log(company_address);
   return (
@@ -1535,6 +1534,65 @@ const Transfer = ({}) => {
               </p>
               <div className=" grid grid-flow-row grid-cols-12  py-2">
                 <div className="col-span-6 py-2 px-2">
+                  <div className=" flex flex-col py-2">
+                    <label className="font-semibold">Employee</label>
+
+                    <Select
+                      disabled={checked}
+                      placeholder="Select Employee"
+                      onChange={(value) => {
+                        setSelectedEMP(value ?? "")
+                        console.log(employeeList, "aaaa list")
+                        setIssuedTo(Number(value))
+                        console.log(transfer_date, "aaaaa")
+                        console.log(issuedTo, "aaaa issued to")
+                        setSelectedCustodian(value ?? "")
+                      }}
+                      value={selectedEMP}
+                      data={employeeList}
+                      styles={(theme) => ({
+                        item: {
+                          // applies styles to selected item
+                          "&[data-selected]": {
+                            "&, &:hover": {
+                              backgroundColor:
+                                theme.colorScheme === "light"
+                                  ? theme.colors.orange[3]
+                                  : theme.colors.orange[1],
+                              color:
+                                theme.colorScheme === "dark"
+                                  ? theme.white
+                                  : theme.black,
+                            },
+                          },
+
+                          // applies styles to hovered item (with mouse or keyboard)
+                          "&[data-hovered]": {},
+                        },
+                      })}
+                      variant="unstyled"
+                      className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    />
+                    {/* <div className="flex w-full flex-col">
+                    <label className="py-2 font-semibold">Department</label>
+                    <input
+                      type="text"
+                      id={"department"}
+                      className={
+                        "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
+                      }
+                      placeholder="Select an employee"
+                      value={
+                        specificDepartment ? specificDepartment ?? "--" : ""
+                      }
+                      disabled
+                    />
+                  </div> */}
+                  </div>
+                </div>
+                <div className="col-span-6 py-2 px-2"></div>
+
+                <div className="col-span-6 py-2 px-2">
                   {/* <div className="flex w-full flex-col py-2">
                     <div className="mb-2 flex flex-row gap-2">
                       <label className="w-full font-semibold">Floor</label>
@@ -1765,7 +1823,7 @@ const Transfer = ({}) => {
                   <div className="col-span-4 ">
                     <InputField
                       register={register}
-                      label="Name"
+                      label="Asset Name"
                       name="name"
                       placeholder={asset?.name}
                       // className="placeholder:font-semibold"
@@ -1777,13 +1835,13 @@ const Transfer = ({}) => {
                   <div className="col-span-4 ">
                     <InputField
                       register={register}
-                      label="Alternate Asset Number"
+                      label="Asset Number"
                       placeholder={
-                        asset?.alt_number == "" || null || undefined
+                        asset?.number == "" || null || undefined
                           ? "--"
-                          : asset?.alt_number ?? "--"
+                          : asset?.number ?? "--"
                       }
-                      name="alt_number"
+                      name="number"
                       disabled
                     />
                     {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
@@ -1791,9 +1849,13 @@ const Transfer = ({}) => {
                   <div className="col-span-4 ">
                     <InputField
                       register={register}
-                      label="Tag"
-                      name="assettag"
-                      placeholder={asset?.assetTag?.name}
+                      label="Employee"
+                      name="employee"
+                      placeholder={
+                        (asset?.custodian?.name ?? "--") +
+                        " | " +
+                        (asset?.custodian?.employee_id ?? "--")
+                      }
                       // className="placeholder:font-semibold"
                       disabled
                       // required
@@ -1806,7 +1868,9 @@ const Transfer = ({}) => {
                       <div className="relative ">
                         <input
                           disabled
-                          placeholder={"--"}
+                          placeholder={
+                            asset?.AssetTransfer?.transferLocation || "--"
+                          }
                           className={
                             "w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm  focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
                           }
@@ -1853,7 +1917,7 @@ const Transfer = ({}) => {
                   <div className="col-span-4 ">
                     <InputField
                       register={register}
-                      label="Name"
+                      label="Asset Name"
                       name="name"
                       placeholder={asset?.name}
                       // className="placeholder:font-semibold"
@@ -1865,13 +1929,13 @@ const Transfer = ({}) => {
                   <div className="col-span-4 ">
                     <InputField
                       register={register}
-                      label="Alternate Asset Number"
+                      label="Asset Number"
                       placeholder={
-                        asset?.alt_number == "" || null || undefined
+                        asset?.number == "" || null || undefined
                           ? "--"
-                          : asset?.alt_number ?? "--"
+                          : asset?.number ?? "--"
                       }
-                      name="alt_number"
+                      name="number"
                       disabled
                     />
                     {/* <AlertInput>{errors?.alt_number?.message}</AlertInput> */}
@@ -1879,9 +1943,21 @@ const Transfer = ({}) => {
                   <div className="col-span-4 ">
                     <InputField
                       register={register}
-                      label="Tag"
-                      name="assettag"
-                      placeholder={asset?.assetTag?.name}
+                      label="Employee"
+                      name="employee"
+                      placeholder={
+                        (employeeList[
+                          employeeList.findIndex(
+                            (employee) => employee.value === selectedCustodian
+                          )
+                        ]?.label ?? "--") +
+                        " | " +
+                        (employeeList[
+                          employeeList.findIndex(
+                            (employee) => employee.value === selectedCustodian
+                          )
+                        ]?.emp_id ?? "--")
+                      }
                       // className="placeholder:font-semibold"
                       disabled
                       // required

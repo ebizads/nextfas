@@ -9,6 +9,7 @@ import Modal from "../../headless/modal/modal"
 import { AssetTransferType } from "../../../types/generic"
 import { Textarea } from "@mantine/core"
 import { AssetTransferEditInput } from "../../../server/schemas/asset"
+import { useTransferAssetStore } from "../../../store/useStore"
 
 export type TransferEdit = z.infer<typeof AssetTransferEditInput>
 
@@ -23,6 +24,12 @@ export const TransferDetailsModal = (props: {
   const utils = trpc.useContext()
   const [remarks, setRemarks] = useState<string | null>(null)
 
+  const { transferAsset, setTransferAsset } = useTransferAssetStore()
+
+  const [assetNumber, setAssetNumber] = useState<number>(transferAsset?.id ?? 0)
+
+  const { data: assetIssue } = trpc.assetIssuance.findOne.useQuery(assetNumber)
+
   //   const { data: asset } = trpc.asset.findOne.useQuery(
   //     String(props.asset?.asset?.number.toUpperCase())
   //   )
@@ -35,17 +42,23 @@ export const TransferDetailsModal = (props: {
     },
   })
 
+  const issueAsset = trpc.assetIssuance.create.useMutation({
+    onSuccess() {
+      console.log("aaa issue mo to")
+    },
+  })
+
   const { handleSubmit, reset, setValue } = useForm<TransferEdit>({
     resolver: zodResolver(AssetTransferEditInput),
   })
   const changeStats = trpc.asset.edit.useMutation({
     onSuccess() {
-      console.log("omsim")
+      console.log("aaa omsim")
     },
   })
 
   const onSubmit = (transfer: TransferEdit) => {
-    console.log("ITEM WORKS")
+    console.log("aaa ITEM WORKS")
 
     mutate({
       ...transfer,
@@ -53,28 +66,52 @@ export const TransferDetailsModal = (props: {
       transferStatus: stats,
     })
 
+    if (stats === "cancelled" || stats === "rejected") {
+      changeStats.mutate({
+        id: props.asset?.assetId ?? 0,
+        status: null,
+      })
+    }
+   
     if (
-      stats === "cancelled" ||
-      stats === "rejected" ||
-      stats === "approved" ||
+      props.asset?.asset?.remarks?.toLowerCase().includes("for return") &&
       stats === "done"
     ) {
       changeStats.mutate({
         id: props.asset?.assetId ?? 0,
-        status: null,
-      })
-    }
-
-    if(props.asset?.asset?.remarks?.toLowerCase().includes('for return') && stats === "done"){
-      changeStats.mutate({
-        id: props.asset?.assetId ?? 0,
         custodianId: 0,
         status: null,
+        remarks: "Returned",
       })
     }
 
+     if (!props.asset?.asset?.remarks?.toLowerCase().includes("for return") && stats === "done") {
+      console.log(props.asset?.custodianId, "aaaaaa custodian")
+      mutate({
+        ...transfer,
+        id: props.asset?.id,
+        transferStatus: stats,
+        issuance: {
+          issuanceStatus: "done",
+          issuanceDate: props.asset?.transferDate,
+          assetId: props.asset?.assetId ?? 0,
+        },
+      })
+      changeStats.mutate({
+        id: props.asset?.assetId ?? 0,
+        custodianId: props.asset?.custodianId ?? 0,
+        status: null,
+      })
+      issueAsset.mutate({
+        ...assetIssue,
+        issuanceDate:  props.asset?.transferDate,
+        issuanceStatus: "done",
+        assetId: props.asset?.asset?.id ?? 0,
+      })
+    }
+
+
     // console.log(props.asset?.asset?.remarks);
-    
 
     // reset()
   }

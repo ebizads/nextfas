@@ -30,6 +30,7 @@ export const assetRouter = t.router({
         addedBy: true,
         assetTag: true,
         AssetIssuance: true,
+        AssetTransfer: true,
         pastIssuance: true,
         issuedBy: true,
         issuedTo: true,

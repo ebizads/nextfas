@@ -199,8 +199,8 @@ export const AssetTransferEditInput = z.object({
   departmentCode: z.string().nullish().optional(),
   remarks: z.string().nullish().optional(),
   custodianId: z.number().optional().nullish(),
-  assetId: z.number().optional().nullish(),
-  issuance: createIssuance.optional(),
+  assetId: z.number().optional(),
+  issuance: initialIssuance.optional(),
 })
 
 export const AssetRepairCreateInput = z.object({

@@ -515,16 +515,14 @@ export const employeeRouter = t.router({
             },
           },
         },
-        where: {
-          id: 999999,
-        },
+    
       })
 
       const empAll: EmployeeType[] = allEmp as EmployeeType[]
 
       let employeeNumber = ""
 
-      for (let x = 0; x <= (empAll ? empAll?.length : 0) + 1; ) {
+      for (let x = 0; x <= (empAll ? empAll?.length : 0) + 1; x++) {
         if (
           empAll?.find((item) =>
             item?.employee_id?.includes(String(x + 1).padStart(4, "0"))

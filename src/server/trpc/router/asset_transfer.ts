@@ -123,7 +123,7 @@ export const assetTransferRouter = t.router({
   edit: authedProcedure
     .input(AssetTransferEditInput)
     .mutation(async ({ ctx, input }) => {
-      const { id, ...rest } = input
+      const { id, assetId, ...rest } = input
       try {
         await ctx.prisma.assetTransfer.update({
           where: {
@@ -142,6 +142,18 @@ export const assetTransferRouter = t.router({
             },
           },
         })
+
+        // await ctx.prisma.assetIssuance.create({
+        //   data: {
+        //     asset: {
+        //       connect: {
+        //         id: assetId ?? 0,
+        //       },
+        //     },
+
+        //     ...rest,
+        //   },
+        // })
 
         return "Asset updated successfully"
       } catch (error) {

@@ -139,24 +139,10 @@ export const navigations = [
   //   icon: "fa-users",
   //   link: "/issuance",
   // },
-  {
-    name: "Vendors",
-    icon: "fa-store",
-    link: "/vendors",
-  },
   // {
-  //   name: "User Management",
-  //   icon: "fa-light fa-user-gear",
-  //   link: "/auth",
-  // },
-  // {
-  //   name: "User Management",
-  //   icon: "fa-user-pen",
+  //   name: "Vendors",
+  //   icon: "fa-store",
   //   link: "/vendors",
   // },
-  // {
-  //   name: "Inventory",
-  //   icon: "fa-light fa-folders",
-  //   link: "/inventory",
-  // },
+  
 ] as NavType[]

@@ -101,11 +101,11 @@ const SideBar = () => {
             </div>
           </Link>
         </div>
-        <NavAccordion
+        {/* <NavAccordion
           paths={paths}
           minimize={minimize}
           setMinimize={setMinimize}
-        />
+        /> */}
         {navigations.map((page, idx) => (
           <div
             key={idx}

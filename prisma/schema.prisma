@@ -433,15 +433,35 @@ model Vendor {
   assets    Asset[]
 }
 
+
+enum Type {
+  hardware
+  software
+  peripheral
+  license
+}
+
+enum ActionType {
+  manual
+  automatic
+  semi_automatic
+}
+
+
 model Asset {
   id                Int              @id @unique @default(autoincrement())
   name              String
-  number            String           @unique
-  alt_number        String?
+  number            Int?
+  assetId           String?
   serial_no         String?
   barcode           String?
   description       String?
+  types             String?
   remarks           String?
+  brand             String?
+  models            String?
+  caliber           String?
+  actionType        String?
   parentId          Int?
   modelId           Int?             @unique
   custodianId       Int?

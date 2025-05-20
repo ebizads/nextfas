@@ -79,6 +79,31 @@ const SideBar = () => {
             asset info
           </p>
         )}
+
+{(user?.user_type ?? "") === "admin" && (
+  <div
+    className={`py-4 px-2 ${
+      paths[paths.length - 1] === "Dashboard"
+        ? "bg-tangerine-50 font-medium text-tangerine-500"
+        : "text-light-secondary"
+    }`}
+  >
+    <Link href={"/dashboard"}>
+      <div
+        className={`flex items-center ${
+          minimize ? "justify-center" : "justify-start pl-2"
+        } cursor-pointer gap-2 pl-2`}
+      >
+        <i
+          className={`fa-cubes w-8 ${
+            minimize ? "fa-regular text-2xl" : "fa-light"
+          } text-left`}
+        />
+        {!minimize && <p className="text-light-primary">Dashboard</p>}
+      </div>
+    </Link>
+  </div>
+)}
         <div
           className={`py-4 px-2 ${
             paths[paths.length - 1] === "assets"
@@ -101,6 +126,8 @@ const SideBar = () => {
             </div>
           </Link>
         </div>
+        
+
         {/* <NavAccordion
           paths={paths}
           minimize={minimize}

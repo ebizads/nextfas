@@ -440,6 +440,11 @@ model Asset {
   alt_number        String?
   serial_no         String?
   barcode           String?
+  brand             String?
+  type              String?
+  actionType        String?
+  caliber           String?
+  models            String?
   description       String?
   remarks           String?
   parentId          Int?

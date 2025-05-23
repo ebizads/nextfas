@@ -406,216 +406,49 @@ export const assetRouter = t.router({
   create: authedProcedure
     .input(AssetCreateInput)
     .mutation(async ({ ctx, input }) => {
-      const {
-        number,
-        management,
-        custodianId,
-        departmentId,
-        model,
-        vendorId,
-        subsidiaryId,
-        assetProjectId,
-        parentId,
-        addedById,
-        assetTagId,
-        ...rest
-      } = input
+      const { ...rest } = input;
 
-      const allAssets = await ctx.prisma.asset.findMany({
+      const allAssets = await ctx.prisma.asset.findMany();
 
-        include: {
-          model: {
-            include: {
-              type: true,
-              category: true,
-              class: true,
-            },
-          },
-          custodian: true,
-          department: {
-            include: {
-              location: true,
-              company: true,
-              teams: true,
-            },
-          },
-          assetTag: true,
-          parent: true,
-          project: true,
-          vendor: true,
-          subsidiary: true,
-          management: true,
-          addedBy: true,
-          AssetIssuance: true,
+      const assetsAll: AssetType[] = allAssets as AssetType[];
 
-        },
-      })
-
-      const assetsAll: AssetType[] = allAssets as AssetType[]
-
-      let assetNumber = ""
+      let assetNumber = "";
 
       for (
         let x = 0;
-        x <= (allAssets ? allAssets?.length : 0) + 1;
-
+        x <= (allAssets ? allAssets.length : 0) + 1;
       ) {
-        if (
-          assetsAll?.some((item) =>
-            item?.number?.includes(String(x + 1).padStart(4, "0"))
-          )
-        ) {
-          x++
+        const formattedNumber = `GUN-${String(x + 1).padStart(4, "0")}`;
+        if (assetsAll?.some((item) => item?.number === formattedNumber)) {
+          x++;
         } else {
-          assetNumber = String(x + 1).padStart(4, "0")
+          assetNumber = formattedNumber;
           break;
         }
       }
 
-      const id: string = number + assetNumber
-
       const asset = await ctx.prisma.asset.create({
         data: {
           ...rest,
-          number: id,
-          model: {
-            connectOrCreate: {
-              where: {
-                id: 0,
-              },
-              create: model,
-            },
-          },
-          management: {
-            connectOrCreate: {
-              where: {
-                id: 0,
-              },
-              create: management,
-            },
-          },
-          custodian: {
-            connect: {
-              id: custodianId ?? 0,
-            },
-          },
-          department: {
-            connect: {
-              id: departmentId ?? 0,
-            },
-          },
-          vendor: {
-            connect: {
-              id: vendorId ?? 0,
-            },
-          },
-          subsidiary: {
-            connect: {
-              id: subsidiaryId ?? 0,
-            },
-          },
-          project: {
-            connect: {
-              id: assetProjectId ?? 0,
-            },
-          },
-          parent: {
-            connect: {
-              id: parentId ?? 0,
-            },
-          },
-          addedBy: {
-            connect: {
-              id: addedById ?? 0,
-            },
-          },
-          assetTag: {
-            connect: {
-              id: assetTagId ?? 0,
-            }
-          }
+          number: assetNumber,
         },
-        include: {
-          model: true,
-          custodian: true,
-          subsidiary: true,
-          project: true,
-          parent: true,
-          department: true,
-          vendor: true,
-          management: true,
-          addedBy: true,
-          assetTag: true,
-        },
-      })
-      return asset
+      });
+
+      return asset;
     }),
+
   createMany: authedProcedure
     .input(z.array(AssetCreateInput))
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.asset.createMany({
         data: input.map((asset) => {
           const {
-            management,
-            custodianId,
-            departmentId,
-            model,
-            vendorId,
-            subsidiaryId,
-            assetProjectId,
-            parentId,
-            addedById,
             ...rest
           } = asset
           return {
             ...rest,
 
-            model: {
-              connectOrCreate: {
-                where: {
-                  id: 0,
-                },
-                create: model,
-              },
-            },
-            management: {
-              connectOrCreate: {
-                where: {
-                  id: 0,
-                },
-                create: management,
-              },
-            },
-            custodian: {
-              connect: {
-                id: custodianId ?? 0,
-              },
-            },
-            department: {
-              connect: {
-                id: departmentId ?? 0,
-              },
-            },
-            vendor: {
-              connect: {
-                id: vendorId ?? 0,
-              },
-            },
-            subsidiary: {
-              connect: {
-                id: subsidiaryId ?? 0,
-              },
-            },
-            project: {
-              connect: {
-                id: assetProjectId ?? 0,
-              },
-            },
-            parent: {
-              connect: {
-                id: parentId ?? 0,
-              },
-            },
+
           }
         }),
         skipDuplicates: true,

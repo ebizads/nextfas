@@ -50,32 +50,40 @@ const DisplayAssets = (props: {
     <div className="space-y-4">
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex w-fit items-center gap-2">
-              <div className="flex-1">
-                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search Asset Name" onChange={(e) => setSearch(e.currentTarget.value)}>
-                </input>
+
+          <div className="flex items-center gap-2 ml-auto flex-wrap justify-end">
+
+            <div className="flex items-center gap-2 ml-auto flex-wrap justify-end">
+
+              <div className="flex w-fit items-center gap-2">
+                <div className="relative w-fit">
+                  <input
+                    type="text"
+                    className="border-gray-400 border-2 rounded pl-2 pr-10 py-[0.25rem] w-64 "
+                    placeholder="Search"
+                    onChange={(e) => setSearch(e.currentTarget.value)}
+                  />
+                  <i className="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                </div>
+                <FilterPopOver
+                  openPopover={openPopover}
+                  setOpenPopover={setOpenPopover}
+                  filterBy={filterBy}
+                  setFilterBy={setFilterBy}
+                  columns={columns}
+                />
               </div>
-              <FilterPopOver
-                openPopover={openPopover}
-                setOpenPopover={setOpenPopover}
-                filterBy={filterBy}
-                setFilterBy={setFilterBy}
-                columns={columns}
-              />
+              {checkboxes.length > 0 && (
+                <button
+                  onClick={() => setOpenModalDel(true)}
+                  className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
+                >
+                  {checkboxes.includes(-1)
+                    ? `Delete all record/s ( ${props.assets.length} ) ?`
+                    : `Delete selected record/s ( ${checkboxes.length} )`}
+                </button>
+              )}
             </div>
-            {checkboxes.length > 0 && (
-              <button
-                onClick={() => setOpenModalDel(true)}
-                className="flex gap-2 rounded-md p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
-              >
-                {checkboxes.includes(-1)
-                  ? `Delete all record/s ( ${props.assets.length} ) ?`
-                  : `Delete selected record/s ( ${checkboxes.length} )`}
-              </button>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
 
             <button onClick={() => {
               const downloadableAssets = props.assetsSample.map((assets) => {
@@ -116,9 +124,9 @@ const DisplayAssets = (props: {
               console.log("TEST: " + JSON.stringify(downloadableAssets))
 
               downloadExcel_templateAssets(downloadableAssets)
-            }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
-              <i className="fa-solid fa-print text-xs" />
-              Download Template
+            }} className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 hover:border-tangerine-600 focus:outline-none">
+              <i className="fa-solid fa-file-lines text-xs" title="Download Template" />
+
             </button>
             <button onClick={() => {
 
@@ -157,9 +165,9 @@ const DisplayAssets = (props: {
               console.log("TEST: " + JSON.stringify(downloadableAssets))
 
               downloadExcel_assets(downloadableAssets)
-            }} className="flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 focus:outline-none">
-              <i className="fa-solid fa-print text-xs" />
-              Download Assets
+            }} className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 hover:border-tangerine-600 focus:outline-none">
+              <i className="fa-solid fa-file-arrow-down text-xs" title="Download Assets" />
+
             </button>
             {/* <Link href={"/assets/create"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">

@@ -22,9 +22,7 @@ const form = () => {
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
     defaultValues: {
-      management: {
-        depreciation_period: 1,
-      },
+      
     },
   });
 

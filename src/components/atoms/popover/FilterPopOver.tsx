@@ -17,7 +17,7 @@ const FilterPopOver = (props: {
       position="bottom"
       zIndex={20}
       classNames={{
-        dropdown: "p-0 w-80 rounded-md shadow-lg",
+        dropdown: "p-0 w-96 rounded-md shadow-lg",
       }}
     >
       <Popover.Target>
@@ -25,37 +25,35 @@ const FilterPopOver = (props: {
           onClick={() => {
             props.setOpenPopover(!props.openPopover)
           }}
-          className="group flex w-7 gap-2 rounded-md bg-tangerine-500 p-2 text-xs  text-neutral-50 outline-none transition-width duration-200 hover:w-16 hover:bg-tangerine-400 focus:outline-none"
+          className="flex gap-2 border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs rounded-md font-medium text-white outline-none hover:bg-tangerine-600 hover:border-tangerine-600 focus:outline-none items-center"
         >
-          <i className="fa-regular fa-bars-filter text-xs" />
-          <span className="invisible group-hover:visible">Filter</span>
+          <i className="fa-regular fa-bars-filter text-xs text-white" />
         </button>
-      </Popover.Target>{" "}
+      </Popover.Target>
+
       <Popover.Dropdown>
         <div className="h-2 rounded-t-md bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500"></div>
-        <div className="px-4 py-2">
+        <div className="px-6 py-4">
           <Checkbox.Group
             orientation="vertical"
             description="Filter by"
             value={props.filterBy}
             onChange={props.setFilterBy}
           >
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               {props.columns.map((col) => (
                 <Checkbox
-                  color={"orange"}
+                  color="orange"
                   key={col.name}
                   disabled={
                     props.filterBy.length === 1 &&
-                      props.filterBy.includes(col.value)
-                      ? true
-                      : false
+                    props.filterBy.includes(col.value)
                   }
                   value={col.value}
                   label={col.name}
                   classNames={{
                     input:
-                      "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
+                      "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
                     label: "truncate",
                   }}
                 />

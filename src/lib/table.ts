@@ -4,15 +4,11 @@ import { UserType } from "../types/generic"
 import { ColumnType, DetailType, NavType } from "../types/table"
 
 export const columns = [
-  { value: "number", name: "Asset No." },
-  { value: "model.type", name: "Type" },
-  // { value: "type", name: "Type" },
-  { value: "name", name: "Asset Name" },
-  // { value: "description", name: "Description" },
-  { value: "custodian", name: "Custodian" },
-  // { value: "createdAt", name: "Added Date" },
-  { value: "deployment_status", name: "Status" },
-  { value: "assetTag", name: "Tag" },
+  { value: "number", name: "ASSET ID" },
+  { value: "name", name: "ASSET NAME" },
+  { value: "barcode", name: "RFID/BARCODE ID" },
+  { value: "type", name: "TYPE" },
+  { value: "status", name: "STATUS" },
 ] as ColumnType[]
 
 export const vendorColumns = [
@@ -130,6 +126,16 @@ export const asset_information = [
 
 export const navigations = [
   {
+    name: "Dashboard",
+    icon: "fa-light fa-gauge",
+    link: "/dashboard",
+  },
+  {
+    name: "Assets",
+    icon: "fa-light fa-cubes",
+    link: "/assets",
+  },
+  {
     name: "Employees",
     icon: "fa-users",
     link: "/employees",
@@ -139,11 +145,7 @@ export const navigations = [
   //   icon: "fa-users",
   //   link: "/issuance",
   // },
-  {
-    name: "Vendors",
-    icon: "fa-store",
-    link: "/vendors",
-  },
+  
   // {
   //   name: "User Management",
   //   icon: "fa-light fa-user-gear",

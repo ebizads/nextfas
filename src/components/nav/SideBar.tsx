@@ -79,33 +79,6 @@ const SideBar = () => {
             asset info
           </p>
         )}
-        <div
-          className={`py-4 px-2 ${
-            paths[paths.length - 1] === "assets"
-              ? "bg-tangerine-50 font-medium text-tangerine-500"
-              : "text-light-secondary"
-          }`}
-        >
-          <Link href={"/assets"}>
-            <div
-              className={`flex items-center ${
-                minimize ? "justify-center" : "justify-start pl-2"
-              } cursor-pointer gap-2 pl-2`}
-            >
-              <i
-                className={`fa-cubes w-8 ${
-                  minimize ? "fa-regular text-2xl" : "fa-light"
-                } text-left`}
-              />
-              {!minimize && <p className="text-light-primary">Assets</p>}
-            </div>
-          </Link>
-        </div>
-        <NavAccordion
-          paths={paths}
-          minimize={minimize}
-          setMinimize={setMinimize}
-        />
         {navigations.map((page, idx) => (
           <div
             key={idx}
@@ -171,6 +144,22 @@ const SideBar = () => {
                   />
                   {!minimize && (
                     <p className="text-light-primary">User Management</p>
+                  )}
+                </div>
+              </Link>
+              <Link href={"/UserManagement"}>
+                <div
+                  className={`flex items-center ${
+                    minimize ? "justify-center" : "justify-start pl-2"
+                  } cursor-pointer gap-2 pl-2 mt-8`}
+                >
+                  <i
+                    className={`fa-user-gear w-8 ${
+                      minimize ? "fa-regular text-2xl" : "fa-light"
+                    } text-left`}
+                  />
+                  {!minimize && (
+                    <p className="text-light-primary">Asset Details Management</p>
                   )}
                 </div>
               </Link>

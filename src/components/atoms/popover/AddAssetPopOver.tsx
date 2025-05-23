@@ -27,8 +27,7 @@ const AddAssetPopOver = (props: {
           }}
           className="-md flex gap-2 border-2 border-tangerine-500 py-2 px-4 text-center text-xs rounded-md font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none"
         >
-          <i className="fa-regular fa-plus text-xs" />
-          Add New
+          <i className="fa-regular fa-plus text-xs" />  
         </button>
       </Popover.Target>{" "}
       <Popover.Dropdown>

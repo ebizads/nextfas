@@ -78,6 +78,7 @@ const TypeSelect = (props: {
     </div>
   )
 }
+
 export const ClassTypeSelect = (props: {
   defaultValue?: any | null
   disabled?: boolean

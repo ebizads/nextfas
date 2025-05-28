@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import DashboardLayout from "../../layouts/DashboardLayout"
 import { trpc } from "../../utils/trpc"
 import DisplayAssets from "../../components/asset/DisplayAssets"
@@ -20,7 +20,6 @@ import {
     LineElement
 } from 'chart.js'
 
-// Register ChartJS components
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -31,10 +30,22 @@ ChartJS.register(
     ArcElement,
     PointElement,
     LineElement
-)
+);
 
-// Chart type enum
-type ChartType = 'bar' | 'pie' | 'line'
+type ChartType = 'bar' | 'pie' | 'line';
+
+type ChartDataType = {
+    labels: string[];
+    datasets: {
+        label: string;
+        data: number[];
+        backgroundColor: string[];
+        borderColor: string[];
+        borderWidth: number;
+        hoverOffset?: number;
+        borderRadius?: number;
+    }[];
+};
 
 const Dashboard = () => {
     const [page, setPage] = useState(1)
@@ -76,96 +87,170 @@ const Dashboard = () => {
 
     // Generate distinct colors for each category
     const generateColors = (count: number) => {
-        const colors = []
-        const hueStep = 360 / count
+        const colors = [];
+        // Use a fixed set of distinct colors for better consistency
+        const distinctColors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#8AC24A', '#F06292', '#7986CB', '#E57373',
+            '#64B5F6', '#BA68C8', '#4DB6AC', '#81C784', '#FFB74D'
+        ];
 
         for (let i = 0; i < count; i++) {
-            const hue = i * hueStep
+            // Cycle through distinct colors if we have more types than colors
+            const color = distinctColors[i % distinctColors.length];
             colors.push({
-                background: `hsla(${hue}, 70%, 50%, 0.5)`,
-                border: `hsla(${hue}, 70%, 50%, 1)`
-            })
+                background: `${color}80`, // Add alpha channel for background
+                border: color
+            });
         }
 
-        return colors
-    }
+        return colors;
+    };
 
     // Prepare chart data
     const typeCounts: Record<string, number> = {};
     assets.forEach(asset => {
-        if (asset.type) {
-            typeCounts[asset.type] = (typeCounts[asset.type] || 0) + 1;
+        const typeName = asset?.type?.name;
+        if (typeName) {
+            typeCounts[typeName] = (typeCounts[typeName] || 0) + 1;
         }
     });
 
-    const labels = Object.keys(typeCounts)
-    const dataValues = Object.values(typeCounts)
-    const colorSet = generateColors(labels.length)
+    const labels = Object.keys(typeCounts).filter(label => label !== 'Unknown'); // Optional: filter out 'Unknown'
+    const dataValues = labels.map(label => typeCounts[label]);
+    const colorSet = generateColors(labels.length);
 
-    const chartData = {
-        labels,
-        datasets: [
-            {
-                label: 'Number of Firearms',
-                data: dataValues,
-                backgroundColor: colorSet.map(c => c.background),
-                borderColor: colorSet.map(c => c.border),
-                borderWidth: 1,
-            },
-        ],
-    };
+    const getColorPalette = useMemo(() => {
+        const palette = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#8AC24A', '#F06292', '#7986CB', '#E57373',
+            '#64B5F6', '#BA68C8', '#4DB6AC', '#81C784', '#FFB74D'
+        ];
+        return (index: number) => ({
+            background: `${palette[index % palette.length]}80`,
+            border: palette[index % palette.length]
+        });
+    }, []);
 
-    const chartOptions = {
+    const { chartData, hasData } = useMemo(() => {
+        const typeCounts = assets.reduce((acc, asset) => {
+            const typeName = asset?.type?.name || 'Unknown';
+            acc[typeName] = (acc[typeName] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const labels = Object.keys(typeCounts).filter(label => label !== 'Unknown');
+        const dataValues = labels.map(label => typeCounts[label]);
+
+        return {
+            chartData: {
+                labels,
+                datasets: [{
+                    label: 'Number of Firearms',
+                    data: dataValues,
+                    backgroundColor: labels.map((_, i) => getColorPalette(i).background),
+                    borderColor: labels.map((_, i) => getColorPalette(i).border),
+                    borderWidth: 1,
+                    hoverOffset: 4,
+                    borderRadius: 6,
+                }]
+            } as ChartData<'bar' | 'pie' | 'line', number[], string>,
+            hasData: labels.length > 0
+        };
+    }, [assets, getColorPalette]);
+
+    const chartOptions = useMemo<ChartOptions<'bar' | 'pie' | 'line'>>(() => ({
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: 'top' as const,
+                position: 'top',
+                labels: {
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    padding: 20,
+                    font: {
+                        size: 12,
+                        family: "'Inter', sans-serif",
+                        weight: 'normal' as const
+                    },
+                    generateLabels: (chart) => {
+                        const { data } = chart;
+                        if (data.labels?.length && data.datasets.length) {
+                            return data.labels.map((label, i) => ({
+                                text: label as string,
+                                fillStyle: getColorPalette(i).background,
+                                strokeStyle: getColorPalette(i).border,
+                                lineWidth: 1,
+                                hidden: !chart.isDatasetVisible(0),
+                                index: i
+                            }));
+                        }
+                        return [];
+                    }
+                },
+                onClick: (_, legendItem, legend) => {
+                    const ci = legend.chart;
+                    ci.setDatasetVisibility(legendItem.datasetIndex, !ci.isDatasetVisible(legendItem.datasetIndex));
+                    ci.update();
+                }
             },
             title: {
                 display: true,
                 text: 'Firearms by Type',
+                font: {
+                    size: 16,
+                    weight: 'bold' as const,
+                    family: "'Inter', sans-serif"
+                }
             },
+            tooltip: {
+                callbacks: {
+                    label: (context) => {
+                        const label = context.label || '';
+                        const value = context.raw as number || 0;
+                        const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
+                        const percentage = Math.round((value / total) * 100);
+                        return `${label}: ${value} (${percentage}%)`;
+                    }
+                }
+            }
         },
-    };
+        ...(chartType === 'pie' && {
+            cutout: '50%',
+            radius: '90%',
+        }),
+        ...(chartType !== 'pie' && {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        })
+    }), [chartType, getColorPalette]);
+
 
     const renderChart = () => {
+        const chartProps = {
+            data: chartData,
+            options: chartOptions,
+            redraw: true
+        };
+
         switch (chartType) {
             case 'bar':
-                return (
-                    <div className="relative w-full h-64">
-                        <Bar
-                            data={chartData}
-                            options={{
-                                ...chartOptions,
-                                maintainAspectRatio: false,
-                            }}
-                        />
-                    </div>
-                )
-                
+                return <Bar {...chartProps} />;
             case 'pie':
-                return (
-                    <div className="relative w-full h-64">
-                        <Pie
-                            data={chartData}
-                            options={{
-                                ...chartOptions,
-                                maintainAspectRatio: false,
-                            }}
-                        />
-                    </div>
-                )
+                return <Pie {...chartProps} />;
             case 'line':
-                return (
-                    <div className="relative w-full h-64 flex justify-center items-center">
-                        <Line data={chartData} options={chartOptions} />
-                    </div>
-                )
-                
+                return <Line {...chartProps} />;
             default:
-                return <Bar data={chartData} options={chartOptions} />
+                return <Bar {...chartProps} />;
         }
-    }
+    };
 
 
     return (
@@ -180,7 +265,7 @@ const Dashboard = () => {
                             <img
                                 src="/gun.webp"
                                 alt="Firearm Icon"
-                                className="w-48 h-48 mb-2"
+                                className="w-48 h-48 mb-20"
                             />
                         </div>
 
@@ -211,28 +296,28 @@ const Dashboard = () => {
 
                     {/* 2nd Column - Chart */}
                     <div className="w-2/3 bg-white p-6 rounded-lg shadow">
-                        <div className="flex justify-end mb-4 space-x-2">
-                            <button
-                                onClick={() => setChartType('bar')}
-                                className={`px-3 py-1 rounded ${chartType === 'bar' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                            >
-                                Bar
-                            </button>
-                            <button
-                                onClick={() => setChartType('pie')}
-                                className={`px-3 py-1 rounded ${chartType === 'pie' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                            >
-                                Pie
-                            </button>
-                            <button
-                                onClick={() => setChartType('line')}
-                                className={`px-3 py-1 rounded ${chartType === 'line' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                            >
-                                Line
-                            </button>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold text-gray-700">Firearms Distribution</h3>
+                            <div className="flex space-x-2">
+                                {(['bar', 'pie', 'line'] as ChartType[]).map((type) => (
+                                    <button
+                                        key={type}
+                                        onClick={() => setChartType(type)}
+                                        className={`px-3 py-1 rounded-md text-sm ${chartType === type
+                                                ? 'bg-blue-500 text-white'
+                                                : 'bg-gray-100 text-gray-700'
+                                            }`}
+                                    >
+                                        <i className={`fas fa-chart-${type} mr-1`}></i>
+                                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                        {labels.length > 0 ? (
-                            renderChart()
+                        {hasData ? (
+                            <div className="relative w-full h-96">
+                                {renderChart()}
+                            </div>
                         ) : (
                             <div className="flex items-center justify-center h-64">
                                 <p className="text-gray-500">No data available for chart</p>

@@ -7,7 +7,7 @@ export const columns = [
   { value: "number", name: "ASSET ID" },
   { value: "name", name: "ASSET NAME" },
   { value: "barcode", name: "RFID/BARCODE ID" },
-  { value: "type", name: "TYPE" },
+  { value: "typeId", name: "TYPE" },
   { value: "status", name: "STATUS" },
 ] as ColumnType[]
 
@@ -30,6 +30,18 @@ export const userColumns = [
   // { value: "hired_date", name: "Hire Date" },
   { value: "team", name: "Team" },
   { value: "email", name: "Email" },
+] as ColumnType[]
+
+export const assetTypeColumns = [
+  { value: "id", name: "Type ID" },
+  { value: "name", name: "Type Name" },
+  { value: "description", name: "Description" },
+] as ColumnType[]
+
+export const assetActionTypeColumns = [
+  { value: "id", name: "Type ID" },
+  { value: "name", name: "Type Name" },
+  { value: "description", name: "Description" },
 ] as ColumnType[]
 
 export const employeeColumns = [

@@ -53,6 +53,7 @@ const DisplayDashboard = (props: {
       <AssetTable
         checkboxes={checkboxes}
         setCheckboxes={setCheckboxes}
+        showCheckboxes={false}
         rows={props.assets}
         filterBy={filterBy}
         columns={columns.filter((col) => filterBy.includes(col.value))}

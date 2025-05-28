@@ -49,6 +49,7 @@ const CreateAssetAccordion = () => {
     reset,
     setValue,
     getValues,
+    watch,
     formState: { errors, isDirty, isValid },
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
@@ -67,6 +68,8 @@ const CreateAssetAccordion = () => {
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAll.useQuery()
+  const { data: typesData } = trpc.assetType.findAll.useQuery()
+  const { data: actionTypesData } = trpc.assetActionType.findAll.useQuery()
   const { data: allAssets } = trpc.asset.findAllNoLimit.useQuery()
   const assetsAll: AssetType[] = allAssets?.assets as AssetType[]
 
@@ -79,6 +82,26 @@ const CreateAssetAccordion = () => {
           return { value: asset.id.toString(), label: asset.name }
         }),
     [assetsData]
+  ) as SelectValueType[] | undefined
+
+  const typesList = useMemo(
+    () =>
+      typesData?.assetTypes
+        .filter((item) => item.id != 0)
+        .map((assetType) => {
+          return { value: assetType.id.toString(), label: assetType.name }
+        }),
+    [typesData]
+  ) as SelectValueType[] | undefined
+
+  const actionTypesList = useMemo(
+    () =>
+      actionTypesData?.assetActionTypes
+        .filter((item) => item.id != 0)
+        .map((assetActionType) => {
+          return { value: assetActionType.id.toString(), label: assetActionType.name }
+        }),
+    [actionTypesData]
   ) as SelectValueType[] | undefined
 
 
@@ -166,28 +189,28 @@ const CreateAssetAccordion = () => {
   const { data: departmentData } = trpc.department.findAll.useQuery()
 
 
-  const assetTagList = useMemo(() =>
-    assetTagData?.assetTag.
-      filter((item) => item.id != 0)
-      .map((assetTag) => {
-        return { value: assetTag.id.toString(), label: assetTag.name }
-      }),
-    [assetTagData]) as SelectValueType[] | undefined
+  // const assetTagList = useMemo(() =>
+  //   assetTagData?.assetTag.
+  //     filter((item) => item.id != 0)
+  //     .map((assetTag) => {
+  //       return { value: assetTag.id.toString(), label: assetTag.name }
+  //     }),
+  //   [assetTagData]) as SelectValueType[] | undefined
 
 
-  const buildingLocation = useMemo(() => {
-    if (buildingId) {
-      const building = departmentData?.departments.filter(
-        (department) => department.id === Number(buildingId)
-      )[0]
-      return building?.building ?? null
-    }
-  }, [buildingId, departmentData])
+  // const buildingLocation = useMemo(() => {
+  //   if (buildingId) {
+  //     const building = departmentData?.departments.filter(
+  //       (department) => department.id === Number(buildingId)
+  //     )[0]
+  //     return building?.building ?? null
+  //   }
+  // }, [buildingId, departmentData])
 
 
-  useEffect(() => {
-    setFloorId(String(buildingLocation?.id))
-  }, [buildingLocation])
+  // useEffect(() => {
+  //   setFloorId(String(buildingLocation?.id))
+  // }, [buildingLocation])
 
 
   //asset description
@@ -199,67 +222,67 @@ const CreateAssetAccordion = () => {
   >(undefined)
 
 
-  const categories = useMemo(() => {
-    if (classId) {
-      const selectedClass = classData?.filter(
-        (classItem) => classItem.id === Number(classId)
-      )[0]
-      if (selectedClass) {
-        //sets selected class
-        setSelectedClass(selectedClass)
+  // const categories = useMemo(() => {
+  //   if (classId) {
+  //     const selectedClass = classData?.filter(
+  //       (classItem) => classItem.id === Number(classId)
+  //     )[0]
+  //     if (selectedClass) {
+  //       //sets selected class
+  //       setSelectedClass(selectedClass)
 
 
-        //filters all the categories based on the selected class
-        const categories = selectedClass.categories.map((category) => {
-          return { value: category.id.toString(), label: category.name }
-        }) as SelectValueType[]
-        return categories ?? null
-      }
-    } else {
-      //clears category selection
-      setCategoryId(null)
-      return null
-    }
+  //       //filters all the categories based on the selected class
+  //       const categories = selectedClass.categories.map((category) => {
+  //         return { value: category.id.toString(), label: category.name }
+  //       }) as SelectValueType[]
+  //       return categories ?? null
+  //     }
+  //   } else {
+  //     //clears category selection
+  //     setCategoryId(null)
+  //     return null
+  //   }
 
 
-    console.error("Error loading categories")
-    return null
-  }, [classId, classData])
+  //   console.error("Error loading categories")
+  //   return null
+  // }, [classId, classData])
 
 
-  const types = useMemo(() => {
-    if (categoryId) {
-      const selectedCategory = selectedClass?.categories.filter(
-        (category) => category.id === Number(categoryId)
-      )[0]
-      if (selectedCategory) {
-        //filters all types in the selected category based on the selected class
-        const types = selectedCategory?.types.map((type) => {
-          return { value: type.id.toString(), label: type.name }
-        }) as SelectValueType[]
-        return types ?? null
-      }
-    } else {
-      //clears type selection
-      setTypeId(null)
-      return null
-    }
+  // // const types = useMemo(() => {
+  // //   if (categoryId) {
+  // //     const selectedCategory = selectedClass?.categories.filter(
+  // //       (category) => category.id === Number(categoryId)
+  // //     )[0]
+  // //     if (selectedCategory) {
+  // //       //filters all types in the selected category based on the selected class
+  // //       const types = selectedCategory?.types.map((type) => {
+  // //         return { value: type.id.toString(), label: type.name }
+  // //       }) as SelectValueType[]
+  // //       return types ?? null
+  // //     }
+  // //   } else {
+  // //     //clears type selection
+  // //     setTypeId(null)
+  // //     return null
+  // //   }
 
 
-    console.error("Error loading types")
-    return null
-  }, [categoryId, selectedClass])
+  //   console.error("Error loading types")
+  //   return null
+  // }, [categoryId, selectedClass])
 
 
   //filters data for company
-  const company_address = useMemo(() => {
-    if (companyId) {
-      const address = companyData?.companies.filter(
-        (company) => company.id === Number(companyId)
-      )[0]
-      return address ?? null
-    }
-  }, [companyId, companyData])
+  // const company_address = useMemo(() => {
+  //   if (companyId) {
+  //     const address = companyData?.companies.filter(
+  //       (company) => company.id === Number(companyId)
+  //     )[0]
+  //     return address ?? null
+  //   }
+  // }, [companyId, companyData])
 
 
   const [loading, setIsLoading] = useState<boolean>(false)
@@ -394,14 +417,15 @@ const CreateAssetAccordion = () => {
               <AlertInput>{errors?.models?.message}</AlertInput>
             </div>
             <div className="col-span-4 pt-1">
-            <InputField
-                register={register}
-                label="Type"
-                name="type"
-                placeholder="Type"
-                required
+              <TypeSelect
+                name={"typeId"}
+                setValue={setValue}
+                value={getValues("typeId")?.toString()}
+                title={"Type"}
+                placeholder={"Select Type"}
+                data={typesList ?? []}
               />
-              <AlertInput>{errors?.type?.message}</AlertInput>
+              <AlertInput>{errors?.typeId?.message}</AlertInput>
             </div>
           </div>
 
@@ -418,14 +442,15 @@ const CreateAssetAccordion = () => {
               <AlertInput>{errors?.name?.message}</AlertInput>
             </div>
             <div className="col-span-4 pt-1">
-            <InputField
-                register={register}
-                label="Action Type"
-                name="actionType"
-                placeholder="Action Type"
-                required
+              <TypeSelect
+                name={"actionTypeId"}
+                setValue={setValue}
+                value={getValues("actionTypeId")?.toString()}
+                title={"Action Type"}
+                placeholder={"Select Action Type"}
+                data={actionTypesList ?? []}
               />
-              <AlertInput>{errors?.actionType?.message}</AlertInput>
+              <AlertInput>{errors?.actionTypeId?.message}</AlertInput>
             </div>
           </div>
 

@@ -9,6 +9,7 @@ import { assetRepairRouter } from "./asset_repair"
 import { assetTagRouter } from "./asset_tag"
 import { assetTransferRouter } from "./asset_transfer"
 import { assetTypeRouter } from "./asset_type"
+import { assetActionTypeRouter } from "./asset_actiontype"
 import { buildingRouter } from "./building"
 import { companyRouter } from "./company"
 import { dashboardRouter } from "./dashboard"
@@ -35,6 +36,7 @@ export const appRouter = t.router({
   assetTag: assetTagRouter,
   assetCategory: assetCategoryRouter,
   assetType: assetTypeRouter,
+  assetActionType: assetActionTypeRouter,
   assetDisposal: assetDisposalRouter,
   assetIssuance: assetIssuanceRouter,
   assetTransfer: assetTransferRouter,

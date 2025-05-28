@@ -147,7 +147,7 @@ const SideBar = () => {
                   )}
                 </div>
               </Link>
-              <Link href={"/UserManagement"}>
+              <Link href={"/assetdetailsmanagement"}>
                 <div
                   className={`flex items-center ${
                     minimize ? "justify-center" : "justify-start pl-2"

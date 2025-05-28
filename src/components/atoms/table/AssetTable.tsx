@@ -113,6 +113,10 @@ const AssetDetailsModal = (props: {
     }
   }, [props.openModalDesc])
 
+  const getNestedValue = (obj: any, path: string) => {
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  };
+
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
   // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
@@ -652,7 +656,7 @@ const AssetDetailsModal = (props: {
                   {/* //TODO:  Fix this when we have Asset Issuance READY */}
                   {props.asset?.AssetIssuance?.issuanceStatus &&
                     (disposeAsset || repairAsset || transferAsset)?.status ===
-                      ("" || null) && (
+                    ("" || null) && (
                       <Link href="/transactions/transfer/create">
                         <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                           <i className={"fa-solid fa-arrow-right-arrow-left"} />
@@ -662,22 +666,22 @@ const AssetDetailsModal = (props: {
                     )}
                   {(disposeAsset || repairAsset || transferAsset)?.status ===
                     ("" || null) && (
-                    <Link href="/transactions/repair/create">
-                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                        <i className={"fa-solid  fa-screwdriver-wrench"} />
-                        Repair
-                      </div>
-                    </Link>
-                  )}
+                      <Link href="/transactions/repair/create">
+                        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                          <i className={"fa-solid  fa-screwdriver-wrench"} />
+                          Repair
+                        </div>
+                      </Link>
+                    )}
                   {(disposeAsset || repairAsset || transferAsset)?.status ===
                     ("" || null) && (
-                    <Link href="/transactions/disposal/create">
-                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                        <i className={"fa-solid fa-trash-can"} />
-                        Dispose
-                      </div>
-                    </Link>
-                  )}
+                      <Link href="/transactions/disposal/create">
+                        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                          <i className={"fa-solid fa-trash-can"} />
+                          Dispose
+                        </div>
+                      </Link>
+                    )}
                   <Link href="/assets/update">
                     <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                       <i className={"fa-solid fa-pen-to-square"} />
@@ -766,9 +770,8 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}{" "}
               {props.checkboxes.length > 1 ? "records" : "record"}{" "}
               <i
-                className={`fa-solid ${
-                  showList ? " fa-caret-up" : " fa-caret-down"
-                }`}
+                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
+                  }`}
               />
             </button>{" "}
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -805,7 +808,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-              // disabled={isLoading}
+            // disabled={isLoading}
             >
               Yes, delete record/s
             </button>
@@ -822,7 +825,9 @@ const AssetTable = (props: {
   filterBy: string[]
   rows: AssetType[]
   columns: ColumnType[]
+  showCheckboxes?: boolean
 }) => {
+  const showCheckboxes = props.showCheckboxes ?? true;
   //minimize screen toggle
   const { minimize } = useMinimizeStore()
 
@@ -869,29 +874,29 @@ const AssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-full"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
         <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
-            <th scope="col" className="py-1">
-              <div className="flex items-center justify-center">
-                <Checkbox
-                  color={"orange"}
-                  onChange={() => {
-                    selectAllCheckboxes()
-                  }}
-                  checked={props.checkboxes.length > 0 ? true : false}
-                  classNames={{
-                    input:
-                      "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                  }}
-                />
-              </div>
-            </th>
+            {showCheckboxes && (
+              <th scope="col" className="py-1">
+                <div className="flex items-center justify-center">
+                  <Checkbox
+                    color={"orange"}
+                    onChange={selectAllCheckboxes}
+                    checked={props.checkboxes.length > 0}
+                    classNames={{
+                      input:
+                        "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none outline-none",
+                    }}
+                  />
+                </div>
+              </th>
+            )}
+
             {props.columns.map((col) => (
               <th
                 key={col.name}
@@ -915,22 +920,23 @@ const AssetTable = (props: {
                 key={row?.id ?? idx}
                 className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
               >
-                <td className="w-4 p-2">
-                  <div className="flex items-center justify-center">
-                    <Checkbox
-                      value={row?.id ?? idx}
-                      color={"orange"}
-                      onChange={(e) => {
-                        toggleCheckbox(Number(e.target.value))
-                      }}
-                      checked={props.checkboxes.includes(row?.id ?? idx)}
-                      classNames={{
-                        input:
-                          "border-2 border-neutral-400 checked:bg-tangerine-500 checked:bg-tangerine-500 focus:outline-none outline-none",
-                      }}
-                    />
-                  </div>
-                </td>
+                {showCheckboxes && (
+                  <td className="w-4 p-2">
+                    <div className="flex items-center justify-center">
+                      <Checkbox
+                        value={row?.id ?? idx}
+                        color={"orange"}
+                        onChange={(e) => toggleCheckbox(Number(e.target.value))}
+                        checked={props.checkboxes.includes(row?.id ?? idx)}
+                        classNames={{
+                          input:
+                            "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none outline-none",
+                        }}
+                      />
+                    </div>
+                  </td>
+                )}
+
 
                 {columns
                   .filter((col) => props.filterBy.includes(col.value))
@@ -946,7 +952,7 @@ const AssetTable = (props: {
                         console.log("chek", row)
                       }}
                     >
-                      {getProperty(col.value, row)}
+                      {col.value == "typeId" ? row?.type?.name : getProperty(col.value, row)}
                     </td>
                   ))}
                 {/* <td className="max-w-[10rem] space-x-2 text-center">

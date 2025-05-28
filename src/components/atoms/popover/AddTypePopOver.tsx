@@ -1,18 +1,16 @@
-// components/atoms/popover/AddActionTypePopOver.tsx
-
 import React from "react";
 import { Popover } from "@mantine/core";
 
-const AddActionTypePopOver = (props: {
+const AddTypePopOver = (props: {
     openPopover: boolean;
-    actionTypeId: string;
-    setActionTypeId: React.Dispatch<React.SetStateAction<string>>;
+    typeId: string;
+    setTypeId: React.Dispatch<React.SetStateAction<string>>;
     setOpenPopover: React.Dispatch<React.SetStateAction<boolean>>;
     setAddSingleRecord: React.Dispatch<React.SetStateAction<boolean>>;
     setAddBulkRecord: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-    function generateActionTypeId() {
-        // You can customize this logic based on your actual ID format
+    function generateTypeId(){
+        //You cna customize this logic based on your actual ID format
         const randomId = `AT-${Math.floor(1000 + Math.random() * 9000)}`;
         return randomId;
     }
@@ -31,7 +29,7 @@ const AddActionTypePopOver = (props: {
             <Popover.Target>
                 <button
                     onClick={() => {
-                        props.setOpenPopover(!props.openPopover);
+                        props.setOpenPopover(!props.openPopover)
                     }}
                     className="-md flex gap-2 border-2 border-tangerine-500 py-2 px-4 text-center text-xs rounded-md font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none"
                 >
@@ -44,7 +42,7 @@ const AddActionTypePopOver = (props: {
                 <div className="flex flex-col text-sm">
                     <button
                         onClick={() => {
-                            props.setActionTypeId(generateActionTypeId());
+                            props.setTypeId(generateTypeId());
                             props.setAddSingleRecord(true);
                             props.setOpenPopover(false);
                         }}
@@ -64,7 +62,7 @@ const AddActionTypePopOver = (props: {
                 </div>
             </Popover.Dropdown>
         </Popover>
-    );
+    )
 };
 
-export default AddActionTypePopOver;
+export default AddTypePopOver;

@@ -116,15 +116,17 @@ const DisplayActionTypes = (props: {
           </div>
         </div>
 
-        <ActionTypeTable
-          checkboxes={checkboxes}
-          setCheckboxes={setCheckboxes}
-          rows={props.actionTypes}
-          filterBy={filterBy}
-          columns={columns.filter((col) =>
-            filterBy.includes(col.value)
-          )}
-        />
+        <div className="w-full overflow-x-auto rounded-lg  shadow-md">
+          <ActionTypeTable
+            checkboxes={checkboxes}
+            setCheckboxes={setCheckboxes}
+            rows={props.actionTypes}
+            filterBy={filterBy}
+            columns={columns.filter((col) =>
+              filterBy.includes(col.value)
+            )}
+          />
+        </div>
 
       </section>
 

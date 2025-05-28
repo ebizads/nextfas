@@ -1,31 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import DashboardLayout from '../../layouts/DashboardLayout'
 import { AssetActionType } from '../../types/generic'
-import { AssetType } from '../../types/generic'
 import { trpc } from '../../utils/trpc'
 import { useRouter } from "next/router"
 import { useSearchStore } from '../../store/useStore'
 import DisplayActionTypes from '../../components/actiontype/DisplayActionTypes'
-import DisplayType from '../../components/type/DisplayType'
 
-const AssetDetailsManagement = () => {
+const ActionTypeManagement = () => {
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(10)
     const router = useRouter()
     const [actionType, setActionType] = useState<AssetActionType[]>([])
     const [sampleActionType, setSampleActionType] = useState<AssetActionType[]>([])
-
-    const [type, setType] = useState<AssetType[]>([])
-    const [sampleType, setSampleType] = useState<AssetType[]>([])
-
     const [actionTypePage, setActionTypePage] = useState<number>(0)
-    const [typePage, setTypePage] = useState<number>(0)
 
     const { search } = useSearchStore()
+
     const { data: dataActionType } = trpc.assetActionType.findAll.useQuery({
-        search: {
-            name: search
-        },
+        search: { name: search },
         limit,
         page,
     })
@@ -36,24 +28,6 @@ const AssetDetailsManagement = () => {
         page,
     })
 
-    const { data: sampleTypeData } = trpc.assetType.findAllSample.useQuery({
-        search: { name: search },
-        limit,
-        page,
-    })
-
-    const { data: dataType } = trpc.assetType.findAll.useQuery({
-        search: {
-            name: search
-        },
-        limit,
-        page,
-    })
-
-
-    console.log("sample ", dataActionType, search);
-    console.log("sample ", dataType, search);
-
     useEffect(() => {
         if (dataActionType) {
             setActionType(dataActionType.assetActionTypes as AssetActionType[])
@@ -63,17 +37,6 @@ const AssetDetailsManagement = () => {
             setSampleActionType(sampleActionTypeData.assetActionTypes as AssetActionType[])
         }
     }, [dataActionType, limit, router, sampleActionTypeData, search])
-
-    useEffect(() => {
-        if (dataType) {
-            setType(dataType.assetTypes as AssetType[])
-            setTypePage(Math.ceil(dataType?.count / limit))
-        }
-        if (sampleTypeData) {
-            setSampleType(sampleTypeData.assetTypes as AssetType[])
-        }
-    }, [dataType, limit, router, sampleTypeData, search])
-
 
     return (
         <DashboardLayout>
@@ -91,21 +54,9 @@ const AssetDetailsManagement = () => {
                     limit={limit}
                     setLimit={setLimit}
                 />
-
-                <h5 className="text-lg font-medium my-2">Types</h5>
-                <DisplayType
-                    total={dataType?.total ?? 0}
-                    types={type}
-                    sampleTypes={sampleType}
-                    typePage={typePage}
-                    page={page}
-                    setPage={setPage}
-                    limit={limit}
-                    setLimit={setLimit}
-                />
             </div>
         </DashboardLayout>
     )
 }
 
-export default AssetDetailsManagement
+export default ActionTypeManagement

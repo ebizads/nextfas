@@ -43,10 +43,9 @@ const ActionTypeTable = ({
 
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-        } relative border shadow-md sm:rounded-lg`}
+      className="relative border shadow-md sm:rounded-full"
     >
-      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rounded-full">
         <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
             <th className="py-1">
@@ -112,7 +111,7 @@ const ActionTypeTable = ({
                   setIsVisible(true)
                 }}
               >
-                {row.description}
+                {row.description ?? '—'}
               </td>
             </tr>
           ))}
@@ -130,7 +129,7 @@ const ActionTypeTable = ({
           <div className="space-y-3">
             <p><strong>ID:</strong> {selectedAction.id}</p>
             <p><strong>Name:</strong> {selectedAction.name}</p>
-            <p><strong>Description:</strong> {selectedAction.description}</p>
+            <p><strong>Description:</strong> {selectedAction.description ?? '—'}</p>
           </div>
         </Modal>
       )}

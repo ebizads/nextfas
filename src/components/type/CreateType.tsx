@@ -1,20 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { trpc } from "../../utils/trpc"
 import AlertInput from "../atoms/forms/AlertInput"
 import { InputField } from "../atoms/forms/InputField"
 import Modal from "../headless/modal/modal"
-import { AssetActionTypeCreateInput } from "../../server/schemas/assetActionType"
+import { AssetTypeCreateInput } from "../../server/schemas/assetType"
 
-export type ActionTypeForm = z.infer<typeof AssetActionTypeCreateInput>
+export type TypeForm = z.infer<typeof AssetTypeCreateInput>
 
-export const CreateActionType = (props: {
+export const CreateType = (props: {
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
     setIsLoading?: React.Dispatch<React.SetStateAction<boolean>> // Make optional
-    isLoading?: boolean; // Make optional
-    actionTypeId?: string; // Make optional
+    isLoading?: boolean // Make optional
+    typeId?: string // Make optional
 }) => {
     const [isSuccessVisible, setIsSuccessVisible] = useState<boolean>(false)
     const utils = trpc.useContext()
@@ -23,9 +23,9 @@ export const CreateActionType = (props: {
         mutate,
         isLoading: isCreating,
         error,
-    } = trpc.assetActionType.create.useMutation({
+    } = trpc.assetType.create.useMutation({
         onSuccess: () => {
-            utils.assetActionType.findAll.invalidate()
+            utils.assetType.findAll.invalidate()
             setIsSuccessVisible(true)
             reset()
         },
@@ -36,15 +36,15 @@ export const CreateActionType = (props: {
         handleSubmit,
         reset,
         formState: { errors },
-    } = useForm<ActionTypeForm>({
-        resolver: zodResolver(AssetActionTypeCreateInput),
+    } = useForm<TypeForm>({
+        resolver: zodResolver(AssetTypeCreateInput),
         defaultValues: {
             name: "",
             description: "",
-        },
+        }
     })
 
-    const onSubmit = async (data: ActionTypeForm) => {
+    const onSubmit = async (data: TypeForm) => {
         mutate({
             name: data.name,
             description: data.description,
@@ -65,13 +65,13 @@ export const CreateActionType = (props: {
             >
                 <div className="flex w-full flex-wrap gap-4 py-2.5">
                     <div className="flex w-full flex-col">
-                        <label className="sm:text-sm">Action Type Name*</label>
+                        <label className="sm:text-sm">Type Name</label>
                         <InputField
                             register={register}
                             name="name"
                             type={"text"}
                             label={""}
-                            placeholder="Enter action type name"
+                            placeholder="Enter type name"
                         />
                         <AlertInput>{errors?.name?.message}</AlertInput>
                     </div>
@@ -102,7 +102,7 @@ export const CreateActionType = (props: {
                         className="rounded bg-tangerine-500 px-4 py-2 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
                         disabled={isCreating}
                     >
-                        {isCreating ? "Creating..." : "Create Action Type"}
+                        {isCreating ? "Creating..." : "Create Type"}
                     </button>
                 </div>
             </form>
@@ -121,7 +121,7 @@ export const CreateActionType = (props: {
             >
                 <div className="flex flex-col items-center gap-3 py-2">
                     <p className="text-center text-lg font-semibold">
-                        Action Type created successfully
+                        Type created successfully
                     </p>
                     <button
                         className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400"

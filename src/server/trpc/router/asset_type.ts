@@ -9,7 +9,9 @@ export const assetTypeRouter = t.router({
     .query(async ({ ctx, input }) => {
       const [assetType, relatedAssetsCount] = await ctx.prisma.$transaction([
         ctx.prisma.assetType.findUnique({
-          where: { id: input },
+          where: {
+            id: input,
+          },
           include: {
             assets: {
               select: {
@@ -62,22 +64,25 @@ export const assetTypeRouter = t.router({
           filter: z
             .object({
               updatedAt: z.date().optional(),
-              deleted: z.boolean().optional().default(false),
+              deleted: z.boolean().optional().default(false), // Keep optional but default to false
             })
             .optional(),
         })
         .optional()
     )
     .query(async ({ ctx, input }) => {
+      // Set default deleted filter to false if not provided
+      const deletedFilter = input?.filter?.deleted ?? false;
+
       const [assetTypes, count] = await ctx.prisma.$transaction([
         ctx.prisma.assetType.findMany({
           orderBy: {
             name: "asc",
           },
           where: {
-            deleted: input?.filter?.deleted,
-            name: input?.search?.name 
-              ? { contains: input.search.name, mode: 'insensitive' } 
+            deleted: deletedFilter, // Use the computed deleted filter
+            name: input?.search?.name
+              ? { contains: input.search.name, mode: 'insensitive' }
               : undefined,
             description: input?.search?.description
               ? { contains: input.search.description, mode: 'insensitive' }
@@ -90,9 +95,9 @@ export const assetTypeRouter = t.router({
         }),
         ctx.prisma.assetType.count({
           where: {
-            deleted: input?.filter?.deleted,
-            name: input?.search?.name 
-              ? { contains: input.search.name, mode: 'insensitive' } 
+            deleted: deletedFilter, // Use the computed deleted filter
+            name: input?.search?.name
+              ? { contains: input.search.name, mode: 'insensitive' }
               : undefined,
             description: input?.search?.description
               ? { contains: input.search.description, mode: 'insensitive' }
@@ -123,7 +128,7 @@ export const assetTypeRouter = t.router({
           filter: z
             .object({
               updatedAt: z.date().optional(),
-              deleted: z.boolean().optional().default(false),
+              deleted: z.boolean().optional().default(false), // Keep optional but default to false
             })
             .optional(),
         })
@@ -131,6 +136,9 @@ export const assetTypeRouter = t.router({
     )
     .query(async ({ ctx, input }) => {
       try {
+        // Set default deleted filter to false if not provided
+        const deletedFilter = input?.filter?.deleted ?? false;
+
         const [assetTypes, count] = await ctx.prisma.$transaction(
           [
             ctx.prisma.assetType.findMany({
@@ -138,7 +146,7 @@ export const assetTypeRouter = t.router({
                 name: "asc",
               },
               where: {
-                deleted: input?.filter?.deleted,
+                deleted: deletedFilter, // Use the computed deleted filter
                 updatedAt: input?.filter?.updatedAt,
                 name: input?.search?.name
                   ? { contains: input.search.name, mode: "insensitive" }
@@ -154,7 +162,7 @@ export const assetTypeRouter = t.router({
             }),
             ctx.prisma.assetType.count({
               where: {
-                deleted: input?.filter?.deleted,
+                deleted: deletedFilter, // Use the computed deleted filter
                 updatedAt: input?.filter?.updatedAt,
                 name: input?.search?.name
                   ? { contains: input.search.name, mode: "insensitive" }
@@ -183,24 +191,39 @@ export const assetTypeRouter = t.router({
         })
       }
     }),
-
   create: authedProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        description: z.string().optional(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const assetType = await ctx.prisma.assetType.create({
-        data: {
-          name: input.name,
-          description: input.description,
-        },
+  .input(
+    z.object({
+      name: z.string(),
+      description: z.string().optional(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    // Check if a non-deleted assetType with the same name exists
+    const existing = await ctx.prisma.assetType.findFirst({
+      where: {
+        name: input.name,
+        deleted: false, // only block if not soft-deleted
+      },
+    });
+
+    if (existing) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "An asset type with this name already exists",
       });
-  
-      return assetType;
-    }),
+    }
+
+    const assetType = await ctx.prisma.assetType.create({
+      data: {
+        name: input.name,
+        description: input.description,
+      },
+    });
+
+    return assetType;
+  }),
+
 
   delete: authedProcedure
     .input(z.number())
@@ -238,6 +261,66 @@ export const assetTypeRouter = t.router({
           code: "BAD_REQUEST",
           message: JSON.stringify(error),
         })
+      }
+    }),
+  update: authedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1, "Name is required"),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // First verify the asset type exists
+        const existingType = await ctx.prisma.assetType.findUnique({
+          where: { id: input.id },
+        });
+
+        if (!existingType) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Asset type not found",
+          });
+        }
+
+        // Check if name is already taken by another type
+        const nameExists = await ctx.prisma.assetType.findFirst({
+          where: {
+            name: input.name,
+            id: { not: input.id }, // Exclude current type from check
+            deleted: false,
+          },
+        });
+
+        if (nameExists) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "An asset type with this name already exists",
+          });
+        }
+
+        // Update the asset type
+        const updatedType = await ctx.prisma.assetType.update({
+          where: { id: input.id },
+          data: {
+            name: input.name,
+            description: input.description,
+            updatedAt: new Date(),
+          },
+        });
+
+        return updatedType;
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update asset type",
+        });
       }
     }),
 })

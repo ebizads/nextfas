@@ -22,11 +22,10 @@ const SideBar = () => {
 
   return (
     <div
-      className={`max-w-md duration-300 ${
-        minimize
+      className={`max-w-md duration-300 ${minimize
           ? "w-[10vw] min-w-[10vw]"
           : "w-[25vw] min-w-[25vw] xl:w-[20vw] xl:min-w-[20vw]"
-      } flex min-h-screen flex-col space-y-4 overflow-hidden border-r px-2 py-4`}
+        } flex min-h-screen flex-col space-y-4 overflow-hidden border-r px-2 py-4`}
     >
       <div
         className="relative flex w-full flex-col px-2 pb-2"
@@ -43,33 +42,6 @@ const SideBar = () => {
         />
         {/* <p className="text-2xl font-semibold">Fixed Assets System</p> */}
       </div>
-      {/* <div className="flex w-full flex-col border-b">
-        {!minimize && (
-          <p className="pl-2 text-xs capitalize text-light-secondary">home</p>
-        )}
-        <div
-          className={`py-4 px-2 ${
-            paths[paths.length - 1] === "dashboard"
-              ? "bg-tangerine-50 font-medium text-tangerine-500"
-              : "text-light-secondary"
-          }`}
-        >
-          <Link href={"/dashboard"}>
-            <div
-              className={`flex items-center ${
-                minimize ? "justify-center" : "justify-start pl-2"
-              } cursor-pointer gap-2 pl-2`}
-            >
-              <i
-                className={`fa-house-blank w-8 ${
-                  minimize ? "fa-regular text-2xl" : "fa-light"
-                } text-left`}
-              />
-              {!minimize && <p className="text-light-primary">Dashboard</p>}
-            </div>
-          </Link>
-        </div>
-      </div> */}
 
       {/* //TODO:  Fix this when we have Asset Issuance & Transfer READY */}
 
@@ -82,27 +54,23 @@ const SideBar = () => {
         {navigations.map((page, idx) => (
           <div
             key={idx}
-            className={`py-4 px-2 ${
-              paths[paths.length - 1]?.toUpperCase() === page.name.toUpperCase()
+            className={`py-4 px-2 ${paths[paths.length - 1]?.toUpperCase() === page.name.toUpperCase()
                 ? "bg-tangerine-50 font-medium text-tangerine-500"
                 : ""
-            }`}
+              }`}
           >
             <Link href={page.link}>
               <div
-                className={`flex items-center ${
-                  minimize ? "justify-center" : "justify-start pl-2"
-                } cursor-pointer gap-2 pl-2`}
+                className={`flex items-center ${minimize ? "justify-center" : "justify-start pl-2"
+                  } cursor-pointer gap-2 pl-2`}
               >
                 <i
-                  className={`${page.icon} ${
-                    paths[paths.length - 1]?.toUpperCase() ===
-                    page.name.toUpperCase()
+                  className={`${page.icon} ${paths[paths.length - 1]?.toUpperCase() ===
+                      page.name.toUpperCase()
                       ? "bg-tangerine-50 font-medium text-tangerine-500"
                       : "text-light-secondary"
-                  } w-8 ${
-                    minimize ? "fa-regular text-2xl" : "fa-light"
-                  } text-left`}
+                    } w-8 ${minimize ? "fa-regular text-2xl" : "fa-light"
+                    } text-left`}
                 />
                 {!minimize && <p>{page.name}</p>}
               </div>
@@ -125,44 +93,30 @@ const SideBar = () => {
 
           {
             <div
-              className={`py-4 px-2 ${
-                paths[paths.length - 1] === "User Management"
+              className={`py-4 px-2 ${paths[paths.length - 1] === "User Management"
                   ? "bg-tangerine-50 font-medium text-tangerine-500"
                   : "text-light-secondary"
-              }`}
+                }`}
             >
               <Link href={"/UserManagement"}>
                 <div
-                  className={`flex items-center ${
-                    minimize ? "justify-center" : "justify-start pl-2"
-                  } cursor-pointer gap-2 pl-2`}
+                  className={`flex items-center ${minimize ? "justify-center" : "justify-start pl-2"
+                    } cursor-pointer gap-2 pl-2 py-2`}
                 >
                   <i
-                    className={`fa-user-gear w-8 ${
-                      minimize ? "fa-regular text-2xl" : "fa-light"
-                    } text-left`}
+                    className={`fa-user-gear w-8 ${minimize ? "fa-regular text-2xl" : "fa-light"
+                      } text-left`}
                   />
                   {!minimize && (
                     <p className="text-light-primary">User Management</p>
                   )}
                 </div>
               </Link>
-              <Link href={"/assetdetailsmanagement"}>
-                <div
-                  className={`flex items-center ${
-                    minimize ? "justify-center" : "justify-start pl-2"
-                  } cursor-pointer gap-2 pl-2 mt-8`}
-                >
-                  <i
-                    className={`fa-user-gear w-8 ${
-                      minimize ? "fa-regular text-2xl" : "fa-light"
-                    } text-left`}
-                  />
-                  {!minimize && (
-                    <p className="text-light-primary">Asset Details Management</p>
-                  )}
-                </div>
-              </Link>
+              
+              <div className="flex w-full flex-col py-2">
+                {/* 👇 Insert NavAccordion here */}
+                <NavAccordion paths={paths} minimize={minimize} setMinimize={setMinimize} />
+              </div>
             </div>
           }
         </div>

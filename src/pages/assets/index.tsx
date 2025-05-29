@@ -45,7 +45,7 @@ const Assets = () => {
     <DashboardLayout>
       {/* <pre>{JSON.stringify(assets, null, 2)}</pre> */}
       <div className="space-y-6">
-        <h3 className="text-xl font-medium">Assets</h3>
+        <h3 className="text-xl font-medium">Assets </h3>
         <DisplayAssets
           total={dataAssets?.count ?? 0}
           assets={assets}

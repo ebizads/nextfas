@@ -11,10 +11,6 @@ import { CreateType } from "./CreateType"
 import DropZone from "../dropzone/DropZone"
 import { trpc } from "../../utils/trpc"
 import { useSearchStore } from "../../store/useStore"
-// import {
-//   downloadActionTypes,
-//   downloadActionTypesTemplate,
-// } from "../../lib/functions";
 
 const DisplayTypes = (props: {
     total: number;
@@ -30,9 +26,7 @@ const DisplayTypes = (props: {
     const [openPopover, setOpenPopover] = useState<boolean>(false);
     const [openAddPopover, setOpenAddPopover] = useState<boolean>(false);
     const [paginationPopover, setPaginationPopover] = useState<boolean>(false);
-    const [filterBy, setFilterBy] = useState<string[]>(
-        columns.map((i) => i.value)
-    );
+    const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value));
 
     const [typeId, setTypeId] = useState("");
     const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false);
@@ -40,72 +34,62 @@ const DisplayTypes = (props: {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const utils = trpc.useContext();
-    const { search, setSearch } = useSearchStore();
+    const { setSearch } = useSearchStore();
 
     useEffect(() => {
         setSearch("");
     }, [setSearch]);
 
-    const { mutate } = trpc.assetType.deleteMany.useMutation({
+    const [showConfirm, setShowConfirm] = useState(false);
+
+    const { mutate, isLoading: isDeleting } = trpc.assetType.deleteMany.useMutation({
         onSuccess: () => {
             utils.assetType.findAll.invalidate();
+        },
+        onError: (error) => {
+            console.error("Failed to delete types:", error);
         }
     });
 
     return (
-        <div>
+        <div className="space-y-4">
             <section className="space-y-4">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="flex w-fit items-center gap-2">
-                            <input
-                                type="text"
-                                className="rounded border-2 border-gray-400 p-[0.1rem]"
-                                placeholder="Search Type"
-                                onChange={(e) => setSearch(e.currentTarget.value)}
-                            />
-                            <FilterPopOver
-                                openPopover={openPopover}
-                                setOpenPopover={setOpenPopover}
-                                filterBy={filterBy}
-                                setFilterBy={setFilterBy}
-                                columns={columns}
-                            />
+                    <div className="flex items-center gap-2 ml-auto flex-wrap justify-end">
+                        <div className="flex items-center gap-2 ml-auto flex-wrap justify-end">
+                            <div className="flex w-fit items-center gap-2">
+                                <div className="relative w-fit">
+                                    <input
+                                        type="text"
+                                        className="border-gray-400 border-2 rounded pl-2 pr-10 py-[0.25rem] w-64"
+                                        placeholder="Search"
+                                        onChange={(e) => setSearch(e.currentTarget.value)}
+                                    />
+                                    <i className="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                                </div>
+                                <FilterPopOver
+                                    openPopover={openPopover}
+                                    setOpenPopover={setOpenPopover}
+                                    filterBy={filterBy}
+                                    setFilterBy={setFilterBy}
+                                    columns={columns}
+                                />
+                            </div>
+                            {checkboxes.length > 0 && (
+                                <button
+                                    onClick={() => setShowConfirm(true)}
+                                    className={`flex gap-2 rounded-md p-2 text-xs font-medium text-red-500 underline underline-offset-4 outline-none focus:outline-none ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? 'Deleting...' : 
+                                        checkboxes.includes(-1)
+                                            ? `Delete all record/s (${props.types.length}) ?`
+                                            : `Delete selected record/s (${checkboxes.length})`
+                                    }
+                                </button>
+                            )}
                         </div>
-                        {checkboxes.length > 0 && (
-                            <button
-                                className="-md flex gap-2 p-2 text-xs font-medium text-red-500 underline-offset-4"
-                                onClick={() => {
-                                    mutate(checkboxes);
-                                    setCheckboxes([]);
-                                }}
-                            >
-                                {checkboxes.includes(-1)
-                                    ? `Delete all record/s (${props.types.length}) ?`
-                                    : `Delete selected record/s (${checkboxes.length})`
-                                }
-                            </button>
-                        )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                        {/* <button
-                            className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 hover:bg-tangerine-600"
-                            onClick={() => {
-                                downloadActionTypesTemplate(props.sampleActionTypes);
-                            }}
-                        >
-                            <i className="fa-solid fa-print text-xs" />
-                            Download Template
-                        </button>
-                        <button
-                            className="-md flex gap-2 rounded-md bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 hover:bg-tangerine-600"
-                            onClick={() => {
-                                downloadActionTypes(props.actionTypes);
-                            }}
-                        >
-                            <i className="fa-solid fa-print text-xs" />
-                            Download Action Types
-                        </button> */}
+                        {/* Add your download template and download types buttons here if needed */}
                         <AddTypePopOver
                             openPopover={openAddPopover}
                             setOpenPopover={setOpenAddPopover}
@@ -116,16 +100,14 @@ const DisplayTypes = (props: {
                         />
                     </div>
                 </div>
-
+                
                 <div className="w-full overflow-x-auto rounded-lg shadow-md">
                     <TypeTable
                         checkboxes={checkboxes}
                         setCheckboxes={setCheckboxes}
                         rows={props.types}
                         filterBy={filterBy}
-                        columns={columns.filter((col) =>
-                            filterBy.includes(col.value)
-                        )}
+                        columns={columns.filter((col) => filterBy.includes(col.value))}
                     />
                 </div>
             </section>
@@ -141,7 +123,7 @@ const DisplayTypes = (props: {
                         limit={props.limit}
                         setLimit={props.setLimit}
                     />
-                    <p> entries</p>
+                    <p>entries</p>
                 </div>
                 <Pagination
                     page={props.page}
@@ -180,6 +162,35 @@ const DisplayTypes = (props: {
                     setIsLoading={setIsLoading}
                     setIsVisible={setAddBulkRecord}
                 />
+            </Modal>
+
+            <Modal
+                title="Confirm Deletion"
+                isVisible={showConfirm}
+                setIsVisible={setShowConfirm}
+                className="max-w-md"
+            >
+                <div className="p-4">
+                    <p>Are you sure you want to delete {checkboxes.includes(-1) ? 'all' : checkboxes.length} type(s)?</p>
+                    <div className="mt-4 flex justify-end gap-2">
+                        <button 
+                            onClick={() => setShowConfirm(false)}
+                            className="px-4 py-2 border rounded-md"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            onClick={() => {
+                                mutate(checkboxes);
+                                setCheckboxes([]);
+                                setShowConfirm(false);
+                            }}
+                            className="px-4 py-2 bg-red-500 text-white rounded-md"
+                        >
+                            Confirm Delete
+                        </button>
+                    </div>
+                </div>
             </Modal>
         </div>
     )

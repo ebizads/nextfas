@@ -113,15 +113,16 @@ const ActionTypeTable = ({
                   onChange={selectAllCheckboxes}
                   checked={checkboxes.length > 0}
                   classNames={{
-                    input:
-                      "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
+                    input: "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
                   }}
                 />
               </div>
             </th>
-            <th className="px-6 py-4">ID</th>
-            <th className="px-6 py-4">Name</th>
-            <th className="px-6 py-4">Description</th>
+            {columns.map((column) => (
+              <th key={column.value} className="px-6 py-4">
+                {column.name}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -138,39 +139,26 @@ const ActionTypeTable = ({
                     onChange={() => toggleCheckbox(row.id)}
                     checked={checkboxes.includes(row.id) || checkboxes.includes(-1)}
                     classNames={{
-                      input:
-                        "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
+                      input: "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
                     }}
                   />
                 </div>
               </td>
-              <td
-                className="cursor-pointer px-6 py-2"
-                onClick={() => {
-                  setSelectedAction(row)
-                  setIsVisible(true)
-                }}
-              >
-                {row.id}
-              </td>
-              <td
-                className="cursor-pointer px-6 py-2"
-                onClick={() => {
-                  setSelectedAction(row)
-                  setIsVisible(true)
-                }}
-              >
-                {row.name}
-              </td>
-              <td
-                className="cursor-pointer px-6 py-2"
-                onClick={() => {
-                  setSelectedAction(row)
-                  setIsVisible(true)
-                }}
-              >
-                {row.description ?? '—'}
-              </td>
+              {columns.map((column) => {
+                const cellValue = row[column.value as keyof typeof row];
+                return (
+                  <td
+                    key={`${row.id}-${column.value}`}
+                    className="cursor-pointer px-6 py-2"
+                    onClick={() => {
+                      setSelectedAction(row);
+                      setIsVisible(true);
+                    }}
+                  >
+                    {cellValue ?? '—'}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

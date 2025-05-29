@@ -119,9 +119,11 @@ const TypeTable = ({
                                 />
                             </div>
                         </th>
-                        <th className="px-6 py-4">ID</th>
-                        <th className="px-6 py-4">Name</th>
-                        <th className="px-6 py-4">Description</th>
+                        {columns.map((column) => (
+                            <th key={column.value} className="px-6 py-4">
+                                {column.name}
+                            </th>
+                        ))}
                     </tr>
                 </thead>
                 <tbody>
@@ -143,33 +145,21 @@ const TypeTable = ({
                                     />
                                 </div>
                             </td>
-                            <td
-                                className="cursor-pointer px-6 py-2"
-                                onClick={() => {
-                                    setSelectedType(row)
-                                    setIsVisible(true)
-                                }}
-                            >
-                                {row.id}
-                            </td>
-                            <td
-                                className="cursor-pointer px-6 py-2"
-                                onClick={() => {
-                                    setSelectedType(row)
-                                    setIsVisible(true)
-                                }}
-                            >
-                                {row.name}
-                            </td>
-                            <td
-                                className="cursor-pointer px-6 py-2"
-                                onClick={() => {
-                                    setSelectedType(row)
-                                    setIsVisible(true)
-                                }}
-                            >
-                                {row.description ?? '—'}
-                            </td>
+                            {columns.map((column) => {
+                                const cellValue = row[column.value as keyof typeof row];
+                                return (
+                                    <td
+                                        key={column.value}
+                                        className="cursor-pointer px-6 py-2"
+                                        onClick={() => {
+                                            setSelectedType(row);
+                                            setIsVisible(true);
+                                        }}
+                                    >
+                                        {cellValue ?? '—'}
+                                    </td>
+                                );
+                            })}
                         </tr>
                     ))}
                 </tbody>

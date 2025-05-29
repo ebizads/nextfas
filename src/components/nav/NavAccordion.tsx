@@ -31,7 +31,7 @@ const NavAccordion = ({ minimize, paths }: { minimize: boolean; paths: string[] 
         <Link href="/actiontypemanagement">
           <p
             className={`cursor-pointer text-sm ${
-              isActive("actiontypemanagement")
+              isActive("Actiontypemanagement")
                 ? "text-tangerine-500 font-semibold"
                 : "text-light-secondary"
             }`}

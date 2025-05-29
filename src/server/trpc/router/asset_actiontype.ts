@@ -75,7 +75,7 @@ export const assetActionTypeRouter = t.router({
       const [assetActionTypes, count] = await ctx.prisma.$transaction([
         ctx.prisma.assetActionType.findMany({
           orderBy: {
-            name: "asc",
+            id: "asc",
           },
           where: {
             deleted: deletedFilter,
@@ -141,7 +141,7 @@ export const assetActionTypeRouter = t.router({
           [
             ctx.prisma.assetActionType.findMany({
               orderBy: {
-                name: "asc",
+                id: "asc",
               },
               where: {
                 deleted: deletedFilter,

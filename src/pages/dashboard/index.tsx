@@ -1,3 +1,5 @@
+//OLD dashboard working
+
 import React, { useEffect, useState, useMemo } from "react"
 import DashboardLayout from "../../layouts/DashboardLayout"
 import { trpc } from "../../utils/trpc"
@@ -49,7 +51,7 @@ type ChartDataType = {
 
 const Dashboard = () => {
     const [page, setPage] = useState(1)
-    const [limit, setLimit] = useState(5)
+    const [limit, setLimit] = useState()
     const [chartType, setChartType] = useState<ChartType>('bar')
     const router = useRouter()
     const { search } = useSearchStore()

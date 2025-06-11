@@ -2,12 +2,12 @@ import { useForm } from "react-hook-form"
 import { z } from "zod/lib"
 import { ChangeUserPass } from "../../server/schemas/user"
 import { zodResolver } from "@hookform/resolvers/zod"
-import InputField from "../../components/atoms/forms/InputField"
+import InputField from "../atoms/forms/InputField"
 import { trpc } from "../../utils/trpc"
 import { Textarea } from "@mantine/core"
 import { useEffect, useRef, useState } from "react"
-import PasswordChecker from "../../components/atoms/forms/PasswordChecker"
-import Modal from "../../components/headless/modal/modal"
+import PasswordChecker from "../atoms/forms/PasswordChecker"
+import Modal from "../headless/modal/modal"
 import { clearAndGoBack, passConfirmCheck } from "../../lib/functions"
 import { useSession } from "next-auth/react"
 import { Session } from "inspector"
@@ -54,7 +54,7 @@ const ChangePassModal = (props: {
   if (Boolean(user?.passwordAge)) {
     dayNow = Number(
       (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
-      (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24)
     )
   }
 
@@ -239,7 +239,9 @@ const ChangePassModal = (props: {
             <button
               type="submit"
               className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-              onClick={() => { console.log(errors), console.log("check", password) }}
+              onClick={() => {
+                console.log(errors), console.log("check", password)
+              }}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Saving..." : "Change"}

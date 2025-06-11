@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react"
 import { Select, Pagination } from "@mantine/core"
-import UserTable from "../../components/user/UserTable"
+import UserTable from "./UserTable"
 import { userColumns } from "../../lib/table"
 import { columnsuser } from "../../lib/employeeTable"
 import { ImageJSON } from "../../types/table"
-import Modal from "../../components/headless/modal/modal"
+import Modal from "../headless/modal/modal"
 import { downloadExcel } from "../../lib/functions"
 import { ExcelExportType, ExcelExportTypeUser } from "../../types/employee"
 import { employeeColumns } from "../../lib/table"
 import { trpc } from "../../utils/trpc"
 import { UserType } from "../../types/generic"
-import PaginationPopOver from "../../components/atoms/popover/PaginationPopOver"
-import FilterPopOver from "../../components/atoms/popover/FilterPopOver"
+import PaginationPopOver from "../atoms/popover/PaginationPopOver"
+import FilterPopOver from "../atoms/popover/FilterPopOver"
 import { redirect } from "next/dist/server/api-utils"
 import Link from "next/link"
 import { useSearchStore } from "../../store/useStore"
@@ -20,8 +20,6 @@ type SearchType = {
   value: string
   label: string
 }
-
-
 
 const DisplayUsers = (props: {
   total: number
@@ -87,8 +85,12 @@ const DisplayUsers = (props: {
           <div className="flex items-center gap-2">
             <div className="flex w-fit items-center gap-2">
               <div className="flex-1">
-                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search User Name" onChange={(e) => setSearch(e.currentTarget.value)}>
-                </input>
+                <input
+                  type="text"
+                  className="rounded border-2 border-gray-400 p-[0.1rem]"
+                  placeholder="Search User Name"
+                  onChange={(e) => setSearch(e.currentTarget.value)}
+                ></input>
               </div>
               <FilterPopOver
                 openPopover={openPopover}

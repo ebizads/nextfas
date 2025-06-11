@@ -529,7 +529,7 @@ export const employeeRouter = t.router({
         ) {
           x++
         } else {
-          employeeNumber = String(x + 1).padStart(4, "0")
+          employeeNumber = String(x).padStart(4, "0")
           break
         }
       }

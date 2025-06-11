@@ -3,25 +3,23 @@ import { DatePicker } from "@mantine/dates"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { EmployeeCreateInput } from "../../../server/schemas/employee"
-import { ImageJSON } from "../../../types/table"
-import { trpc } from "../../../utils/trpc"
-import AlertInput from "../../../components/atoms/forms/AlertInput"
-import { InputField } from "../../../components/atoms/forms/InputField"
+import { EmployeeCreateInput } from "../../server/schemas/employee"
+import { ImageJSON } from "../../types/table"
+import { trpc } from "../../utils/trpc"
+import AlertInput from "../atoms/forms/AlertInput"
+import { InputField } from "../atoms/forms/InputField"
 import { Select } from "@mantine/core"
-import DropZoneComponent from "../../../components/dropzone/DropZoneComponent"
-import { env } from "../../../env/client.mjs"
+import DropZoneComponent from "../dropzone/DropZoneComponent"
+import { env } from "../../env/client.mjs"
 import moment from "moment"
-import Modal from "../../../components/headless/modal/modal"
-import TypeSelect, {
-  SelectValueType,
-} from "../../../components/atoms/select/TypeSelect"
-import ph_regions from "../../../json/ph_regions.json"
-import all_countries from "../../../json/countries.json"
-import all_states from "../../../json/states.json"
-import all_cities from "../../../json/cities.json"
+import Modal from "../headless/modal/modal"
+import TypeSelect, { SelectValueType } from "../atoms/select/TypeSelect"
+import ph_regions from "../../json/ph_regions.json"
+import all_countries from "../../json/countries.json"
+import all_states from "../../json/states.json"
+import all_cities from "../../json/cities.json"
 import { set } from "lodash"
-import { clearAndGoBack } from "../../../lib/functions"
+import { clearAndGoBack } from "../../lib/functions"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -174,7 +172,7 @@ export const CreateEmployee_new = (props: {
   const filteredProvince = useMemo(() => {
     const newProvince: Array<string> = []
     if (country === "Philippines") {
-      if (region === null ?? "") {
+      if (region === null) {
         setProvince("")
 
         return newProvince
@@ -216,7 +214,7 @@ export const CreateEmployee_new = (props: {
   const filteredCity = useMemo(() => {
     const newCity: Array<any> = []
     if (country === "Philippines") {
-      if (province === null ?? "") {
+      if (province === null) {
         setCity("")
 
         return newCity
@@ -258,7 +256,7 @@ export const CreateEmployee_new = (props: {
 
   const filteredBarangay = useMemo(() => {
     const newBarangay: Array<any> = []
-    if (city === null ?? "") {
+    if (city === null) {
       setBarangay("")
 
       return newBarangay

@@ -1,7 +1,11 @@
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import { VendorCreateInput, VendorDelete, VendorEditInput } from "../../schemas/vendor"
+import {
+  VendorCreateInput,
+  VendorDelete,
+  VendorEditInput,
+} from "../../schemas/vendor"
 import { authedProcedure, t } from "../trpc"
 
 export const vendorRouter = t.router({
@@ -93,16 +97,16 @@ export const vendorRouter = t.router({
               where: {
                 name: {
                   contains: input?.search?.name ? input.search.name : undefined,
-                  mode: 'insensitive'
+                  mode: "insensitive",
                 },
                 NOT: {
-                  deleted: true,
+                  OR: [
+                    { deleted: true },
+                    {
+                      address: null,
+                    },
+                  ],
                 },
-                OR: {
-                  NOT: {
-                    address: null,
-                  }
-                }
               },
             }),
             ctx.prisma.vendor.count({
@@ -156,17 +160,15 @@ export const vendorRouter = t.router({
               where: {
                 name: {
                   contains: input?.search?.name ? input.search.name : undefined,
-                  mode: 'insensitive'
+                  mode: "insensitive",
                 },
 
                 id: 999999,
-
               },
               skip: input?.page
                 ? (input.page - 1) * (input.limit ?? 10)
                 : undefined,
               take: input?.limit ?? 10,
-
             }),
             ctx.prisma.vendor.count({
               where: {

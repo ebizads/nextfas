@@ -726,7 +726,7 @@ export const assetRouter = t.router({
           data: {
             ...rest,
             management: {
-              update: management,
+              update: management ?? undefined,
             },
             AssetIssuance: {
               update: issuance,

@@ -665,10 +665,10 @@ export const employeeRouter = t.router({
             data: {
               ...rest,
               profile: {
-                update: profile,
+                update: profile ?? undefined,
               },
               address: {
-                update: address,
+                update: address ?? undefined,
               },
             },
           })

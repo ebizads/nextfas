@@ -49,13 +49,14 @@ const CreateDisposeAccordion = () => {
 
   const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
 
-
   //const utils = trpc.useContext()
 
   const disposalTypeList = useMemo(() => {
-    const list = disposalTypes?.disposalTypes.map((employee: { id: { toString: () => any }; name: any }) => {
-      return { value: employee.id.toString(), label: employee.name }
-    }) as SelectValueType[]
+    const list = disposalTypes?.disposalTypes.map(
+      (employee: { id: { toString: () => any }; name: any }) => {
+        return { value: employee.id.toString(), label: employee.name }
+      }
+    ) as SelectValueType[]
     return list ?? []
   }, [disposalTypes]) as SelectValueType[]
 
@@ -96,12 +97,11 @@ const CreateDisposeAccordion = () => {
       disposalStatus: "pending",
     })
 
-    updateAsset.mutate({
-      ...asset,
-      id: asset?.id ?? 0,
-      status: "disposal",
-
-    })
+    if (asset?.management !== null)
+      updateAsset.mutate({
+        id: asset?.id ?? 0,
+        status: "disposal",
+      })
 
     reset()
   }
@@ -141,7 +141,6 @@ const CreateDisposeAccordion = () => {
   useEffect(() => {
     setAssetNumber(disposeAsset?.number ?? "")
   }, [setAssetNumber, disposeAsset])
-
 
   const steps = useMemo(
     () => [
@@ -185,15 +184,12 @@ const CreateDisposeAccordion = () => {
     console.log("dapat wala na")
   }
 
-
   const [companyId, setCompanyId] = useState<string>("")
   const { data: companyData } = trpc.company.findAll.useQuery()
 
   useEffect(() => {
     setCompanyId(asset?.subsidiaryId?.toString() ?? "")
-
   }, [asset?.subsidiaryId])
-
 
   const company_address = useMemo(() => {
     if (companyId) {
@@ -230,19 +226,21 @@ const CreateDisposeAccordion = () => {
                   <div className="flex w-full items-center gap-4">
                     {state.currentStep > index ? (
                       <span
-                        className={`border-full flex h-9 w-9 items-center justify-center rounded-full border border-transparent transition-colors ease-in-out group-focus:ring-2 group-focus:ring-offset-2 ${state?.currentStep >= index
-                          ? "bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 text-white"
-                          : ""
-                          }`}
+                        className={`border-full flex h-9 w-9 items-center justify-center rounded-full border border-transparent transition-colors ease-in-out group-focus:ring-2 group-focus:ring-offset-2 ${
+                          state?.currentStep >= index
+                            ? "bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 text-white"
+                            : ""
+                        }`}
                       >
                         <Check size={25} strokeWidth={2} />
                       </span>
                     ) : (
                       <span
-                        className={`border-full flex h-8 w-8 items-center justify-center rounded-full border bg-white text-black ring-tangerine-500 transition-colors ease-in-out group-focus:ring-2 group-focus:ring-offset-2 ${state?.currentStep >= index
-                          ? "bg-[#B45309] text-white ring-2 ring-offset-2"
-                          : ""
-                          }`}
+                        className={`border-full flex h-8 w-8 items-center justify-center rounded-full border bg-white text-black ring-tangerine-500 transition-colors ease-in-out group-focus:ring-2 group-focus:ring-offset-2 ${
+                          state?.currentStep >= index
+                            ? "bg-[#B45309] text-white ring-2 ring-offset-2"
+                            : ""
+                        }`}
                       >
                         {steps[index]?.icon}
                       </span>
@@ -250,18 +248,19 @@ const CreateDisposeAccordion = () => {
 
                     {
                       <div
-                        className={`mr-4 h-2 flex-1 rounded border ${index !== 2 ? "" : "invisible"
-                          } ${state?.currentStep > index
+                        className={`mr-4 h-2 flex-1 rounded border ${
+                          index !== 2 ? "" : "invisible"
+                        } ${
+                          state?.currentStep > index
                             ? "bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 text-white"
                             : "bg-[#ECECEC]"
-                          }`}
+                        }`}
                       />
                     }
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs">Step {index + 1}</span>
                     <span className="font-bold">{steps[index]?.label}</span>
-
                   </div>
                 </div>
               </li>
@@ -318,7 +317,7 @@ const CreateDisposeAccordion = () => {
           <div>
             <div className="rounded-md bg-white drop-shadow-lg">
               <div className="p-5">
-                <Accordion multiple={true} defaultValue={['1', '2', '3']}>
+                <Accordion multiple={true} defaultValue={["1", "2", "3"]}>
                   {/* <Accordion.Item value="asset_details">
                                         <Accordion.Control>
                                             <div className="flex flex-row">
@@ -462,17 +461,20 @@ const CreateDisposeAccordion = () => {
                         {/* <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-yellow-400 p-1 text-sm text-yellow-400">
                                                     1
                                                 </div> */}
-                        <CircleNumber1 className="h-7 w-7" color="gold"></CircleNumber1>{" "}
-                        <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Information</p>
+                        <CircleNumber1
+                          className="h-7 w-7"
+                          color="gold"
+                        ></CircleNumber1>{" "}
+                        <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                          Asset Information
+                        </p>
                       </div>
                     </Accordion.Control>
                     <Accordion.Panel>
                       <div className="grid grid-cols-9 gap-7">
                         <div className="col-span-9 grid grid-cols-8 gap-7">
                           <div className="col-span-4">
-                            <label className="text-sm">
-                              Asset Number
-                            </label>
+                            <label className="text-sm">Asset Number</label>
                             <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
                               {asset?.number ?? ""}
                             </p>
@@ -496,96 +498,74 @@ const CreateDisposeAccordion = () => {
                                                     </div> */}
                         </div>
                         <div className="col-span-3">
-                          <label className="text-sm">
-                            Serial Number
-                          </label>
+                          <label className="text-sm">Serial Number</label>
                           <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 ">
                             {asset?.serial_no ?? ""}
                           </p>
                         </div>
                         <div className="col-span-6 grid grid-cols-9 gap-7">
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Parent Asset
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Parent Asset</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.parent?.name ?? ""}
                             </p>
                           </div>
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Project
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Project</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.project?.name}
                             </p>
                           </div>
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Vendor
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Vendor</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.vendor?.name ?? ""}
                             </p>
                           </div>
                         </div>
                         <div className="col-span-3">
-                          <label className="text-sm">
-                            Model Name
-                          </label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                          <label className="text-sm">Model Name</label>
+                          <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                             {asset?.model?.name ?? ""}
                           </p>
                         </div>
                         <div className="col-span-6 grid grid-cols-9 gap-7">
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Model Brand
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Model Brand</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.model?.brand ?? ""}
                             </p>
                           </div>
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Model Number
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Model Number</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.model?.number ?? ""}
                             </p>
                           </div>
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Asset Lifetime
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Asset Lifetime</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.asset_lifetime}
                             </p>
                           </div>
                         </div>
                         <div className="col-span-9 grid grid-cols-12 gap-7">
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Original Cost
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Original Cost</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.original_cost}
                             </p>
                           </div>
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Current Cost
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Current Cost</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.current_cost}
                             </p>
                           </div>
 
                           <div className="col-span-3">
-                            <label className="text-sm">
-                              Residual Value
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Residual Value</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.residual_value}
                             </p>
                           </div>
@@ -593,16 +573,11 @@ const CreateDisposeAccordion = () => {
                             <label className="text-sm">
                               Residual Value Percentage
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.residual_percentage}
                             </p>
                           </div>
-
                         </div>
-
-
-
-
 
                         <div className="col-span-9">
                           {/* <textarea
@@ -612,9 +587,7 @@ const CreateDisposeAccordion = () => {
                                                     >
 
                                                     </textarea> */}
-                          <label className="text-sm">
-                            Asset Description
-                          </label>
+                          <label className="text-sm">Asset Description</label>
                           <Textarea
                             value={asset?.description ?? ""}
                             // onChange={(event) => {
@@ -642,7 +615,10 @@ const CreateDisposeAccordion = () => {
                   <Accordion.Item value={"2"} className="">
                     <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
                       <div className="flex items-center gap-2 text-gray-700">
-                        <CircleNumber2 className="h-7 w-7" color="gold"></CircleNumber2>{" "}
+                        <CircleNumber2
+                          className="h-7 w-7"
+                          color="gold"
+                        ></CircleNumber2>{" "}
                         <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
                           General Information
                         </p>
@@ -650,20 +626,16 @@ const CreateDisposeAccordion = () => {
                     </Accordion.Control>
                     <Accordion.Panel>
                       <div className="grid gap-7">
-                        <div className="grid grid-cols-9 col-span-9 gap-7">
+                        <div className="col-span-9 grid grid-cols-9 gap-7">
                           <div className="col-span-4">
-                            <label className="text-sm">
-                              Company
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Company</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.subsidiary?.name ?? ""}
                             </p>
                           </div>
                           <div className="col-span-8">
-                            <label className="text-sm">
-                              Company Address
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Company Address</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {company_address?.address
                                 ? getAddress(company_address)
                                 : ""}
@@ -671,38 +643,29 @@ const CreateDisposeAccordion = () => {
                           </div>
                           <div className="col-span-12 grid grid-cols-12 gap-7">
                             <div className="col-span-3">
-                              <label className="text-sm">
-                                Department
-                              </label>
-                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              <label className="text-sm">Department</label>
+                              <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                                 {asset?.department?.name ?? ""}
                               </p>
                             </div>
                             <div className="col-span-3">
-                              <label className="text-sm">
-                                Floor
-                              </label>
-                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              <label className="text-sm">Floor</label>
+                              <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                                 {asset?.department?.location?.floor ?? ""}
                               </p>
                             </div>
                             <div className="col-span-3">
-                              <label className="text-sm">
-                                Room
-                              </label>
-                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              <label className="text-sm">Room</label>
+                              <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                                 {asset?.department?.location?.room ?? ""}
                               </p>
                             </div>
                             <div className="col-span-3">
-                              <label className="text-sm">
-                                Custodian
-                              </label>
-                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              <label className="text-sm">Custodian</label>
+                              <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                                 {asset?.custodian?.name ?? ""}
                               </p>
                             </div>
-
                           </div>
                           <div className="col-span-12 grid grid-cols-12 gap-7 ">
                             <div className="col-span-2">
@@ -718,10 +681,8 @@ const CreateDisposeAccordion = () => {
                                                                 data={classList ?? []}
                                                             /> */}
 
-                              <label className="text-sm">
-                                Class
-                              </label>
-                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              <label className="text-sm">Class</label>
+                              <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                                 {asset?.model?.class?.name ?? ""}
                               </p>
                             </div>
@@ -743,10 +704,8 @@ const CreateDisposeAccordion = () => {
                                                                 data={categories ?? []}
                                                             /> */}
 
-                              <label className="text-sm">
-                                Category
-                              </label>
-                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              <label className="text-sm">Category</label>
+                              <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                                 {asset?.model?.category?.name ?? ""}
                               </p>
                             </div>
@@ -768,25 +727,20 @@ const CreateDisposeAccordion = () => {
                                                                 data={types ?? []}
                                                             /> */}
 
-                              <label className="text-sm">
-                                Type
-                              </label>
-                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              <label className="text-sm">Type</label>
+                              <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                                 {asset?.model?.type?.name ?? ""}
                               </p>
                             </div>
                             <div className="col-span-6">
-                              <label className="text-sm">
-                                Class
-                              </label>
-                              <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                              <label className="text-sm">Class</label>
+                              <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                                 {asset?.management?.asset_location ?? ""}
                               </p>
                             </div>
-
                           </div>
                         </div>
-                        <div className="grid grid-cols-9 col-span-9 gap-7">
+                        <div className="col-span-9 grid grid-cols-9 gap-7">
                           <div className="col-span-3">
                             {/* <TypeSelect
                                                             isString
@@ -804,10 +758,8 @@ const CreateDisposeAccordion = () => {
                                                             {errors?.management?.currency?.message}
                                                         </AlertInput> */}
 
-                            <label className="text-sm">
-                              Currency
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Currency</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.currency ?? ""}
                             </p>
                           </div>
@@ -830,10 +782,8 @@ const CreateDisposeAccordion = () => {
                                                             {errors?.management?.accounting_method?.message}
                                                         </AlertInput> */}
 
-                            <label className="text-sm">
-                              Accounting Method
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Accounting Method</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.accounting_method ?? ""}
                             </p>
                           </div>
@@ -852,16 +802,13 @@ const CreateDisposeAccordion = () => {
                                                                     "border-2 border-gray-400 h-11 rounded-md px-2 outline-none focus:outline-none focus:border-tangerine-400",
                                                             }} // className="peer peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-3 text-sm text-gray-900 focus:border-tangerine-500 focus:outline-none focus:ring-0"
                                                         /> */}
-                            <label className="text-sm">
-                              Purchase Date
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
-                              {asset?.management?.purchase_date?.toString() ?? ""}
+                            <label className="text-sm">Purchase Date</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                              {asset?.management?.purchase_date?.toString() ??
+                                ""}
                             </p>
                           </div>
-
                         </div>
-
 
                         <div className="col-span-9 grid grid-cols-6 gap-7">
                           <div className="col-span-2">
@@ -877,10 +824,8 @@ const CreateDisposeAccordion = () => {
                                                         <AlertInput>
                                                             {errors?.management?.depreciation_rule?.message}
                                                         </AlertInput> */}
-                            <label className="text-sm">
-                              Depreciation Rule
-                            </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                            <label className="text-sm">Depreciation Rule</label>
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                               {asset?.management?.depreciation_rule ?? ""}
                             </p>
                           </div>
@@ -905,8 +850,9 @@ const CreateDisposeAccordion = () => {
                             <label className="text-sm">
                               Depreciation Start Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
-                              {asset?.management?.depreciation_start?.toString() ?? ""}
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                              {asset?.management?.depreciation_start?.toString() ??
+                                ""}
                             </p>
                           </div>
                           <div className="col-span-2 space-y-2">
@@ -936,13 +882,12 @@ const CreateDisposeAccordion = () => {
                             <label className="text-sm">
                               Depreciation End Date
                             </label>
-                            <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
-                              {asset?.management?.depreciation_end?.toString() ?? ""}
+                            <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                              {asset?.management?.depreciation_end?.toString() ??
+                                ""}
                             </p>
                           </div>
-
                         </div>
-
                       </div>
                     </Accordion.Panel>
                   </Accordion.Item>
@@ -950,25 +895,27 @@ const CreateDisposeAccordion = () => {
                   <Accordion.Item value={"3"} className="">
                     <Accordion.Control className="uppercase outline-none focus:outline-none active:outline-none">
                       <div className="flex items-center gap-2 text-gray-700">
-                        <CircleNumber3 className="h-7 w-7" color="gold"></CircleNumber3>{" "}
-                        <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">Asset Usage</p>
+                        <CircleNumber3
+                          className="h-7 w-7"
+                          color="gold"
+                        ></CircleNumber3>{" "}
+                        <p className="bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text px-2 font-sans text-xl font-semibold uppercase text-transparent">
+                          Asset Usage
+                        </p>
                       </div>
                     </Accordion.Control>
                     <Accordion.Panel>
-                      <div className="grid grid-cols-9 col-span-9 gap-7">
+                      <div className="col-span-9 grid grid-cols-9 gap-7">
                         <div className="col-span-3 space-y-2">
-                          <label className="text-sm">
-                            Date of Usage
-                          </label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
-                            {asset?.management?.depreciation_start?.toString() ?? ""}
+                          <label className="text-sm">Date of Usage</label>
+                          <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
+                            {asset?.management?.depreciation_start?.toString() ??
+                              ""}
                           </p>
                         </div>
                         <div className="col-span-3">
-                          <label className="text-sm">
-                            Period
-                          </label>
-                          <p className="my-2 h-11 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2 text-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 truncate">
+                          <label className="text-sm">Period</label>
+                          <p className="my-2 h-11 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-2  text-gray-600 outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2">
                             {asset?.management?.depreciation_period}
                           </p>
                         </div>
@@ -1096,9 +1043,8 @@ const CreateDisposeAccordion = () => {
 
                   </div>
                 </div> */}
-                {
-                  selectedType !== "1" &&
-                  (<div className="flex w-full flex-row justify-between gap-7 py-2">
+                {selectedType !== "1" && (
+                  <div className="flex w-full flex-row justify-between gap-7 py-2">
                     <div className="flex w-full flex-col">
                       <label className="font-semibold">Customer Name</label>
                       <InputField
@@ -1117,11 +1063,10 @@ const CreateDisposeAccordion = () => {
                         label={""}
                       />
                     </div>
-                  </div>)
-                }
-                {(selectedType !== "1" && selectedType !== "3") && (
+                  </div>
+                )}
+                {selectedType !== "1" && selectedType !== "3" && (
                   <div>
-
                     <div className="flex w-full flex-row justify-between gap-7 py-2">
                       <div className="flex w-full flex-col">
                         <label className="font-semibold">
@@ -1169,8 +1114,7 @@ const CreateDisposeAccordion = () => {
                     </div>
                   </div>
                 )}
-                {
-                  (selectedType !== "1" && selectedType !== "2") &&
+                {selectedType !== "1" && selectedType !== "2" && (
                   <div className="flex w-full flex-row justify-between gap-7 py-2">
                     <div className="flex w-full flex-col">
                       <label className="font-semibold">Traded Items</label>
@@ -1182,9 +1126,8 @@ const CreateDisposeAccordion = () => {
                       />
                       <AlertInput>{errors?.tradedItem?.message}</AlertInput>
                     </div>
-
                   </div>
-                }
+                )}
                 <hr className="w-full"></hr>
                 <div className="align-center flex w-full flex-col justify-center gap-4 py-3">
                   <div className="flex w-full justify-center gap-3">
@@ -1314,11 +1257,9 @@ const CreateDisposeAccordion = () => {
                         <AlertInput>{errors?.telephoneNo?.message}</AlertInput>
                       </div>
                     </div>
-
                   </div>
                 )}
-                {
-                  (selectedType !== "1" && selectedType !== "3") &&
+                {selectedType !== "1" && selectedType !== "3" && (
                   <div>
                     <div className="flex w-full flex-row justify-between gap-7 py-2">
                       <div className="flex w-full flex-col">
@@ -1375,9 +1316,8 @@ const CreateDisposeAccordion = () => {
                       </div>
                     </div>
                   </div>
-                }
-                {
-                  (selectedType !== "1" && selectedType !== "2") &&
+                )}
+                {selectedType !== "1" && selectedType !== "2" && (
                   <div className="flex w-full flex-row justify-between gap-7 py-2">
                     <div className="flex w-full flex-col">
                       <label className="font-semibold">Traded Items</label>
@@ -1390,9 +1330,8 @@ const CreateDisposeAccordion = () => {
                       />
                       <AlertInput>{errors?.tradedItem?.message}</AlertInput>
                     </div>
-
                   </div>
-                }
+                )}
 
                 <hr className="w-full"></hr>
                 {/* <div className="flex w-full justify-between py-3">
@@ -1454,9 +1393,12 @@ const CreateDisposeAccordion = () => {
               Asset successfully added to disposal.
             </p>
           </div>
-          <div className="pt-5 flex justify-end py-2">
+          <div className="flex justify-end py-2 pt-5">
             <Link href={"/transactions/disposal"}>
-              <button onClick={resetDisposeAsset} className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500">
+              <button
+                onClick={resetDisposeAsset}
+                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+              >
                 Return
               </button>
             </Link>

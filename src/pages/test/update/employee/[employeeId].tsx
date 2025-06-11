@@ -36,13 +36,11 @@ const EmployeeEdit = () => {
           Update Employee - {employee?.name}
         </h3>
         <EditForm
-          employee={
-            {
-              id: employee?.id ?? 0,
-              name: employee?.name,
-              ...employee,
-            } ?? ({} as Employee)
-          }
+          employee={{
+            id: employee?.id ?? 0,
+            name: employee?.name,
+            ...employee,
+          }}
         />
         <Link href="/auth/login">
           <a className="my-2 px-4 py-1 text-amber-300 underline hover:text-amber-400">

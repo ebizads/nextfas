@@ -106,7 +106,6 @@ export const ModelEditTableInput = z.object({
 
   deletedAt: z.date().nullish(),
   deleted: z.boolean(),
-
 })
 
 export const ManagementCreateInput = z.object({
@@ -146,6 +145,7 @@ export const ManagementEditInput = z.object({
   depreciation_lifetime: z.number().nullish(),
   depreciation_rule: z.string().nullish(),
   asset_lifetime: z.number().nullish(),
+  asset_quantity: z.number().nullish(),
   asset_location: z.string().nullish(),
   accounting_method: z.string().nullish(),
   remarks: z.string().nullish(),

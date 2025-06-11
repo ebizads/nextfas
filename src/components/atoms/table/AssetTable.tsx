@@ -639,8 +639,10 @@ const AssetDetailsModal = (props: {
                   </button>
                   <p className="font-medium xl:text-lg">Asset Options</p>
                   {/* {props.asset?.AssetIssuance === null &&
-                    (disposeAsset || repairAsset || transferAsset)?.status ===
-                      ("" || null) && (
+                    ((disposeAsset || repairAsset || transferAsset)?.status ===
+                      "" ||
+                      (disposeAsset || repairAsset || transferAsset)?.status ===
+                        null) && (
                       <Link href="/transactions/issuance/create">
                         <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                           <i className={"fa-solid fa-hand-holding-box"} />

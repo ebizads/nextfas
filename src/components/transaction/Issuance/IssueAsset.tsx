@@ -568,8 +568,10 @@ const Issue = ({}) => {
                               register={register}
                               label="Residual Value Percentage"
                               placeholder={
-                                String(asset?.management?.residual_percentage) +
-                                  "%" ?? "--"
+                                asset?.management?.residual_percentage
+                                  ? asset?.management?.residual_percentage?.toString() +
+                                    "%"
+                                  : "--"
                               }
                               name={"management.residual_percentage"}
                               disabled

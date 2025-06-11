@@ -130,7 +130,7 @@ export const authOptions: NextAuthOptions = {
               },
               data: { attempts: 0, inactivityDate: new Date() },
             })
-            return user
+            return { ...user, id: user?.id?.toString() }
           }
           let data = {}
           if (Boolean(user.lockedUntil)) {

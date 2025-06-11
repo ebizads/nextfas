@@ -23,26 +23,27 @@ const DuplicateAccordion_asset = (props: {
       console.log("singol change")
       removeItem(assetId)
       props.incomingChanges.splice(spliceId, 1)
-      props.currentRecords.splice(spliceId, 1)        // invalidate query of asset id when mutations is successful
+      props.currentRecords.splice(spliceId, 1) // invalidate query of asset id when mutations is successful
     },
   })
 
-
-  const [mappedItems, setMappedItems] = useState(props.currentRecords);
+  const [mappedItems, setMappedItems] = useState(props.currentRecords)
 
   const removeItem = (assetId: number) => {
-    const updatedItems = props.currentRecords.filter((item) => item.id !== assetId);
-    setMappedItems(updatedItems);
-  };
+    const updatedItems = props.currentRecords.filter(
+      (item) => item.id !== assetId
+    )
+    setMappedItems(updatedItems)
+  }
 
   const retainRecord = (id: number, assetId: number) => () => {
     removeItem(assetId)
-    console.log("INITIAL INCOMING CHANGES: " + props.incomingChanges.length + "idx: " + id)
+    console.log(
+      "INITIAL INCOMING CHANGES: " + props.incomingChanges.length + "idx: " + id
+    )
     props.incomingChanges.splice(id, 1)
     props.currentRecords.splice(id, 1)
-    console.log(
-      "INCOMING CHANGES: " + props.incomingChanges.length,
-    )
+    console.log("INCOMING CHANGES: " + props.incomingChanges.length)
   }
 
   const acceptChange = (splice: number, assetId: number) => () => {
@@ -73,35 +74,52 @@ const DuplicateAccordion_asset = (props: {
         subsidiaryId: props.incomingChanges[splice]?.subsidiaryId ?? 0,
         invoiceNum: props.incomingChanges[splice]?.invoiceNum ?? "",
         purchaseOrder: props.incomingChanges[splice]?.purchaseOrder ?? "",
-        deployment_status: props.incomingChanges[splice]?.deployment_status ?? "",
+        deployment_status:
+          props.incomingChanges[splice]?.deployment_status ?? "",
         status: props.incomingChanges[splice]?.status ?? "",
         management: {
           currency: props.incomingChanges[splice]?.management?.currency ?? "",
-          original_cost: props.incomingChanges[splice]?.management?.original_cost ?? 0,
-          current_cost: props.incomingChanges[splice]?.management?.current_cost ?? 0,
-          residual_value: props.incomingChanges[splice]?.management?.residual_value ?? 0,
-          purchase_date: props.incomingChanges[splice]?.management?.purchase_date,
-          depreciation_start: props.incomingChanges[splice]?.management?.depreciation_start,
-          depreciation_end: props.incomingChanges[splice]?.management?.depreciation_end,
-          depreciation_status: props.incomingChanges[splice]?.management?.depreciation_status,
-          depreciation_period: props.incomingChanges[splice]?.management?.id ?? 0,
-          depreciation_rule: props.incomingChanges[splice]?.management?.depreciation_rule ?? "",
+          original_cost:
+            props.incomingChanges[splice]?.management?.original_cost ?? 0,
+          current_cost:
+            props.incomingChanges[splice]?.management?.current_cost ?? 0,
+          residual_value:
+            props.incomingChanges[splice]?.management?.residual_value ?? 0,
+          purchase_date:
+            props.incomingChanges[splice]?.management?.purchase_date,
+          depreciation_start:
+            props.incomingChanges[splice]?.management?.depreciation_start,
+          depreciation_end:
+            props.incomingChanges[splice]?.management?.depreciation_end,
+          depreciation_status:
+            props.incomingChanges[splice]?.management?.depreciation_status,
+          depreciation_period:
+            props.incomingChanges[splice]?.management?.id ?? 0,
+          depreciation_rule:
+            props.incomingChanges[splice]?.management?.depreciation_rule ?? "",
           // assetId: props.incomingChanges[splice]?.id ?? 0,
-          accounting_method: props.incomingChanges[splice]?.management?.accounting_method ?? "",
-          depreciation_lifetime: props.incomingChanges[splice]?.management?.depreciation_lifetime ?? 0,
-          residual_percentage: props.incomingChanges[splice]?.management?.residual_percentage ?? 0,
-          asset_location: props.incomingChanges[splice]?.management?.asset_location ?? "",
-          asset_quantity: props.incomingChanges[splice]?.management?.asset_quantity ?? 1,
-          asset_lifetime: props.incomingChanges[splice]?.management?.asset_lifetime ?? 0,
-          id: props.incomingChanges[splice]?.management?.id ?? 0
-
-        }
+          accounting_method:
+            props.incomingChanges[splice]?.management?.accounting_method ?? "",
+          depreciation_lifetime:
+            props.incomingChanges[splice]?.management?.depreciation_lifetime ??
+            0,
+          residual_percentage:
+            props.incomingChanges[splice]?.management?.residual_percentage ?? 0,
+          asset_location:
+            props.incomingChanges[splice]?.management?.asset_location ?? "",
+          asset_quantity:
+            props.incomingChanges[splice]?.management?.asset_quantity ?? 1,
+          asset_lifetime:
+            props.incomingChanges[splice]?.management?.asset_lifetime ?? 0,
+          id: props.incomingChanges[splice]?.management?.id ?? 0,
+        },
       })
-    } catch { console.log(error) }
+    } catch {
+      console.log(error)
+    }
   }
 
   return (
-
     <Accordion>
       {mappedItems.map((asset, idx) => (
         <>
@@ -120,7 +138,6 @@ const DuplicateAccordion_asset = (props: {
                       Current Record
                     </p>
                     <pre className="text-sm">
-
                       {JSON.stringify(asset, null, 1)}
                     </pre>
                   </div>
@@ -158,7 +175,6 @@ const DuplicateAccordion_asset = (props: {
         </>
       ))}
     </Accordion>
-
   )
 }
 

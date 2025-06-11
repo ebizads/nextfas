@@ -14,11 +14,12 @@ type Asset = z.infer<typeof AssetEditInput>
 
 const AssetEdit = () => {
   const { assetId } = useRouter().query
+  const assetIdStr = typeof assetId === "string" ? assetId : ""
 
   // Get asset by asset id
-  const { data: asset } = trpc.asset.findOne.useQuery(Number(assetId), {
+  const { data: asset } = trpc.asset.findOne.useQuery(assetIdStr, {
     //  only fetch when assetId is not undefined or null
-    enabled: !!assetId,
+    enabled: typeof assetId === "string" ? true : false,
   })
 
   return (
@@ -33,14 +34,12 @@ const AssetEdit = () => {
           Update Asset - {asset?.name}
         </h3>
         <EditForm
-          asset={
-            {
-              id: asset?.id ?? 0,
-              name: asset?.name,
-              number: asset?.number,
-              ...asset,
-            } ?? ({} as Asset)
-          }
+          asset={{
+            id: asset?.id ?? 0,
+            name: asset?.name,
+            number: asset?.number,
+            ...asset,
+          }}
         />
         <Link href="/auth/login">
           <a className="my-2 px-4 py-1 text-amber-300 underline hover:text-amber-400">
@@ -60,7 +59,7 @@ const EditForm = ({ asset }: { asset: Asset }) => {
   const { mutate, isLoading, error } = trpc.asset.edit.useMutation({
     onSuccess() {
       // invalidate query of asset id when mutations is successful
-      utils.asset.findOne.invalidate(Number(asset?.id))
+      utils.asset.findOne.invalidate(asset?.id.toString())
     },
   })
   const {

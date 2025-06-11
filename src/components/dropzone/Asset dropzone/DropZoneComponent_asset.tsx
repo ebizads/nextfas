@@ -1,9 +1,9 @@
 import { Image } from "@mantine/core"
 import React from "react"
 import { Loader } from "@mantine/core"
-import { formatBytes } from "../../lib/functions"
-import DropZone from "./DropZone"
-import { ImageJSON } from "../../types/table"
+import { formatBytes } from "../../../lib/functions"
+import DropZone from "../DropZone"
+import { ImageJSON } from "../../../types/table"
 
 function DropZoneComponent(props: {
   images: ImageJSON[]

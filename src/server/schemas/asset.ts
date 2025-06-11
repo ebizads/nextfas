@@ -8,7 +8,6 @@ import {
   ModelEditInput,
   ModelEditTableInput,
   ProjectEditInput,
-
 } from "./model"
 import { VendorTableEditInput } from "./vendor"
 import { CompanyTableEditInput } from "./company"
@@ -74,12 +73,12 @@ export const AssetEditInput = z.object({
   subsidiaryId: z.number().optional().nullish(),
   assetProjectId: z.number().optional().nullish(),
   parentId: z.number().optional().nullish(),
-  assetTagId: z.number().optional(),
+  assetTagId: z.number().optional().nullish(),
   pastIssuanceId: z.number().nullish(),
   issuedById: z.number().optional().nullish(),
   issuedToId: z.number().optional().nullish(),
-  management: ManagementEditInput.optional(),
-  issuance: createIssuance.optional()
+  management: ManagementEditInput.optional().nullish(),
+  issuance: createIssuance.optional(),
   // model: ModelEditInput.optional(),
 })
 
@@ -111,7 +110,7 @@ export const AssetTransformInput = z.object({
   parentId: z.number().nullish(),
   management: ManagementEditInput,
   model: ModelEditTableInput,
-  issuance: createIssuance
+  issuance: createIssuance.optional(),
 })
 
 export const AssetUpdateInput = z.object({
@@ -196,7 +195,6 @@ export const AssetTransferCreateInput = z.object({
   remarks: z.string().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
-
 })
 
 export const AssetTransferEditInput = z.object({
@@ -208,7 +206,7 @@ export const AssetTransferEditInput = z.object({
   remarks: z.string().nullish().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
-  issuance: createIssuance
+  issuance: createIssuance,
 })
 
 export const AssetRepairCreateInput = z.object({

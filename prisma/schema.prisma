@@ -69,6 +69,7 @@ model User {
   superviseeId   Int?
   teamId         Int?
   passwordAge    DateTime?
+  hiredDate      DateTime?
   position       String?
   user_Id        String?        @unique
   accounts       Account[]
@@ -277,6 +278,7 @@ model AssetManagement {
   depreciation_lifetime Int?
   remarks               String?
   residual_percentage   Float?
+  asset_quantity        Int?
   asset_location        String?
   asset_lifetime        Int?
   asset                 Asset?    @relation(fields: [assetId], references: [id], onDelete: Cascade)

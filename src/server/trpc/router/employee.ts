@@ -102,12 +102,12 @@ export const employeeRouter = t.router({
                 },
 
                 NOT: {
-                  deleted: true,
-                },
-                OR: {
-                  NOT: {
-                    profile: null,
-                  },
+                  OR: [
+                    { deleted: true },
+                    {
+                      profile: null,
+                    },
+                  ],
                 },
                 // hired_date: input?.filter?.hired_date,
 

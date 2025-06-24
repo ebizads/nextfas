@@ -2,6 +2,14 @@ import { z } from "zod"
 import { AddressCreateInput, AddressEditInput } from "./address"
 
 export const CreateUserInput = z.object({
+  username: z.string({ required_error: "Username is required" })
+    .min(1, "Username is required") // triggers when value is ""
+    .min(3, "Username must be at least 3 characters")
+    .max(20, "Username must be at most 20 characters")
+    .regex(
+      /^[a-zA-Z0-9_-]{3,20}$/,
+      "Username must be 3-20 characters and use only letters, numbers, - or _"
+    ),
   name: z.string({ required_error: "Name is required" }).min(1),
   email: z.string({ required_error: "Email is required" }).email().min(1),
   password: z.string(),

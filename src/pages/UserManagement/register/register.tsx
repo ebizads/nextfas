@@ -45,11 +45,55 @@ const Register2 = () => {
   const futureDate = new Date()
   futureDate.setFullYear(futureDate.getFullYear() + 1)
 
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<User>({
+    resolver: zodResolver(CreateUserInput),
+    defaultValues: {
+      username: "",
+      name: "test",
+      user_Id: `${env.NEXT_PUBLIC_CLIENT_USER_ID}${userId}`,
+      // supervisee: {
+      //   name: ""
+      // },
+      // superviseeId: 0,
+      email: "",
+      position: "",
+      address: {
+        city: "",
+        country: "",
+        street: "",
+        // zip: 0,
+      },
+      profile: {
+        first_name: "",
+        middle_name: "",
+        last_name: "",
+        image: "",
+      },
+      validateTable: {
+        certificate: "",
+        validationDate: futureDate,
+      },
+      firstLogin: true,
+      password: "",
+    }, // Configuration the validation with the zod schema.
+  })
+
   const { mutate, isLoading, error } = trpc.user.create.useMutation({
     onSuccess() {
       setCompleteModal(true)
+      reset()
       // invalidate query of asset id when mutations is successful
       //utils.asset.findAll.invalidate()
+    },
+    onError(e) {
+      console.log("error creating uesr: ", e);
     },
   })
   const { data: teams } = trpc.team.findAll.useQuery()
@@ -73,50 +117,12 @@ const Register2 = () => {
     setCertificate(generateCertificate())
   }, [setUserId, setCertificate])
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<User>({
-    resolver: zodResolver(CreateUserInput),
-    defaultValues: {
-      name: "test",
-      user_Id: `${env.NEXT_PUBLIC_CLIENT_USER_ID}${userId}`,
-      // supervisee: {
-      //   name: ""
-      // },
-      // superviseeId: 0,
-      email: "",
-      position: "",
-      address: {
-        city: "",
-        country: "",
-        street: "",
-        zip: 0,
-      },
-      profile: {
-        first_name: "",
-        middle_name: "",
-        last_name: "",
-        image: "",
-      },
-      validateTable: {
-        certificate: "",
-        validationDate: futureDate,
-      },
-      firstLogin: true,
-      password: "",
-    }, // Configuration the validation with the zod schema.
-  })
-
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
     console.log("ewaaaa"),
       // Register function
       mutate({
+        username: user.username,
         firstLogin: true,
         name: `${user.profile.first_name} ${user.profile.last_name}`,
         user_type: "user",
@@ -153,7 +159,6 @@ const Register2 = () => {
       }),
       console.log("Cert: " + certificateCheck)
     console.log(user.validateTable)
-    reset()
   }
 
   const filteredAllCountries = useMemo(() => {
@@ -300,6 +305,25 @@ const Register2 = () => {
         className="grid grid-cols-9 gap-7"
         noValidate
       >
+        <div className="col-span-9 grid grid-cols-12">
+          <div className="col-span-4">
+            {/* <label className="sm:text-sm"></label> */}
+            <InputField
+              register={register}
+              name="username"
+              type={"text"}
+              label={"Username"}
+              required
+            />
+          </div>
+          <div className="col-span-12">
+            <AlertInput>{
+              (error?.message != null && error?.message.includes("username"))
+                ? error?.message
+                : errors?.username?.message
+            }</AlertInput>
+          </div>
+        </div>
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
             {/* <label className="sm:text-sm"></label> */}
@@ -410,7 +434,7 @@ const Register2 = () => {
               variant="unstyled"
               className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
-            <AlertInput>{errors?.teamId?.message}</AlertInput>
+            <AlertInput>{(errors?.teamId?.message && watch("teamId") == null) && errors?.teamId?.message}</AlertInput>
           </div>
 
           <div className="col-span-3">
@@ -449,7 +473,7 @@ const Register2 = () => {
               variant="unstyled"
               className="mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-2 py-0.5 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  disabled:bg-gray-200 disabled:text-gray-400 "
             />
-            <AlertInput>{errors?.teamId?.message}</AlertInput>
+            <AlertInput>{(errors?.teamId?.message && watch("teamId") == null) && errors?.teamId?.message}</AlertInput>
           </div>
         </div>
 
@@ -555,7 +579,7 @@ const Register2 = () => {
               className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
 
-            <AlertInput>{errors?.address?.country?.message}</AlertInput>
+            <AlertInput>{(errors?.address?.country?.message && country == "") && errors?.address?.country?.message}</AlertInput>
           </div>
           <div className="col-span-2">
             <label className="sm:text-sm">Region</label>
@@ -778,6 +802,7 @@ const Register2 = () => {
               disabled={country === ""}
               name={"address.zip"}
               register={register}
+              placeholder="Zip Code"
             />
             <AlertInput>{errors?.address?.zip?.message}</AlertInput>
           </div>
@@ -809,12 +834,12 @@ const Register2 = () => {
           </button>
         </div>
       </form>
-      {error && (
+      {/* {error && (
         <pre className="mt-2 text-sm italic text-red-500">
           Something went wrong!
           {JSON.stringify({ error, errors }, null, 2)}
         </pre>
-      )}
+      )} */}
 
       <Modal
         isVisible={completeModal}

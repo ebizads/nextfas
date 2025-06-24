@@ -144,10 +144,10 @@ export const userRouter = t.router({
   create: authedProcedure
     .input(CreateUserInput)
     .mutation(async ({ input, ctx }) => {
-      const { address, profile, password, validateTable, name, ...rest } = input
-      let username = (profile.first_name[0] + profile.last_name)
-        .replace(" ", "")
-        .toLowerCase()
+      const { username, address, profile, password, validateTable, name, ...rest } = input
+      // let username = (profile.first_name[0] + profile.last_name)
+      //   .replace(" ", "")
+      //   .toLowerCase()
 
       const encryptedPassword = await bcrypt.hash(password, 10)
 
@@ -161,7 +161,10 @@ export const userRouter = t.router({
         })
 
         if (user.length !== 0) {
-          username = username + user.length
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "This username is already taken",
+          })
         }
         await ctx.prisma.user.create({
           data: {
@@ -181,14 +184,22 @@ export const userRouter = t.router({
             name: name,
             password: encryptedPassword,
             email: username + env.NEXT_PUBLIC_CLIENT_EMAIL,
-            username,
+            username: username,
           },
         })
         return "User created successfully"
       } catch (error) {
+        let message = "An unexpected error occurred"
+
+        if (error instanceof Error) {
+          message = error.message
+        } else if (typeof error === "string") {
+          message = error
+        }
+
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: JSON.stringify(error),
+          message,
         })
       }
     }),

@@ -10,28 +10,39 @@ import {
 import { EmployeeCreateInput } from "../server/schemas/employee"
 import { AppRouter } from "../server/trpc/router"
 
-
 //dynamic inference of type
 export type AssetType = inferProcedureOutput<AppRouter["assetType"]["findOne"]>
-export type AssetTypeTable = inferProcedureOutput<AppRouter["asset"]["findOneTable"]>
+export type Asset = inferProcedureOutput<AppRouter["asset"]["findOne"]>
+export type AssetTypeTable = inferProcedureOutput<
+  AppRouter["asset"]["findOneTable"]
+>
 
-export type AssetActionType = inferProcedureOutput<AppRouter["assetActionType"]["findOne"]>
-
+export type AssetActionType = inferProcedureOutput<
+  AppRouter["assetActionType"]["findOne"]
+>
 
 export type AssetTag = inferProcedureOutput<AppRouter["assetTag"]["findOne"]>
-export type AssetDevice = inferProcedureOutput<AppRouter["assetType"]["findOne"]>
+export type AssetDevice = inferProcedureOutput<
+  AppRouter["assetType"]["findOne"]
+>
 
-export type AssetTransferType = inferProcedureOutput<AppRouter["assetTransfer"]["findOne"]>
+export type AssetTransferType = inferProcedureOutput<
+  AppRouter["assetTransfer"]["findOne"]
+>
 export type AssetRepairType = inferProcedureOutput<
   AppRouter["assetRepair"]["findOne"]
 >
 
-export type AssetProject = inferProcedureOutput<AppRouter["assetproject"]["findOne"]>
+export type AssetProject = inferProcedureOutput<
+  AppRouter["assetproject"]["findOne"]
+>
 export type AssetClassType = inferProcedureOutput<
   AppRouter["assetClass"]["findOne"]
 >
 
-export type BuildingType = inferProcedureOutput<AppRouter["building"]["findOne"]>
+export type BuildingType = inferProcedureOutput<
+  AppRouter["building"]["findOne"]
+>
 
 export type DepartmentType = inferProcedureOutput<
   AppRouter["department"]["findOne"]
@@ -41,7 +52,6 @@ export type VendorType = inferProcedureOutput<AppRouter["vendor"]["findOne"]>
 export type EmployeeType = inferProcedureOutput<
   AppRouter["employee"]["findOne"]
 >
-
 
 export type DisposeType = inferProcedureOutput<
   AppRouter["assetDisposal"]["findOne"]

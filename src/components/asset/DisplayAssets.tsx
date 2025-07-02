@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react"
 import { Pagination } from "@mantine/core"
 import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
-import { AssetType } from "../../types/generic"
+import { Asset, AssetType } from "../../types/generic"
 import { columns } from "../../lib/table"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import { useSearchStore } from "../../store/useStore"
-import { downloadExcel_assets, downloadExcel_templateAssets } from "../../lib/functions"
+import {
+  downloadExcel_assets,
+  downloadExcel_templateAssets,
+} from "../../lib/functions"
 import { UserType } from "../../types/generic"
 import { ExcelExportAssetType } from "../../types/asset"
 import { trpc } from "../../utils/trpc"
@@ -18,15 +21,14 @@ import DropZone_asset from "../dropzone/Asset dropzone/DropZone_asset"
 const DisplayAssets = (props: {
   user: UserType
   total: number
-  assets: AssetType[]
-  assetsSample: AssetType[]
+  assets: Asset[]
+  assetsSample: Asset[]
   accessiblePage: number
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
   limit: number
   setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-
   const { setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
@@ -38,9 +40,10 @@ const DisplayAssets = (props: {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
-  const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
+  const [filterBy, setFilterBy] = useState<string[]>(
+    columns.map((i) => i.value)
+  )
   console.log("check", filterBy)
-
 
   useEffect(() => {
     setSearch("")
@@ -50,16 +53,13 @@ const DisplayAssets = (props: {
     <div className="space-y-4">
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-
-          <div className="flex items-center gap-2 ml-auto flex-wrap justify-end">
-
-            <div className="flex items-center gap-2 ml-auto flex-wrap justify-end">
-
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+            <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
               <div className="flex w-fit items-center gap-2">
                 <div className="relative w-fit">
                   <input
                     type="text"
-                    className="border-gray-400 border-2 rounded pl-2 pr-10 py-[0.25rem] w-64 "
+                    className="w-64 rounded border-2 border-gray-400 py-[0.25rem] pl-2 pr-10 "
                     placeholder="Search"
                     onChange={(e) => setSearch(e.currentTarget.value)}
                   />
@@ -85,89 +85,76 @@ const DisplayAssets = (props: {
               )}
             </div>
 
-            <button onClick={() => {
-              const downloadableAssets = props.assetsSample.map((assets) => {
-                console.log("TRIAl: " + JSON.stringify(assets))
-                if (assets?.['model'] && assets?.['management']) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
-                  const { management, createdAt, updatedAt, deleted, deletedAt, model, ...rest } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
+            <button
+              onClick={() => {
+                const downloadableAssets = props.assetsSample.map((assets) => {
+                  console.log("TRIAl: " + JSON.stringify(assets))
+                  if (assets) {
+                    // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
+                    const {
+                      createdAt,
+                      updatedAt,
+                      deleted,
+                      deletedAt,
+                      ...rest
+                    } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
 
-                  return {
-                    ...rest,
-                    management_id: management?.id,
-                    ...management,
-                    management_createdAt: management?.createdAt,
-                    management_updatedAt: management?.updatedAt,
-                    mangement_deletedAt: management?.deletedAt,
-                    management_deleted: management?.deleted,
-                    management_remarks: management?.remarks,
-                    model_id: model?.id,
-                    model_name: model?.name,
-                    model_number: model?.number,
-                    model_createdAt: model?.createdAt,
-                    model_updatedAt: model?.updatedAt,
-                    model_deletedAt: model?.deletedAt,
-                    model_deleted: model?.deleted,
-                    ...model,
-                    ...rest,
-                    remarks: rest?.remarks,
-                    id: rest.id,
-                    number: rest.number,
-                    createdAt: createdAt,
-                    updatedAt: updatedAt,
-                    deletedAt: deletedAt,
-                    deleted: deleted,
-
+                    return {
+                      ...rest,
+                      // remarks: rest?.remarks,
+                      id: rest.id,
+                      // number: rest.number,
+                      createdAt: createdAt,
+                      updatedAt: updatedAt,
+                      deletedAt: deletedAt,
+                      deleted: deleted,
+                    }
                   }
-                }
+                }) as ExcelExportAssetType[]
+                console.log("TEST: " + JSON.stringify(downloadableAssets))
 
-              }) as ExcelExportAssetType[]
-              console.log("TEST: " + JSON.stringify(downloadableAssets))
-
-              downloadExcel_templateAssets(downloadableAssets)
-            }} className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 hover:border-tangerine-600 focus:outline-none">
-              <i className="fa-solid fa-file-lines text-xs" title="Download Template" />
-
+                downloadExcel_templateAssets(downloadableAssets)
+              }}
+              className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
+            >
+              <i
+                className="fa-solid fa-file-lines text-xs"
+                title="Download Template"
+              />
             </button>
-            <button onClick={() => {
-
-              const downloadableAssets = props.assets.map((assets) => {
-                console.log("TRIAl: " + JSON.stringify(assets?.model))
-                if (assets?.["model"] && assets?.["management"]) { // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
-                  const { management, createdAt, updatedAt, deleted, deletedAt, model, ...rest } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
-                  return {
-                    ...rest,
-                    management_id: management?.id,
-                    ...management,
-                    management_createdAt: management?.createdAt,
-                    management_updatedAt: management?.updatedAt,
-                    mangement_deletedAt: management?.deletedAt,
-                    management_deleted: management?.deleted,
-                    management_remarks: management?.remarks,
-                    model_id: model?.id,
-                    model_name: model?.name,
-                    model_number: model?.number,
-                    model_createdAt: model?.createdAt,
-                    model_updatedAt: model?.updatedAt,
-                    model_deletedAt: model?.deletedAt,
-                    model_deleted: model?.deleted,
-                    ...model,
-                    ...rest,
-                    remarks: rest?.remarks,
-                    id: rest.id,
-                    number: rest.number,
-                    createdAt: createdAt,
-                    updatedAt: updatedAt,
-                    deletedAt: deletedAt,
-                    deleted: deleted,
+            <button
+              onClick={() => {
+                const downloadableAssets = props.assets.map((assets) => {
+                  console.log("TRIAl: " + JSON.stringify(assets))
+                  if (assets) {
+                    // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
+                    const {
+                      createdAt,
+                      updatedAt,
+                      deleted,
+                      deletedAt,
+                      ...rest
+                    } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
+                    return {
+                      ...rest,
+                      id: rest.id,
+                      createdAt: createdAt,
+                      updatedAt: updatedAt,
+                      deletedAt: deletedAt,
+                      deleted: deleted,
+                    }
                   }
-                }
-              }) as ExcelExportAssetType[]
-              console.log("TEST: " + JSON.stringify(downloadableAssets))
+                }) as ExcelExportAssetType[]
+                console.log("TEST: " + JSON.stringify(downloadableAssets))
 
-              downloadExcel_assets(downloadableAssets)
-            }} className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:bg-tangerine-600 hover:border-tangerine-600 focus:outline-none">
-              <i className="fa-solid fa-file-arrow-down text-xs" title="Download Assets" />
-
+                downloadExcel_assets(downloadableAssets)
+              }}
+              className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
+            >
+              <i
+                className="fa-solid fa-file-arrow-down text-xs"
+                title="Download Assets"
+              />
             </button>
             {/* <Link href={"/assets/create"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">
@@ -183,7 +170,7 @@ const DisplayAssets = (props: {
             />
           </div>
         </div>
-      </section >
+      </section>
       <AssetTable
         checkboxes={checkboxes}
         setCheckboxes={setCheckboxes}
@@ -234,8 +221,7 @@ const DisplayAssets = (props: {
         openModalDel={openModalDel}
         setOpenModalDel={setOpenModalDel}
       />
-
-    </div >
+    </div>
   )
 }
 

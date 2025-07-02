@@ -20,27 +20,8 @@ export const assetRouter = t.router({
         number: input,
       },
       include: {
-        custodian: true,
-        parent: true,
-        project: true,
-        vendor: true,
-        subsidiary: true,
-        management: true,
-        addedBy: true,
-        assetTag: true,
-        AssetIssuance: true,
-        pastIssuance: true,
-        issuedBy: true,
-        issuedTo: true,
-        type: true,
-        actionType: true, // Added type relation
-        // model: {
-        //   include: {
-        //     type: true,
-        //     category: true,
-        //     class: true,
-        //   },
-        // },
+        type: true, // Added type relation
+        actionType: true, // Added actionType relation
         department: {
           include: {
             location: true,
@@ -49,25 +30,34 @@ export const assetRouter = t.router({
             building: true,
           },
         },
+        parent: true,
+        custodian: true,
+        vendor: true,
+        management: true,
+        addedBy: true,
+        assetTag: true,
+        AssetIssuance: true,
       },
-    });
-    return asset;
+    })
+    return asset
   }),
 
-  findOneTable: authedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const asset = await ctx.prisma.asset.findUnique({
-      where: {
-        number: input,
-      },
-      include: {
-        management: true,
-        model: true,
-        type: true,
-        actionType: true, // Added type relation
-      },
-    });
-    return asset;
-  }),
+  findOneTable: authedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const asset = await ctx.prisma.asset.findUnique({
+        where: {
+          number: input,
+        },
+        include: {
+          management: true,
+          model: true,
+          type: true,
+          actionType: true, // Added type relation
+        },
+      })
+      return asset
+    }),
 
   findAll: authedProcedure
     .input(
@@ -136,10 +126,10 @@ export const assetRouter = t.router({
             OR: {
               NOT: {
                 id: 999999,
-              }
+              },
             },
-            name: { contains: input?.search?.name, mode: 'insensitive' },
-            number: { contains: input?.search?.number, mode: 'insensitive' },
+            name: { contains: input?.search?.name, mode: "insensitive" },
+            number: { contains: input?.search?.number, mode: "insensitive" },
             typeId: input?.search?.typeId, // Added type filter
             actionTypeId: input?.search?.actionTypeId, // Added actionType filter
           },
@@ -157,12 +147,12 @@ export const assetRouter = t.router({
             actionTypeId: input?.search?.typeId, // Added type filter to count
           },
         }),
-      ]);
+      ])
 
       return {
         assets,
         count,
-      };
+      }
     }),
   findAllNoLimit: authedProcedure
     .input(
@@ -221,14 +211,13 @@ export const assetRouter = t.router({
             addedBy: true,
             assetTag: true,
             AssetIssuance: true,
-
           },
           where: {
             NOT: {
               id: 999999,
             },
-            name: { contains: input?.search?.name, mode: 'insensitive' },
-            number: { contains: input?.search?.number, mode: 'insensitive' },
+            name: { contains: input?.search?.name, mode: "insensitive" },
+            number: { contains: input?.search?.number, mode: "insensitive" },
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)
@@ -306,11 +295,9 @@ export const assetRouter = t.router({
             addedBy: true,
             assetTag: true,
             AssetIssuance: true,
-
           },
           where: {
             id: 999999,
-
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)
@@ -339,7 +326,7 @@ export const assetRouter = t.router({
           const assets = await ctx.prisma.asset.findMany({
             where: {
               number: {
-                in: input
+                in: input,
               },
             },
             include: {
@@ -376,7 +363,7 @@ export const assetRouter = t.router({
           const assets = await ctx.prisma.asset.findMany({
             where: {
               number: {
-                in: input
+                in: input,
               },
             },
             include: {
@@ -391,31 +378,33 @@ export const assetRouter = t.router({
       }
     }),
   create: authedProcedure
-    .input(AssetCreateInput.extend({
-      typeId: z.number(), // Add typeId to input validation
-    }))
+    .input(
+      AssetCreateInput.extend({
+        typeId: z.number(), // Add typeId to input validation
+      })
+    )
     .mutation(async ({ ctx, input }) => {
-      const { typeId, actionTypeId, ...rest } = input;
+      const { typeId, actionTypeId, ...rest } = input
 
       // Validate type exists if provided
       if (typeId) {
         const typeExists = await ctx.prisma.assetType.findUnique({
           where: { id: typeId },
-        });
+        })
         if (!typeExists) {
-          throw new Error('Specified asset type does not exist');
+          throw new Error("Specified asset type does not exist")
         }
       }
 
       // Generate asset number
-      const allAssets = await ctx.prisma.asset.findMany();
-      let assetNumber = '';
+      const allAssets = await ctx.prisma.asset.findMany()
+      let assetNumber = ""
 
       for (let x = 0; x <= (allAssets?.length || 0) + 1; x++) {
-        const formattedNumber = `GUN-${String(x + 1).padStart(4, '0')}`;
+        const formattedNumber = `GUN-${String(x + 1).padStart(4, "0")}`
         if (!allAssets?.some((item) => item.number === formattedNumber)) {
-          assetNumber = formattedNumber;
-          break;
+          assetNumber = formattedNumber
+          break
         }
       }
 
@@ -441,76 +430,81 @@ export const assetRouter = t.router({
           type: true,
           actionType: true, // Include the type in the response
         },
-      });
+      })
 
-      return asset;
+      return asset
     }),
 
   createMany: authedProcedure
-    .input(z.array(AssetCreateInput.extend({
-      typeId: z.number().optional(),
-    })))
+    .input(
+      z.array(
+        AssetCreateInput.extend({
+          typeId: z.number().optional(),
+        })
+      )
+    )
     .mutation(async ({ ctx, input }) => {
       // Validate all types exist first
-      const typeIds = input.map(i => i.typeId).filter(Boolean) as number[];
+      const typeIds = input.map((i) => i.typeId).filter(Boolean) as number[]
       if (typeIds.length > 0) {
         const existingTypes = await ctx.prisma.assetType.findMany({
           where: { id: { in: typeIds } },
-        });
+        })
         if (existingTypes.length !== new Set(typeIds).size) {
-          throw new Error('One or more specified asset types do not exist');
+          throw new Error("One or more specified asset types do not exist")
         }
       }
 
       // Generate numbers for each asset
-      const allAssets = await ctx.prisma.asset.findMany();
+      const allAssets = await ctx.prisma.asset.findMany()
       const assetsWithNumbers = input.map((asset, index) => {
-        let assetNumber = '';
+        let assetNumber = ""
         for (let x = 0; x <= (allAssets?.length || 0) + index + 1; x++) {
-          const formattedNumber = `GUN-${String((allAssets?.length || 0) + x + 1).padStart(4, '0')}`;
-          if (!allAssets?.some(item => item.number === formattedNumber)) {
-            assetNumber = formattedNumber;
-            break;
+          const formattedNumber = `GUN-${String(
+            (allAssets?.length || 0) + x + 1
+          ).padStart(4, "0")}`
+          if (!allAssets?.some((item) => item.number === formattedNumber)) {
+            assetNumber = formattedNumber
+            break
           }
         }
         return {
           ...asset,
           number: assetNumber,
-        };
-      });
+        }
+      })
 
       await ctx.prisma.asset.createMany({
         data: assetsWithNumbers,
         skipDuplicates: true,
-      });
+      })
 
-      return 'Assets successfully created';
+      return "Assets successfully created"
     }),
   createOrUpdate: authedProcedure
-    .input(AssetTransformInput.extend({
-      typeId: z.number().optional(), // Add typeId to input validation
-    }))
+    .input(
+      AssetTransformInput.extend({
+        typeId: z.number().optional(), // Add typeId to input validation
+      })
+    )
     .mutation(async ({ ctx, input }) => {
-      const { number, id, typeId, actionTypeId, ...rest } = input;
+      const { number, id, typeId, actionTypeId, ...rest } = input
 
       // Validate type exists if provided
       if (typeId) {
         const typeExists = await ctx.prisma.assetType.findUnique({
           where: { id: typeId },
-        });
+        })
         if (!typeExists) {
-          throw new Error('Specified asset type does not exist');
+          throw new Error("Specified asset type does not exist")
         }
       }
 
       const existAssets = await ctx.prisma.asset.findFirst({
         where: {
-          number: number
-        }
-      });
-
-
-      
+          number: number,
+        },
+      })
 
       // Prepare base data with type handling
       const baseData = {
@@ -518,7 +512,7 @@ export const assetRouter = t.router({
         number: number,
         ...(typeId && { type: { connect: { id: typeId } } }),
         ...(actionTypeId && { actionType: { connect: { id: actionTypeId } } }),
-      };
+      }
 
       if (existAssets?.id) {
         // Update existing asset
@@ -540,8 +534,8 @@ export const assetRouter = t.router({
           include: {
             type: true, // Include the type in the response
           },
-        });
-        return updatedAsset;
+        })
+        return updatedAsset
       } else {
         // Create new asset
         const newAsset = await ctx.prisma.asset.create({
@@ -553,13 +547,12 @@ export const assetRouter = t.router({
                 id: typeId, // Connect to AssetType if typeId is provided
               },
             }, // Connect to AssetType
-
           },
           include: {
             type: true,
-          }
-        });
-        return newAsset;
+          },
+        })
+        return newAsset
       }
     }),
 
@@ -581,7 +574,6 @@ export const assetRouter = t.router({
   //       },
   //     },
   //   },
-
 
   //   // update: {
   //   //   ...rest,

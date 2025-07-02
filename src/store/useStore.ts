@@ -1,6 +1,6 @@
 import React from "react"
 import create from "zustand"
-import { AssetType, EmployeeType, UserType, VendorType } from "../types/generic"
+import { Asset, EmployeeType, UserType, VendorType } from "../types/generic"
 
 type MinimizeState = {
   minimize: boolean
@@ -28,28 +28,28 @@ type GenerateState = {
 }
 
 type SelectedAssetState = {
-  selectedAsset: AssetType
-  setSelectedAsset: (newAsset: AssetType) => void
+  selectedAsset: Asset
+  setSelectedAsset: (newAsset: Asset) => void
 }
 
 type TransferAssetState = {
-  transferAsset: AssetType
-  setTransferAsset: (newAsset: AssetType) => void
+  transferAsset: Asset
+  setTransferAsset: (newAsset: Asset) => void
 }
 
 type DisposeAssetState = {
-  disposeAsset: AssetType
-  setDisposeAsset: (newAsset: AssetType) => void
+  disposeAsset: Asset
+  setDisposeAsset: (newAsset: Asset) => void
 }
 
 type IssuanceAssetState = {
-  issuanceAsset: AssetType
-  setIssuanceAsset: (newAsset: AssetType) => void
+  issuanceAsset: Asset
+  setIssuanceAsset: (newAsset: Asset) => void
 }
 
 type RepairAssetState = {
-  repairAsset: AssetType
-  setRepairAsset: (newAsset: AssetType) => void
+  repairAsset: Asset
+  setRepairAsset: (newAsset: Asset) => void
 }
 
 type SelectedEmpState = {
@@ -102,7 +102,8 @@ export const useEditableStore = create<EditableState>((set) => ({
 
 export const useUserEditableStore = create<UserEditableState>((set) => ({
   userEditable: false,
-  setUserEditable: () => set((state) => ({ userEditable: !state.userEditable })),
+  setUserEditable: () =>
+    set((state) => ({ userEditable: !state.userEditable })),
 }))
 
 export const useGenerateStore = create<GenerateState>((set) => ({
@@ -122,37 +123,39 @@ export const useDeleteStore = create<DeleteState>((set) => ({
 
 export const useUpdateAssetStore = create<SelectedAssetState>((set) => ({
   selectedAsset: null,
-  setSelectedAsset: (newAsset: AssetType) => set({ selectedAsset: newAsset }),
+  setSelectedAsset: (newAsset: Asset) => set({ selectedAsset: newAsset }),
 }))
 
 export const useDisposeAssetStore = create<DisposeAssetState>((set) => ({
   disposeAsset: null,
-  setDisposeAsset: (newAsset: AssetType) => set({ disposeAsset: newAsset }),
+  setDisposeAsset: (newAsset: Asset) => set({ disposeAsset: newAsset }),
 }))
 
 export const useIssuanceAssetStore = create<IssuanceAssetState>((set) => ({
   issuanceAsset: null,
-  setIssuanceAsset: (newAsset: AssetType) => set({ issuanceAsset: newAsset }),
+  setIssuanceAsset: (newAsset: Asset) => set({ issuanceAsset: newAsset }),
 }))
 
 export const useTransferAssetStore = create<TransferAssetState>((set) => ({
   transferAsset: null,
-  setTransferAsset: (newAsset: AssetType) => set({ transferAsset: newAsset }),
+  setTransferAsset: (newAsset: Asset) => set({ transferAsset: newAsset }),
 }))
 
 export const useRepairAssetStore = create<RepairAssetState>((set) => ({
   repairAsset: null,
-  setRepairAsset: (newAsset: AssetType) => set({ repairAsset: newAsset }),
+  setRepairAsset: (newAsset: Asset) => set({ repairAsset: newAsset }),
 }))
 
 export const useSelectedEmpStore = create<SelectedEmpState>((set) => ({
   selectedEmp: null,
-  setSelectedEmp: (newEmployee: EmployeeType) => set({ selectedEmp: newEmployee }),
+  setSelectedEmp: (newEmployee: EmployeeType) =>
+    set({ selectedEmp: newEmployee }),
 }))
 
 export const useSelectedVendorStore = create<SelectedVendorState>((set) => ({
   selectedVendor: null,
-  setSelectedVendor: (newVendor: VendorType) => set({ selectedVendor: newVendor }),
+  setSelectedVendor: (newVendor: VendorType) =>
+    set({ selectedVendor: newVendor }),
 }))
 
 export const useSelectedUserStore = create<SelectedUserState>((set) => ({
@@ -164,7 +167,6 @@ export const useDisposalStatusStore = create<DisposalStatusState>((set) => ({
   status: "pending",
   setStatus: (newStatus: string) => set({ status: newStatus }),
 }))
-
 
 export const useIssuanceStatusStore = create<IssuanceStatusState>((set) => ({
   status: null,
@@ -188,5 +190,6 @@ export const useSearchStore = create<SearchState>((set) => ({
 
 export const useCounterValidateStore = create<counterValidateState>((set) => ({
   counterCheck: false,
-  setCounterCheck: (counterStatus: boolean) => set({ counterCheck: counterStatus }),
+  setCounterCheck: (counterStatus: boolean) =>
+    set({ counterCheck: counterStatus }),
 }))

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import DashboardLayout from "../../layouts/DashboardLayout"
 import { trpc } from "../../utils/trpc"
 import DisplayAssets from "../../components/asset/DisplayAssets"
-import { AssetType } from "../../types/generic"
+import { Asset, AssetType } from "../../types/generic"
 import { useRouter } from "next/router"
 import { useSearchStore } from "../../store/useStore"
 import Modal from "../../components/asset/Modal"
@@ -24,19 +24,19 @@ const Assets = () => {
     page,
   })
   const [completeModal, setCompleteModal] = useState<boolean>(false)
-  const [assets, setAssets] = useState<AssetType[]>([])
+  const [assets, setAssets] = useState<Asset[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
-  const [sampleAssets, setSampleAssets] = useState<AssetType[]>([])
+  const [sampleAssets, setSampleAssets] = useState<Asset[]>([])
 
   useEffect(() => {
     //get and parse all data
     console.log("sample ", dataAssets, search)
     if (dataAssets) {
-      setAssets(dataAssets.assets as AssetType[])
+      setAssets(dataAssets.assets as Asset[])
       setAccessiblePage(Math.ceil(dataAssets?.count / limit))
     }
     if (sample) {
-      setSampleAssets(sample.assets as AssetType[])
+      setSampleAssets(sample.assets as Asset[])
       console.log(sampleAssets)
     }
   }, [dataAssets, limit, router, sample, sampleAssets, search])

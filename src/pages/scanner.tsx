@@ -29,9 +29,9 @@ const Scanner = () => {
                     }}
                     width={500}
                     height={500}
-                    facingMode="user" // 👈 Use back camera
+                    facingMode="environment" // 👈 Use back camera
                     videoConstraints={{
-                        facingMode: { exact: "user" }
+                        facingMode: { exact: "environment" }
                     }}
                 />
             </div>

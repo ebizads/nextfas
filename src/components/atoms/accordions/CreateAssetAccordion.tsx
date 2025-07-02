@@ -368,10 +368,10 @@ const CreateAssetAccordion = () => {
               <InputField
                 register={register}
                 label="Asset ID"
-                placeholder="Asset ID"
-                name="assetId"
+                placeholder={`GUN-${String(assetsData?.count + 1).padStart(4, '0')}`}
+                name="number"
+                disabled
               />
-              <AlertInput>{errors?.alt_number?.message}</AlertInput>
             </div>
           </div>
           <div className="col-span-9 grid grid-cols-12 gap-7">

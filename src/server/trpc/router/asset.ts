@@ -739,6 +739,33 @@ export const assetRouter = t.router({
         })
       }
     }),
+  changeStatusScanned: authedProcedure
+    .input(
+      z.object({
+        serial_no: z.string(),
+        status: z.string().nullish(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { serial_no, status } = input
+      try {
+        await ctx.prisma.asset.updateMany({
+          where: {
+            serial_no,
+          },
+          data: {
+            status: status,
+          },
+        })
+
+        return "Asset updated successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
   delete: authedProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
     try {
       await ctx.prisma.asset.update({
@@ -783,7 +810,7 @@ export const assetRouter = t.router({
         })
       }
     }),
-    
+
   // editCustodian: authedProcedure
   //   .input(AssetEditKevinInput)
   //   .mutation(async ({ ctx, input }) => {

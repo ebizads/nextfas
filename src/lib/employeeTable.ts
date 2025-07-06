@@ -7,7 +7,6 @@ export const columns = [
   { value: "first_name", name: "First Name" },
   { value: "last_name", name: "Last Name" },
   { value: "city", name: "Street Address" },
-  { value: "team", name: "Team" },
   { value: "email", name: "Email" },
   { value: "workMode", name: "Work Mode" },
 ] as ColumnType[]
@@ -18,7 +17,6 @@ export const columnsuser = [
   { value: "last_name", name: "Last Name" },
   { value: "city", name: "Street Address" },
   // { value: "hired_date", name: "Hire Date" },
-  { value: "team", name: "Team" },
   { value: "email", name: "Email" },
   // { value: "workMode", name: "Work Mode"},
 ] as ColumnType[]

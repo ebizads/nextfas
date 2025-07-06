@@ -43,7 +43,6 @@ const DisplayAssets = (props: {
   const [filterBy, setFilterBy] = useState<string[]>(
     columns.map((i) => i.value)
   )
-  console.log("check", filterBy)
 
   useEffect(() => {
     setSearch("")
@@ -86,9 +85,9 @@ const DisplayAssets = (props: {
             </div>
 
             <button
+              title="Download Template"
               onClick={() => {
                 const downloadableAssets = props.assetsSample.map((assets) => {
-                  console.log("TRIAl: " + JSON.stringify(assets))
                   if (assets) {
                     // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
                     const {
@@ -111,21 +110,17 @@ const DisplayAssets = (props: {
                     }
                   }
                 }) as ExcelExportAssetType[]
-                console.log("TEST: " + JSON.stringify(downloadableAssets))
 
                 downloadExcel_templateAssets(downloadableAssets)
               }}
               className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
             >
-              <i
-                className="fa-solid fa-file-lines text-xs"
-                title="Download Template"
-              />
+              <i className="fa-solid fa-file-lines text-xs" />
             </button>
             <button
+              title="Download Assets"
               onClick={() => {
                 const downloadableAssets = props.assets.map((assets) => {
-                  console.log("TRIAl: " + JSON.stringify(assets))
                   if (assets) {
                     // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
 
@@ -144,16 +139,12 @@ const DisplayAssets = (props: {
                     }
                   }
                 }) as ExcelExportAssetType[]
-                console.log("TEST: " + JSON.stringify(downloadableAssets))
 
                 downloadExcel_assets(downloadableAssets)
               }}
               className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
             >
-              <i
-                className="fa-solid fa-file-arrow-down text-xs"
-                title="Download Assets"
-              />
+              <i className="fa-solid fa-file-arrow-down text-xs" />
             </button>
             {/* <Link href={"/assets/create"}>
               <div className="flex cursor-pointer gap-2 rounded-md border-2 border-tangerine-500 py-2 px-4 text-center text-xs font-medium text-tangerine-600 outline-none hover:bg-tangerine-200 focus:outline-none">

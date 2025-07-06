@@ -585,8 +585,6 @@ const AssetTable = (props: {
                         setOpenModalDesc(true)
                         setSelectedAsset(null)
                         setSelectedAsset(row)
-
-                        console.log("chek", row)
                       }}
                     >
                       {col.value == "typeId"

@@ -30,14 +30,12 @@ const Assets = () => {
 
   useEffect(() => {
     //get and parse all data
-    console.log("sample ", dataAssets, search)
     if (dataAssets) {
       setAssets(dataAssets.assets as Asset[])
       setAccessiblePage(Math.ceil(dataAssets?.count / limit))
     }
     if (sample) {
       setSampleAssets(sample.assets as Asset[])
-      console.log(sampleAssets)
     }
   }, [dataAssets, limit, router, sample, sampleAssets, search])
 
@@ -45,7 +43,6 @@ const Assets = () => {
     <DashboardLayout>
       {/* <pre>{JSON.stringify(assets, null, 2)}</pre> */}
       <div className="space-y-6">
-        <h3 className="text-xl font-medium">Assets </h3>
         <DisplayAssets
           total={dataAssets?.count ?? 0}
           assets={assets}

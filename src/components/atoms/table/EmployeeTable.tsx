@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState } from "react"
-import { useEditableStore, useMinimizeStore, useSelectedEmpStore } from "../../../store/useStore"
+import {
+  useEditableStore,
+  useMinimizeStore,
+  useSelectedEmpStore,
+} from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox, Avatar } from "@mantine/core"
 import Modal from "../../headless/modal/modal"
@@ -51,18 +55,11 @@ const EmployeeTable = (props: {
     }
   }, [setEditable, updateRecord, editable])
 
-  useEffect(() => {
-    console.log("editable: " + editable, "updateRecord: " + updateRecord)
-  })
-
-  if (editable) {
-    console.log("dapat maging editable")
-  }
-
   return (
     <div
-      className={`max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-[78vw]"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-full"
+      } relative mt-8 border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -132,7 +129,6 @@ const EmployeeTable = (props: {
                       setDetails(row)
                       setUpdateRecord(true)
                       setSelectedEmp(row)
-                      console.log(selectedEmp, "YAYEET EMPLOYEE")
                     }}
                   >
                     {
@@ -140,8 +136,8 @@ const EmployeeTable = (props: {
                       col.value.match(/_name/g)
                         ? getName(col.value, row)
                         : col.value === "city"
-                          ? getAddress(row)
-                          : getProperty(col.value, row)
+                        ? getAddress(row)
+                        : getProperty(col.value, row)
                     }
                   </td>
                 ))}

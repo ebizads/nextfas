@@ -31,30 +31,47 @@ export const UserDetailsModal = (props: {
   // setEditable: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-
-
   const address = () => {
-    return props.user?.address?.country !== null ??
-      props.user?.address?.country !== ""
-      ? props.user?.address?.country === "Philippines"
-        ? (props.user?.address?.street ? (props.user?.address?.street + ", ") : "") +
-        (props.user?.address?.baranggay ? (props.user?.address?.baranggay + ", ") : "") +
-        (props.user?.address?.city ? (props.user?.address?.city + ", ") : "") +
-        (props.user?.address?.province ? (props.user?.address?.province + ", ") : "") +
-        (props.user?.address?.region ? (props.user?.address?.region + ", ") : "") +
-        (props.user?.address?.country ? (props.user?.address?.country + ", ") : "") +
-        (props.user?.address?.zip ?? "")
-        :
-        (props.user?.address?.street ? (props.user?.address?.street + ", ") : "") +
-        (props.user?.address?.city ? (props.user?.address?.city + ", ") : "") +
-        (props.user?.address?.province ? (props.user?.address?.province + ", ") : "") +
-        (props.user?.address?.country ? (props.user?.address?.country + ", ") : "") +
-        (String(props.user?.address?.zip) ?? "")
+    return props.user?.address?.country !== null
+      ? props.user?.address?.country !== ""
+        ? props.user?.address?.country === "Philippines"
+          ? (props.user?.address?.street
+              ? props.user?.address?.street + ", "
+              : "") +
+            (props.user?.address?.baranggay
+              ? props.user?.address?.baranggay + ", "
+              : "") +
+            (props.user?.address?.city
+              ? props.user?.address?.city + ", "
+              : "") +
+            (props.user?.address?.province
+              ? props.user?.address?.province + ", "
+              : "") +
+            (props.user?.address?.region
+              ? props.user?.address?.region + ", "
+              : "") +
+            (props.user?.address?.country
+              ? props.user?.address?.country + ", "
+              : "") +
+            (props.user?.address?.zip ?? "")
+          : (props.user?.address?.street
+              ? props.user?.address?.street + ", "
+              : "") +
+            (props.user?.address?.city
+              ? props.user?.address?.city + ", "
+              : "") +
+            (props.user?.address?.province
+              ? props.user?.address?.province + ", "
+              : "") +
+            (props.user?.address?.country
+              ? props.user?.address?.country + ", "
+              : "") +
+            (String(props.user?.address?.zip) ?? "")
+        : "--"
       : "--"
   }
 
   // const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
-
 
   return (
     <div className="">
@@ -66,42 +83,45 @@ export const UserDetailsModal = (props: {
               Personal Information
             </p>
             <div className="mt-4 flex flex-col gap-4 text-sm">
-              <section className="grid grid-cols-4">
-                <div className="col-span-1">
+              <section className="grid grid-cols-9">
+                <div className="col-span-3">
                   <p className="font-light">First Name</p>
                   <p className="font-medium">
                     {props.user?.profile?.first_name}
                   </p>
                 </div>
-                <div className="col-span-1">
+                <div className="col-span-3">
                   <p className="font-light">Middle Name</p>
                   <p className="font-medium">
-                    {props.user?.profile?.middle_name ?? "--"}
+                    {props.user?.profile?.middle_name
+                      ? props.user?.profile?.middle_name.length > 0
+                        ? props.user?.profile?.middle_name
+                        : "--"
+                      : "--"}
                     {/* {props.asset?.alt_number !== "" */}
                     {/* // ? props.asset?.alt_number */}
                     {/* // : "No Alternate Number"} */}
                   </p>
                 </div>
-                <div className="col-span-1">
+                <div className="col-span-3">
                   <p className="font-light">Last Name</p>
                   <p className="font-medium">
                     {props.user?.profile?.last_name}
                   </p>
                   {/* <p className="font-medium">{props.asset?.name}</p> */}
                 </div>
-                <div className="col-span-1">
+              </section>
+              <section className="grid grid-cols-9">
+                <div className="col-span-3">
                   <p className="font-light">Role</p>
                   <p className="font-medium">
                     {/* {props.asset?.serial_no !== "" */}
                     {/* // ? props.asset?.serial_no */}
                     {/* // : "--"} */}
                     {props.user?.user_type ?? "--"}
-
                   </p>
                 </div>
-              </section>
-              <section className="grid grid-cols-4">
-                <div className="col-span-1">
+                <div className="col-span-3">
                   <p className="font-light">User Number</p>
                   <p className="font-medium">
                     {/* {props.asset?.model?.name */}
@@ -110,49 +130,24 @@ export const UserDetailsModal = (props: {
                     {props.user?.user_Id}
                   </p>
                 </div>
-                <div className="col-span-1">
-                  <p className="font-light">Team</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.parentId !== 0 */}
-                    {/* // ? props.asset?.parent?.name */}
-                    {/* // : "--"} */}
-                    {props.user?.Userteam?.name === null
-                      ? "--"
-                      : props.user?.Userteam?.name === undefined
-                        ? "--"
-                        : props.user?.Userteam?.name === ""
-                          ? "--"
-                          : props.user?.Userteam?.name}
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-light">Department</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.parentId !== 0 */}
-                    {/* // ? props.asset?.parent?.name */}
-                    {/* // : "--"} */}
-                    {props.user?.Userteam?.department?.name === null
-                      ? "--"
-                      : props.user?.Userteam?.department?.name === undefined
-                        ? "--"
-                        : props.user?.Userteam?.department?.name === ""
-                          ? "--"
-                          : props.user?.Userteam?.department?.name}
-                  </p>
-                </div>
-                <div className="col-span-1">
+
+                <div className="col-span-3">
                   <p className="font-light">Designation / Position</p>
                   <p className="font-medium">
                     {/* {props.asset?.model?.brand */}
                     {/* // ? props.asset?.model?.brand
                       // : "--"} */}
-                    {props.user?.position ?? "--"}
+                    {props.user?.position
+                      ? props.user?.position.length > 0
+                        ? props.user?.position
+                        : "--"
+                      : "--"}
                   </p>
                 </div>
               </section>
 
               <section className="grid grid-cols-4">
-                <div className="col-span-1">
+                <div className="col-span-2">
                   <p className="font-light">Email</p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.currency}{" "} */}
@@ -161,29 +156,13 @@ export const UserDetailsModal = (props: {
                     {props.user?.email ?? "--"}
                   </p>
                 </div>
-                <div className="col-span-1">
+                <div className="col-span-2">
                   <p className="font-light">Mobile Number</p>
                   <p className="font-medium">
                     {/* {props.asset?.management?.currency}{" "}
                     {props.asset?.management?.current_cost ??
                       "no information"} */}
                     {props.user?.profile?.phone_no ?? "--"}
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-light"></p>
-                  <p className="font-medium">
-                    {/* {props.asset?.management?.currency}{" "} */}
-                    {/* {props.asset?.management?.residual_value ?? */}
-                    {/* // "no information"} */}
-                    {/* {props.user?.workStation ?? "--"} */}
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-light"></p>
-                  <p className="font-medium">
-                    {/* {props.asset?.management?.residual_percentage ?? "--"}% */}
-                    {/* {props.user?.workMode ?? "--"} */}
                   </p>
                 </div>
               </section>
@@ -250,8 +229,7 @@ export const UserDeleteModal = (props: {
       <div className="m-4 flex flex-col ">
         <div className="flex flex-col items-center gap-8 text-center">
           <div>
-            You are about delete this item with user name:{" "}
-            {props.user?.name}
+            You are about delete this item with user name: {props.user?.name}
           </div>
           <p className="text-neutral-500">
             <i className="fa-regular fa-circle-exclamation" /> Please carefully
@@ -269,8 +247,8 @@ export const UserDeleteModal = (props: {
             </button>
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
-            // onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // onClick={() => handleDelete()}
+              // disabled={isLoading}
             >
               Yes, delete record
             </button>

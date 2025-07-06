@@ -21,8 +21,6 @@ type SearchType = {
   label: string
 }
 
-
-
 const DisplayUsers = (props: {
   total: number
   users: UserType[]
@@ -34,45 +32,13 @@ const DisplayUsers = (props: {
 }) => {
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [openPopover, setOpenPopover] = useState<boolean>(false)
-  const [openAddPopover, setOpenAddPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [filterBy, setFilterBy] = useState<string[]>(
     employeeColumns.map((i) => i.value)
   )
-  const [users, setUsers] = useState<UserType[]>([])
-  const [page, setPage] = useState(props.page)
-  const [limit, setLimit] = useState(props.limit)
-  const [addSingleRecord, setAddSingleRecord] = useState<boolean>(false)
-  const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
-  const [date, setDate] = useState<Date>(new Date())
-  const [images, setImage] = useState<ImageJSON[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { setSearch } = useSearchStore()
   const utils = trpc.useContext()
-
-  // const Search = (props: { data: SearchType[] }) => {
-  //   const [value, setValue] = useState<string | null>(null)
-
-  //   return (
-  //     <Select
-  //       value={value}
-  //       placeholder="Search"
-  //       searchable
-  //       nothingFound={`Cannot find option`}
-  //       onChange={setValue}
-  //       clearable
-  //       data={[...props.data]}
-  //       icon={<i className="fa-solid fa-magnifying-glass text-xs"></i>}
-  //     />
-  //   )
-  // }
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setUsers(data.user as UserType[])
-  //   }
-  // }, [data])
 
   const { mutate } = trpc.user.deleteMany.useMutation({
     onSuccess: () => {
@@ -84,35 +50,39 @@ const DisplayUsers = (props: {
     <div>
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex w-fit items-center gap-2">
-              <div className="flex-1">
-                <input type="text" className="border-gray-400 border-2 rounded p-[0.1rem]" placeholder="Search User Name" onChange={(e) => setSearch(e.currentTarget.value)}>
-                </input>
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+            <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+              <div className="flex w-fit items-center gap-2">
+                <div className="relative w-fit">
+                  <input
+                    type="text"
+                    className="w-64 rounded border-2 border-gray-400 py-[0.25rem] pl-2 pr-10 "
+                    placeholder="Search User"
+                    onChange={(e) => setSearch(e.currentTarget.value)}
+                  ></input>
+                </div>
+                <FilterPopOver
+                  openPopover={openPopover}
+                  setOpenPopover={setOpenPopover}
+                  filterBy={filterBy}
+                  setFilterBy={setFilterBy}
+                  columns={userColumns}
+                />
               </div>
-              <FilterPopOver
-                openPopover={openPopover}
-                setOpenPopover={setOpenPopover}
-                filterBy={filterBy}
-                setFilterBy={setFilterBy}
-                columns={userColumns}
-              />
+              {checkboxes.length > 0 && (
+                <button
+                  className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
+                  onClick={() => {
+                    mutate(checkboxes)
+                    setCheckboxes([])
+                  }}
+                >
+                  {checkboxes.includes(-1)
+                    ? `Delete all record/s ( ${props.users.length} ) ?`
+                    : `Delete selected record/s ( ${checkboxes.length} )`}
+                </button>
+              )}
             </div>
-            {checkboxes.length > 0 && (
-              <button
-                className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
-                onClick={() => {
-                  mutate(checkboxes)
-                  setCheckboxes([])
-                }}
-              >
-                {checkboxes.includes(-1)
-                  ? `Delete all record/s ( ${props.users.length} ) ?`
-                  : `Delete selected record/s ( ${checkboxes.length} )`}
-              </button>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
             {/* <button
               onClick={() => {
                 const downloadableUsers = props.users.map((user) => {

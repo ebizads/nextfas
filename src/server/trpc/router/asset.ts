@@ -227,6 +227,138 @@ export const assetRouter = t.router({
         count,
       }
     }),
+
+  findAllDashboard: authedProcedure
+    .input(
+      z
+        .object({
+          page: z.number().optional(),
+          limit: z.number().optional(),
+          search: z
+            .object({
+              name: z.string().optional(),
+              number: z.string().optional(),
+              serial_no: z.string().optional(),
+              barcode: z.string().optional(),
+              description: z.string().optional(),
+              remarks: z.string().optional(),
+              invoiceNum: z.string().optional(),
+              purchaseOrder: z.string().optional(),
+              deployment_status: z.string().optional(),
+              custodianId: z.number().optional(),
+              departmentId: z.number().optional(),
+              vendorId: z.number().optional(),
+              subsidiaryId: z.number().optional(),
+              assetProjectId: z.number().optional(),
+              parentId: z.number().optional(),
+              typeId: z.number().optional(),
+              actionTypeId: z.number().optional(), // Added typeId to search
+            })
+            .optional(),
+          filter: z
+            .object({
+              updatedAt: z.date().optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const today = new Date()
+      const start = startOfDay(today)
+      const end = endOfDay(today)
+      const [assets, count, allCount] = await ctx.prisma.$transaction([
+        ctx.prisma.asset.findMany({
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            type: true, // Added type relation
+            actionType: true, // Added actionType relation
+            department: {
+              include: {
+                location: true,
+                company: true,
+                teams: true,
+                building: true,
+              },
+            },
+            parent: true,
+            custodian: true,
+            vendor: true,
+            management: true,
+            addedBy: true,
+            assetTag: true,
+            AssetIssuance: true,
+          },
+          where: {
+            NOT: {
+              deleted: true,
+            },
+            OR: {
+              NOT: {
+                id: 999999,
+              },
+            },
+            createdAt: {
+              gte: start,
+              lte: end,
+            },
+            name: { contains: input?.search?.name, mode: "insensitive" },
+            number: { contains: input?.search?.number, mode: "insensitive" },
+            typeId: input?.search?.typeId, // Added type filter
+            actionTypeId: input?.search?.actionTypeId, // Added actionType filter
+          },
+          skip: input?.page
+            ? (input.page - 1) * (input.limit ?? 10)
+            : undefined,
+          take: input?.limit ?? 10,
+        }),
+        ctx.prisma.asset.count({
+          where: {
+            NOT: {
+              deleted: true,
+            },
+            OR: {
+              NOT: {
+                id: 999999,
+              },
+            },
+            createdAt: {
+              gte: start,
+              lte: end,
+            },
+            name: { contains: input?.search?.name, mode: "insensitive" },
+            number: { contains: input?.search?.number, mode: "insensitive" },
+            typeId: input?.search?.typeId, // Added type filter
+            actionTypeId: input?.search?.actionTypeId, // Added actionType filter
+          },
+        }),
+        ctx.prisma.asset.count({
+          where: {
+            NOT: {
+              deleted: true,
+            },
+            OR: {
+              NOT: {
+                id: 999999,
+              },
+            },
+
+            name: { contains: input?.search?.name, mode: "insensitive" },
+            number: { contains: input?.search?.number, mode: "insensitive" },
+            typeId: input?.search?.typeId, // Added type filter
+            actionTypeId: input?.search?.actionTypeId, // Added actionType filter
+          },
+        }),
+      ])
+
+      return {
+        assets,
+        count,
+        allCount,
+      }
+    }),
   findAllNoLimit: authedProcedure
     .input(
       z

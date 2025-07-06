@@ -21,8 +21,8 @@ const ActionTypeTable = ({
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
   rows: ActionType[]
-  filterBy: string[]; // ← Add this
-  columns: ColumnType[];
+  filterBy: string[] // ← Add this
+  columns: ColumnType[]
 }) => {
   const { minimize } = useMinimizeStore()
   const [selectedAction, setSelectedAction] = useState<ActionType | null>(null)
@@ -35,12 +35,12 @@ const ActionTypeTable = ({
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const utils = trpc.useContext();
+  const utils = trpc.useContext()
   const updateMutation = trpc.assetActionType.update.useMutation({
     onSuccess: () => {
-      utils.assetActionType.findAll.invalidate();
+      utils.assetActionType.findAll.invalidate()
     },
-  });
+  })
 
   //Initialize form when action type is selected
   useEffect(() => {
@@ -52,11 +52,13 @@ const ActionTypeTable = ({
     }
   }, [selectedAction])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target
-    setEditForm(prev => ({
+    setEditForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }))
   }
 
@@ -70,13 +72,13 @@ const ActionTypeTable = ({
       await updateMutation.mutateAsync({
         id: selectedAction.id,
         name: editForm.name,
-        description: editForm.description
-      });
+        description: editForm.description,
+      })
 
       setIsEditing(false)
       setIsVisible(false)
     } catch (err) {
-      setError('Failed to update type')
+      setError("Failed to update type")
       console.error(err)
     } finally {
       setIsSaving(false)
@@ -100,10 +102,8 @@ const ActionTypeTable = ({
   }
 
   return (
-    <div
-      className="relative border shadow-md sm:rounded-full"
-    >
-      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rounded-full">
+    <div className="relative border shadow-md sm:rounded-full">
+      <table className="w-full rounded-full text-left text-sm text-gray-500 dark:text-gray-400">
         <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
             <th className="py-1">
@@ -113,7 +113,8 @@ const ActionTypeTable = ({
                   onChange={selectAllCheckboxes}
                   checked={checkboxes.length > 0}
                   classNames={{
-                    input: "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
+                    input:
+                      "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
                   }}
                 />
               </div>
@@ -137,27 +138,34 @@ const ActionTypeTable = ({
                     value={row.id}
                     color="orange"
                     onChange={() => toggleCheckbox(row.id)}
-                    checked={checkboxes.includes(row.id) || checkboxes.includes(-1)}
+                    checked={
+                      checkboxes.includes(row.id) || checkboxes.includes(-1)
+                    }
                     classNames={{
-                      input: "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
+                      input:
+                        "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none",
                     }}
                   />
                 </div>
               </td>
               {columns.map((column) => {
-                const cellValue = row[column.value as keyof typeof row];
+                const cellValue = row[column.value as keyof typeof row]
                 return (
                   <td
                     key={`${row.id}-${column.value}`}
                     className="cursor-pointer px-6 py-2"
                     onClick={() => {
-                      setSelectedAction(row);
-                      setIsVisible(true);
+                      setSelectedAction(row)
+                      setIsVisible(true)
                     }}
                   >
-                    {cellValue ?? '—'}
+                    {cellValue
+                      ? cellValue.toString().length > 0
+                        ? cellValue
+                        : "--"
+                      : "--"}
                   </td>
-                );
+                )
               })}
             </tr>
           ))}
@@ -181,38 +189,51 @@ const ActionTypeTable = ({
           <div className="space-y-4 p-4">
             {/* ID - Always read-only */}
             <div>
-              <label className="block text-sm font-medium text-gray-500">ID</label>
-              <div className="mt-1 text-sm text-gray-900">{selectedAction.id}</div>
+              <label className="block text-sm font-medium text-gray-500">
+                ID
+              </label>
+              <div className="mt-1 text-sm text-gray-900">
+                {selectedAction.id}
+              </div>
             </div>
 
             {!isEditing ? (
               <>
                 {/* View Mode */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">Name</label>
-                  <div className="mt-1 tex-sm text-gray-900">{selectedAction.name}</div>
+                  <label className="block text-sm font-medium text-gray-500">
+                    Name
+                  </label>
+                  <div className="tex-sm mt-1 text-gray-900">
+                    {selectedAction.name}
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">Description</label>
+                  <label className="block text-sm font-medium text-gray-500">
+                    Description
+                  </label>
                   <div className="mt-1 text-sm text-gray-900">
                     {selectedAction.description}
                   </div>
                 </div>
-                <div className="flex justify-end gap-2 mt-4">
+                <div className="mt-4 flex justify-end gap-2">
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="px-4 py-2 bg-tangerine-500 text-white rounded-md"
+                    className="flex w-[25%]  cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
                   >
+                    <i className={"fa-solid fa-pen-to-square"} />
                     Edit
                   </button>
                 </div>
               </>
-
             ) : (
               <>
                 {/* Edit Mode */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Name *
                   </label>
                   <input
@@ -225,14 +246,17 @@ const ActionTypeTable = ({
                     placeholder={selectedAction.name}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-tangerine-500 focus:ring-tangerine-500"
                   />
-                  {editForm.name === selectedAction.name && (
-                    <p className="mt-1 text-xs text-gray-500">
-                      Original: {selectedAction.name}
-                    </p>
-                  )}
+                  {/* {editForm.name === selectedAction.name && ( */}
+                  <p className="mt-1 text-xs text-gray-500">
+                    Original: {selectedAction.name}
+                  </p>
+                  {/* )} */}
                 </div>
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Description
                   </label>
                   <textarea
@@ -244,26 +268,27 @@ const ActionTypeTable = ({
                     placeholder={selectedAction.description || "No description"}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-tangerine-500 focus:ring-tangerine-500"
                   />
-                  {editForm.description === selectedAction.description && selectedAction.description && (
-                    <p className="mt-1 text-xs text-gray-500">
-                      Original: {selectedAction.description}
-                    </p>
-                  )}
+                  {/* {editForm.description === selectedAction.description &&
+                    selectedAction.description && ( */}
+                  <p className="mt-1 text-xs text-gray-500">
+                    Original: {selectedAction.description}
+                  </p>
+                  {/* )} */}
                 </div>
-                <div className="flex justify-end gap-2 mt-4">
+                <div className="mt-4 flex justify-end gap-2">
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md"
+                    className="rounded-md bg-gray-300 px-4 py-2 text-gray-700"
                     disabled={isSaving}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSave}
-                    className="px-4 py-2 bg-tangerine-500 text-white rounded-md"
+                    className="rounded-md bg-tangerine-500 px-4 py-2 text-white"
                     disabled={isSaving}
                   >
-                    {isSaving ? 'Saving...' : 'Save'}
+                    {isSaving ? "Saving..." : "Save"}
                   </button>
                 </div>
               </>
@@ -271,7 +296,6 @@ const ActionTypeTable = ({
           </div>
         </Modal>
       )}
-
     </div>
   )
 }

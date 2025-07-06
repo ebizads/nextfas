@@ -59,7 +59,7 @@ const Dashboard = () => {
   const { search } = useSearchStore()
 
   // Get asset data
-  const { data: dataAssets } = trpc.asset.findAll.useQuery({
+  const { data: dataAssets } = trpc.asset.findAllDashboard.useQuery({
     search: { name: search },
     limit,
     page,
@@ -110,15 +110,15 @@ const Dashboard = () => {
       "#F0E68C",
       "#C0C0C0",
       "#36454F",
-      "#8AC24A",
-      "#F06292",
-      "#7986CB",
-      "#E57373",
-      "#64B5F6",
-      "#BA68C8",
-      "#4DB6AC",
-      "#81C784",
-      "#FFB74D",
+      // "#8AC24A",
+      // "#F06292",
+      // "#7986CB",
+      // "#E57373",
+      // "#64B5F6",
+      // "#BA68C8",
+      // "#4DB6AC",
+      // "#81C784",
+      // "#FFB74D",
     ]
     return (index: number) => ({
       background: `${palette[index % palette.length]}80`,
@@ -302,7 +302,9 @@ const Dashboard = () => {
                 </svg>
               </div>
               <div>
-                <h2 className="text-3xl font-bold">{dataAssets?.count || 0}</h2>
+                <h2 className="text-3xl font-bold">
+                  {dataAssets?.allCount || 0}
+                </h2>
                 <p className="text-gray-500">Total Firearms in Stock</p>
               </div>
             </div>

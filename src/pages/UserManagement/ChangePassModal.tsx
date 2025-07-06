@@ -44,7 +44,6 @@ const ChangePassModal = (props: {
       form.reset()
     }
 
-    console.log("pass: " + password)
     setPassIncorrect(false)
     props.setVisible(false)
   }
@@ -54,14 +53,13 @@ const ChangePassModal = (props: {
   if (Boolean(user?.passwordAge)) {
     dayNow = Number(
       (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
-      (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24)
     )
   }
 
   const { mutate } = trpc.user.change.useMutation({
     onSuccess(data) {
       setIsVisible(true)
-      //console.log(data)
       if (data !== false) {
         setChangeString("Change Password Succesfully")
         setDataCheck(true)
@@ -119,8 +117,6 @@ const ChangePassModal = (props: {
       setPassIncorrect(false)
     }
 
-    console.log("isVisible: " + props.isVisible)
-
     // if (!props.isVisible && session?.user?.firstLogin ) {
     //   props.setVisible(true)
     //   props.setPromptVisible(true)
@@ -129,7 +125,6 @@ const ChangePassModal = (props: {
     if (dataCheck) {
       if (user?.firstLogin) {
         props.setVisible(true)
-        console.log("setvisible111: " + props.isVisible)
       }
     }
 
@@ -239,7 +234,6 @@ const ChangePassModal = (props: {
             <button
               type="submit"
               className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
-              onClick={() => { console.log(errors), console.log("check", password) }}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Saving..." : "Change"}

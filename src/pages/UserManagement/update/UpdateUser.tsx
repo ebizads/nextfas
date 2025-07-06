@@ -45,32 +45,18 @@ export const UpdateUser = (props: {
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
   const [country, setCountry] = useState("")
   const [region, setRegion] = useState("")
   const [province, setProvince] = useState("")
   const [city, setCity] = useState("")
   const [barangay, setBarangay] = useState("")
+  const [isSuccess, setIsSuccess] = useState(false)
 
-  const { data: user } = trpc.user.findOne.useQuery(
-    Number(props.user?.id) ?? 0
-  )
-  const { data: singleTeams } = trpc.team.findOne.useQuery(
-    props.user?.teamId ?? 0
-  )
+  const { data: user } = trpc.user.findOne.useQuery(Number(props.user?.id) ?? 0)
 
   const lockedChecker =
     futureDate < (props.user?.lockedUntil ?? "") ? true : false
-
-  const teamList = useMemo(() => {
-    const list = teams?.teams.map(
-      (team: { id: { toString: () => any }; name: any }) => {
-        return { value: team.id.toString(), label: team.name }
-      }
-    ) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
 
   const {
     mutate,
@@ -78,15 +64,17 @@ export const UpdateUser = (props: {
     error,
   } = trpc.user.updateAdmin.useMutation({
     onSuccess() {
-      console.log("omsim")
       setCompleteModal(true)
       utils.user.findAll.invalidate()
       setImage([])
-      router.back()
+      setIsVisible(true)
+      setIsSuccess(true)
     },
     onError() {
+      reset(props.user as User)
+      setCertificate(generateCertificate())
       console.log(error)
-    }
+    },
   })
 
   const {
@@ -100,41 +88,42 @@ export const UpdateUser = (props: {
   })
 
   useEffect(() => {
-    console.log(("test") + JSON.stringify(user))
     reset(props.user as User)
     setCertificate(generateCertificate())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-    console.log("error mo to", JSON.stringify(error))
-  }, [error, props.user, reset, user, setCertificate])
+  useEffect(() => {
+    if (!isVisible && isSuccess) {
+      router.push("/UserManagement")
+    }
+  }, [isVisible])
 
   const onSubmit = async (userForm: User) => {
     // Register function
-    console.log(userForm)
-    console.log("error na nga to anoba", JSON.stringify(error))
-
 
     mutate({
       ...userForm,
-      name: `${userForm.profile?.first_name
-        ? userForm.profile?.first_name
-        : user?.profile?.first_name
-        } ${userForm.profile?.last_name
+      name: `${
+        userForm.profile?.first_name
+          ? userForm.profile?.first_name
+          : user?.profile?.first_name
+      } ${
+        userForm.profile?.last_name
           ? userForm.profile?.last_name
           : user?.profile?.last_name
-        }`,
+      }`,
       inactivityDate: new Date(),
       lockedAt: null,
       lockedUntil: null,
       attempts: 0,
       lockedReason: null,
-      teamId: userForm.teamId,
       id: userForm.id,
       validateTable: {
         certificate: certificateCheck,
         validationDate: props.user?.validateTable?.validationDate ?? futureDate,
       },
     })
-    reset()
   }
 
   const [isEditable, setIsEditable] = useState<boolean>(false)
@@ -158,12 +147,10 @@ export const UpdateUser = (props: {
   // useEffect(() => { console.log("department: " + props.user?.team?.department?.name) })
 
   const filteredAllCountries = useMemo(() => {
-    console.log("checkcount: ", country)
     const countries = all_countries.map((countries) => {
       return countries.name
     })
     setCountry("")
-    console.log("country", countries)
     return countries
   }, [country])
 
@@ -176,14 +163,13 @@ export const UpdateUser = (props: {
       })
       .map(([key]) => key)
     setRegion("")
-    console.log("keys:", upperLevel)
     return upperLevel
   }, [])
 
   const filteredProvince = useMemo(() => {
     const newProvince: Array<string> = []
     if (country === "Philippines") {
-      if (region === null ?? "") {
+      if (region === null) {
         setProvince("")
 
         return newProvince
@@ -194,7 +180,6 @@ export const UpdateUser = (props: {
         const provinceLevel = Object.keys(
           (jsonData as Record<string, any>)[region].province_list
         )
-        console.log("province", provinceLevel)
         setProvince("")
 
         return provinceLevel
@@ -202,7 +187,6 @@ export const UpdateUser = (props: {
     } else {
       if (country) {
         const states = all_states
-        console.log("states", all_states)
         const specStates = states.filter((states) => {
           return states.country_name === country
         })
@@ -212,7 +196,6 @@ export const UpdateUser = (props: {
         if (finalStates.length === 0) {
           return newProvince
         }
-        console.log("states:", specStates)
         return finalStates
       }
       return newProvince
@@ -225,7 +208,7 @@ export const UpdateUser = (props: {
   const filteredCity = useMemo(() => {
     const newCity: Array<any> = []
     if (country === "Philippines") {
-      if (province === null ?? "") {
+      if (province === null) {
         setCity("")
 
         return newCity
@@ -238,7 +221,6 @@ export const UpdateUser = (props: {
         const cityLevel = Object.keys(
           (jsonData as Record<string, any>)[province].municipality_list
         )
-        console.log("city", cityLevel)
         setCity("")
 
         return cityLevel
@@ -252,7 +234,6 @@ export const UpdateUser = (props: {
         const finalCities = specCities.map((city: { name: string }) => {
           return city.name
         })
-        console.log("cities", finalCities)
         setCity("")
         if (finalCities.length === 0) {
           return newCity
@@ -267,7 +248,7 @@ export const UpdateUser = (props: {
 
   const filteredBarangay = useMemo(() => {
     const newBarangay: Array<any> = []
-    if (city === null ?? "") {
+    if (city === null) {
       setBarangay("")
 
       return newBarangay
@@ -279,7 +260,6 @@ export const UpdateUser = (props: {
         .municipality_list
       const barangayLevel = (cityData as Record<string, any>)[city]
         .barangay_list
-      console.log("city", barangayLevel)
       setBarangay("")
 
       return barangayLevel
@@ -288,8 +268,6 @@ export const UpdateUser = (props: {
 
     return newBarangay
   }, [region, province, city])
-
-  // console.log("ALAM MO TONG EMPLOYEE NA TO::::", props.user)
 
   return (
     <main className="container mx-auto flex flex-col justify-center p-2">
@@ -416,87 +394,6 @@ export const UpdateUser = (props: {
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-6">
-            <label className="sm:text-sm">Team</label>
-            <Select
-              disabled={!isEditable}
-              placeholder={singleTeams?.name ? singleTeams?.name : "Pick One"}
-              onChange={(value) => {
-                setValue("teamId", Number(value) ?? 0)
-                onSearchChange(value ?? "0")
-              }}
-              value={searchValue}
-              data={teamList}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className={
-                isEditable
-                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            />
-            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
-          </div>
-
-          <div className="col-span-6">
-            <label className="sm:text-sm">Department</label>
-            {/* <InputField
-              // placeholder={props.user?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.user?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
-            <p
-              className={
-                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >{`${props.user?.Userteam?.department?.name}`}</p>
-          </div>
-
-          {/* <div className="col-span-6">
-            <label className="sm:text-sm">Location</label>
-            <InputField
-              // placeholder={props.user?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.user?.team?.department?.name}
-              name={"department"}
-              register={register}
-            />
-            <p
-              className={
-                "my-2 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >
-              {"based on workmode (based wer?)"}
-            </p>
-          </div> */}
-        </div>
-
-        <div className="col-span-9 grid grid-cols-12 gap-7">
-          <div className="col-span-4">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
               type="number"
@@ -523,7 +420,7 @@ export const UpdateUser = (props: {
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
 
-          <div className="col-span-4">
+          <div className="col-span-6">
             <label className="sm:text-sm">Email</label>
             <InputField
               type={"text"}
@@ -654,7 +551,11 @@ export const UpdateUser = (props: {
               clearable
               nothingFound="No options"
               variant="unstyled"
-              className={country === "" || country !== "Philippines" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 pointer-events-none px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                country === "" || country !== "Philippines"
+                  ? "pointer-events-none mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
 
             <AlertInput>{errors?.address?.region?.message}</AlertInput>
@@ -669,7 +570,9 @@ export const UpdateUser = (props: {
               id="address.province"
               placeholder={props.user?.address?.province ?? "Province/States"}
               data={filteredProvince}
-              disabled={country === "Philippines " ? (region === "") : country === ""}
+              disabled={
+                country === "Philippines " ? region === "" : country === ""
+              }
               onChange={(value) => {
                 setValue("address.province", value ?? "")
                 setProvince(value ?? "")
@@ -698,7 +601,11 @@ export const UpdateUser = (props: {
                 },
               })}
               variant="unstyled"
-              className={(country === "Philippines " ? (region === "") : country === "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                (country === "Philippines " ? region === "" : country === "")
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
             {/* <InputField
                 type={"text"}
@@ -746,7 +653,11 @@ export const UpdateUser = (props: {
                 },
               })}
               variant="unstyled"
-              className={province === "" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                province === ""
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
             {/* <InputField
                 type={"text"}
@@ -757,67 +668,73 @@ export const UpdateUser = (props: {
 
             <AlertInput>{errors?.address?.city?.message}</AlertInput>
           </div>
-          <div className=" col-span-2">
-            <label className="sm:text-sm">Barangay</label>
-            <Select
-              name={"address.barangay"}
-              id="address.barangay"
-              placeholder={props.user?.address?.baranggay ?? "Barangay"}
-              data={filteredBarangay}
-              searchable
-              required
-              disabled={country !== "Philippines"}
-              onChange={(value) => {
-                setValue("address.baranggay", value ?? "")
-                setBarangay(value ?? "")
-              }}
-              value={barangay ?? ""}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
+          <div className="col-span-8 grid grid-cols-6 gap-7">
+            <div className=" col-span-2">
+              <label className="sm:text-sm">Barangay</label>
+              <Select
+                name={"address.barangay"}
+                id="address.barangay"
+                placeholder={props.user?.address?.baranggay ?? "Barangay"}
+                data={filteredBarangay}
+                searchable
+                required
+                disabled={country !== "Philippines"}
+                onChange={(value) => {
+                  setValue("address.baranggay", value ?? "")
+                  setBarangay(value ?? "")
+                }}
+                value={barangay ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
                     },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
                   },
+                })}
+                variant="unstyled"
+                className={
+                  country === "Philippines" && city !== ""
+                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                }
+              />
+              <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
+            </div>
+            <div className="col-span-2">
+              <InputField
+                type={"text"}
+                label={"Street"}
+                placeholder="Street"
+                disabled={country === ""}
+                name={"address.street"}
+                register={register}
+              />
+              <AlertInput>{errors?.address?.street?.message}</AlertInput>
+            </div>
 
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className={(country === "Philippines" && city !== "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  " : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"}
-            />
-            <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
-          </div>
-          <div className="col-span-2">
-            <InputField
-              type={"text"}
-              label={"Street"}
-              placeholder="Street"
-              disabled={country === ""}
-              name={"address.street"}
-              register={register}
-            />
-            <AlertInput>{errors?.address?.street?.message}</AlertInput>
-          </div>
-
-          <div className="col-span-2">
-            <InputField
-              type={"number"}
-              label={"Zip Code"}
-              disabled={country === ""}
-              name={"address.zip"}
-              register={register}
-            />
-            <AlertInput>{errors?.address?.zip?.message}</AlertInput>
+            <div className="col-span-2">
+              <InputField
+                type={"number"}
+                label={"Zip Code"}
+                disabled={country === ""}
+                name={"address.zip"}
+                register={register}
+              />
+              <AlertInput>{errors?.address?.zip?.message}</AlertInput>
+            </div>
           </div>
         </div>
 
@@ -888,8 +805,8 @@ export const UpdateUser = (props: {
                 {userLoading
                   ? "Loading..."
                   : lockedChecker
-                    ? "Unlock and save "
-                    : "Save"}
+                  ? "Unlock and save "
+                  : "Save"}
               </button>
             </div>
           }
@@ -899,7 +816,7 @@ export const UpdateUser = (props: {
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             setOpenModalDel={setOpenModalDel}
-          // setIsVisible={props.setIsVisible}
+            // setIsVisible={props.setIsVisible}
           />
         </div>
       </form>
@@ -957,7 +874,6 @@ export const UserDeleteModal = (props: {
       props.setIsLoading(false)
       // props.setIsVisible(false)
       utils.user.findAll.invalidate()
-
     },
   })
   const handleDelete = async () => {
@@ -992,7 +908,7 @@ export const UserDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete record
             </button>

@@ -128,20 +128,19 @@ const DisplayAssets = (props: {
                   console.log("TRIAl: " + JSON.stringify(assets))
                   if (assets) {
                     // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
-                    const {
-                      createdAt,
-                      updatedAt,
-                      deleted,
-                      deletedAt,
-                      ...rest
-                    } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
+
                     return {
-                      ...rest,
-                      id: rest.id,
-                      createdAt: createdAt,
-                      updatedAt: updatedAt,
-                      deletedAt: deletedAt,
-                      deleted: deleted,
+                      id: assets.id,
+                      name: assets.name,
+                      asset_number: assets?.number,
+                      serial_no: assets.serial_no,
+                      barcode: assets.barcode,
+                      brand: assets.brand,
+                      type: assets.type?.name,
+                      caliber: assets.caliber,
+                      models: assets.models,
+                      action_type: assets?.actionType?.name,
+                      description: assets.description,
                     }
                   }
                 }) as ExcelExportAssetType[]

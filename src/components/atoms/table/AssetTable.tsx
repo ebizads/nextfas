@@ -578,7 +578,9 @@ const AssetTable = (props: {
                   .map((col) => (
                     <td
                       key={col.value}
-                      className="max-w-[10rem] cursor-pointer truncate py-2 px-6"
+                      className={`max-w-[10rem] cursor-pointer truncate py-2 px-6 ${
+                        col.value == "status" && "capitalize"
+                      }`}
                       onClick={() => {
                         setOpenModalDesc(true)
                         setSelectedAsset(null)

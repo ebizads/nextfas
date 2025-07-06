@@ -8,7 +8,6 @@ import {
   ModelEditInput,
   ModelEditTableInput,
   ProjectEditInput,
-
 } from "./model"
 import { VendorTableEditInput } from "./vendor"
 import { CompanyTableEditInput } from "./company"
@@ -42,24 +41,20 @@ export const AssetCreateInput = z.object({
   invoiceNum: z.string().nullish(),
   purchaseOrder: z.string().nullish(),
   deployment_status: z.string().nullish(),
-
 })
 
 export const AssetEditInput = z.object({
   id: z.number(),
   name: z.string().min(1, "Please Provide Asset Name").optional(),
   number: z.string().optional(),
-  alt_number: z.string().optional().nullish(),
   serial_no: z.string().optional().nullish(),
   barcode: z.string().nullish().optional(),
   description: z.string().optional().nullish(),
-  remarks: z.string().nullish().optional(),
   brand: z.string().nullish(),
-  typeId: z.number(),
-  actionTypeId: z.number(),
+  type: z.string(),
+  action_type: z.string().nullish(),
   caliber: z.string().nullish(),
   models: z.string().nullish(),
-  status: z.string().nullish().optional(),
 
   // pastIssuanceId: z.number().nullish(),
   // issuedById: z.number().optional().nullish(),
@@ -69,25 +64,18 @@ export const AssetEditInput = z.object({
 })
 
 export const AssetTransformInput = z.object({
-  id: z.number(),
   name: z.string().min(1, "Please provide name"),
-  number: z.string(),
-  alt_number: z.string().nullish(),
   serial_no: z.string().nullish(),
-  barcode: z.string().nullish(),
+  barcode: z.string(),
+  number: z.string().optional(),
+  brand: z.string(),
+  type: z.string(),
+  caliber: z.string(),
+  models: z.string(),
+  action_type: z.string().nullish(),
   description: z.string().nullish(),
-  remarks: z.string().nullish(),
-  brand: z.string().nullish(),
-  typeId: z.number(),
-  actionTypeId: z.number(),
-  caliber: z.string().nullish(),
-  models: z.string().nullish(),
-  status: z.string().nullish(),
-  deployment_status: z.string().nullish(),
   // createdAt: z.date(),
-  // updatedAt: z.date(),
-  deletedAt: z.date().nullish(),
-  deleted: z.boolean(),
+  // updatedAt: z.date(),,
 
   // assetTagId: z.number(),
   // modelId: z.number(),
@@ -182,7 +170,6 @@ export const AssetTransferCreateInput = z.object({
   remarks: z.string().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
-
 })
 
 export const AssetTransferEditInput = z.object({
@@ -194,7 +181,7 @@ export const AssetTransferEditInput = z.object({
   remarks: z.string().nullish().optional(),
   custodianId: z.number().optional(),
   assetId: z.number().optional(),
-  issuance: createIssuance
+  issuance: createIssuance,
 })
 
 export const AssetRepairCreateInput = z.object({

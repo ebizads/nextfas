@@ -16,6 +16,9 @@ export type Asset = inferProcedureOutput<AppRouter["asset"]["findOne"]>
 export type AssetTypeTable = inferProcedureOutput<
   AppRouter["asset"]["findOneTable"]
 >
+export type AssetTypeDashboard = inferProcedureOutput<
+  AppRouter["assetType"]["findOneDashboard"]
+>
 
 export type AssetActionType = inferProcedureOutput<
   AppRouter["assetActionType"]["findOne"]

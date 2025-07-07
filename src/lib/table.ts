@@ -28,7 +28,6 @@ export const userColumns = [
   { value: "last_name", name: "Last Name" },
   { value: "city", name: "Street Address" },
   // { value: "hired_date", name: "Hire Date" },
-  { value: "team", name: "Team" },
   { value: "email", name: "Email" },
 ] as ColumnType[]
 
@@ -49,7 +48,6 @@ export const employeeColumns = [
   { value: "first_name", name: "First Name" },
   { value: "last_name", name: "Last Name" },
   { value: "city", name: "Street Address" },
-  { value: "team", name: "Team" },
   { value: "email", name: "Email" },
   { value: "workMode", name: "Work Mode" },
 ] as ColumnType[]
@@ -129,6 +127,15 @@ export const purchase_info = [
   { type: "shipping_method", label: "Shipping Method" },
 ] as DetailType[]
 
+export const topbar = [
+  { type: "actiontypemanagement", name: "Asset Action Types" },
+  { type: "dashboard", name: "Dashboard" },
+  { type: "UserManagement", name: "Users" },
+  { type: "typemanagement", name: "Asset Types" },
+  { type: "employees", name: "Employees" },
+  { type: "assets", name: "Assets" },
+]
+
 export const asset_information = [
   asset_info,
   vendor_info,
@@ -157,7 +164,7 @@ export const navigations = [
   //   icon: "fa-users",
   //   link: "/issuance",
   // },
-  
+
   // {
   //   name: "User Management",
   //   icon: "fa-light fa-user-gear",

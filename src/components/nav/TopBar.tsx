@@ -7,6 +7,7 @@ import { trpc } from "../../utils/trpc"
 import Modal from "../headless/modal/modal"
 import { signOut } from "next-auth/react"
 import { useCounterValidateStore } from "../../store/useStore"
+import { topbar } from "../../lib/table"
 
 const TopBar = () => {
   const { data: session } = useSession()
@@ -67,8 +68,6 @@ const TopBar = () => {
     //   refetch()
     //   console.log("userId: " + userId)
     // }, 5000)
-
-    console.log("first login: " + user?.firstLogin?.toString())
   }, [
     session,
     user,
@@ -86,10 +85,7 @@ const TopBar = () => {
       .split("/")
       .filter((_, idx) => idx !== 0)
       .map((path) => {
-        if (path.includes("_")) {
-          return path.replace("_", " ")
-        }
-        return path
+        return topbar.find((i) => path == i.type)?.name
       })
     return path_array
   }, [pathname])

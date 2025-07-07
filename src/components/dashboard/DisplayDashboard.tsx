@@ -2,12 +2,15 @@
 import React, { useState, useEffect } from "react"
 import { Pagination } from "@mantine/core"
 import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
-import { AssetType } from "../../types/generic"
+import { Asset } from "../../types/generic"
 import { columns } from "../../lib/table"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
 import { useSearchStore } from "../../store/useStore"
-import { downloadExcel_assets, downloadExcel_templateAssets } from "../../lib/functions"
+import {
+  downloadExcel_assets,
+  downloadExcel_templateAssets,
+} from "../../lib/functions"
 import { UserType } from "../../types/generic"
 import { ExcelExportAssetType } from "../../types/asset"
 import { trpc } from "../../utils/trpc"
@@ -19,29 +22,24 @@ import DropZone_asset from "../dropzone/Asset dropzone/DropZone_asset"
 const DisplayDashboard = (props: {
   user: UserType
   total: number
-  assets: AssetType[]
-  assetsSample: AssetType[]
+  assets: Asset[]
   accessiblePage: number
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
   limit: number
   setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
-
   const { setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-  const [openPopover, setOpenPopover] = useState<boolean>(false)
-  const [openAddPopover, setOpenAddPopover] = useState<boolean>(false)
 
-  const [firstLogin, setFirstLogin] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 
-  const [filterBy, setFilterBy] = useState<string[]>(columns.map((i) => i.value))
-  console.log("check", filterBy)
-
+  const [filterBy, setFilterBy] = useState<string[]>(
+    columns.map((i) => i.value)
+  )
 
   useEffect(() => {
     setSearch("")
@@ -49,8 +47,7 @@ const DisplayDashboard = (props: {
 
   return (
     <div className="space-y-4">
-      <section className="space-y-4">
-      </section >
+      <section className="space-y-4"></section>
       <AssetTable
         checkboxes={checkboxes}
         setCheckboxes={setCheckboxes}
@@ -102,8 +99,7 @@ const DisplayDashboard = (props: {
         openModalDel={openModalDel}
         setOpenModalDel={setOpenModalDel}
       />
-
-    </div >
+    </div>
   )
 }
 

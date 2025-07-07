@@ -27,7 +27,6 @@ export const EmployeeCreateInput = z.object({
   address: AddressCreateInput,
   workStation: z.string().nullish(),
   workMode: z.string().nullish(),
-  teamId: z.number().optional(),
 })
 
 export const EmployeeEditInput = z.object({
@@ -69,17 +68,16 @@ export const EmployeeTableEditInput = z.object({
     .nullish()
     .optional(),
   position: z.string().nullish().optional(),
-  profile: z
-    .object({
-      first_name: z.string(),
-      last_name: z.string(),
-      middle_name: z.string().nullish().optional(),
-      suffix: z.string().nullish().optional(),
-      date_of_birth: z.date().nullish().optional(),
-      phone_no: z.string().nullish().optional(),
-      gender: z.string().nullish().optional(),
-      image: z.string().nullish().optional(),
-    }),
+  profile: z.object({
+    first_name: z.string(),
+    last_name: z.string(),
+    middle_name: z.string().nullish().optional(),
+    suffix: z.string().nullish().optional(),
+    date_of_birth: z.date().nullish().optional(),
+    phone_no: z.string().nullish().optional(),
+    gender: z.string().nullish().optional(),
+    image: z.string().nullish().optional(),
+  }),
   address: AddressEditInput,
   workStation: z.string().nullish(),
   workMode: z.string().nullish(),
@@ -89,7 +87,6 @@ export const EmployeeTableEditInput = z.object({
   deletedAt: z.date().nullish(),
   deleted: z.boolean(),
 })
-
 
 export const EmployeeDeleteInput = z.object({
   id: z.number(),

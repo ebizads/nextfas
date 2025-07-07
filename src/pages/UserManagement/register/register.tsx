@@ -48,25 +48,15 @@ const Register2 = () => {
   const { mutate, isLoading, error } = trpc.user.create.useMutation({
     onSuccess() {
       setCompleteModal(true)
+      setCountry("")
+      setRegion("")
+      setProvince("")
+      setCity("")
+      setBarangay("")
       // invalidate query of asset id when mutations is successful
       //utils.asset.findAll.invalidate()
     },
   })
-  const { data: teams } = trpc.team.findAll.useQuery()
-
-  const teamList = useMemo(() => {
-    const list = teams?.teams.map((team) => {
-      return { value: team.id.toString(), label: team.name }
-    }) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
-
-  const teamList1 = useMemo(() => {
-    const list = teams?.teams.map((team) => {
-      return { value: team.id.toString(), label: team.department?.name }
-    }) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
 
   useEffect(() => {
     setUserId(moment().format("YY-MDhms"))
@@ -85,10 +75,6 @@ const Register2 = () => {
     defaultValues: {
       name: "test",
       user_Id: `${env.NEXT_PUBLIC_CLIENT_USER_ID}${userId}`,
-      // supervisee: {
-      //   name: ""
-      // },
-      // superviseeId: 0,
       email: "",
       position: "",
       address: {
@@ -124,7 +110,7 @@ const Register2 = () => {
         oldPassword: user.oldPassword,
         password: passwordCheck,
         user_Id: env.NEXT_PUBLIC_CLIENT_USER_ID + userId,
-        teamId: user.teamId,
+        // teamId: user.teamId,
         position: user.position ?? "",
         profile: {
           first_name: user.profile.first_name,
@@ -141,7 +127,7 @@ const Register2 = () => {
           zip: user.address?.zip,
           baranggay: user.address?.baranggay,
           region: user.address?.region,
-          province: user.address?.province
+          province: user.address?.province,
         },
         inactivityDate: new Date(),
         passwordAge: new Date(),
@@ -156,15 +142,15 @@ const Register2 = () => {
   }
 
   const filteredAllCountries = useMemo(() => {
-    const countries = all_countries.map((countries) => { return countries.name })
+    const countries = all_countries.map((countries) => {
+      return countries.name
+    })
     setCountry("")
     console.log("country", countries)
     return countries
-
   }, [])
 
   const filteredRegion = useMemo(() => {
-
     const upperLevel = Object.entries(ph_regions)
       .sort(([key1], [key2]) => {
         const num1 = parseInt(key1)
@@ -175,15 +161,12 @@ const Register2 = () => {
     setRegion("")
     console.log("keys:", upperLevel)
     return upperLevel
-
-
-
   }, [])
 
   const filteredProvince = useMemo(() => {
     const newProvince: Array<string> = []
     if (country === "Philippines") {
-      if (region === null ?? "") {
+      if (region === null) {
         setProvince("")
 
         return newProvince
@@ -200,12 +183,15 @@ const Register2 = () => {
         return provinceLevel
       }
     } else {
-
       if (country) {
         const states = all_states
         console.log("states", all_states)
-        const specStates = states.filter((states) => { return states.country_name === country })
-        const finalStates = specStates.map((states) => { return states.name })
+        const specStates = states.filter((states) => {
+          return states.country_name === country
+        })
+        const finalStates = specStates.map((states) => {
+          return states.name
+        })
         if (finalStates.length === 0) {
           return newProvince
         }
@@ -213,7 +199,6 @@ const Register2 = () => {
         return finalStates
       }
       return newProvince
-
     }
     setProvince("")
 
@@ -223,14 +208,15 @@ const Register2 = () => {
   const filteredCity = useMemo(() => {
     const newCity: Array<any> = []
     if (country === "Philippines") {
-      if (province === null ?? "") {
+      if (province === null) {
         setCity("")
 
         return newCity
       }
 
       if (region && province) {
-        const jsonData = (ph_regions as Record<string, any>)[region].province_list
+        const jsonData = (ph_regions as Record<string, any>)[region]
+          .province_list
 
         const cityLevel = Object.keys(
           (jsonData as Record<string, any>)[province].municipality_list
@@ -243,8 +229,12 @@ const Register2 = () => {
     } else {
       if (province) {
         const cities = JSON.parse(JSON.stringify(all_cities))
-        const specCities = cities.filter((city: { state_name: string }) => { return city.state_name === province })
-        const finalCities = specCities.map((city: { name: string }) => { return city.name })
+        const specCities = cities.filter((city: { state_name: string }) => {
+          return city.state_name === province
+        })
+        const finalCities = specCities.map((city: { name: string }) => {
+          return city.name
+        })
         console.log("cities", finalCities)
         setCity("")
         if (finalCities.length === 0) {
@@ -252,7 +242,6 @@ const Register2 = () => {
         }
         return finalCities
       }
-
     }
     setCity("")
 
@@ -261,7 +250,7 @@ const Register2 = () => {
 
   const filteredBarangay = useMemo(() => {
     const newBarangay: Array<any> = []
-    if (city === null ?? "") {
+    if (city === null) {
       setBarangay("")
 
       return newBarangay
@@ -283,7 +272,8 @@ const Register2 = () => {
     return newBarangay
   }, [region, province, city])
 
-  const disabledStyles = "disabled:w-full disabled:rounded-md disabled:border-2 disabled:border-gray-400 disabled:bg-transparent disabled:px-4 disabled:py-2 disabled:text-gray-600 disabled:outline-none disabled:ring-tangerine-400/40 disabled:placeholder:text-sm disabled:focus:border-tangerine-400 disabled:focus:outline-none disabled:focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400";
+  const disabledStyles =
+    "disabled:w-full disabled:rounded-md disabled:border-2 disabled:border-gray-400 disabled:bg-transparent disabled:px-4 disabled:py-2 disabled:text-gray-600 disabled:outline-none disabled:ring-tangerine-400/40 disabled:placeholder:text-sm disabled:focus:border-tangerine-400 disabled:focus:outline-none disabled:focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400"
 
   return (
     <main className="container mx-auto flex flex-col justify-center p-2">
@@ -340,7 +330,7 @@ const Register2 = () => {
           />
           <PasswordChecker password={watch().password} /> */}
         <div className="col-span-9 grid grid-cols-12 gap-7">
-          <div className="col-span-3">
+          <div className="col-span-6">
             <label className="sm:text-sm">User Number</label>
             {/* <InputField
               disabled
@@ -358,7 +348,7 @@ const Register2 = () => {
               {userId}
             </p>
           </div>
-          <div className="col-span-3">
+          <div className="col-span-6">
             {/* <label className="sm:text-sm">Designation / Position</label> */}
             <InputField
               type={"text"}
@@ -370,88 +360,9 @@ const Register2 = () => {
 
             <AlertInput>{errors?.position?.message}</AlertInput>
           </div>
-          <div className="col-span-3">
-            <label className="sm:text-sm">
-              Team<span className="text-red-500">*</span>
-            </label>
-            <Select
-              placeholder="Pick one"
-              onChange={(value) => {
-                setValue("teamId", Number(value))
-                onSearchChange(value ?? "")
-              }}
-              value={searchValue}
-              data={teamList}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-            />
-            <AlertInput>{errors?.teamId?.message}</AlertInput>
-          </div>
-
-
-
-          <div className="col-span-3">
-            <label className="sm:text-sm">
-              Deparment<span className="text-red-500">*</span>
-            </label>
-            <Select
-              placeholder="--"
-              onChange={(value) => {
-                setValue("teamId", Number(value))
-                onSearchChange(value ?? "")
-              }}
-              disabled
-              value={searchValue}
-              data={teamList1}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-2 py-0.5 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  disabled:bg-gray-200 disabled:text-gray-400 "
-            />
-            <AlertInput>{errors?.teamId?.message}</AlertInput>
-          </div>
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
-
           <div className="col-span-4">
             {/* <label className="sm:text-sm">Email</label> */}
             <InputField
@@ -488,12 +399,9 @@ const Register2 = () => {
             />
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
-          <div className="col-span-4">
+          {/* <div className="col-span-4">
             <label className="sm:text-sm ">Hired Date</label>
-            {/* <InputField
-            className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
-            type={"text"}
-          /> */}
+
             <DatePicker
               dropdownType="modal"
               placeholder="Pick Date"
@@ -505,11 +413,8 @@ const Register2 = () => {
               }}
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
-          </div>
-
+          </div> */}
         </div>
-
-
 
         <div className="col-span-9 grid grid-cols-8 gap-7">
           <div className="col-span-2">
@@ -598,7 +503,11 @@ const Register2 = () => {
               clearable
               nothingFound="No options"
               variant="unstyled"
-              className={country === "" || country !== "Philippines" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 pointer-events-none px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                country === "" || country !== "Philippines"
+                  ? "pointer-events-none mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
 
             <AlertInput>{errors?.address?.region?.message}</AlertInput>
@@ -613,7 +522,9 @@ const Register2 = () => {
               id="address.province"
               placeholder="Province/States"
               data={filteredProvince}
-              disabled={country === "Philippines " ? (region === "") : country === ""}
+              disabled={
+                country === "Philippines " ? region === "" : country === ""
+              }
               onChange={(value) => {
                 setValue("address.province", value ?? "")
                 setProvince(value ?? "")
@@ -642,7 +553,11 @@ const Register2 = () => {
                 },
               })}
               variant="unstyled"
-              className={(country === "Philippines " ? (region === "") : country === "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                (country === "Philippines " ? region === "" : country === "")
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
             {/* <InputField
                 type={"text"}
@@ -690,7 +605,11 @@ const Register2 = () => {
                 },
               })}
               variant="unstyled"
-              className={province === "" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                province === ""
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
             {/* <InputField
                 type={"text"}
@@ -701,67 +620,73 @@ const Register2 = () => {
 
             <AlertInput>{errors?.address?.city?.message}</AlertInput>
           </div>
-          <div className=" col-span-2">
-            <label className="sm:text-sm">Barangay</label>
-            <Select
-              name={"address.barangay"}
-              id="address.barangay"
-              placeholder="Barangay"
-              data={filteredBarangay}
-              searchable
-              required
-              disabled={country !== "Philippines"}
-              onChange={(value) => {
-                setValue("address.baranggay", value ?? "")
-                setBarangay(value ?? "")
-              }}
-              value={barangay ?? ""}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
+          <div className="col-span-8 grid grid-cols-6 gap-7">
+            <div className=" col-span-2">
+              <label className="sm:text-sm">Barangay</label>
+              <Select
+                name={"address.barangay"}
+                id="address.barangay"
+                placeholder="Barangay"
+                data={filteredBarangay}
+                searchable
+                required
+                disabled={country !== "Philippines"}
+                onChange={(value) => {
+                  setValue("address.baranggay", value ?? "")
+                  setBarangay(value ?? "")
+                }}
+                value={barangay ?? ""}
+                styles={(theme) => ({
+                  item: {
+                    // applies styles to selected item
+                    "&[data-selected]": {
+                      "&, &:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "light"
+                            ? theme.colors.orange[3]
+                            : theme.colors.orange[1],
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.white
+                            : theme.black,
+                      },
                     },
+
+                    // applies styles to hovered item (with mouse or keyboard)
+                    "&[data-hovered]": {},
                   },
+                })}
+                variant="unstyled"
+                className={
+                  country === "Philippines" && city !== ""
+                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                }
+              />
+              <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
+            </div>
+            <div className="col-span-2">
+              <InputField
+                type={"text"}
+                label={"Street"}
+                placeholder="Street"
+                disabled={country === ""}
+                name={"address.street"}
+                register={register}
+              />
+              <AlertInput>{errors?.address?.street?.message}</AlertInput>
+            </div>
 
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className={(country === "Philippines" && city !== "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  " : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"}
-            />
-            <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
-          </div>
-          <div className="col-span-2">
-            <InputField
-              type={"text"}
-              label={"Street"}
-              placeholder="Street"
-              disabled={country === ""}
-              name={"address.street"}
-              register={register}
-            />
-            <AlertInput>{errors?.address?.street?.message}</AlertInput>
-          </div>
-
-          <div className="col-span-2">
-            <InputField
-              type={"number"}
-              label={"Zip Code"}
-              disabled={country === ""}
-              name={"address.zip"}
-              register={register}
-            />
-            <AlertInput>{errors?.address?.zip?.message}</AlertInput>
+            <div className="col-span-2">
+              <InputField
+                type={"number"}
+                label={"Zip Code"}
+                disabled={country === ""}
+                name={"address.zip"}
+                register={register}
+              />
+              <AlertInput>{errors?.address?.zip?.message}</AlertInput>
+            </div>
           </div>
         </div>
 

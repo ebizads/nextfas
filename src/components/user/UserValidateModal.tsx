@@ -52,7 +52,6 @@ const UserValidateModal = (props: {
   )
   const utils = trpc.useContext()
 
-
   const futureDate = new Date()
 
   futureDate.setFullYear(futureDate.getFullYear() + 1)
@@ -82,7 +81,6 @@ const UserValidateModal = (props: {
     error,
   } = trpc.user.update.useMutation({
     onSuccess() {
-
       setCompleteModal(true)
       // invalidate query of asset id when mutations is successful
     },
@@ -104,16 +102,17 @@ const UserValidateModal = (props: {
   })
 
   const onSubmit = async (userForm: User) => {
-    console.log("this: " + userForm.toString())
     mutate({
       ...userForm,
-      name: `${userForm.profile?.first_name
-        ? userForm.profile?.first_name
-        : user?.profile?.first_name
-        } ${userForm.profile?.last_name
+      name: `${
+        userForm.profile?.first_name
+          ? userForm.profile?.first_name
+          : user?.profile?.first_name
+      } ${
+        userForm.profile?.last_name
           ? userForm.profile?.last_name
           : user?.profile?.last_name
-        }`,
+      }`,
 
       id: userId,
       validateTable: {
@@ -122,8 +121,6 @@ const UserValidateModal = (props: {
       },
     })
     setName(userForm?.name?.toString() ?? "")
-    console.log(name)
-    console.log(userForm)
   }
   // async (user: User) => {
   //   // Register function
@@ -157,37 +154,34 @@ const UserValidateModal = (props: {
   //   reset()
   // }
 
-  const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [updated, setUpdated] = useState(false);
+  const [isEditable, setIsEditable] = useState<boolean>(false)
+  const [updated, setUpdated] = useState(false)
 
   useEffect(() => {
     setUserEditable(false)
-
   }, [])
 
-  useEffect(() => { setUpdated(false); })
+  useEffect(() => {
+    setUpdated(false)
+  })
 
   const handleEditable = () => {
-
-    setIsEditable(true);
+    setIsEditable(true)
   }
 
   const handleIsEditable = () => {
     if (!updated) {
-      setUserEditable(true);
-      setUpdated(true);
-
+      setUserEditable(true)
+      setUpdated(true)
     }
-  };
+  }
 
-
-  console.log(user?.position);
   return (
     <Modal
       isVisible={props.openModalDesc}
       setIsVisible={props.setOpenModalDesc}
       className="max-w-4xl"
-      title={(userEditable) ? "Update User Details" : "User Details"}
+      title={userEditable ? "Update User Details" : "User Details"}
     >
       <div>
         <div className="flex w-full flex-row-reverse">
@@ -236,7 +230,13 @@ const UserValidateModal = (props: {
                 className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                 id="profile.middle_name"
                 type={"text"}
-                placeholder={user?.profile?.middle_name ?? ""}
+                placeholder={
+                  user?.profile?.middle_name
+                    ? user?.profile?.middle_name.length > 0
+                      ? user?.profile?.middle_name
+                      : "--"
+                    : "--"
+                }
                 onChange={(e) => {
                   setValue("profile.middle_name", e.currentTarget.value)
                 }}
@@ -258,88 +258,6 @@ const UserValidateModal = (props: {
             </div>
           </div>
 
-          <div className="flex w-full flex-wrap gap-4 py-2.5">
-            <div className="flex w-[32%] flex-col">
-              <label className="sm:text-sm">Team</label>
-              <Select
-                disabled={!isEditable}
-                placeholder={teams?.name ?? "Pick One"}
-                onChange={(value) => {
-                  setValue("teamId", Number(value) ?? 0)
-                  onSearchChange(value ?? "0")
-                }}
-                value={searchValue ? searchValue : teams?.name}
-                data={teamList}
-                defaultValue={"pick one"}
-                styles={(theme) => ({
-                  item: {
-                    // applies styles to selected item
-                    "&[data-selected]": {
-                      "&, &:hover": {
-                        backgroundColor:
-                          theme.colorScheme === "light"
-                            ? theme.colors.orange[3]
-                            : theme.colors.orange[1],
-                        color:
-                          theme.colorScheme === "dark"
-                            ? theme.white
-                            : theme.black,
-                      },
-                    },
-
-                    // applies styles to hovered item (with mouse or keyboard)
-                    "&[data-hovered]": {},
-                  },
-                })}
-                variant="unstyled"
-                className={
-                  isEditable
-                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                    : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                }
-              />
-              {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
-            </div>
-            <div className="flex w-[32%] flex-col">
-              <label className="sm:text-sm">User Number</label>
-              {/* <InputField
-               
-              type={"text"}
-              label={""}
-              name={"employee_id"}
-              register={register}
-            /> */}
-              <p
-                className={
-                  "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                }
-              >{`${user?.user_Id}`}</p>
-            </div>
-            <div className="flex w-[32%] flex-col">
-              <label className="sm:text-sm">Designation / Position</label>
-              {/* <InputField
-                type={"text"}
-                disabled={!isEditable}
-                label={""}
-                placeholder={user?.position?.toString()}
-                name={"position"}
-                register={register}
-              />
-
-              <AlertInput>{errors?.position?.message}</AlertInput> */}
-              <input
-                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                id="position"
-                type={"text"}
-                placeholder={user?.position ?? ""}
-                onChange={(e) => {
-                  setValue("position", e.currentTarget.value)
-                }}
-                disabled={!isEditable}
-              />
-            </div>
-          </div>
-
           <div className="flex flex-wrap gap-4 py-2.5">
             <div className="flex w-[49%] flex-col">
               <label className="sm:text-sm">Email</label>
@@ -354,47 +272,6 @@ const UserValidateModal = (props: {
                 }}
               />
             </div>
-            <div className="flex w-[49%] flex-col">
-              <label className="sm:text-sm">Departmemt</label>
-
-              <p
-                className={
-                  "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                }
-              >
-                {user?.Userteam?.department?.name
-                  ? `${user?.Userteam?.department?.name}`
-                  : "--"}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-4 py-2.5">
-            <div className="flex flex-col sm:w-1/3 md:w-[49%]">
-              <label className="sm:text-sm ">Hired Date</label>
-              {/* <InputField
-            className= appearance-none border  border-black py-2 px-3 text-gray-700 leading-tight focus:outline-none focus-outline"
-            type={"text"}
-          /> */}
-              <DatePicker
-                disabled={!isEditable}
-                dropdownType="modal"
-                placeholder="Pick Date"
-                size="sm"
-                variant="unstyled"
-                value={date}
-                onChange={(value) => {
-                  setValue("hired_date", value)
-                  value === null ? setDate(new Date()) : setDate(value)
-                }}
-                className={
-                  isEditable
-                    ? "my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                    : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                }
-              />
-            </div>
-
             <div className="flex w-[49%] flex-col">
               <label className="mb-2 sm:text-sm">Mobile Number</label>
               <input
@@ -414,7 +291,6 @@ const UserValidateModal = (props: {
                 }}
                 onChange={(event) => {
                   if (event.target.value.length > 11) {
-                    console.log("more than 11")
                     event.target.value = event.target.value.slice(0, 11)
                   }
                   setValue(
@@ -426,6 +302,31 @@ const UserValidateModal = (props: {
 
               <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
             </div>
+          </div>
+
+          <div className="flex flex-wrap gap-4 py-2.5">
+            {/* <div className="flex flex-col sm:w-1/3 md:w-[49%]">
+              <label className="sm:text-sm ">Hired Date</label>
+          
+              <DatePicker
+                disabled={!isEditable}
+                dropdownType="modal"
+                placeholder="Pick Date"
+                size="sm"
+                variant="unstyled"
+                value={date}
+                onChange={(value) => {
+                  setValue("hired_date", value)
+                  value === null ? setDate(new Date()) : setDate(value)
+                }}
+                className={
+                  isEditable
+                    ? "my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                    : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
+                }
+              />
+            </div> */}
+
             <div className="flex w-full flex-wrap gap-4 py-2.5">
               <div className="flex w-[18.4%] flex-col">
                 <label className="sm:text-sm">Street</label>
@@ -490,7 +391,6 @@ const UserValidateModal = (props: {
                   name="address.zip"
                   disabled={!isEditable}
                 />
-
               </div>
               <div className="flex w-[18.4%] flex-col">
                 <label className="sm:text-sm">Country</label>
@@ -563,7 +463,7 @@ const UserValidateModal = (props: {
                 </div>
               </div>
             </Modal>
-            {(
+            {
               <button
                 type="submit"
                 className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
@@ -572,10 +472,9 @@ const UserValidateModal = (props: {
               >
                 {isLoading ? "Loading..." : "Save"}
               </button>
-            )}
+            }
           </div>
         </form>
-
 
         {/* <form
           onSubmit={handleSubmit(onSubmit)}

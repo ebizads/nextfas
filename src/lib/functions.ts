@@ -281,24 +281,23 @@ export const downloadExcelTemplateVendor = (data: ExcelExportTypeVendor[]) => {
 export const downloadExcel_templateAssets = (data: ExcelExportAssetType[]) => {
   console.log("assetsss moooooo::::", data)
 
-  const worksheet = XLSX.utils.json_to_sheet(
-    data !== null && data !== undefined ? data : []
-  )
-  // const worksheet = XLSX.utils.aoa_to_sheet(
-  //   [['id', 'name', 'number', 'alt_number', 'serial_no', 'barcode', 'description',
-  //     'remarks', 'parentId', 'modelId', 'custodianId', 'vendorId', 'assetProjectId',
-  //     'departmentId', 'subsidiaryId', 'addedById', 'status', 'userArchiveId', 'category',
-  //     'invoiceNum', 'purchaseOrder', 'deployment_status', 'department', 'parent',
-  //     'custodian', 'vendor', 'addedBy', 'management_id', 'currency', 'original_cost',
-  //     'current_cost', 'residual_value', 'purchase_date', 'depreciation_start', 'depreciation_end',
-  //     'depreciation_status', 'depreciation_period', 'depreciation_rule', 'createdAt',
-  //     'updatedAt', 'deletedAt', 'deleted', 'assetId', 'accounting_method', 'depreciation_lifetime',
-  //     'residual_percentage', 'asset_location', 'asset_quantity', 'asset_lifetime',
-  //     'management_createdAt', 'management_updatedAt', 'mangement_deletedAt',
-  //     'management_deleted', 'management_remarks', 'model_id', 'model_name', 'model_number',
-  //     'model_createdAt', 'model_updatedAt', 'model_deletedAt', 'model_deleted', 'brand',
-  //     'classId', 'typeId', 'categoryId', 'class', 'type']]
+  // const worksheet = XLSX.utils.json_to_sheet(
+  //   data !== null && data !== undefined ? data : []
   // )
+  const worksheet = XLSX.utils.aoa_to_sheet([
+    [
+      "name",
+      "asset_number",
+      "serial_no",
+      "barcode",
+      "brand",
+      "type",
+      "caliber",
+      "models",
+      "action_type",
+      "description",
+    ],
+  ])
   const workbook = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });

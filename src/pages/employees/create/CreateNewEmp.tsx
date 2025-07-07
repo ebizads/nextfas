@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { DatePicker } from "@mantine/dates"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -9,7 +8,6 @@ import { trpc } from "../../../utils/trpc"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
 import { InputField } from "../../../components/atoms/forms/InputField"
 import { Select } from "@mantine/core"
-import DropZoneComponent from "../../../components/dropzone/DropZoneComponent"
 import { env } from "../../../env/client.mjs"
 import moment from "moment"
 import Modal from "../../../components/headless/modal/modal"
@@ -20,8 +18,8 @@ import ph_regions from "../../../json/ph_regions.json"
 import all_countries from "../../../json/countries.json"
 import all_states from "../../../json/states.json"
 import all_cities from "../../../json/cities.json"
-import { set } from "lodash"
 import { clearAndGoBack } from "../../../lib/functions"
+import { useRouter } from "next/router"
 
 export type Employee = z.infer<typeof EmployeeCreateInput>
 
@@ -48,6 +46,7 @@ export const CreateEmployee_new = (props: {
   const [province, setProvince] = useState("")
   const [city, setCity] = useState("")
   const [barangay, setBarangay] = useState("")
+  const router = useRouter()
 
   const utils = trpc.useContext()
 
@@ -85,7 +84,6 @@ export const CreateEmployee_new = (props: {
       //   name: ""
       // },
       // superviseeId: 0,
-      teamId: 0,
       email: "",
       position: "",
       address: {
@@ -102,9 +100,6 @@ export const CreateEmployee_new = (props: {
       },
     },
   })
-  useEffect(() => {
-    console.log(moment().format("YY-"), empId, "try")
-  }, [empId])
 
   const onSubmit = async (employee: Employee) => {
     // Register function
@@ -113,15 +108,12 @@ export const CreateEmployee_new = (props: {
       name: `${employee.profile?.first_name ?? ""} ${
         employee.profile?.last_name ?? ""
       }`,
-      employee_id:
-        `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}` +
-        String(employee.teamId).padStart(2, "0"),
+      employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
       //     .replace(" ", "")
       //     .toLowerCase()
       //     .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
-      teamId: employee.teamId,
       // supervisee: {
       //   name: employee.supervisee?.name ?? ""
       // },
@@ -154,7 +146,6 @@ export const CreateEmployee_new = (props: {
       return countries.name
     })
     setCountry("")
-    console.log("country", countries)
     return countries
   }, [])
 
@@ -167,14 +158,13 @@ export const CreateEmployee_new = (props: {
       })
       .map(([key]) => key)
     setRegion("")
-    console.log("keys:", upperLevel)
     return upperLevel
   }, [])
 
   const filteredProvince = useMemo(() => {
     const newProvince: Array<string> = []
     if (country === "Philippines") {
-      if (region === null ?? "") {
+      if (region === null) {
         setProvince("")
 
         return newProvince
@@ -185,7 +175,6 @@ export const CreateEmployee_new = (props: {
         const provinceLevel = Object.keys(
           (jsonData as Record<string, any>)[region].province_list
         )
-        console.log("province", provinceLevel)
         setProvince("")
 
         return provinceLevel
@@ -193,7 +182,6 @@ export const CreateEmployee_new = (props: {
     } else {
       if (country) {
         const states = all_states
-        console.log("states", all_states)
         const specStates = states.filter((states) => {
           return states.country_name === country
         })
@@ -203,7 +191,6 @@ export const CreateEmployee_new = (props: {
         if (finalStates.length === 0) {
           return newProvince
         }
-        console.log("states:", specStates)
         return finalStates
       }
       return newProvince
@@ -216,7 +203,7 @@ export const CreateEmployee_new = (props: {
   const filteredCity = useMemo(() => {
     const newCity: Array<any> = []
     if (country === "Philippines") {
-      if (province === null ?? "") {
+      if (province === null) {
         setCity("")
 
         return newCity
@@ -229,7 +216,6 @@ export const CreateEmployee_new = (props: {
         const cityLevel = Object.keys(
           (jsonData as Record<string, any>)[province].municipality_list
         )
-        console.log("city", cityLevel)
         setCity("")
 
         return cityLevel
@@ -243,7 +229,6 @@ export const CreateEmployee_new = (props: {
         const finalCities = specCities.map((city: { name: string }) => {
           return city.name
         })
-        console.log("cities", finalCities)
         setCity("")
         if (finalCities.length === 0) {
           return newCity
@@ -258,7 +243,7 @@ export const CreateEmployee_new = (props: {
 
   const filteredBarangay = useMemo(() => {
     const newBarangay: Array<any> = []
-    if (city === null ?? "") {
+    if (city === null) {
       setBarangay("")
 
       return newBarangay
@@ -270,7 +255,6 @@ export const CreateEmployee_new = (props: {
         .municipality_list
       const barangayLevel = (cityData as Record<string, any>)[city]
         .barangay_list
-      console.log("city", barangayLevel)
       setBarangay("")
 
       return barangayLevel
@@ -376,7 +360,7 @@ export const CreateEmployee_new = (props: {
             />
           </div>
         </div>
-
+        {/* 
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-6">
             <label className="sm:text-sm">Team</label>
@@ -390,7 +374,6 @@ export const CreateEmployee_new = (props: {
               data={teamList}
               styles={(theme) => ({
                 item: {
-                  // applies styles to selected item
                   "&[data-selected]": {
                     "&, &:hover": {
                       backgroundColor:
@@ -404,7 +387,6 @@ export const CreateEmployee_new = (props: {
                     },
                   },
 
-                  // applies styles to hovered item (with mouse or keyboard)
                   "&[data-hovered]": {},
                 },
               })}
@@ -414,7 +396,7 @@ export const CreateEmployee_new = (props: {
           </div>
           <div className="col-span-6">
             <label className="sm:text-sm">Department</label>
-            {/* <InputField
+            <InputField
               // placeholder={props.employee?.department}
               type={"text"}
               disabled={!editable}
@@ -422,7 +404,7 @@ export const CreateEmployee_new = (props: {
               placeholder={props.employee?.team?.department?.name}
               name={"department"}
               register={register}
-            /> */}
+            />
             <p
               className={
                 "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
@@ -431,7 +413,7 @@ export const CreateEmployee_new = (props: {
               {"--"}
             </p>
           </div>
-        </div>
+        </div> */}
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
@@ -826,6 +808,7 @@ export const CreateEmployee_new = (props: {
               onClick={() => {
                 // props.setIsVisible(false)
                 setIsVisible(false)
+                router.push("/employees")
               }}
             >
               Confirm

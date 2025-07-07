@@ -15,7 +15,7 @@ const NewEmp = () => {
 
     for (let x = 0; x <= (employeesAll ? employeesAll?.length : 0) + 1; ) {
       if (
-        employeesAll.find((item) =>
+        employeesAll?.find((item) =>
           item?.employee_id?.includes(String(x + 1).padStart(4, "0"))
         )
       ) {

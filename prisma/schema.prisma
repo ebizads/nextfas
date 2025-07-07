@@ -222,7 +222,6 @@ model AssetCategory {
   model     Model[]
 }
 
-
 model assetTag {
   id        Int       @id @default(autoincrement())
   name      String
@@ -442,6 +441,7 @@ model Asset {
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   deletedAt         DateTime?
+  issuedAt          DateTime?
   deleted           Boolean          @default(false)
   departmentId      Int?
   subsidiaryId      Int?
@@ -456,6 +456,7 @@ model Asset {
   issuedById        Int?
   issuedToId        Int?
   pastIssuanceId    Int?
+  actionType        AssetActionType? @relation(fields: [actionTypeId], references: [id], onDelete: Cascade)
   addedBy           User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project           AssetProject?    @relation(fields: [assetProjectId], references: [id])
   assetTag          assetTag?        @relation(fields: [assetTagId], references: [id], onDelete: Cascade)
@@ -468,37 +469,36 @@ model Asset {
   children          Asset[]          @relation("children")
   pastIssuance      Employee?        @relation("Pastissuance", fields: [pastIssuanceId], references: [id], onDelete: Cascade)
   subsidiary        Company?         @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
+  type              AssetType?       @relation(fields: [typeId], references: [id], onDelete: Cascade)
   vendor            Vendor?          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   AssetDisposal     AssetDisposal?
   AssetIssuance     AssetIssuance?
   management        AssetManagement?
   AssetRepair       AssetRepair?
   AssetTransfer     AssetTransfer?
-  type              AssetType?       @relation(fields: [typeId], references: [id], onDelete: Cascade)
-  actionType        AssetActionType?       @relation(fields: [actionTypeId], references: [id], onDelete: Cascade)
 
   @@unique([typeId, actionTypeId, parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }
 
 model AssetType {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  deleted     Boolean  @default(false)
+  deleted     Boolean   @default(false)
   assets      Asset[]
 }
 
 model AssetActionType {
-  id         Int      @id @default(autoincrement())
-  name        String   @unique
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  deleted     Boolean  @default(false)
+  deleted     Boolean   @default(false)
   assets      Asset[]
 }
 

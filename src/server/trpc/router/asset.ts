@@ -624,19 +624,19 @@ export const assetRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       const {
         id,
-        management,
-        custodianId,
-        departmentId,
-        model,
-        vendorId,
-        subsidiaryId,
-        assetProjectId,
-        parentId,
-        assetTagId,
-        AssetIssuance,
-        purchaseOrder,
-        invoiceNum,
-        deployment_status,
+        // management,
+        // custodianId,
+        // departmentId,
+        // model,
+        // vendorId,
+        // subsidiaryId,
+        // assetProjectId,
+        // parentId,
+        // assetTagId,
+        // AssetIssuance,
+        // purchaseOrder,
+        // invoiceNum,
+        // deployment_status,
         typeId,
         actionTypeId,
         ...rest
@@ -648,50 +648,50 @@ export const assetRouter = t.router({
           },
           data: {
             ...rest,
-            model: {
-              update: model,
-            },
-            management: {
-              update: management,
-            },
-            AssetIssuance: {
-              update: AssetIssuance,
-            },
-            vendor: {
-              connect: {
-                id: vendorId ?? 0,
-              },
-            },
-            custodian: {
-              connect: {
-                id: custodianId ?? 0,
-              },
-            },
-            department: {
-              connect: {
-                id: departmentId ?? 0,
-              },
-            },
-            subsidiary: {
-              connect: {
-                id: subsidiaryId ?? 0,
-              },
-            },
-            project: {
-              connect: {
-                id: assetProjectId ?? 0,
-              },
-            },
-            parent: {
-              connect: {
-                id: parentId ?? 0,
-              },
-            },
-            assetTag: {
-              connect: {
-                id: assetTagId ?? 0,
-              },
-            },
+            // model: {
+            //   update: model,
+            // },
+            // management: {
+            //   update: management,
+            // },
+            // AssetIssuance: {
+            //   update: AssetIssuance,
+            // },
+            // vendor: {
+            //   connect: {
+            //     id: vendorId ?? 0,
+            //   },
+            // },
+            // custodian: {
+            //   connect: {
+            //     id: custodianId ?? 0,
+            //   },
+            // },
+            // department: {
+            //   connect: {
+            //     id: departmentId ?? 0,
+            //   },
+            // },
+            // subsidiary: {
+            //   connect: {
+            //     id: subsidiaryId ?? 0,
+            //   },
+            // },
+            // project: {
+            //   connect: {
+            //     id: assetProjectId ?? 0,
+            //   },
+            // },
+            // parent: {
+            //   connect: {
+            //     id: parentId ?? 0,
+            //   },
+            // },
+            // assetTag: {
+            //   connect: {
+            //     id: assetTagId ?? 0,
+            //   },
+            // },
             type: {
               connect: {
                 id: typeId, // Connect to AssetType if typeId is provided
@@ -725,6 +725,33 @@ export const assetRouter = t.router({
         await ctx.prisma.asset.update({
           where: {
             id,
+          },
+          data: {
+            status: status,
+          },
+        })
+
+        return "Asset updated successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
+  changeStatusScanned: authedProcedure
+    .input(
+      z.object({
+        serial_no: z.string(),
+        status: z.string().nullish(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { serial_no, status } = input
+      try {
+        await ctx.prisma.asset.updateMany({
+          where: {
+            serial_no,
           },
           data: {
             status: status,
@@ -783,7 +810,7 @@ export const assetRouter = t.router({
         })
       }
     }),
-    
+
   // editCustodian: authedProcedure
   //   .input(AssetEditKevinInput)
   //   .mutation(async ({ ctx, input }) => {

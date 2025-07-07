@@ -26,6 +26,7 @@ const AssetDetailsModal = (props: {
   setOpenModalDesc: React.Dispatch<React.SetStateAction<boolean>>
   setOpenModalDel: React.Dispatch<React.SetStateAction<boolean>>
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
+  refetch: () => Promise<{ data?: any }>
 }) => {
   // useEffect(() => {
   //   console.log(props.asset.addedBy)
@@ -62,6 +63,8 @@ const AssetDetailsModal = (props: {
   const { issuanceAsset, setIssuanceAsset } = useIssuanceAssetStore()
   const [validateModal, setValidateModal] = useState<boolean>(false)
   const [validateString, setValidateString] = useState<string>("")
+  const [statusToUpdate, setStatusToUpdate] = useState<string>("")
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false)
 
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
@@ -118,6 +121,28 @@ const AssetDetailsModal = (props: {
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
+
+  const { mutate: changeStatus, isLoading, error } = trpc.asset.changeStatus.useMutation({
+    onSuccess() {
+      setStatusToUpdate("")
+      setConfirmationModalOpen(false)
+      props.setOpenModalDesc(false)
+      props.refetch()
+      console.log("status successfully changed");
+    },
+    onError(error){
+      console.error("Error changing status", error)
+    }
+  })
+
+  const onConfirm = (
+  ) => {
+    changeStatus({
+      id: props.asset?.id ?? 0,
+      status: statusToUpdate
+    })
+  }
+
   // const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
   return (
     <>
@@ -125,6 +150,7 @@ const AssetDetailsModal = (props: {
         size={13}
         isOpen={props.openModalDesc}
         setIsOpen={props.setOpenModalDesc}
+        preventClose={confirmationModalOpen}
       >
         <div className="px-8 py-6">
           <div className="flex w-full text-sm text-light-primary">
@@ -134,55 +160,63 @@ const AssetDetailsModal = (props: {
                 <p className="text-base font-medium text-neutral-600">
                   Asset Information
                 </p>
-                <div className="text-md mt-4 flex flex-col gap-4">
-                  <section className="grid grid-cols-2">
-                    <div className="col-span-1">
-                      <p className="font-light">Asset Name</p>
-                      <p className="font-medium">{props.asset?.name ?? "--"}</p>
-                    </div>
+                <div className="mt-4 flex flex-col gap-4 text-sm">
+                  <section className="grid grid-cols-3">
                     <div className="col-span-1">
                       <p className="font-light">Asset ID</p>
-                      <p className="font-medium">
-                        {props.asset?.number ?? "--"}
-                      </p>
+                      <p className="font-medium">{props.asset?.number}</p>
                     </div>
-                  </section>
-                  <section className="grid grid-cols-2">
-                    <div className="col-span-1">
-                      <p className="font-light">RFID Tag ID / Barcode</p>
-                      <p className="font-medium">
-                        {props.asset?.barcode ?? "--"}
-                      </p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Firearm Serial No.</p>
-                      <p className="font-medium">
-                        {props.asset?.serial_no ?? "--"}
-                      </p>
-                    </div>
-                  </section>
 
+                    <div className="col-span-1">
+                      <p className="font-light">Name</p>
+                      <p className="font-medium">{props.asset?.name}</p>
+                    </div>
+
+                    <div className="col-span-1">
+                      <p className="font-light">RFID/ Barcode ID</p>
+                      <p className="font-medium">
+                        {props.asset?.barcode !== ""
+                          ? props.asset?.barcode
+                          : "--"}
+                      </p>
+                    </div>
+
+                  </section>
                   <section className="grid grid-cols-3">
+                    <div className="col-span-1">
+                      <p className="font-light">Firearm Serial Number</p>
+                      <p className="font-medium">
+                        {props.asset?.serial_no !== ""
+                          ? props.asset?.serial_no
+                          : "--"}
+                      </p>
+                    </div>
                     <div className="col-span-1">
                       <p className="font-light">Brand</p>
                       <p className="font-medium">
-                        {props.asset?.brand ?? "--"}
+                        {props.asset?.brand !== ""
+                          ? props.asset?.brand
+                          : "--"}
                       </p>
                     </div>
                     <div className="col-span-1">
                       <p className="font-light">Model</p>
                       <p className="font-medium">
-                        {props.asset?.models ?? "--"}
-                      </p>
-                    </div>
-                    <div className="col-span-1">
-                      <p className="font-light">Type</p>
-                      <p className="font-medium">
-                        {props.asset?.type?.name ?? "--"}
+                        {props.asset?.models !== ""
+                          ? props.asset?.models
+                          : "--"}
                       </p>
                     </div>
                   </section>
-                  <section className="grid grid-cols-2">
+                  <section className="grid grid-cols-3">
+                    <div className="col-span-1">
+                      <p className="font-light">Type</p>
+                      <p className="font-medium">
+                        {props.asset?.type?.name
+                          ? props.asset?.type?.name
+                          : "--"}
+                      </p>
+                    </div>
                     <div className="col-span-1">
                       <p className="font-light">Caliber</p>
                       <p className="font-medium">
@@ -196,8 +230,8 @@ const AssetDetailsModal = (props: {
                       </p>
                     </div>
                   </section>
-                  <section className="grid grid-cols-1">
-                    <div className="col-span-1">
+                  <section className="grid grid-cols-3">
+                    <div className="col-span-3">
                       <p className="font-light">Description</p>
                       <p className="font-medium">
                         {props.asset?.description ?? "--"}
@@ -206,6 +240,80 @@ const AssetDetailsModal = (props: {
                   </section>
                 </div>
               </section>
+              <div className="space-y flex flex-col">
+                <button
+                  className="outline-none focus:outline-none"
+                  onClick={() => props.setOpenModalDesc(false)}
+                >
+                  {""}
+                  <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
+                </button>
+                <p className="font-medium xl:text-lg">Asset Options</p>
+                <nav className="relative my-2 flex flex-1 gap-2 ">
+                  {props.asset?.status === null && (
+                    <button onClick={() => {
+                      setStatusToUpdate("in")
+                      setConfirmationModalOpen(true)
+                    }}>
+                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                        <i className={"fa-solid fa-hand-holding-box"} />
+                        In
+                      </div>
+                    </button>
+                  )}
+
+                  {/* //TODO:  Fix this when we have Asset Issuance READY */}
+                  {props.asset?.status === null && (
+                    <button onClick={() => {
+                      setStatusToUpdate("out")
+                      setConfirmationModalOpen(true)
+                    }}>
+                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                        <i className={"fa-solid fa-arrow-right-arrow-left"} />
+                        Out
+                      </div>
+                    </button>
+                  )}
+
+                  {props.asset?.status === null && (
+                    <button onClick={() => {
+                      setStatusToUpdate("issued")
+                      setConfirmationModalOpen(true)
+                    }}>
+                      <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                        <i className={"fa-solid fa-arrow-right-arrow-left"} />
+                        Issue
+                      </div>
+                    </button>
+                  )}
+
+                  <Link href="/assets/update">
+                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                      <i className={"fa-solid fa-pen-to-square"} />
+                      Edit
+                    </div>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      props.setOpenModalDel(true)
+                      props.setCheckboxes([props.asset?.id ?? -1])
+                    }}
+                    className="flex items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
+                  >
+                    <i className={"fa-solid fa-trash-can-xmark text-red-500"} />
+                    Delete
+                  </button>
+                  {/* {navigations[0]?.subType?.map((action, idx) => (
+                  <button
+                    key={idx}
+                    className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
+                  >
+                    <i className={action.icon} />
+                    {action.name}
+                  </button>
+                ))} */}
+                </nav>
+              </div>
             </div>
             <button
               className="outline-none focus:outline-none"
@@ -295,58 +403,10 @@ const AssetDetailsModal = (props: {
                   )}
                 </section>
               </section>
-              <div className="space-y flex flex-col">
-                <nav className="relative my-2 flex flex-1 flex-col gap-2 ">
-                  <button
-                    className="outline-none focus:outline-none"
-                    onClick={() => props.setOpenModalDesc(false)}
-                  >
-                    <i className="fa-regular fa-circle-xmark fixed top-1 right-2 text-lg text-light-secondary" />
-                  </button>
-                  <p className="font-medium xl:text-lg">Asset Options</p>
-                  {/* {props.asset?.AssetIssuance === null &&
-                    (disposeAsset || repairAsset || transferAsset)?.status ===
-                      ("" || null) && (
-                      <Link href="/transactions/issuance/create">
-                        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                          <i className={"fa-solid fa-hand-holding-box"} />
-                          Assign
-                        </div>
-                      </Link>
-                    )} */}
-
-                  {/* //TODO:  Fix this when we have Asset Issuance READY */}
-                  <Link href="/assets/update">
-                    <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
-                      <i className={"fa-solid fa-pen-to-square"} />
-                      Edit
-                    </div>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      props.setOpenModalDel(true)
-                      props.setCheckboxes([props.asset?.id ?? -1])
-                    }}
-                    className="flex items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
-                  >
-                    <i className={"fa-solid fa-trash-can-xmark text-red-500"} />
-                    Delete
-                  </button>
-                  {/* {navigations[0]?.subType?.map((action, idx) => (
-                  <button
-                    key={idx}
-                    className="flex items-center gap-2 rounded-md bg-[#F1F4F9] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
-                  >
-                    <i className={action.icon} />
-                    {action.name}
-                  </button>
-                ))} */}
-                </nav>
-              </div>
             </div>
           </div>
         </div>
-      </Modal>
+      </Modal >
       <Modal
         size={8}
         className="max-w-lg"
@@ -355,6 +415,30 @@ const AssetDetailsModal = (props: {
       >
         <div className="py-2">
           <p className=" text-center text-lg font-semibold">{validateString}</p>
+        </div>
+      </Modal>
+      <Modal
+        size={6}
+        isOpen={confirmationModalOpen}
+        setIsOpen={setConfirmationModalOpen}
+      >
+        <div className="px-8 py-4 flex flex-col items-center gap-5">
+          <p>Would you like to tag this asset as <span className={`text-red-500`}>&quot;{statusToUpdate}&quot;</span>?</p>
+
+          <div className="flex gap-2">
+            <button onClick={() => { setConfirmationModalOpen(false) }}>
+              <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                <i className={"fa-solid fa-xmark"} />
+                Cancel
+              </div>
+            </button>
+            <button onClick={() => { onConfirm() }}>
+              <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
+                <i className={"fa-solid fa-check"} />
+                Confirm
+              </div>
+            </button>
+          </div>
         </div>
       </Modal>
     </>
@@ -404,9 +488,8 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}
               {props.checkboxes.length > 1 ? "records" : "record"}
               <i
-                className={`fa-solid ${
-                  showList ? " fa-caret-up" : " fa-caret-down"
-                }`}
+                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
+                  }`}
               />
             </button>
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -443,7 +526,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-              // disabled={isLoading}
+            // disabled={isLoading}
             >
               Yes, delete record/s
             </button>
@@ -461,6 +544,7 @@ const AssetTable = (props: {
   rows: Asset[]
   columns: ColumnType[]
   showCheckboxes?: boolean
+  refetch: () => Promise<{ data?: any }>
 }) => {
   const showCheckboxes = props.showCheckboxes ?? true
   //minimize screen toggle
@@ -509,9 +593,8 @@ const AssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-full"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -618,6 +701,7 @@ const AssetTable = (props: {
         setOpenModalDesc={setOpenModalDesc}
         setOpenModalDel={setOpenModalDel}
         setCheckboxes={props.setCheckboxes}
+        refetch={props.refetch}
       />
       <AssetDeleteModal
         checkboxes={props.checkboxes}

@@ -5,26 +5,26 @@ const getSize = (size: number) => {
   return size === 1
     ? "max-w-xs"
     : size === 2
-    ? "max-w-sm"
-    : size === 3
-    ? "max-w-md"
-    : size === 4
-    ? "max-w-lg"
-    : size === 5
-    ? "max-w-xl"
-    : size === 6
-    ? "max-w-2xl"
-    : size === 7
-    ? "max-w-3xl"
-    : size === 8
-    ? "max-w-4xl"
-    : size === 9
-    ? "max-w-5xl"
-    : size === 10
-    ? "max-w-6xl"
-    : size === 11
-    ? "max-w-7xl"
-    : "max-w-full"
+      ? "max-w-sm"
+      : size === 3
+        ? "max-w-md"
+        : size === 4
+          ? "max-w-lg"
+          : size === 5
+            ? "max-w-xl"
+            : size === 6
+              ? "max-w-2xl"
+              : size === 7
+                ? "max-w-3xl"
+                : size === 8
+                  ? "max-w-4xl"
+                  : size === 9
+                    ? "max-w-5xl"
+                    : size === 10
+                      ? "max-w-6xl"
+                      : size === 11
+                        ? "max-w-7xl"
+                        : "max-w-full"
 }
 
 const Modal = ({
@@ -33,15 +33,19 @@ const Modal = ({
   className,
   size,
   children,
+  preventClose = false,
 }: {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   className?: string
   size: number
   children: ReactElement
+  preventClose?: boolean
 }) => {
   function closeModal() {
-    setIsOpen(false)
+    if (!preventClose) {
+      setIsOpen(false)
+    }
   }
 
   return (
@@ -77,8 +81,8 @@ const Modal = ({
                     className
                       ? `${className} ${getSize(size - 3)} xl:${getSize(size)}`
                       : `${getSize(size - 3)} xl:${getSize(
-                          size
-                        )} min-w-lg w-full transform overflow-hidden rounded-xl bg-neutral-50 text-left align-middle shadow-xl transition-all`
+                        size
+                      )} min-w-lg w-full transform overflow-hidden rounded-xl bg-neutral-50 text-left align-middle shadow-xl transition-all`
                   }
                 >
                   {children}

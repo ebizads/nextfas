@@ -28,6 +28,7 @@ const DisplayAssets = (props: {
   setPage: React.Dispatch<React.SetStateAction<number>>
   limit: number
   setLimit: React.Dispatch<React.SetStateAction<number>>
+  refetch: () => Promise<{ data?: any }>
 }) => {
   const { setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
@@ -177,6 +178,7 @@ const DisplayAssets = (props: {
         rows={props.assets}
         filterBy={filterBy}
         columns={columns.filter((col) => filterBy.includes(col.value))}
+        refetch={props.refetch}
       />
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">

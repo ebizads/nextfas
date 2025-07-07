@@ -13,7 +13,7 @@ const Assets = () => {
   const router = useRouter()
   const { search } = useSearchStore()
   // Get asset by asset id
-  const { data: dataAssets } = trpc.asset.findAll.useQuery({
+  const { data: dataAssets, refetch } = trpc.asset.findAll.useQuery({
     search: { name: search },
     limit,
     page,
@@ -56,6 +56,7 @@ const Assets = () => {
           limit={limit}
           setLimit={setLimit}
           user={null}
+          refetch={refetch}
         />
       </div>
     </DashboardLayout>

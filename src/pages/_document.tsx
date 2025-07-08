@@ -9,7 +9,7 @@ export default function Document() {
           href="https://kit-pro.fontawesome.com/releases/v6.1.1/css/pro.css"
         />
       </Head>
-      <body className="min-h-screen bg-light-background text-light-primary transition-colors selection:bg-green-300 selection:text-light-primary dark:bg-dark-background dark:text-dark-primary">
+      <body className="min-h-screen min-w-max bg-light-background text-light-primary transition-colors selection:bg-green-300 selection:text-light-primary dark:bg-dark-background dark:text-dark-primary">
         <Main />
         <NextScript />
       </body>

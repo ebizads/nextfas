@@ -4,6 +4,7 @@ import Modal from "../../headless/modal/modal"
 import { useMinimizeStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { trpc } from "../../../utils/trpc"
+import { AssetTypeUpdateInput } from "../../../server/schemas/assetType"
 
 type Type = {
   id: number
@@ -17,75 +18,15 @@ const TypeTable = ({
   rows,
   filterBy,
   columns,
+  setSelectedType,
 }: {
   checkboxes: number[]
   setCheckboxes: React.Dispatch<React.SetStateAction<number[]>>
   rows: Type[]
   filterBy: string[]
   columns: ColumnType[]
+  setSelectedType: React.Dispatch<React.SetStateAction<Type>>
 }) => {
-  const { minimize } = useMinimizeStore()
-  // const [selectedAction, setSelectedAction] = useState<Type | null>(null)
-  const [selectedType, setSelectedType] = useState<Type | null>(null)
-  const [isVisible, setIsVisible] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editForm, setEditForm] = useState({
-    name: "",
-    description: "",
-  })
-  const [isSaving, setIsSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const utils = trpc.useContext()
-  const updateMutation = trpc.assetType.update.useMutation({
-    onSuccess: () => {
-      utils.assetType.findAll.invalidate() // Correct invalidation
-    },
-  })
-
-  //Initialize form when type is selected
-  useEffect(() => {
-    if (selectedType) {
-      setEditForm({
-        name: selectedType.name || "",
-        description: selectedType.description || "",
-      })
-    }
-  }, [selectedType])
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target
-    setEditForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
-  const handleSave = async () => {
-    if (!selectedType) return
-
-    setIsSaving(true)
-    setError(null)
-
-    try {
-      await updateMutation.mutateAsync({
-        id: selectedType.id,
-        name: editForm.name,
-        description: editForm.description,
-      })
-
-      setIsEditing(false)
-      setIsVisible(false)
-    } catch (err) {
-      setError("Failed to update type")
-      console.error(err)
-    } finally {
-      setIsSaving(false)
-    }
-  }
-
   const selectAllCheckboxes = () => {
     if (checkboxes.length === 0) {
       setCheckboxes([-1])
@@ -157,7 +98,6 @@ const TypeTable = ({
                     className="cursor-pointer px-6 py-2"
                     onClick={() => {
                       setSelectedType(row)
-                      setIsVisible(true)
                     }}
                   >
                     {cellValue
@@ -172,129 +112,6 @@ const TypeTable = ({
           ))}
         </tbody>
       </table>
-
-      {selectedType && (
-        <Modal
-          title={isEditing ? "Edit Type" : "Type Details"}
-          isVisible={isVisible}
-          setIsVisible={(visible) => {
-            if (!visible) {
-              setIsEditing(false)
-              setError(null)
-            }
-            setIsVisible(visible)
-          }}
-          className="max-w-md"
-        >
-          <div className="space-y-4 p-4">
-            {/* ID - Always read-only */}
-            <div>
-              <label className="block text-sm font-medium text-gray-500">
-                ID
-              </label>
-              <div className="mt-1 text-sm text-gray-900">
-                {selectedType.id}
-              </div>
-            </div>
-
-            {!isEditing ? (
-              <>
-                {/* View Mode */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-500">
-                    Name
-                  </label>
-                  <div className="mt-1 text-sm text-gray-900">
-                    {selectedType.name}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500">
-                    Description
-                  </label>
-                  <div className="mt-1 text-sm text-gray-900">
-                    {selectedType.description || "—"}
-                  </div>
-                </div>
-                <div className="mt-4 flex justify-end gap-2">
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="flex w-[25%]  cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base"
-                  >
-                    <i className={"fa-solid fa-pen-to-square"} />
-                    Edit
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Edit Mode */}
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Name *
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    value={editForm.name}
-                    onChange={handleInputChange}
-                    placeholder={selectedType.name} // Show original value as placeholder
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-tangerine-500 focus:ring-tangerine-500"
-                  />
-                  {/* {editForm.name === selectedType.name && ( */}
-                  <p className="mt-1 text-xs text-gray-500">
-                    Original: {selectedType.name}
-                  </p>
-                  {/* )} */}
-                </div>
-                <div>
-                  <label
-                    htmlFor="description"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows={3}
-                    value={editForm.description}
-                    onChange={handleInputChange}
-                    placeholder={selectedType.description || "No description"} // Show original value as placeholder
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-tangerine-500 focus:ring-tangerine-500"
-                  />
-                  {/* {editForm.description === selectedType.description && selectedType.description && ( */}
-                  <p className="mt-1 text-xs text-gray-500">
-                    Original: {selectedType.description}
-                  </p>
-                  {/* )} */}
-                </div>
-                <div className="mt-4 flex justify-end gap-2">
-                  <button
-                    onClick={() => setIsEditing(false)}
-                    className="rounded-md bg-gray-300 px-4 py-2 text-gray-700"
-                    disabled={isSaving}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    className="rounded-md bg-tangerine-500 px-4 py-2 text-white"
-                    disabled={isSaving}
-                  >
-                    {isSaving ? "Saving..." : "Save"}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </Modal>
-      )}
     </div>
   )
 }

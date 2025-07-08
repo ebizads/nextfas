@@ -2,9 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import {
-  EmployeeEditInput,
-} from "../../../server/schemas/employee"
+import { EmployeeEditInput } from "../../../server/schemas/employee"
 import { ImageJSON } from "../../../types/table"
 import { trpc } from "../../../utils/trpc"
 import AlertInput from "../../../components/atoms/forms/AlertInput"
@@ -58,17 +56,7 @@ export const UpdateEmployee = (props: {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
 
-  const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
-
-  const teamList = useMemo(() => {
-    const list = teams?.teams.map(
-      (team: { id: { toString: () => any }; name: any }) => {
-        return { value: team.id.toString(), label: team.name }
-      }
-    ) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
 
   const {
     mutate,
@@ -76,7 +64,6 @@ export const UpdateEmployee = (props: {
     error,
   } = trpc.employee.edit.useMutation({
     onSuccess() {
-      console.log("omsim")
       // invalidate query of asset id when mutations is successful
       setIsVisible(true)
       utils.employee.findAll.invalidate()
@@ -99,7 +86,6 @@ export const UpdateEmployee = (props: {
   const [updated, setUpdated] = useState(false)
 
   useEffect(() => {
-    console.log(selectedEmp)
     if (selectedEmp === null) {
       router.push("/employees")
     }
@@ -129,12 +115,10 @@ export const UpdateEmployee = (props: {
     }
   }
   const filteredAllCountries = useMemo(() => {
-    console.log("checkcount: ", country)
     const countries = all_countries.map((countries) => {
       return countries.name
     })
     setCountry("")
-    console.log("country", countries)
     return countries
   }, [])
 
@@ -147,14 +131,13 @@ export const UpdateEmployee = (props: {
       })
       .map(([key]) => key)
     setRegion("")
-    console.log("keys:", upperLevel)
     return upperLevel
   }, [])
 
   const filteredProvince = useMemo(() => {
     const newProvince: Array<string> = []
     if (country === "Philippines") {
-      if (region === null ?? "") {
+      if (region === null) {
         setProvince("")
 
         return newProvince
@@ -165,7 +148,6 @@ export const UpdateEmployee = (props: {
         const provinceLevel = Object.keys(
           (jsonData as Record<string, any>)[region].province_list
         )
-        console.log("province", provinceLevel)
         setProvince("")
 
         return provinceLevel
@@ -173,7 +155,6 @@ export const UpdateEmployee = (props: {
     } else {
       if (country) {
         const states = all_states
-        console.log("states", all_states)
         const specStates = states.filter((states) => {
           return states.country_name === country
         })
@@ -183,7 +164,6 @@ export const UpdateEmployee = (props: {
         if (finalStates.length === 0) {
           return newProvince
         }
-        console.log("states:", specStates)
         return finalStates
       }
       return newProvince
@@ -196,7 +176,7 @@ export const UpdateEmployee = (props: {
   const filteredCity = useMemo(() => {
     const newCity: Array<any> = []
     if (country === "Philippines") {
-      if (province === null ?? "") {
+      if (province === null) {
         setCity("")
 
         return newCity
@@ -209,7 +189,6 @@ export const UpdateEmployee = (props: {
         const cityLevel = Object.keys(
           (jsonData as Record<string, any>)[province].municipality_list
         )
-        console.log("city", cityLevel)
         setCity("")
 
         return cityLevel
@@ -223,7 +202,6 @@ export const UpdateEmployee = (props: {
         const finalCities = specCities.map((city: { name: string }) => {
           return city.name
         })
-        console.log("cities", finalCities)
         setCity("")
         if (finalCities.length === 0) {
           return newCity
@@ -238,7 +216,7 @@ export const UpdateEmployee = (props: {
 
   const filteredBarangay = useMemo(() => {
     const newBarangay: Array<any> = []
-    if (city === null ?? "") {
+    if (city === null) {
       setBarangay("")
 
       return newBarangay
@@ -250,7 +228,6 @@ export const UpdateEmployee = (props: {
         .municipality_list
       const barangayLevel = (cityData as Record<string, any>)[city]
         .barangay_list
-      console.log("city", barangayLevel)
       setBarangay("")
 
       return barangayLevel
@@ -259,8 +236,6 @@ export const UpdateEmployee = (props: {
 
     return newBarangay
   }, [region, province, city])
-
-  console.log("ALAM MO TONG EMPLOYEE NA TO::::", props.employee)
 
   return (
     <main className="container mx-auto flex flex-col justify-center p-2">
@@ -384,82 +359,6 @@ export const UpdateEmployee = (props: {
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
-          <div className="col-span-6">
-            <label className="sm:text-sm">Team</label>
-            <Select
-              placeholder="Pick one"
-              onChange={(value) => {
-                setValue("teamId", Number(value) ?? 0)
-                onSearchChange(value ?? "0")
-              }}
-              value={searchValue}
-              data={teamList}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-            />
-            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
-          </div>
-
-          <div className="col-span-6">
-            <label className="sm:text-sm">Department</label>
-            {/* <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.employee?.team?.department?.name}
-              name={"department"}
-              register={register}
-            /> */}
-            <p
-              className={
-                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >{`${props.employee?.team?.department?.name}`}</p>
-          </div>
-
-          {/* <div className="col-span-6">
-            <label className="sm:text-sm">Location</label>
-            <InputField
-              // placeholder={props.employee?.department}
-              type={"text"}
-              disabled={!editable}
-              label={""}
-              placeholder={props.employee?.team?.department?.name}
-              name={"department"}
-              register={register}
-            />
-            <p
-              className={
-                "my-2 w-full truncate rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >
-              {"based on workmode (based wer?)"}
-            </p>
-          </div> */}
-        </div>
-
-        <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
@@ -474,7 +373,6 @@ export const UpdateEmployee = (props: {
               }}
               onChange={(event) => {
                 if (event.target.value.length > 11) {
-                  console.log("more than 11")
                   event.target.value = event.target.value.slice(0, 11)
                 }
                 setValue(
@@ -618,7 +516,11 @@ export const UpdateEmployee = (props: {
               clearable
               nothingFound="No options"
               variant="unstyled"
-              className={country === "" || country !== "Philippines" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 pointer-events-none px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                country === "" || country !== "Philippines"
+                  ? "pointer-events-none mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
 
             <AlertInput>{errors?.address?.region?.message}</AlertInput>
@@ -631,9 +533,13 @@ export const UpdateEmployee = (props: {
               searchable
               // required
               id="address.province"
-              placeholder={props.employee?.address?.province ?? "Province/States"}
+              placeholder={
+                props.employee?.address?.province ?? "Province/States"
+              }
               data={filteredProvince}
-              disabled={country === "Philippines " ? (region === "") : country === ""}
+              disabled={
+                country === "Philippines " ? region === "" : country === ""
+              }
               onChange={(value) => {
                 setValue("address.province", value ?? "")
                 setProvince(value ?? "")
@@ -662,7 +568,11 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className={(country === "Philippines " ? (region === "") : country === "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                (country === "Philippines " ? region === "" : country === "")
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
             {/* <InputField
                 type={"text"}
@@ -710,7 +620,11 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className={province === "" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+              className={
+                province === ""
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+              }
             />
             {/* <InputField
                 type={"text"}
@@ -757,7 +671,11 @@ export const UpdateEmployee = (props: {
                 },
               })}
               variant="unstyled"
-              className={(country === "Philippines" && city !== "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  " : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"}
+              className={
+                country === "Philippines" && city !== ""
+                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                  : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+              }
             />
             <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
           </div>
@@ -859,7 +777,7 @@ export const UpdateEmployee = (props: {
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             setOpenModalDel={setOpenModalDel}
-          // setIsVisible={props.setIsVisible}
+            // setIsVisible={props.setIsVisible}
           />
         </div>
       </form>
@@ -914,7 +832,6 @@ export const EmployeeDeleteModal = (props: {
 
   const { mutate } = trpc.employee.delete.useMutation({
     onSuccess() {
-      console.log()
       props.setOpenModalDel(false)
       props.setIsLoading(false)
       // props.setIsVisible(false)
@@ -963,7 +880,7 @@ export const EmployeeDeleteModal = (props: {
                   handleDelete()
                   setIsDeleteVisible(true)
                 }}
-              // disabled={isLoading}
+                // disabled={isLoading}
               >
                 Yes, delete record
               </button>

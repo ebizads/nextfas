@@ -21,8 +21,6 @@ const NewEmp = () => {
       ) {
         x++
       } else {
-        console.log("Chk: " + JSON.stringify(true))
-
         return (numberArray = String(x + 1).padStart(4, "0"))
       }
     }

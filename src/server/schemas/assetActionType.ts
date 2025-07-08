@@ -5,4 +5,12 @@ export const AssetActionTypeCreateInput = z.object({
   description: z.string().optional(),
 })
 
-export type AssetActionTypeCreateInput = z.infer<typeof AssetActionTypeCreateInput>
+export const AssetActionTypeUpdateInput = z.object({
+  id: z.number(),
+  name: z.string().min(1, "Name is required"),
+  description: z.string().optional(),
+})
+
+export type AssetActionTypeCreateInput = z.infer<
+  typeof AssetActionTypeCreateInput
+>

@@ -527,7 +527,6 @@ export const assetRouter = t.router({
     .input(z.array(z.string()))
     .query(async ({ ctx, input }) => {
       if (input) {
-        console.log("array ", input)
         const assets = await ctx.prisma.asset.findMany({
           where: {
             number: {

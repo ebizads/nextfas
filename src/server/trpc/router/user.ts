@@ -6,14 +6,9 @@ import {
   CreateArchiveUser,
   CreateUserInput,
   EditUserInput,
-  IdUser,
 } from "../../schemas/user"
 import { authedProcedure, t } from "../trpc"
-import { trpc } from "../../../utils/trpc"
 import bcrypt from "bcrypt"
-import { Prisma } from "@prisma/client"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { prisma } from "../../../server/db/client"
 
 export const userRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ input, ctx }) => {
@@ -163,8 +158,6 @@ export const userRouter = t.router({
         if (user.length !== 0) {
           username = username + user.length
         }
-
-        console.log(rest, "check rest data")
 
         await ctx.prisma.user.create({
           data: {

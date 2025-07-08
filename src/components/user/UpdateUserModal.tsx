@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { DatePicker } from "@mantine/dates"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -10,15 +9,12 @@ import { InputField } from "../atoms/forms/InputField"
 import { Select } from "@mantine/core"
 //import DropZoneComponent from "../dropzone/DropZoneComponent"
 import { ImageJSON } from "../../types/table"
-import DropZoneComponent from "../dropzone/DropZoneComponent"
-import { SelectValueType } from "../atoms/select/TypeSelect"
 import { UserType } from "../../types/generic"
 import { useEditableStore } from "../../store/useStore"
 // import { useEditableStore } from "../../store/useStore"
-import { CreateArchiveUser, EditUserInput } from "../../server/schemas/user"
+import { EditUserInput } from "../../server/schemas/user"
 import { generateCertificate } from "../../lib/functions"
 import Modal from "../headless/modal/modal"
-import { stubFalse } from "lodash"
 
 import ph_regions from "../../json/ph_regions.json"
 import all_countries from "../../json/countries.json"
@@ -46,7 +42,6 @@ const UpdateUserModal = (props: {
   const utils = trpc.useContext()
   const [images, setImage] = useState<ImageJSON[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { data: teams } = trpc.team.findAll.useQuery()
   const { editable, setEditable } = useEditableStore()
   const [country, setCountry] = useState("")
   const [region, setRegion] = useState("")
@@ -54,24 +49,10 @@ const UpdateUserModal = (props: {
   const [city, setCity] = useState("")
   const [barangay, setBarangay] = useState("")
 
-  const { data: user } = trpc.user.findOne.useQuery(
-    Number(props.user?.id) ?? 0
-  )
-  const { data: singleTeams } = trpc.team.findOne.useQuery(
-    props.user?.teamId ?? 0
-  )
+  const { data: user } = trpc.user.findOne.useQuery(Number(props.user?.id) ?? 0)
 
   const lockedChecker =
     futureDate < (props.user?.lockedUntil ?? "") ? true : false
-
-  const teamList = useMemo(() => {
-    const list = teams?.teams.map(
-      (team: { id: { toString: () => any }; name: any }) => {
-        return { value: team.id.toString(), label: team.name }
-      }
-    ) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
 
   const {
     mutate,
@@ -79,7 +60,6 @@ const UpdateUserModal = (props: {
     error,
   } = trpc.user.updateAdmin.useMutation({
     onSuccess() {
-      console.log("omsim")
       setCompleteModal(true)
       utils.user.findAll.invalidate()
       setImage([])
@@ -97,34 +77,30 @@ const UpdateUserModal = (props: {
   })
 
   useEffect(() => {
-    console.log(("test") + JSON.stringify(user))
     reset(props.user as User)
     setCertificate(generateCertificate)
-
-    console.log("error mo to", JSON.stringify(error))
   }, [props.user, reset, user])
 
   const onSubmit = async (userForm: User) => {
     // Register function
-    console.log(userForm)
-    console.log("error na nga to anoba", JSON.stringify(error))
-
 
     mutate({
       ...userForm,
-      name: `${userForm.profile?.first_name
-        ? userForm.profile?.first_name
-        : user?.profile?.first_name
-        } ${userForm.profile?.last_name
+      name: `${
+        userForm.profile?.first_name
+          ? userForm.profile?.first_name
+          : user?.profile?.first_name
+      } ${
+        userForm.profile?.last_name
           ? userForm.profile?.last_name
           : user?.profile?.last_name
-        }`,
+      }`,
       inactivityDate: new Date(),
       lockedAt: null,
       lockedUntil: null,
       attempts: null,
       lockedReason: null,
-      teamId: userForm.teamId,
+      // teamId: userForm.teamId,
       id: userForm.id,
       validateTable: {
         certificate: certificateCheck,
@@ -155,12 +131,10 @@ const UpdateUserModal = (props: {
   // useEffect(() => { console.log("department: " + props.user?.team?.department?.name) })
 
   const filteredAllCountries = useMemo(() => {
-    console.log("checkcount: ", country)
     const countries = all_countries.map((countries) => {
       return countries.name
     })
     setCountry("")
-    console.log("country", countries)
     return countries
   }, [])
 
@@ -173,14 +147,13 @@ const UpdateUserModal = (props: {
       })
       .map(([key]) => key)
     setRegion("")
-    console.log("keys:", upperLevel)
     return upperLevel
   }, [])
 
   const filteredProvince = useMemo(() => {
     const newProvince: Array<string> = []
     if (country === "Philippines") {
-      if (region === null ?? "") {
+      if (region === null) {
         setProvince("")
 
         return newProvince
@@ -191,7 +164,6 @@ const UpdateUserModal = (props: {
         const provinceLevel = Object.keys(
           (jsonData as Record<string, any>)[region].province_list
         )
-        console.log("province", provinceLevel)
         setProvince("")
 
         return provinceLevel
@@ -199,7 +171,6 @@ const UpdateUserModal = (props: {
     } else {
       if (country) {
         const states = all_states
-        console.log("states", all_states)
         const specStates = states.filter((states) => {
           return states.country_name === country
         })
@@ -209,7 +180,6 @@ const UpdateUserModal = (props: {
         if (finalStates.length === 0) {
           return newProvince
         }
-        console.log("states:", specStates)
         return finalStates
       }
       return newProvince
@@ -222,7 +192,7 @@ const UpdateUserModal = (props: {
   const filteredCity = useMemo(() => {
     const newCity: Array<any> = []
     if (country === "Philippines") {
-      if (province === null ?? "") {
+      if (province === null) {
         setCity("")
 
         return newCity
@@ -235,7 +205,6 @@ const UpdateUserModal = (props: {
         const cityLevel = Object.keys(
           (jsonData as Record<string, any>)[province].municipality_list
         )
-        console.log("city", cityLevel)
         setCity("")
 
         return cityLevel
@@ -249,7 +218,6 @@ const UpdateUserModal = (props: {
         const finalCities = specCities.map((city: { name: string }) => {
           return city.name
         })
-        console.log("cities", finalCities)
         setCity("")
         if (finalCities.length === 0) {
           return newCity
@@ -264,7 +232,7 @@ const UpdateUserModal = (props: {
 
   const filteredBarangay = useMemo(() => {
     const newBarangay: Array<any> = []
-    if (city === null ?? "") {
+    if (city === null) {
       setBarangay("")
 
       return newBarangay
@@ -276,7 +244,6 @@ const UpdateUserModal = (props: {
         .municipality_list
       const barangayLevel = (cityData as Record<string, any>)[city]
         .barangay_list
-      console.log("city", barangayLevel)
       setBarangay("")
 
       return barangayLevel
@@ -340,115 +307,6 @@ const UpdateUserModal = (props: {
           </div>
         </div>
 
-        <div className="flex w-full flex-wrap gap-4 py-2.5">
-          <div className="flex w-[24%] flex-col">
-            <label className="sm:text-sm">Team</label>
-            <Select
-              disabled={!isEditable}
-              placeholder={singleTeams?.name ? singleTeams?.name : "Pick One"}
-              onChange={(value) => {
-                setValue("teamId", Number(value) ?? 0)
-                onSearchChange(value ?? "0")
-              }}
-              value={searchValue}
-              data={teamList}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className={
-                isEditable
-                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            />
-            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
-          </div>
-          <div className="flex w-[23%] flex-col">
-            <label className="sm:text-sm">User Number</label>
-            {/* <InputField
-               
-              type={"text"}
-              label={""}
-              name={"employee_id"}
-              register={register}
-            /> */}
-            <p
-              className={
-                "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 py-2 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            >{`${props.user?.user_Id}`}</p>
-          </div>
-          <div className="flex w-[23%] flex-col">
-            <label className="sm:text-sm">Designation / Position</label>
-            <InputField
-              type={"text"}
-              disabled={!isEditable}
-              label={""}
-              placeholder={props.user?.position?.toString()}
-              name={"position"}
-              register={register}
-            />
-
-            <AlertInput>{errors?.position?.message}</AlertInput>
-          </div>
-          <div className="flex w-[24%] flex-col">
-            <label className="sm:text-sm">User Type</label>
-            <Select
-              disabled={!isEditable}
-              placeholder={user?.user_type ? user?.user_type : "Pick One"}
-              onChange={(value) => {
-                setValue("user_type", String(value) ?? "")
-              }}
-              data={["user", "admin"]}
-              styles={(theme) => ({
-                item: {
-                  // applies styles to selected item
-                  "&[data-selected]": {
-                    "&, &:hover": {
-                      backgroundColor:
-                        theme.colorScheme === "light"
-                          ? theme.colors.orange[3]
-                          : theme.colors.orange[1],
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.white
-                          : theme.black,
-                    },
-                  },
-
-                  // applies styles to hovered item (with mouse or keyboard)
-                  "&[data-hovered]": {},
-                },
-              })}
-              variant="unstyled"
-              className={
-                isEditable
-                  ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-                  : "my-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 p-0.5 px-4 text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
-              }
-            />
-            {/* <AlertInput>{errors?.team?.name?.message}</AlertInput> */}
-          </div>
-        </div>
-
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex w-[49%] flex-col">
             <label className="sm:text-sm">Email</label>
@@ -477,7 +335,6 @@ const UpdateUserModal = (props: {
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-
           <div className="flex w-[49%] flex-col">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
@@ -497,7 +354,6 @@ const UpdateUserModal = (props: {
               }}
               onChange={(event) => {
                 if (event.target.value.length > 11) {
-                  console.log("more than 11")
                   event.target.value = event.target.value.slice(0, 11)
                 }
                 setValue(
@@ -596,7 +452,11 @@ const UpdateUserModal = (props: {
                 clearable
                 nothingFound="No options"
                 variant="unstyled"
-                className={country === "" || country !== "Philippines" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 pointer-events-none px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+                className={
+                  country === "" || country !== "Philippines"
+                    ? "pointer-events-none mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                }
               />
 
               <AlertInput>{errors?.address?.region?.message}</AlertInput>
@@ -611,7 +471,9 @@ const UpdateUserModal = (props: {
                 id="address.province"
                 placeholder={props.user?.address?.province ?? "Province/States"}
                 data={filteredProvince}
-                disabled={country === "Philippines " ? (region === "") : country === ""}
+                disabled={
+                  country === "Philippines " ? region === "" : country === ""
+                }
                 onChange={(value) => {
                   setValue("address.province", value ?? "")
                   setProvince(value ?? "")
@@ -640,7 +502,11 @@ const UpdateUserModal = (props: {
                   },
                 })}
                 variant="unstyled"
-                className={(country === "Philippines " ? (region === "") : country === "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+                className={
+                  (country === "Philippines " ? region === "" : country === "")
+                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                }
               />
               {/* <InputField
                 type={"text"}
@@ -688,7 +554,11 @@ const UpdateUserModal = (props: {
                   },
                 })}
                 variant="unstyled"
-                className={province === "" ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2" : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "}
+                className={
+                  province === ""
+                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                }
               />
               {/* <InputField
                 type={"text"}
@@ -735,7 +605,11 @@ const UpdateUserModal = (props: {
                   },
                 })}
                 variant="unstyled"
-                className={(country === "Philippines" && city !== "") ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  " : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"}
+                className={
+                  country === "Philippines" && city !== ""
+                    ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2  "
+                    : "mt-2 w-full rounded-md border-2 border-gray-400 bg-gray-200 px-4 py-[.15rem] text-gray-400 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                }
               />
               <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
             </div>
@@ -790,7 +664,6 @@ const UpdateUserModal = (props: {
               <pre className="mt-2 text-sm italic text-red-500">
                 Something went wrong!
               </pre>
-
             )
           )}
           <Modal
@@ -840,8 +713,8 @@ const UpdateUserModal = (props: {
                 {userLoading
                   ? "Loading..."
                   : lockedChecker
-                    ? "Unlock and save "
-                    : "Save"}
+                  ? "Unlock and save "
+                  : "Save"}
               </button>
             </div>
           )}
@@ -878,12 +751,10 @@ export const UserDeleteModal = (props: {
 
   const { mutate } = trpc.user.createArchive.useMutation({
     onSuccess() {
-      console.log()
       props.setOpenModalDel(false)
       props.setIsLoading(false)
       props.setIsVisible(false)
       utils.user.findAll.invalidate()
-
     },
   })
   const handleDelete = async () => {
@@ -918,7 +789,7 @@ export const UserDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete record
             </button>

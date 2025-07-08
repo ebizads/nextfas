@@ -38,8 +38,6 @@ export const CreateEmployee = (props: {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [tryReset, setTryReset] = useState<boolean>(false)
   const [empId] = useState<string>(moment().format("YY-"))
-  const { data: teams } = trpc.team.findAll.useQuery()
-  const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
   const [country, setCountry] = useState("")
   const [region, setRegion] = useState("")
   const [province, setProvince] = useState("")
@@ -60,12 +58,12 @@ export const CreateEmployee = (props: {
     },
   })
 
-  const teamList = useMemo(() => {
-    const list = teams?.teams.map((team) => {
-      return { value: team.id.toString(), label: team.name }
-    }) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
+  // const teamList = useMemo(() => {
+  //   const list = teams?.teams.map((team) => {
+  //     return { value: team.id.toString(), label: team.name }
+  //   }) as SelectValueType[]
+  //   return list ?? []
+  // }, [teams]) as SelectValueType[]
 
   const {
     register,
@@ -82,7 +80,7 @@ export const CreateEmployee = (props: {
       //   name: ""
       // },
       // superviseeId: 0,
-      teamId: 0,
+      // teamId: 0,
       email: "",
       position: "",
       address: {
@@ -107,15 +105,13 @@ export const CreateEmployee = (props: {
       name: `${employee.profile?.first_name ?? ""} ${
         employee.profile?.last_name ?? ""
       }`,
-      employee_id:
-        `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}` +
-        (String(employee.teamId).padStart(2, "0") + props.generateId),
+      employee_id: `${env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID}${empId}`,
       email: employee.email,
       //   (employee.profile.first_name[0] + employee.profile.last_name)
       //     .replace(" ", "")
       //     .toLowerCase()
       //     .toString() + env.NEXT_PUBLIC_CLIENT_EMAIL,
-      teamId: employee.teamId,
+      // teamId: employee.teamId,
       // supervisee: {
       //   name: employee.supervisee?.name ?? ""
       // },
@@ -153,7 +149,7 @@ export const CreateEmployee = (props: {
       return countries.name
     })
     setCountry("")
-    console.log("country", countries)
+
     return countries
   }, [])
 
@@ -166,14 +162,14 @@ export const CreateEmployee = (props: {
       })
       .map(([key]) => key)
     setRegion("")
-    console.log("keys:", upperLevel)
+
     return upperLevel
   }, [])
 
   const filteredProvince = useMemo(() => {
     const newProvince: Array<string> = []
     if (country === "Philippines") {
-      if (region === null ?? "") {
+      if (region === null) {
         setProvince("")
 
         return newProvince
@@ -184,7 +180,7 @@ export const CreateEmployee = (props: {
         const provinceLevel = Object.keys(
           (jsonData as Record<string, any>)[region].province_list
         )
-        console.log("province", provinceLevel)
+
         setProvince("")
 
         return provinceLevel
@@ -192,7 +188,7 @@ export const CreateEmployee = (props: {
     } else {
       if (country) {
         const states = all_states
-        console.log("states", all_states)
+
         const specStates = states.filter((states) => {
           return states.country_name === country
         })
@@ -202,7 +198,7 @@ export const CreateEmployee = (props: {
         if (finalStates.length === 0) {
           return newProvince
         }
-        console.log("states:", specStates)
+
         return finalStates
       }
       return newProvince
@@ -215,7 +211,7 @@ export const CreateEmployee = (props: {
   const filteredCity = useMemo(() => {
     const newCity: Array<any> = []
     if (country === "Philippines") {
-      if (province === null ?? "") {
+      if (province === null) {
         setCity("")
 
         return newCity
@@ -228,7 +224,7 @@ export const CreateEmployee = (props: {
         const cityLevel = Object.keys(
           (jsonData as Record<string, any>)[province].municipality_list
         )
-        console.log("city", cityLevel)
+
         setCity("")
 
         return cityLevel
@@ -242,7 +238,7 @@ export const CreateEmployee = (props: {
         const finalCities = specCities.map((city: { name: string }) => {
           return city.name
         })
-        console.log("cities", finalCities)
+
         setCity("")
         if (finalCities.length === 0) {
           return newCity
@@ -257,7 +253,7 @@ export const CreateEmployee = (props: {
 
   const filteredBarangay = useMemo(() => {
     const newBarangay: Array<any> = []
-    if (city === null ?? "") {
+    if (city === null) {
       setBarangay("")
 
       return newBarangay
@@ -269,7 +265,7 @@ export const CreateEmployee = (props: {
         .municipality_list
       const barangayLevel = (cityData as Record<string, any>)[city]
         .barangay_list
-      console.log("city", barangayLevel)
+
       setBarangay("")
 
       return barangayLevel
@@ -319,7 +315,7 @@ export const CreateEmployee = (props: {
         </div>
 
         <div className="flex flex-wrap gap-4 py-2.5">
-          <div className="flex w-[32%] flex-col">
+          {/* <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Team</label>
             <Select
               placeholder="Pick one"
@@ -331,7 +327,6 @@ export const CreateEmployee = (props: {
               data={teamList}
               styles={(theme) => ({
                 item: {
-                  // applies styles to selected item
                   "&[data-selected]": {
                     "&, &:hover": {
                       backgroundColor:
@@ -345,14 +340,13 @@ export const CreateEmployee = (props: {
                     },
                   },
 
-                  // applies styles to hovered item (with mouse or keyboard)
                   "&[data-hovered]": {},
                 },
               })}
               variant="unstyled"
               className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-2 py-0.5 text-gray-800 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
             />
-          </div>
+          </div> */}
           <div className="flex w-[32%] flex-col">
             <label className="sm:text-sm">Employee Number</label>
             {/* <InputField
@@ -425,7 +419,6 @@ export const CreateEmployee = (props: {
               }}
               onChange={(event) => {
                 if (event.target.value.length > 11) {
-                  console.log("more than 11")
                   event.target.value = event.target.value.slice(0, 11)
                 }
                 setValue(

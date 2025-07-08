@@ -59,7 +59,7 @@ const Dashboard = () => {
   const { search } = useSearchStore()
 
   // Get asset data
-  const { data: dataAssets } = trpc.asset.findAllDashboard.useQuery({
+  const { data: dataAssets, refetch } = trpc.asset.findAllDashboard.useQuery({
     search: { name: search },
     limit,
     page,
@@ -411,6 +411,7 @@ const Dashboard = () => {
             limit={limit}
             setLimit={setLimit}
             user={null}
+            refetch={refetch}
           />
         </div>
       </div>

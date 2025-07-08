@@ -83,7 +83,6 @@ export default function DropZone_asset({
     }) as string[]
 
     const cleaned = id_list.filter((i) => i != null || i != undefined)
-    console.log(cleaned, "check cleaned")
 
     if (cleaned.length > 0) {
       setIdList(cleaned)
@@ -102,8 +101,6 @@ export default function DropZone_asset({
       )
     }) as any[]
 
-    console.log(dupAssetList, "check cleaned")
-
     function excelSerialDateToJSDate(serialDate: number) {
       const millisecondsPerDay = 24 * 60 * 60 * 1000
       const epoch = new Date("1899-12-31")
@@ -118,7 +115,6 @@ export default function DropZone_asset({
     const final_dupList = [] as ExcelAssetCheckerType[]
 
     const parseId = (id: string | null) => {
-      console.log("id: " + id)
       if (!id) {
         return "00"
       }
@@ -132,7 +128,6 @@ export default function DropZone_asset({
     const transformNumber = (id: string | number) => {
       return id?.toString()
     }
-    console.log(dupAssetList, "check dup asset")
 
     dupAssetList.forEach((ast) => {
       const data_structure = {
@@ -176,9 +171,6 @@ export default function DropZone_asset({
     // Register function
     try {
       for (let i = 0; i < duplicatedAssets.length; i++) {
-        console.log(
-          "assets: " + JSON.stringify(duplicatedAssets[i]?.asset_number)
-        )
         mutate({
           name: duplicatedAssets[i]?.name ?? "",
           number: duplicatedAssets[i]?.asset_number ?? "",
@@ -274,7 +266,6 @@ export default function DropZone_asset({
                             header: 1,
                             defval: null,
                           })
-                          console.log("RAW:", raw_data)
                           raw_data.shift()
 
                           const data = raw_data
@@ -486,7 +477,6 @@ export default function DropZone_asset({
                         header: 1,
                         defval: null,
                       })
-                      console.log("RAW:", raw_data)
                       raw_data.shift()
 
                       const data = raw_data

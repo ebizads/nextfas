@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "../utils/trpc";
 import dynamic from "next/dynamic"
-import TypeSelect from "../components/atoms/select/TypeSelect";
+import TypeSelect from "../components/atoms/select/TypeSelect"
 import { Select } from "@mantine/core"
 import { procedureTypes } from "@trpc/server";
 
-const BarcodeScanner = dynamic(
-    () => import("react-qr-barcode-scanner"),
-    { ssr: false }
-)
+const BarcodeScanner = dynamic(() => import("react-qr-barcode-scanner"), {
+  ssr: false,
+})
 
 const Scanner = () => {
+
     const [data, setData] = useState<string | null>(null);
     const [success, setSuccess] = useState("")
     const [scanMode, setScanMode] = useState("")

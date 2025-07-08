@@ -1,13 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from "react"
-import {
-  useEditableStore,
-  useMinimizeStore,
-  useUpdateAssetStore,
-  useDisposeAssetStore,
-  useRepairAssetStore,
-  useIssuanceAssetStore,
-  useTransferAssetStore,
-} from "../../../store/useStore"
+import React, { useEffect, useRef, useState } from "react"
+import { useMinimizeStore, useUpdateAssetStore } from "../../../store/useStore"
 import { ColumnType } from "../../../types/table"
 import { Checkbox } from "@mantine/core"
 import Modal from "../../asset/Modal"
@@ -57,14 +49,11 @@ const AssetDetailsModal = (props: {
 
   const emp = trpc.employee.findOne.useQuery(props.asset?.custodianId ?? 0)
 
-  const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
-  const { repairAsset, setRepairAsset } = useRepairAssetStore()
-  const { transferAsset, setTransferAsset } = useTransferAssetStore()
-  const { issuanceAsset, setIssuanceAsset } = useIssuanceAssetStore()
   const [validateModal, setValidateModal] = useState<boolean>(false)
   const [validateString, setValidateString] = useState<string>("")
   const [statusToUpdate, setStatusToUpdate] = useState<string>("")
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false)
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    useState<boolean>(false)
 
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
@@ -121,25 +110,27 @@ const AssetDetailsModal = (props: {
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
 
-
-  const { mutate: changeStatus, isLoading, error } = trpc.asset.changeStatus.useMutation({
+  const {
+    mutate: changeStatus,
+    isLoading,
+    error,
+  } = trpc.asset.changeStatus.useMutation({
     onSuccess() {
       setStatusToUpdate("")
       setConfirmationModalOpen(false)
       props.setOpenModalDesc(false)
       props.refetch()
-      console.log("status successfully changed");
+      console.log("status successfully changed")
     },
-    onError(error){
+    onError(error) {
       console.error("Error changing status", error)
-    }
+    },
   })
 
-  const onConfirm = (
-  ) => {
+  const onConfirm = () => {
     changeStatus({
       id: props.asset?.id ?? 0,
-      status: statusToUpdate
+      status: statusToUpdate,
     })
   }
 
@@ -180,7 +171,6 @@ const AssetDetailsModal = (props: {
                           : "--"}
                       </p>
                     </div>
-
                   </section>
                   <section className="grid grid-cols-3">
                     <div className="col-span-1">
@@ -194,9 +184,7 @@ const AssetDetailsModal = (props: {
                     <div className="col-span-1">
                       <p className="font-light">Brand</p>
                       <p className="font-medium">
-                        {props.asset?.brand !== ""
-                          ? props.asset?.brand
-                          : "--"}
+                        {props.asset?.brand !== "" ? props.asset?.brand : "--"}
                       </p>
                     </div>
                     <div className="col-span-1">
@@ -250,11 +238,13 @@ const AssetDetailsModal = (props: {
                 </button>
                 <p className="font-medium xl:text-lg">Asset Options</p>
                 <nav className="relative my-2 flex flex-1 gap-2 ">
-                  {props.asset?.status === null && (
-                    <button onClick={() => {
-                      setStatusToUpdate("in")
-                      setConfirmationModalOpen(true)
-                    }}>
+                  {props.asset?.status === "issued" && (
+                    <button
+                      onClick={() => {
+                        setStatusToUpdate("in")
+                        setConfirmationModalOpen(true)
+                      }}
+                    >
                       <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                         <i className={"fa-solid fa-hand-holding-box"} />
                         In
@@ -263,7 +253,7 @@ const AssetDetailsModal = (props: {
                   )}
 
                   {/* //TODO:  Fix this when we have Asset Issuance READY */}
-                  {props.asset?.status === null && (
+                  {/* {props.asset?.status === null && (
                     <button onClick={() => {
                       setStatusToUpdate("out")
                       setConfirmationModalOpen(true)
@@ -273,13 +263,15 @@ const AssetDetailsModal = (props: {
                         Out
                       </div>
                     </button>
-                  )}
+                  )} */}
 
-                  {props.asset?.status === null && (
-                    <button onClick={() => {
-                      setStatusToUpdate("issued")
-                      setConfirmationModalOpen(true)
-                    }}>
+                  {props.asset?.status === "in" && (
+                    <button
+                      onClick={() => {
+                        setStatusToUpdate("issued")
+                        setConfirmationModalOpen(true)
+                      }}
+                    >
                       <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                         <i className={"fa-solid fa-arrow-right-arrow-left"} />
                         Issue
@@ -406,7 +398,7 @@ const AssetDetailsModal = (props: {
             </div>
           </div>
         </div>
-      </Modal >
+      </Modal>
       <Modal
         size={8}
         className="max-w-lg"
@@ -422,17 +414,29 @@ const AssetDetailsModal = (props: {
         isOpen={confirmationModalOpen}
         setIsOpen={setConfirmationModalOpen}
       >
-        <div className="px-8 py-4 flex flex-col items-center gap-5">
-          <p>Would you like to tag this asset as <span className={`text-red-500`}>&quot;{statusToUpdate}&quot;</span>?</p>
+        <div className="flex flex-col items-center gap-5 px-8 py-4">
+          <p>
+            Would you like to tag this asset as{" "}
+            <span className={`text-red-500`}>&quot;{statusToUpdate}&quot;</span>
+            ?
+          </p>
 
           <div className="flex gap-2">
-            <button onClick={() => { setConfirmationModalOpen(false) }}>
+            <button
+              onClick={() => {
+                setConfirmationModalOpen(false)
+              }}
+            >
               <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                 <i className={"fa-solid fa-xmark"} />
                 Cancel
               </div>
             </button>
-            <button onClick={() => { onConfirm() }}>
+            <button
+              onClick={() => {
+                onConfirm()
+              }}
+            >
               <div className="flex cursor-pointer items-center gap-2 rounded-md bg-[#dee1e6] py-2 px-3 text-start text-sm outline-none hover:bg-slate-200 focus:outline-none xl:text-base">
                 <i className={"fa-solid fa-check"} />
                 Confirm
@@ -488,8 +492,9 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}
               {props.checkboxes.length > 1 ? "records" : "record"}
               <i
-                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
-                  }`}
+                className={`fa-solid ${
+                  showList ? " fa-caret-up" : " fa-caret-down"
+                }`}
               />
             </button>
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -526,7 +531,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete record/s
             </button>
@@ -552,10 +557,6 @@ const AssetTable = (props: {
 
   const [openModalDesc, setOpenModalDesc] = useState<boolean>(false)
   const [openModalDel, setOpenModalDel] = useState<boolean>(false)
-  const { disposeAsset, setDisposeAsset } = useDisposeAssetStore()
-  const { repairAsset, setRepairAsset } = useRepairAssetStore()
-  const { transferAsset, setTransferAsset } = useTransferAssetStore()
-  const { issuanceAsset, setIssuanceAsset } = useIssuanceAssetStore()
   // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
@@ -578,23 +579,11 @@ const AssetTable = (props: {
     props.setCheckboxes((prev) => [...prev, id])
   }
 
-  useEffect(() => {
-    setIssuanceAsset(selectedAsset)
-    setDisposeAsset(selectedAsset)
-    setTransferAsset(selectedAsset)
-    setRepairAsset(selectedAsset)
-  }, [
-    selectedAsset,
-    setDisposeAsset,
-    setIssuanceAsset,
-    setRepairAsset,
-    setTransferAsset,
-  ])
-
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
-        } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
+        minimize ? "xl:w-[88vw]" : "xl:w-full"
+      } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">

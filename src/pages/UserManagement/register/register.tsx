@@ -100,45 +100,42 @@ const Register2 = () => {
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
   const onSubmit = async (user: User) => {
-    console.log("ewaaaa"),
-      // Register function
-      mutate({
-        firstLogin: true,
-        name: `${user.profile.first_name} ${user.profile.last_name}`,
-        user_type: "user",
-        image: "",
-        oldPassword: user.oldPassword,
-        password: passwordCheck,
-        user_Id: env.NEXT_PUBLIC_CLIENT_USER_ID + userId,
-        // teamId: user.teamId,
-        position: user.position ?? "",
-        profile: {
-          first_name: user.profile.first_name,
-          middle_name: user.profile.middle_name,
-          last_name: user.profile.last_name,
-          image: images[0]?.file ?? "",
-          phone_no: user.profile.phone_no,
-        },
-        email: user.email,
-        address: {
-          city: user.address?.city,
-          country: user.address?.country,
-          street: user.address?.street,
-          zip: user.address?.zip,
-          baranggay: user.address?.baranggay,
-          region: user.address?.region,
-          province: user.address?.province,
-        },
-        inactivityDate: new Date(),
-        passwordAge: new Date(),
-        validateTable: {
-          certificate: certificateCheck,
-          validationDate: futureDate,
-        },
-      }),
-      console.log("Cert: " + certificateCheck)
-    console.log(user.validateTable)
-    reset()
+    // Register function
+    mutate({
+      firstLogin: true,
+      name: `${user.profile.first_name} ${user.profile.last_name}`,
+      user_type: "user",
+      image: "",
+      oldPassword: user.oldPassword,
+      password: passwordCheck,
+      user_Id: env.NEXT_PUBLIC_CLIENT_USER_ID + userId,
+      // teamId: user.teamId,
+      position: user.position ?? "",
+      profile: {
+        first_name: user.profile.first_name,
+        middle_name: user.profile.middle_name,
+        last_name: user.profile.last_name,
+        image: images[0]?.file ?? "",
+        phone_no: user.profile.phone_no,
+      },
+      email: user.email,
+      address: {
+        city: user.address?.city,
+        country: user.address?.country,
+        street: user.address?.street,
+        zip: user.address?.zip,
+        baranggay: user.address?.baranggay,
+        region: user.address?.region,
+        province: user.address?.province,
+      },
+      inactivityDate: new Date(),
+      passwordAge: new Date(),
+      validateTable: {
+        certificate: certificateCheck,
+        validationDate: futureDate,
+      },
+    }),
+      reset()
   }
 
   const filteredAllCountries = useMemo(() => {
@@ -146,7 +143,7 @@ const Register2 = () => {
       return countries.name
     })
     setCountry("")
-    console.log("country", countries)
+
     return countries
   }, [])
 
@@ -159,7 +156,7 @@ const Register2 = () => {
       })
       .map(([key]) => key)
     setRegion("")
-    console.log("keys:", upperLevel)
+
     return upperLevel
   }, [])
 
@@ -177,7 +174,7 @@ const Register2 = () => {
         const provinceLevel = Object.keys(
           (jsonData as Record<string, any>)[region].province_list
         )
-        console.log("province", provinceLevel)
+
         setProvince("")
 
         return provinceLevel
@@ -185,7 +182,7 @@ const Register2 = () => {
     } else {
       if (country) {
         const states = all_states
-        console.log("states", all_states)
+
         const specStates = states.filter((states) => {
           return states.country_name === country
         })
@@ -195,7 +192,7 @@ const Register2 = () => {
         if (finalStates.length === 0) {
           return newProvince
         }
-        console.log("states:", specStates)
+
         return finalStates
       }
       return newProvince
@@ -221,7 +218,7 @@ const Register2 = () => {
         const cityLevel = Object.keys(
           (jsonData as Record<string, any>)[province].municipality_list
         )
-        console.log("city", cityLevel)
+
         setCity("")
 
         return cityLevel
@@ -235,7 +232,7 @@ const Register2 = () => {
         const finalCities = specCities.map((city: { name: string }) => {
           return city.name
         })
-        console.log("cities", finalCities)
+
         setCity("")
         if (finalCities.length === 0) {
           return newCity
@@ -262,7 +259,7 @@ const Register2 = () => {
         .municipality_list
       const barangayLevel = (cityData as Record<string, any>)[city]
         .barangay_list
-      console.log("city", barangayLevel)
+
       setBarangay("")
 
       return barangayLevel
@@ -388,7 +385,6 @@ const Register2 = () => {
               }}
               onChange={(event) => {
                 if (event.target.value.length > 11) {
-                  console.log("more than 11")
                   event.target.value = event.target.value.slice(0, 11)
                 }
                 setValue(

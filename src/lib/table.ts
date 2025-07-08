@@ -154,11 +154,11 @@ export const navigations = [
     icon: "fa-light fa-cubes",
     link: "/assets",
   },
-  {
-    name: "Employees",
-    icon: "fa-users",
-    link: "/employees",
-  },
+  // {
+  //   name: "Employees",
+  //   icon: "fa-users",
+  //   link: "/employees",
+  // },
   // {
   //   name: "Asset Issuance",
   //   icon: "fa-users",

@@ -31,30 +31,47 @@ export const EmployeeDetailsModal = (props: {
   // setEditable: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-
-
   const address = () => {
-    return props.employee?.address?.country !== null ??
-      props.employee?.address?.country !== ""
-      ? props.employee?.address?.country === "Philippines"
-        ? (props.employee?.address?.street ? (props.employee?.address?.street + ", ") : "") +
-        (props.employee?.address?.baranggay ? (props.employee?.address?.baranggay + ", ") : "") +
-        (props.employee?.address?.city ? (props.employee?.address?.city + ", ") : "") +
-        (props.employee?.address?.province ? (props.employee?.address?.province + ", ") : "") +
-        (props.employee?.address?.region ? (props.employee?.address?.region + ", ") : "") +
-        (props.employee?.address?.country ? (props.employee?.address?.country + ", ") : "") +
-        (props.employee?.address?.zip ?? "")
-        :
-        (props.employee?.address?.street ? (props.employee?.address?.street + ", ") : "") +
-        (props.employee?.address?.city ? (props.employee?.address?.city + ", ") : "") +
-        (props.employee?.address?.province ? (props.employee?.address?.province + ", ") : "") +
-        (props.employee?.address?.country ? (props.employee?.address?.country + ", ") : "") +
-        (String(props.employee?.address?.zip) ?? "")
+    return props.employee?.address?.country !== null
+      ? props.employee?.address?.country !== ""
+        ? props.employee?.address?.country === "Philippines"
+          ? (props.employee?.address?.street
+              ? props.employee?.address?.street + ", "
+              : "") +
+            (props.employee?.address?.baranggay
+              ? props.employee?.address?.baranggay + ", "
+              : "") +
+            (props.employee?.address?.city
+              ? props.employee?.address?.city + ", "
+              : "") +
+            (props.employee?.address?.province
+              ? props.employee?.address?.province + ", "
+              : "") +
+            (props.employee?.address?.region
+              ? props.employee?.address?.region + ", "
+              : "") +
+            (props.employee?.address?.country
+              ? props.employee?.address?.country + ", "
+              : "") +
+            (props.employee?.address?.zip ?? "")
+          : (props.employee?.address?.street
+              ? props.employee?.address?.street + ", "
+              : "") +
+            (props.employee?.address?.city
+              ? props.employee?.address?.city + ", "
+              : "") +
+            (props.employee?.address?.province
+              ? props.employee?.address?.province + ", "
+              : "") +
+            (props.employee?.address?.country
+              ? props.employee?.address?.country + ", "
+              : "") +
+            (String(props.employee?.address?.zip) ?? "")
+        : "--"
       : "--"
   }
 
   const { selectedEmp, setSelectedEmp } = useSelectedEmpStore()
-
 
   return (
     <div className="">
@@ -108,21 +125,21 @@ export const EmployeeDetailsModal = (props: {
                     {props.employee?.employee_id}
                   </p>
                 </div>
-                <div className="col-span-1">
+                {/* <div className="col-span-1">
                   <p className="font-light">Team</p>
                   <p className="font-medium">
-                    {/* {props.asset?.parentId !== 0 */}
-                    {/* // ? props.asset?.parent?.name */}
-                    {/* // : "--"} */}
+                    {props.asset?.parentId !== 0
+                      ? props.asset?.parent?.name
+                      : "--"}
                     {props.employee?.team?.name === null
                       ? "--"
                       : props.employee?.team?.name === undefined
-                        ? "--"
-                        : props.employee?.team?.name === ""
-                          ? "--"
-                          : props.employee?.team?.name}
+                      ? "--"
+                      : props.employee?.team?.name === ""
+                      ? "--"
+                      : props.employee?.team?.name}
                   </p>
-                </div>
+                </div> */}
                 <div className="col-span-1">
                   <p className="font-light">Department</p>
                   <p className="font-medium">
@@ -132,10 +149,10 @@ export const EmployeeDetailsModal = (props: {
                     {props.employee?.team?.department?.name === null
                       ? "--"
                       : props.employee?.team?.department?.name === undefined
-                        ? "--"
-                        : props.employee?.team?.department?.name === ""
-                          ? "--"
-                          : props.employee?.team?.department?.name}
+                      ? "--"
+                      : props.employee?.team?.department?.name === ""
+                      ? "--"
+                      : props.employee?.team?.department?.name}
                   </p>
                 </div>
                 <div className="col-span-1">
@@ -268,7 +285,7 @@ export const EmployeeDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-            // disabled={isLoading}
+              // disabled={isLoading}
             >
               Yes, delete record
             </button>

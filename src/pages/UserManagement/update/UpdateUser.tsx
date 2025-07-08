@@ -9,10 +9,9 @@ import AlertInput from "../../../components/atoms/forms/AlertInput"
 import InputField from "../../../components/atoms/forms/InputField"
 import { Select } from "@mantine/core"
 import Modal from "../../../components/headless/modal/modal"
-import { SelectValueType } from "../../../components/atoms/select/TypeSelect"
 import { UserType } from "../../../types/generic"
-import { useEditableStore, useSelectedUserStore } from "../../../store/useStore"
-import router, { useRouter } from "next/router"
+import { useEditableStore } from "../../../store/useStore"
+import router from "next/router"
 
 import ph_regions from "../../../json/ph_regions.json"
 import all_countries from "../../../json/countries.json"
@@ -407,7 +406,6 @@ export const UpdateUser = (props: {
               }}
               onChange={(event) => {
                 if (event.target.value.length > 11) {
-                  console.log("more than 11")
                   event.target.value = event.target.value.slice(0, 11)
                 }
                 setValue(

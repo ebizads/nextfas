@@ -333,7 +333,7 @@ export const assetTypeRouter = t.router({
           where: { id: input.id },
           data: {
             name: input.name,
-            description: input.description,
+            description: input.description ? input.description : "",
             updatedAt: new Date(),
           },
         })

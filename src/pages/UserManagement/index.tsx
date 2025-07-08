@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import DashboardLayout from "../../layouts/DashboardLayout"
 import { trpc } from "../../utils/trpc"
-import DisplayUsers from "./DisplayUsers"
+import DisplayUsers from "../../components/user/DisplayUsers"
 import { UserType } from "../../types/generic"
 import { useRouter } from "next/router"
 import { useSearchStore } from "../../store/useStore"

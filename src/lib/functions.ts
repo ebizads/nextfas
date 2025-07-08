@@ -1,40 +1,22 @@
 import {
-  AssetRepairType,
-  AssetTransferType,
   AssetType,
-  DisposeType,
   EmployeeType,
   UserType,
-  VendorType,
-  AssetTag,
-  DepartmentType,
   BuildingType,
   AssetDevice,
-  IssuanceType,
+  Asset,
 } from "../types/generic"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
-import { Address, Company, assetTag, Model } from "@prisma/client"
+import { Address, Company } from "@prisma/client"
 import Router from "next/router"
-import { object } from "zod"
-import { trpc } from "../utils/trpc"
-import { useState } from "react"
-import { ExcelExportTypeVendor } from "../types/vendors"
+
 import { ExcelExportAssetType } from "../types/asset"
 
 const router = Router
 export const getProperty = (
   filter: string,
-  type:
-    | AssetType
-    | EmployeeType
-    | VendorType
-    | DisposeType
-    | AssetRepairType
-    | UserType
-    | AssetTransferType
-    | AssetTag
-    | AssetDevice
+  type: AssetType | EmployeeType | UserType | AssetDevice | Asset
   //subfilter?: string
 ) => {
   //get object property
@@ -65,7 +47,7 @@ export const getProperty = (
 }
 export const getPropertyIssuance = (
   filter: string,
-  type: IssuanceType | UserType | EmployeeType
+  type: UserType | EmployeeType
   //subfilter?: string
 ) => {
   //get object property
@@ -81,37 +63,6 @@ export const getPropertyIssuance = (
 
     return value ?? "--"
   }
-  const property = Object.getOwnPropertyDescriptor(type, filter)?.value ?? "--"
-
-  //returns the actual property as string
-  if (typeof property === "string" || typeof property === "number") {
-    const value = property.toString()
-    return value.length > 0 ? property.toString() : "--"
-  }
-
-  //dig deeper if obj is an actual obj
-  return property.toString() ?? "--"
-}
-
-export const getPropertyDisposal = (
-  filter: string,
-  type: DisposeType | AssetRepairType | VendorType | AssetTransferType
-  //subfilter?: string
-) => {
-  //get object property
-
-  if (filter.includes(".")) {
-    const getObj = filter.split(".")
-
-    const property =
-      Object.getOwnPropertyDescriptor(type, getObj[0] ?? "")?.value ?? "--"
-
-    const value =
-      Object.getOwnPropertyDescriptor(property, getObj[1] ?? "")?.value ?? "--"
-
-    return value ?? "--"
-  }
-
   const property = Object.getOwnPropertyDescriptor(type, filter)?.value ?? "--"
 
   //returns the actual property as string
@@ -244,43 +195,7 @@ export const downloadExcel_template = (data: ExcelExportType[]) => {
 
   return
 }
-
-export const downloadExcelVendor = (data: ExcelExportTypeVendor[]) => {
-  console.log(data)
-
-  // if (!data) {
-  // csv null fall back
-  // const worksheet = XLSX.utils.json_to_sheet(data || [])
-  const worksheet = XLSX.utils.json_to_sheet(
-    data !== null && data !== undefined ? data : []
-  )
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "Vendor_Sheet.xlsx")
-  return
-}
-export const downloadExcelTemplateVendor = (data: ExcelExportTypeVendor[]) => {
-  console.log(data)
-
-  // if (!data) {
-  // csv null fall back
-  // const worksheet = XLSX.utils.json_to_sheet(data || [])
-  const worksheet = XLSX.utils.json_to_sheet(
-    data !== null && data !== undefined ? data : []
-  )
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "Vendor_Template.xlsx")
-  return
-}
-
 export const downloadExcel_templateAssets = (data: ExcelExportAssetType[]) => {
-  console.log("assetsss moooooo::::", data)
-
   // const worksheet = XLSX.utils.json_to_sheet(
   //   data !== null && data !== undefined ? data : []
   // )
@@ -309,8 +224,6 @@ export const downloadExcel_templateAssets = (data: ExcelExportAssetType[]) => {
 }
 
 export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
-  console.log("assetsss moooooo::::", data)
-
   // if (!data) {  // csv null fall back
   // const worksheet = XLSX.utils.json_to_sheet(data || [])
   const worksheet = XLSX.utils.json_to_sheet(

@@ -1,21 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react"
-import { env } from "../../env/client.mjs"
+import React, { useEffect, useState } from "react"
 import { trpc } from "../../utils/trpc"
 import { useSession } from "next-auth/react"
-import { UserType } from "../../types/generic"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { EditUserInput } from "../../server/schemas/user"
 import { generateCertificate } from "../../lib/functions"
 import Modal from "../headless/modal/modal"
-import { SelectValueType } from "../atoms/select/TypeSelect"
-import { Select } from "@mantine/core"
-import { DatePicker } from "@mantine/dates"
 import { useUserEditableStore } from "../../store/useStore"
 import AlertInput from "../atoms/forms/AlertInput"
 // import register from "../../pages/user-management/register/register"
-import InputField from "../atoms/forms/InputField"
 import InputNumberField from "../atoms/forms/InputNumberField"
 
 export type User = z.infer<typeof EditUserInput>
@@ -44,26 +38,13 @@ const UserValidateModal = (props: {
   const { data: user } = trpc.user.findOne.useQuery(userId)
   // const { data: user } = trpc.user.findOne.useQuery(
   //   Number(props.user?.user_Id) ?? 0
-  // )
-  const { data: teams } = trpc.team.findOne.useQuery(user?.teamId ?? 0)
-  const { data: allTeams } = trpc.team.findAll.useQuery()
+
   const [searchValue, onSearchChange] = useState<string>(
     user?.teamId?.toString() ?? "0"
   )
-  const utils = trpc.useContext()
-
   const futureDate = new Date()
 
   futureDate.setFullYear(futureDate.getFullYear() + 1)
-
-  const teamList = useMemo(() => {
-    const list = allTeams?.teams.map(
-      (team: { id: { toString: () => any }; name: any }) => {
-        return { value: team.id.toString(), label: team.name }
-      }
-    ) as SelectValueType[]
-    return list ?? []
-  }, [allTeams]) as SelectValueType[]
 
   useEffect(() => {
     setUserId(Number(session?.user?.id))

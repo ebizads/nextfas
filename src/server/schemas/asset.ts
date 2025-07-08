@@ -1,19 +1,5 @@
 import { z } from "zod"
-import {
-  CustodianEditInput,
-  ManagementCreateInput,
-  ManagementEditInput,
-  ManagementTableEditInput,
-  ModelCreateInput,
-  ModelEditInput,
-  ModelEditTableInput,
-  ProjectEditInput,
-} from "./model"
-import { VendorTableEditInput } from "./vendor"
-import { CompanyTableEditInput } from "./company"
-import { EditUserInput } from "./user"
-import { EmployeeEditInput, EmployeeTableEditInput } from "./employee"
-import { createIssuance, initialIssuance } from "./issuance"
+import { createIssuance } from "./issuance"
 
 //only creates Assets
 // export const AssetOnlyInput = z.object({
@@ -92,11 +78,11 @@ export const AssetUpdateInput = z.object({
   barcode: z.string().min(1, "RFID Tag ID / Barcode is required"),
   description: z.string().nullish(),
   remarks: z.string().nullish(),
-  brand: z.string().min(1,"Brand is required"),
+  brand: z.string().min(1, "Brand is required"),
   typeId: z.number(),
   actionTypeId: z.number(),
-  caliber: z.string().min(1,"Caliber is required"),
-  models: z.string().min(1,"Model is required"),
+  caliber: z.string().min(1, "Caliber is required"),
+  models: z.string().min(1, "Model is required"),
   status: z.string().nullish(),
   // invoiceNum: z.string().nullish(),
   // purchaseOrder: z.string().nullish(),

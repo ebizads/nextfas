@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { EmployeeCreateInput } from "../../../server/schemas/employee"
@@ -11,9 +11,6 @@ import { Select } from "@mantine/core"
 import { env } from "../../../env/client.mjs"
 import moment from "moment"
 import Modal from "../../../components/headless/modal/modal"
-import TypeSelect, {
-  SelectValueType,
-} from "../../../components/atoms/select/TypeSelect"
 import ph_regions from "../../../json/ph_regions.json"
 import all_countries from "../../../json/countries.json"
 import all_states from "../../../json/states.json"
@@ -33,13 +30,10 @@ export const CreateEmployee_new = (props: {
   isLoading: boolean
   // setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  const [searchValue, onSearchChange] = useState("")
   const [workModeValue, onSearchWorkMode] = useState("")
   const [workStationValue, onSearchWorkStation] = useState("")
   const [isVisible, setIsVisible] = useState<boolean>(false)
-  const [tryReset, setTryReset] = useState<boolean>(false)
   const [empId] = useState<string>(moment().format("YY-"))
-  const { data: teams } = trpc.team.findAll.useQuery()
   const { data: allEmp } = trpc.employee.findAllNoLimit.useQuery()
   const [country, setCountry] = useState("")
   const [region, setRegion] = useState("")
@@ -61,14 +55,6 @@ export const CreateEmployee_new = (props: {
       props.setImage([])
     },
   })
-
-  const teamList = useMemo(() => {
-    const list = teams?.teams.map((team) => {
-      return { value: team.id.toString(), label: team.name }
-    }) as SelectValueType[]
-    return list ?? []
-  }, [teams]) as SelectValueType[]
-
   const {
     register,
     handleSubmit,

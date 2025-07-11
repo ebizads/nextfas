@@ -9,6 +9,7 @@ import { departmentRouter } from "./deparment"
 import { disposalTypeRouter } from "./disposal_type"
 import { employeeRouter } from "./employee"
 import { userRouter } from "./user"
+import { historyLogRouter } from "./history_logs"
 
 export const appRouter = t.router({
   user: userRouter,
@@ -20,6 +21,7 @@ export const appRouter = t.router({
   assetType: assetTypeRouter,
   assetActionType: assetActionTypeRouter,
   disposalType: disposalTypeRouter,
+  historyLogs: historyLogRouter,
 })
 
 // export type definition of API

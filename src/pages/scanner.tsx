@@ -17,7 +17,7 @@ const Scanner = () => {
 
     const { data: asset, refetch, isLoading, isFetching, isSuccess, isError } = trpc.asset.findOneWithBarcode.useQuery(data ?? "", { enabled: false })
 
-    const { mutate: changeStatus, isLoading: isStatusChanging, error } = trpc.asset.changeStatusScanned.useMutation({
+    const { mutate: changeStatusScanned, isLoading: isStatusChanging, error } = trpc.asset.changeStatusScanned.useMutation({
         onSuccess() {
             setSuccess("status successfully changed")
             refetch()
@@ -49,7 +49,7 @@ const Scanner = () => {
 
     return (
         <main className="w-full h-full flex flex-col justify-center items-center p-5" >
-            <div className="flex flex-col gap-5 w-full h-full md:w-auto">
+            <div className="flex flex-col gap-5 w-full h-full sm:w-auto">
                 {/* Scan mode select */}
                 <section className="w-full">
                     <p>Scan Mode:</p>
@@ -96,7 +96,8 @@ const Scanner = () => {
                     <section className="w-full z-50">
                         <nav className="relative my-2 flex flex-1 gap-2 ">
                             <button onClick={() => {
-                                changeStatus({
+                                changeStatusScanned({
+                                    id: asset?.id ?? -9999,
                                     serial_no: data || "",
                                     status: "in"
                                 })
@@ -107,7 +108,8 @@ const Scanner = () => {
                                 </div>
                             </button>
                             <button onClick={() => {
-                                changeStatus({
+                                changeStatusScanned({
+                                    id: asset?.id ?? -9999,
                                     serial_no: data || "",
                                     status: "issued"
                                 })
@@ -296,7 +298,7 @@ const AssetDetails = (
                         </span>
                     </p>
                     <div className="mt-4 flex flex-col gap-4 text-sm">
-                        <section className="grid grid-cols-3">
+                        <section className="grid grid-cols-3 gap-5">
                             <div className="col-span-1">
                                 <p className="font-light">Asset ID</p>
                                 <p className="font-medium">{
@@ -319,9 +321,9 @@ const AssetDetails = (
                                 </p>
                             </div>
                         </section>
-                        <section className="grid grid-cols-3">
+                        <section className="grid grid-cols-3 gap-5">
                             <div className="col-span-1">
-                                <p className="font-light">Firearm Serial Number</p>
+                                <p className="font-light">Firearm Serial No.</p>
                                 <p className="font-medium">
                                     {
                                         props.asset?.serial_no !== ""
@@ -354,7 +356,7 @@ const AssetDetails = (
                                 </p>
                             </div>
                         </section>
-                        <section className="grid grid-cols-3">
+                        <section className="grid grid-cols-3 gap-5">
                             <div className="col-span-1">
                                 <p className="font-light">Type</p>
                                 <p className="font-medium">

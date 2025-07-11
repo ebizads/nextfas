@@ -134,6 +134,7 @@ export const topbar = [
   { type: "typemanagement", name: "Asset Types" },
   { type: "employees", name: "Employees" },
   { type: "assets", name: "Assets" },
+  { type: "historylogs", name: "History Logs" },
 ]
 
 export const asset_information = [
@@ -153,6 +154,11 @@ export const navigations = [
     name: "Assets",
     icon: "fa-light fa-cubes",
     link: "/assets",
+  },
+  {
+    name: "History Logs",
+    icon: "fa-solid fa-clock-rotate-left",
+    link: "/historylogs",
   },
   // {
   //   name: "Employees",
@@ -181,3 +187,11 @@ export const navigations = [
   //   link: "/inventory",
   // },
 ] as NavType[]
+
+export const historyLogColumns = [
+  { value: "asset.name", name: "ASSET NAME" },
+  { value: "gunNumber", name: "RFID/BARCODE ID" },
+  { value: "participant", name: "COMPLETED BY" },
+  { value: "createdAt", name: "DATE COMPLETED" }, 
+  { value: "action", name: "ACTION" },
+] as ColumnType[]

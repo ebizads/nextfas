@@ -44,16 +44,16 @@ module.exports = {
             secondary: "#FFFFFF",
           },
         },
-        dark: {
-          primary: "#FFFFFF",
-          secondary: "#FFFFFF75",
-          muted: "#FFFFFF55",
-          line: "#3B3B3B",
-          background: {
-            DEFAULT: "#181818",
-            secondary: "#292929",
-          },
-        },
+        // dark: {
+        //   primary: "#FFFFFF",
+        //   secondary: "#FFFFFF75",
+        //   muted: "#FFFFFF55",
+        //   line: "#3B3B3B",
+        //   background: {
+        //     DEFAULT: "#181818",
+        //     secondary: "#292929",
+        //   },
+        // },
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],

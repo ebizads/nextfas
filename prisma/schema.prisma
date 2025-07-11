@@ -476,6 +476,7 @@ model Asset {
   management        AssetManagement?
   AssetRepair       AssetRepair?
   AssetTransfer     AssetTransfer?
+  HistoryLogs       HistoryLogs[]
 
   @@unique([typeId, actionTypeId, parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }
@@ -530,4 +531,15 @@ model ticketTable {
   updatedAt     DateTime  @updatedAt
   userArchiveId Int?
   modifiedBy    User?     @relation(fields: [modifiedById], references: [id], onDelete: Cascade)
+}
+
+model HistoryLogs {
+  id          Int      @id @default(autoincrement())
+  gunNumber   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  participant String?
+  action      String?
+  deleted     Boolean  @default(false)
+  asset       Asset    @relation(fields: [gunNumber], references: [number])
 }

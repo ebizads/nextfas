@@ -118,7 +118,7 @@ export const assetRouter = t.router({
                   id: 999999,
                 },
               },
-              status: "in",
+              // status: "in",
               createdAt: {
                 gte: start,
                 lte: end,
@@ -135,7 +135,7 @@ export const assetRouter = t.router({
                   id: 999999,
                 },
               },
-              status: "issued",
+              // status: "issued",
               issuedAt: {
                 gte: start,
                 lte: end,
@@ -326,7 +326,7 @@ export const assetRouter = t.router({
                 id: 999999,
               },
             },
-            createdAt: {
+            issuedAt: {
               gte: start,
               lte: end,
             },
@@ -664,6 +664,18 @@ export const assetRouter = t.router({
         },
       })
 
+      if (asset) {
+        // Creating an asset is automatically tagged as "in"
+        const historyLog = await ctx.prisma.historyLogs.create({
+          data: {
+            gunNumber: asset.number ?? "",
+            participant: ctx.session.user.name,
+            action: "in",
+          },
+        })
+      }
+
+
       return asset
     }),
 
@@ -732,7 +744,7 @@ export const assetRouter = t.router({
             },
           })
           typeId = inner_type.id
-        } else [(typeId = typeExists.id)]
+        } else[(typeId = typeExists.id)]
       }
       if (action_type) {
         const action_typeExists = await ctx.prisma.assetActionType.findUnique({
@@ -746,7 +758,7 @@ export const assetRouter = t.router({
               },
             })
           action_typeId = inner_action_typeExists.id
-        } else [(action_typeId = action_typeExists.id)]
+        } else[(action_typeId = action_typeExists.id)]
       }
 
       const existAssets = await ctx.prisma.asset.findFirst({
@@ -862,7 +874,7 @@ export const assetRouter = t.router({
               },
             })
             typeId = inner_type.id
-          } else [(typeId = typeExists.id)]
+          } else[(typeId = typeExists.id)]
         }
         if (action_type) {
           const action_typeExists = await ctx.prisma.assetActionType.findUnique(
@@ -878,7 +890,7 @@ export const assetRouter = t.router({
                 },
               })
             action_typeId = inner_action_typeExists.id
-          } else [(action_typeId = action_typeExists.id)]
+          } else[(action_typeId = action_typeExists.id)]
         }
 
         await ctx.prisma.asset.update({
@@ -1011,7 +1023,7 @@ export const assetRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       const { id, status } = input
       try {
-        await ctx.prisma.asset.update({
+        const updatedAsset = await ctx.prisma.asset.update({
           where: {
             id,
           },
@@ -1019,6 +1031,17 @@ export const assetRouter = t.router({
             status: status,
           },
         })
+
+        if (updatedAsset) {
+          // Create history log with status as action
+          const historyLog = await ctx.prisma.historyLogs.create({
+            data: {
+              gunNumber: updatedAsset.number ?? "",
+              participant: ctx.session.user.name,
+              action: status,
+            },
+          })
+        }
 
         return "Asset updated successfully"
       } catch (error) {
@@ -1031,21 +1054,34 @@ export const assetRouter = t.router({
   changeStatusScanned: authedProcedure
     .input(
       z.object({
-        serial_no: z.string(),
+        id: z.number(),
+        serial_no: z.string().nullish().optional(),
         status: z.string().nullish(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { serial_no, status } = input
+      const { id, serial_no, status } = input
       try {
-        await ctx.prisma.asset.updateMany({
+        const updatedAsset = await ctx.prisma.asset.update({
           where: {
-            serial_no,
+            id,
           },
           data: {
+            issuedAt: status === "issued" ? new Date() : null,
             status: status,
           },
         })
+
+        if (updatedAsset) {
+          // Create history log with status as action
+          const historyLog = await ctx.prisma.historyLogs.create({
+            data: {
+              gunNumber: updatedAsset.number ?? "",
+              participant: ctx.session.user.name,
+              action: status,
+            },
+          })
+        }
 
         return "Asset updated successfully"
       } catch (error) {

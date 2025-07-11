@@ -188,3 +188,9 @@ export const AssetRepairEditInput = z.object({
 
   assetId: z.number().optional(),
 })
+
+export const HistoryLogCreateInput = z.object({
+  gunNumber: z.string().optional(),
+  participant: z.string().optional(),
+  action: z.string().optional(),
+})

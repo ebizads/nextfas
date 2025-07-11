@@ -47,3 +47,6 @@ export type AssetTransferValues = z.infer<typeof AssetTransferCreateInput>
 export type AssetEditFieldValues = z.infer<typeof AssetUpdateInput>
 
 export type UserType = inferProcedureOutput<AppRouter["user"]["findOne"]>
+
+export type HistoryLogType = inferProcedureOutput<AppRouter["historyLogs"]["findOne"]>
+

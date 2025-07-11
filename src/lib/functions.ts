@@ -4,6 +4,7 @@ import {
   UserType,
   BuildingType,
   AssetDevice,
+  HistoryLogType,
   Asset,
 } from "../types/generic"
 import * as XLSX from "xlsx"
@@ -16,7 +17,7 @@ import { ExcelExportAssetType } from "../types/asset"
 const router = Router
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | UserType | AssetDevice | Asset
+  type: AssetType | EmployeeType | UserType | AssetDevice | Asset | HistoryLogType
   //subfilter?: string
 ) => {
   //get object property
@@ -29,7 +30,7 @@ export const getProperty = (
       Object.getOwnPropertyDescriptor(property, getObj[1] ?? "--")?.value ??
       "--"
 
-    return Object.getOwnPropertyDescriptor(value, "name")?.value ?? "--"
+    return Object.getOwnPropertyDescriptor(value, "name")?.value ?? value ?? "--"
   }
 
   const property = Object.getOwnPropertyDescriptor(type, filter)?.value ?? "--"
@@ -38,6 +39,11 @@ export const getProperty = (
   if (typeof property === "string" || typeof property === "number") {
     const value = property.toString()
     return value.length > 0 ? property.toString() : "--"
+  }
+
+  if (typeof property === "object" && property.getDate != null) {
+    const value = property.getDate.toLocaleString()
+    return value.length > 0 ? property.toLocaleString() : "--"
   }
 
   //dig deeper if obj is an actual obj
@@ -79,41 +85,41 @@ export const getName = (filter: string, type: EmployeeType) => {
   return filter === "first_name"
     ? Object.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
-    : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+      ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+      : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getNameUser = (filter: string, type: UserType) => {
   return filter === "first_name"
     ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
+      ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
         ?.value
-    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+      : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getAddressUser = (
   type:
     | UserType
     | (Company & {
-        address: Address | null
-      })
+      address: Address | null
+    })
 ) => {
   return type?.address?.country !== null
     ? type?.address?.country !== ""
       ? type?.address?.country === "Philippines"
         ? (type?.address?.street ? type?.address?.street + ", " : "") +
-          (type?.address?.baranggay ? type?.address?.baranggay + ", " : "") +
-          (type?.address?.city ? type?.address?.city + ", " : "") +
-          (type?.address?.province ? type?.address?.province + ", " : "") +
-          (type?.address?.region ? type?.address?.region + ", " : "") +
-          (type?.address?.country ? type?.address?.country + ", " : "") +
-          (type?.address?.zip ?? "")
+        (type?.address?.baranggay ? type?.address?.baranggay + ", " : "") +
+        (type?.address?.city ? type?.address?.city + ", " : "") +
+        (type?.address?.province ? type?.address?.province + ", " : "") +
+        (type?.address?.region ? type?.address?.region + ", " : "") +
+        (type?.address?.country ? type?.address?.country + ", " : "") +
+        (type?.address?.zip ?? "")
         : (type?.address?.street ? type?.address?.street + ", " : "") +
-          (type?.address?.city ? type?.address?.city + ", " : "") +
-          (type?.address?.province ? type?.address?.province + ", " : "") +
-          (type?.address?.country ? type?.address?.country + ", " : "") +
-          (String(type?.address?.zip) ?? "")
+        (type?.address?.city ? type?.address?.city + ", " : "") +
+        (type?.address?.province ? type?.address?.province + ", " : "") +
+        (type?.address?.country ? type?.address?.country + ", " : "") +
+        (String(type?.address?.zip) ?? "")
       : "--"
     : "--"
 }
@@ -126,24 +132,24 @@ export const getAddress = (
   type:
     | EmployeeType
     | (Company & {
-        address: Address | null
-      })
+      address: Address | null
+    })
 ) => {
   return type?.address?.country !== null
     ? type?.address?.country !== ""
       ? type?.address?.country === "Philippines"
         ? (type?.address?.street ? type?.address?.street + ", " : "") +
-          (type?.address?.baranggay ? type?.address?.baranggay + ", " : "") +
-          (type?.address?.city ? type?.address?.city + ", " : "") +
-          (type?.address?.province ? type?.address?.province + ", " : "") +
-          (type?.address?.region ? type?.address?.region + ", " : "") +
-          (type?.address?.country ? type?.address?.country + ", " : "") +
-          (type?.address?.zip ?? "")
+        (type?.address?.baranggay ? type?.address?.baranggay + ", " : "") +
+        (type?.address?.city ? type?.address?.city + ", " : "") +
+        (type?.address?.province ? type?.address?.province + ", " : "") +
+        (type?.address?.region ? type?.address?.region + ", " : "") +
+        (type?.address?.country ? type?.address?.country + ", " : "") +
+        (type?.address?.zip ?? "")
         : (type?.address?.street ? type?.address?.street + ", " : "") +
-          (type?.address?.city ? type?.address?.city + ", " : "") +
-          (type?.address?.province ? type?.address?.province + ", " : "") +
-          (type?.address?.country ? type?.address?.country + ", " : "") +
-          (String(type?.address?.zip) ?? "")
+        (type?.address?.city ? type?.address?.city + ", " : "") +
+        (type?.address?.province ? type?.address?.province + ", " : "") +
+        (type?.address?.country ? type?.address?.country + ", " : "") +
+        (String(type?.address?.zip) ?? "")
       : "--"
     : "--"
 }
@@ -274,8 +280,8 @@ export const getLifetime = (start_date: Date, end_date: Date) => {
   return differenceInDay > 364
     ? `${convertDaysToYears(differenceInDay)} year/s`
     : differenceInDay > 30
-    ? `${convertDaysToMonths(differenceInDay)} month/s`
-    : `${differenceInDay} day/s`
+      ? `${convertDaysToMonths(differenceInDay)} month/s`
+      : `${differenceInDay} day/s`
 }
 
 export const convertDaysToYears = (days: number) => {

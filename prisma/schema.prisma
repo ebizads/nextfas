@@ -161,7 +161,7 @@ model Address {
   companyId  Int?      @unique
   vendorId   Int?      @unique
   employeeId Int?      @unique
-  zip        Int?
+  zip        String?
   baranggay  String?
   province   String?
   region     String?

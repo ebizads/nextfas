@@ -3,7 +3,23 @@ import { AddressCreateInput, AddressEditInput } from "./address"
 
 export const CreateUserInput = z.object({
   name: z.string({ required_error: "Name is required" }).min(1),
-  email: z.string({ required_error: "Email is required" }).email().min(1),
+  // email: z.string({ required_error: "Email is required" }).email().min(1),
+  email: z
+    .string()
+    .transform((val) => val.trim())
+    .superRefine((val, ctx) => {
+      if (val === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Email is required",
+        })
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Email format is invalid",
+        })
+      }
+    }),
   password: z.string(),
   // .regex(
   //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{1,}$/,
@@ -22,12 +38,40 @@ export const CreateUserInput = z.object({
     validationDate: z.date().nullish(),
   }),
   profile: z.object({
-    first_name: z
-      .string({ required_error: "First Name is required" })
-      .min(1, { message: "First name is required" }),
-    last_name: z
-      .string({ required_error: "Last Name is required" })
-      .min(1, "Last name is required"),
+    // first_name: z.string().min(1),
+    first_name: z.string().superRefine((val, ctx) => {
+      if (!val || val.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "First Name is required",
+        })
+      } else if (val.length < 3) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_small,
+          type: "string",
+          minimum: 3,
+          inclusive: true,
+          message: "First name is too short",
+        })
+      }
+    }),
+    // last_name: z.string().min(1),
+    last_name: z.string().superRefine((val, ctx) => {
+      if (!val || val.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Last Name is required",
+        })
+      } else if (val.length < 3) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_small,
+          type: "string",
+          minimum: 3,
+          inclusive: true,
+          message: "Last name is too short",
+        })
+      }
+    }),
     middle_name: z.string().nullish(),
     suffix: z.string().nullish(),
     date_of_birth: z.date().nullish(),
@@ -38,9 +82,22 @@ export const CreateUserInput = z.object({
   user_Id: z.string().nullish(),
   inactivityDate: z.date().nullish(),
   passwordAge: z.date().nullish(),
-  position: z
-    .string({ required_error: "Position is required" })
-    .min(1, { message: "Position is required" }),
+  position: z.string().superRefine((val, ctx) => {
+    if (!val || val.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Designation / Position is required",
+      })
+    } else if (val.length < 5) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.too_small,
+        type: "string",
+        minimum: 5,
+        inclusive: true,
+        message: "Designation / Position is too short",
+      })
+    }
+  }),
   address: AddressCreateInput,
   // teamId: z.number({ required_error: "Team is required" }),
 })
@@ -73,13 +130,61 @@ export const ChangeUserPass = z.object({
 export const EditUserInput = z.object({
   id: z.number(),
   name: z.string().optional(),
-  email: z.string().optional(),
+  // email: z.string().optional(),
+  email: z
+    .string()
+    .transform((val) => val.trim())
+    .superRefine((val, ctx) => {
+      if (val === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Email is required",
+        })
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Email format is invalid",
+        })
+      }
+    }),
   user_type: z.string().nullish(),
   image: z.string().nullish(),
   profile: z
     .object({
-      first_name: z.string().min(1),
-      last_name: z.string().min(1),
+      // first_name: z.string().min(1),
+      first_name: z.string().superRefine((val, ctx) => {
+        if (!val || val.trim() === "") {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "First Name is required",
+          })
+        } else if (val.length < 3) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.too_small,
+            type: "string",
+            minimum: 3,
+            inclusive: true,
+            message: "First name is too short",
+          })
+        }
+      }),
+      // last_name: z.string().min(1),
+      last_name: z.string().superRefine((val, ctx) => {
+        if (!val || val.trim() === "") {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Last Name is required",
+          })
+        } else if (val.length < 3) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.too_small,
+            type: "string",
+            minimum: 3,
+            inclusive: true,
+            message: "Last name is too short",
+          })
+        }
+      }),
       middle_name: z.string().nullish(),
       suffix: z.string().nullish(),
       date_of_birth: z.date().nullish(),
@@ -95,7 +200,23 @@ export const EditUserInput = z.object({
     })
     .optional(),
   passwordAge: z.date().nullish(),
-  position: z.string().nullish(),
+  // position: z.string().nullish(),
+  position: z.string().superRefine((val, ctx) => {
+    if (!val || val.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Designation / Position is required",
+      })
+    } else if (val.length < 5) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.too_small,
+        type: "string",
+        minimum: 5,
+        inclusive: true,
+        message: "Designation / Position is too short",
+      })
+    }
+  }),
   address: AddressEditInput,
   inactivityDate: z.date().nullish(),
   lockedAt: z.date().nullish(),

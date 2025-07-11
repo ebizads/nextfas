@@ -76,7 +76,7 @@ export const CreateEmployee_new = (props: {
         city: "",
         country: "",
         street: "",
-        zip: 0,
+        zip: "",
       },
       profile: {
         first_name: "",
@@ -262,31 +262,36 @@ export const CreateEmployee_new = (props: {
       >
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
-            <label className="sm:text-sm">First Name</label>
+            {/* <label className="sm:text-sm">First Name</label> */}
             <InputField
               register={register}
               name="profile.first_name"
               type={"text"}
-              label={""}
+              label={"First Name"}
+              placeholder="First Name"
+              required
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Middle Name (Optional)</label>
+            {/* <label className="sm:text-sm">Middle Name (Optional)</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Middle Name (Optional)"}
               name={"profile.middle_name"}
+              placeholder="Middle Name"
               register={register}
             />
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Last Name</label>
+            {/* <label className="sm:text-sm">Last Name</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Last Name"}
               name={"profile.last_name"}
+              placeholder="Last Name"
               register={register}
+              required
             />
             <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
           </div>
@@ -301,12 +306,14 @@ export const CreateEmployee_new = (props: {
             </p>
           </div> */}
           <div className="col-span-4">
-            <label className="sm:text-sm">Designation / Position</label>
+            {/* <label className="sm:text-sm">Designation / Position</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Designation / Position"}
               name={"position"}
+              placeholder="Designation / Position"
               register={register}
+              required
             />
 
             <AlertInput>{errors?.position?.message}</AlertInput>
@@ -405,7 +412,7 @@ export const CreateEmployee_new = (props: {
           <div className="col-span-4">
             <label className=" sm:text-sm ">Mobile Number</label>
             <input
-              placeholder="--"
+              placeholder="Mobile Number"
               type="number"
               className="!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
               onKeyDown={(e) => {
@@ -427,14 +434,15 @@ export const CreateEmployee_new = (props: {
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Email</label>
+            {/* <label className="sm:text-sm">Email</label> */}
             <InputField
               // disabled={!editable}
               type={"text"}
-              label={""}
+              label={"Email"}
               name={"email"}
               register={register}
-              placeholder={"--@email.com"}
+              placeholder={"example@email.com"}
+              required
             />
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
@@ -478,6 +486,7 @@ export const CreateEmployee_new = (props: {
         <div className="col-span-9 grid grid-cols-8 gap-7">
           <div className="col-span-2">
             <label className="sm:text-sm">Country</label>
+            <span className="text-red-500 sm:text-sm">*</span>
             <Select
               name={"address.country"}
               id="address.country"
@@ -731,18 +740,22 @@ export const CreateEmployee_new = (props: {
               disabled={country === ""}
               name={"address.street"}
               register={register}
+              required
             />
             <AlertInput>{errors?.address?.street?.message}</AlertInput>
           </div>
 
           <div className="col-span-2">
             <InputField
-              type={"number"}
-              label={"Zip Code"}
+              type="text"
+              label="Zip Code"
+              placeholder="Zip Code"
               disabled={country === ""}
-              name={"address.zip"}
+              name="address.zip"
               register={register}
+              required
             />
+
             <AlertInput>{errors?.address?.zip?.message}</AlertInput>
           </div>
         </div>

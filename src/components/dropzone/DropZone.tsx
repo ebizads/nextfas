@@ -67,17 +67,14 @@ export default function DropZone({
     },
     onError() {
       console.log(JSON.stringify(error))
-    }
+    },
   })
-
-
 
   const parseEmployeesData = (data: unknown[]) => {
     //returns all id of parsed employees
     const id_list = data.map((employee) => {
       return Number((employee as number[])[0] as number)
     }) as number[]
-
 
     if (id_list) {
       setIdList(id_list)
@@ -86,26 +83,24 @@ export default function DropZone({
     //filters duplicated ID
 
     const dupEmployeeList = data.filter((employee) => {
-
       return id_list.includes(
         employee ? Number((employee as number[])[0] as number) : 0
       )
     }) as any[]
 
     function excelSerialDateToJSDate(serialDate: number) {
-      const millisecondsPerDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
-      const epoch = new Date('1899-12-31'); // Excel epoch (1900-01-01 in Excel is 1 as the serial date)
+      const millisecondsPerDay = 24 * 60 * 60 * 1000 // Number of milliseconds in a day
+      const epoch = new Date("1899-12-31") // Excel epoch (1900-01-01 in Excel is 1 as the serial date)
 
-      const offset = (serialDate - 1) * millisecondsPerDay; // Subtracting 1 to account for the Excel epoch
-      const jsDate = new Date(epoch.getTime() + offset);
-      jsDate.setUTCHours(jsDate.getUTCHours() - 8);
+      const offset = (serialDate - 1) * millisecondsPerDay // Subtracting 1 to account for the Excel epoch
+      const jsDate = new Date(epoch.getTime() + offset)
+      jsDate.setUTCHours(jsDate.getUTCHours() - 8)
 
-      return jsDate;
+      return jsDate
     }
 
     const final_dupList = [] as ExcelExportType[]
     dupEmployeeList.forEach((emp) => {
-
       const data_structure = {
         id: (emp as (string | number | null)[])[0] as number,
         name: (emp as (string | number | null)[])[1] as string,
@@ -114,10 +109,28 @@ export default function DropZone({
         email: (emp as (string | number | null)[])[4] as string,
         teamId: (emp as (number | null)[])[5] as number,
         superviseeId: (emp as (number | null)[])[6] as number,
-        createdAt: (emp[7] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[7] as number)) : null),
-        updatedAt: (emp[8] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[8] as number)) : null),
+        createdAt: emp[7]
+          ? new Date(
+              excelSerialDateToJSDate(
+                (emp as (string | number | null | boolean)[])[7] as number
+              )
+            )
+          : null,
+        updatedAt: emp[8]
+          ? new Date(
+              excelSerialDateToJSDate(
+                (emp as (string | number | null | boolean)[])[8] as number
+              )
+            )
+          : null,
         deleted: (emp as (string | number | null | boolean)[])[9] as boolean,
-        deletedAt: (emp[10] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[10] as number)) : null),
+        deletedAt: emp[10]
+          ? new Date(
+              excelSerialDateToJSDate(
+                (emp as (string | number | null | boolean)[])[10] as number
+              )
+            )
+          : null,
         workMode: (emp as (string | null)[])[11] as string,
         workStation: (emp as (string | null)[])[12] as string,
         address: {
@@ -125,18 +138,34 @@ export default function DropZone({
           street: (emp as (string | number | null)[])[15] as string,
           city: (emp as (string | number | null)[])[16] as string,
           country: (emp as (string | number | null)[])[17] as string,
-          createdAt:
-            (emp[26] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[26] as number)) : null),
-          updatedAt:
-            (emp[27] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[27] as number)) : null),
+          createdAt: emp[26]
+            ? new Date(
+                excelSerialDateToJSDate(
+                  (emp as (string | number | null | boolean)[])[26] as number
+                )
+              )
+            : null,
+          updatedAt: emp[27]
+            ? new Date(
+                excelSerialDateToJSDate(
+                  (emp as (string | number | null | boolean)[])[27] as number
+                )
+              )
+            : null,
           //may laktaw po ito
           deleted: (emp as (string | number | null | boolean)[])[28] as boolean,
-          deletedAt: (emp[29] ? new Date(excelSerialDateToJSDate((emp as (string | number | null | boolean)[])[29] as number)) : null),
+          deletedAt: emp[29]
+            ? new Date(
+                excelSerialDateToJSDate(
+                  (emp as (string | number | null | boolean)[])[29] as number
+                )
+              )
+            : null,
           userId: (emp as (string | number | null)[])[18] as number,
           companyId: (emp as (number | string | null)[])[19] as number,
           vendorId: (emp as (string | number | null)[])[29] as number,
           employeeId: (emp as (string | number | null)[])[21] as number,
-          zip: (emp as (string | number | null)[])[22] as number,
+          zip: (emp as (string | number | null)[])[22] as string,
           baranggay: (emp as (string | number | null)[])[23] as string,
           province: (emp as (string | number | null)[])[24] as string,
           region: (emp as (string | number | null)[])[25] as string,
@@ -149,7 +178,14 @@ export default function DropZone({
           suffix: (emp as (string | number | null)[])[34] as string,
           gender: (emp as (string | number | null)[])[35] as string,
           image: (emp as (string | number | null)[])[36] as string,
-          date_of_birth: new Date(Math.round(((emp as (string | number | null | boolean)[])[41] as number - 25569) * 86400 * 1000)),
+          date_of_birth: new Date(
+            Math.round(
+              (((emp as (string | number | null | boolean)[])[41] as number) -
+                25569) *
+                86400 *
+                1000
+            )
+          ),
           userId: (emp as (string | number | null)[])[40] as number,
           employeeId: (emp as (string | number | null)[])[39] as number,
           phone_no: (emp as (string | number | null)[])[38] as string,
@@ -169,9 +205,7 @@ export default function DropZone({
     )
     // setDuplicatedEmployees(dupEmployees)
     // console.log(dupEmployees)
-
   }
-
 
   const checkDuplicated = async () => {
     for (let x = 0; x <= duplicatedEmployees.length; x++) {
@@ -179,10 +213,8 @@ export default function DropZone({
         duplicatedEmployees[x]?.id == 0 ||
         duplicatedEmployees[x]?.id == null
       ) {
-
         duplicatedEmployees.splice(x, 1)
       }
-
     }
   }
 
@@ -192,43 +224,52 @@ export default function DropZone({
 
   function generateEmployeeId(length: number, employee: EmployeeType[]) {
     const numberArray: string[] = []
-    for (let x = 0, y = 0; x <= (allEmp?.employees ? allEmp?.employees?.length : 0) + 1;) {
-      if ((employee.some((item) => item?.employee_id?.includes(String(x + 1).padStart(4, '0')))) || (numberArray?.includes(String(x + 1).padStart(4, '0')))) {
+    for (
+      let x = 0, y = 0;
+      x <= (allEmp?.employees ? allEmp?.employees?.length : 0) + 1;
+
+    ) {
+      if (
+        employee.some((item) =>
+          item?.employee_id?.includes(String(x + 1).padStart(4, "0"))
+        ) ||
+        numberArray?.includes(String(x + 1).padStart(4, "0"))
+      ) {
         x++
       } else {
-        numberArray.push(String(x + 1).padStart(4, '0'))
+        numberArray.push(String(x + 1).padStart(4, "0"))
         x = 0
         y++
       }
       if (y >= length) {
-        break;
+        break
       }
-
-
     }
     console.log("Chk: " + JSON.stringify(numberArray))
 
     return numberArray
-
   }
 
   useEffect(() => {
-    setChecker(employeeRandomizer);
+    setChecker(employeeRandomizer)
   }, [employeeRandomizer])
 
   const OnSubmitUpdate = async () => {
     // Register function
-    const employeesAll: EmployeeType[] = allEmp?.employees as EmployeeType[];
-    const employeeId: string[] = generateEmployeeId(duplicatedEmployees.length, employeesAll)
+    const employeesAll: EmployeeType[] = allEmp?.employees as EmployeeType[]
+    const employeeId: string[] = generateEmployeeId(
+      duplicatedEmployees.length,
+      employeesAll
+    )
     // setChecker(employeeRandomizer)
     for (let i = 0; i < duplicatedEmployees.length; i++) {
-
-
       mutate({
         id: duplicatedEmployees[i]?.id ?? 0,
         name: duplicatedEmployees[i]?.name ?? "",
         position: duplicatedEmployees[i]?.position,
-        employee_id: String(duplicatedEmployees[i]?.teamId).padStart(2, "0") + employeeId[i],
+        employee_id:
+          String(duplicatedEmployees[i]?.teamId).padStart(2, "0") +
+          employeeId[i],
         email: duplicatedEmployees[i]?.email,
         teamId: duplicatedEmployees[i]?.teamId ?? 0,
         superviseeId: duplicatedEmployees[i]?.superviseeId ?? null,
@@ -270,8 +311,7 @@ export default function DropZone({
           // employeeId: duplicatedEmployees[i]?.profile?.employeeId,
           phone_no: duplicatedEmployees[i]?.profile?.phone_no,
         },
-      });
-
+      })
     }
   }
   checkDuplicated()
@@ -280,12 +320,12 @@ export default function DropZone({
       {/* {"DUPLICATES: " + JSON.stringify(duplicates)} */}
       {importedData ? (
         duplicates?.length === 0 ||
-          duplicates === null ||
-          duplicates === undefined ||
-          duplicates[0]?.id === 0 ? (
+        duplicates === null ||
+        duplicates === undefined ||
+        duplicates[0]?.id === 0 ? (
           duplicatedEmployees.length === 0 ||
-            duplicatedEmployees === null ||
-            duplicatedEmployees === undefined ? (
+          duplicatedEmployees === null ||
+          duplicatedEmployees === undefined ? (
             <div className="flex flex-col gap-2 px-4 py-2">
               <div className="flex items-center gap-4 bg-yellow-100 p-4 text-light-secondary">
                 <i className="fa-regular fa-circle-exclamation" />
@@ -476,7 +516,6 @@ export default function DropZone({
                   (a: { id: number }, b: { id: number }) => a.id - b.id
                 )}
                 incomingChanges={duplicatedEmployees}
-
               />
             ) : (
               <></>
@@ -631,7 +670,6 @@ export default function DropZone({
               </div>
             </Group>
           </Dropzone>
-
         </>
       )}
       <DropZoneModal

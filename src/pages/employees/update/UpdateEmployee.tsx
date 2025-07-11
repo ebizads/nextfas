@@ -41,9 +41,9 @@ export const UpdateEmployee = (props: {
   const [barangay, setBarangay] = useState("")
   const router = useRouter()
 
-  const [searchValue, onSearchChange] = useState<string>(
-    props.employee?.teamId?.toString() ?? "0"
-  )
+  // const [searchValue, onSearchChange] = useState<string>(
+  //   props.employee?.teamId?.toString() ?? "0"
+  // )
   const [workModeValue, onSearchWorkMode] = useState<string>(
     props.employee?.workMode?.toString() ?? " "
   )
@@ -92,6 +92,7 @@ export const UpdateEmployee = (props: {
   })
 
   const onSubmit = async (employee: Employee) => {
+    // console.log("aaaa")
     // Register function
     mutate({
       ...employee,
@@ -237,6 +238,10 @@ export const UpdateEmployee = (props: {
     return newBarangay
   }, [region, province, city])
 
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
+
   return (
     <main className="container mx-auto flex flex-col justify-center p-2">
       <h3 className="mb-2 bg-gradient-to-r from-yellow-400 via-tangerine-200 to-yellow-500 bg-clip-text text-xl font-bold leading-normal text-transparent md:text-[2rem]">
@@ -249,33 +254,38 @@ export const UpdateEmployee = (props: {
       >
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
-            <label className="sm:text-sm">First Name</label>
+            {/* <label className="sm:text-sm">First Name</label> */}
             <InputField
               register={register}
               name="profile.first_name"
               type={"text"}
-              label={""}
+              label={"First Name"}
+              placeholder="First Name"
+              required
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Middle Name (Optional)</label>
+            {/* <label className="sm:text-sm">Middle Name (Optional)</label> */}
             <InputField
               // className="0 appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
 
               type={"text"}
-              label={""}
+              label={"Middle Name (Optional)"}
               name={"profile.middle_name"}
+              placeholder="Middle Name"
               register={register}
             />
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Last Name</label>
+            {/* <label className="sm:text-sm">Last Name</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Last Name"}
               name={"profile.last_name"}
+              placeholder="Last Name"
               register={register}
+              required
             />
             <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
           </div>
@@ -283,23 +293,25 @@ export const UpdateEmployee = (props: {
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
-            <label className="flex justify-between pb-1 sm:text-sm">
-              Employee Number
-              <div className="flex items-center gap-2">
-                <i
-                  className="fa-light fa-pen-to-square cursor-pointer"
-                  onClick={() => {
-                    handleIsEditable()
-                    handleEditable()
-                  }}
-                />
-              </div>
+            <label className="flex items-center justify-between pb-1 sm:text-sm">
+              <span className="flex items-center gap-1">
+                Employee Number
+                {/* <span className="text-red-500">*</span> */}
+              </span>
+              <i
+                className="fa-light fa-pen-to-square cursor-pointer"
+                onClick={() => {
+                  handleIsEditable()
+                  handleEditable()
+                }}
+              />
             </label>
             <InputField
               disabled={!isEditable}
-              type={"text"}
-              label={""}
-              name={"employee_id"}
+              type="text"
+              label=""
+              name="employee_id"
+              placeholder="Employee Number"
               register={register}
             />
 
@@ -310,13 +322,14 @@ export const UpdateEmployee = (props: {
             >{`${props.employee?.employee_id}`}</p> */}
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Designation / Position</label>
+            {/* <label className="sm:text-sm">Designation / Position</label> */}
             <InputField
               type={"text"}
-              label={""}
-              // placeholder={props.employee?.}
+              label={"Designation / Position"}
+              placeholder="Designation / Position"
               name={"position"}
               register={register}
+              required
             />
 
             <AlertInput>{errors?.position?.message}</AlertInput>
@@ -329,7 +342,7 @@ export const UpdateEmployee = (props: {
                 onSearchWorkMode(value ?? "")
               }}
               value={workModeValue}
-              placeholder="--"
+              placeholder="Work Mode"
               data={["WFH", "Hybrid", "On Site"]}
               defaultValue={props.employee?.workMode ?? "--"}
               styles={(theme) => ({
@@ -364,7 +377,10 @@ export const UpdateEmployee = (props: {
             <input
               type="number"
               pattern="[0-9]*"
-              defaultValue={props.employee?.profile?.phone_no ?? "--"}
+              placeholder="Mobile Number"
+              defaultValue={
+                props.employee?.profile?.phone_no ?? "Mobile Number"
+              }
               className="!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
               onKeyDown={(e) => {
                 if (e.key === "e") {
@@ -386,12 +402,14 @@ export const UpdateEmployee = (props: {
           </div>
 
           <div className="col-span-4">
-            <label className="sm:text-sm">Email</label>
+            {/* <label className="sm:text-sm">Email</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Email"}
               name={"email"}
+              placeholder="Email"
               register={register}
+              required
             />
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
@@ -402,7 +420,7 @@ export const UpdateEmployee = (props: {
                 setValue("workStation", String(value) ?? " ")
                 onSearchWorkStation(value ?? "")
               }}
-              placeholder="--"
+              placeholder="Device"
               value={workStationValue}
               defaultValue={props.employee?.workStation ?? "--"}
               data={["Desktop", "Laptop"]}
@@ -432,6 +450,7 @@ export const UpdateEmployee = (props: {
         <div className="col-span-9 grid grid-cols-8 gap-7">
           <div className="col-span-2">
             <label className="sm:text-sm">Country</label>
+            <span className="text-sm text-red-500">*</span>
             <Select
               name={"address.country"}
               id="address.country"
@@ -687,17 +706,19 @@ export const UpdateEmployee = (props: {
               disabled={country === ""}
               name={"address.street"}
               register={register}
+              required
             />
             <AlertInput>{errors?.address?.street?.message}</AlertInput>
           </div>
 
           <div className="col-span-2">
             <InputField
-              type={"number"}
+              type={"text"}
               label={"Zip Code"}
               disabled={country === ""}
               name={"address.zip"}
               register={register}
+              required
             />
             <AlertInput>{errors?.address?.zip?.message}</AlertInput>
           </div>
@@ -754,9 +775,9 @@ export const UpdateEmployee = (props: {
               <button
                 type="button"
                 className="rounded bg-red-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                onClick={() => {
-                  handleDelete(), setIsLoading(true)
-                }}
+                // onClick={() => {
+                //   handleDelete(), setIsLoading(true)
+                // }}
                 disabled={isLoading}
               >
                 {isLoading ? "Loading..." : "Delete"}

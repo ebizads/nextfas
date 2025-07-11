@@ -280,33 +280,38 @@ export const UpdateUser = (props: {
       >
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
-            <label className="sm:text-sm">First Name</label>
+            {/* <label className="sm:text-sm">First Name</label> */}
             <InputField
               register={register}
               name="profile.first_name"
               type={"text"}
-              label={""}
+              label={"First Name"}
+              placeholder="First Name"
+              required
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Middle Name (Optional)</label>
+            {/* <label className="sm:text-sm">Middle Name (Optional)</label> */}
             <InputField
               // className="0 appearance-none  border border-black py-2 px-3 leading-tight text-gray-700 focus:outline-none"
 
               type={"text"}
-              label={""}
+              label={"Middle Name (Optional)"}
               name={"profile.middle_name"}
+              placeholder="Middle Name"
               register={register}
             />
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Last Name</label>
+            {/* <label className="sm:text-sm">Last Name</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Last Name"}
               name={"profile.last_name"}
+              placeholder="Last Name"
               register={register}
+              required
             />
             <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
           </div>
@@ -345,13 +350,14 @@ export const UpdateUser = (props: {
             >{`${props.user?.user_id}`}</p> */}
           </div>
           <div className="col-span-4">
-            <label className="sm:text-sm">Designation / Position</label>
+            {/* <label className="sm:text-sm">Designation / Position</label> */}
             <InputField
               type={"text"}
-              label={""}
-              // placeholder={props.user?.}
+              label={"Designation / Position"}
+              placeholder="Designation / Position"
               name={"position"}
               register={register}
+              required
             />
 
             <AlertInput>{errors?.position?.message}</AlertInput>
@@ -360,7 +366,9 @@ export const UpdateUser = (props: {
             <label className="sm:text-sm">User Type</label>
             <Select
               // disabled={!isEditable}
-              placeholder={user?.user_type ? user?.user_type : "Pick One"}
+              // placeholder={user?.user_type ? user?.user_type : "Pick One"}
+              placeholder="Pick One"
+              value={user?.user_type ?? ""}
               onChange={(value) => {
                 setValue("user_type", String(value) ?? "")
               }}
@@ -397,6 +405,7 @@ export const UpdateUser = (props: {
             <input
               type="number"
               pattern="[0-9]*"
+              placeholder="Mobile Number"
               defaultValue={props.user?.profile?.phone_no ?? "--"}
               className="!mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
               onKeyDown={(e) => {
@@ -419,12 +428,14 @@ export const UpdateUser = (props: {
           </div>
 
           <div className="col-span-6">
-            <label className="sm:text-sm">Email</label>
+            {/* <label className="sm:text-sm">Email</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Email"}
               name={"email"}
+              placeholder="Email"
               register={register}
+              required
             />
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
@@ -465,6 +476,7 @@ export const UpdateUser = (props: {
         <div className="col-span-9 grid grid-cols-8 gap-7">
           <div className="col-span-2">
             <label className="sm:text-sm">Country</label>
+            <span className="text-red-500 sm:text-sm">*</span>
             <Select
               name={"address.country"}
               id="address.country"
@@ -719,17 +731,19 @@ export const UpdateUser = (props: {
                 disabled={country === ""}
                 name={"address.street"}
                 register={register}
+                required
               />
               <AlertInput>{errors?.address?.street?.message}</AlertInput>
             </div>
 
             <div className="col-span-2">
               <InputField
-                type={"number"}
+                type={"text"}
                 label={"Zip Code"}
                 disabled={country === ""}
                 name={"address.zip"}
                 register={register}
+                required
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
             </div>

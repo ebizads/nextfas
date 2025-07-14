@@ -87,7 +87,7 @@ export const CreateEmployee = (props: {
         city: "",
         country: "",
         street: "",
-        zip: 0,
+        zip: "",
       },
       profile: {
         first_name: "",
@@ -289,7 +289,8 @@ export const CreateEmployee = (props: {
               register={register}
               name="profile.first_name"
               type={"text"}
-              label={""}
+              label={"First Name"}
+              required
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
           </div>
@@ -297,7 +298,7 @@ export const CreateEmployee = (props: {
             <label className="sm:text-sm">Middle Name (Optional)</label>
             <InputField
               type={"text"}
-              label={""}
+              label={"Middle Name"}
               name={"profile.middle_name"}
               register={register}
             />
@@ -306,9 +307,10 @@ export const CreateEmployee = (props: {
             <label className="sm:text-sm">Last Name</label>
             <InputField
               type={"text"}
-              label={""}
+              label={"Last Name"}
               name={"profile.last_name"}
               register={register}
+              required
             />
             <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
           </div>
@@ -363,12 +365,13 @@ export const CreateEmployee = (props: {
             </p>
           </div>
           <div className="flex w-[32%] flex-col">
-            <label className="sm:text-sm">Designation / Position</label>
+            {/* <label className="sm:text-sm">Designation / Position</label> */}
             <InputField
               type={"text"}
-              label={""}
+              label={"Designation / Position"}
               name={"position"}
               register={register}
+              required
             />
 
             <AlertInput>{errors?.position?.message}</AlertInput>
@@ -377,14 +380,15 @@ export const CreateEmployee = (props: {
 
         <div className="flex flex-wrap gap-4 py-2.5">
           <div className="flex w-[49%] flex-col">
-            <label className="sm:text-sm">Email</label>
+            {/* <label className="sm:text-sm">Email</label> */}
             <InputField
               // disabled={!editable}
               type={"text"}
-              label={""}
+              label={"Email"}
               name={"email"}
               register={register}
-              placeholder={"--@email.com"}
+              placeholder={"example@email.com"}
+              required
             />
             <AlertInput>{errors?.email?.message}</AlertInput>
           </div>
@@ -409,7 +413,7 @@ export const CreateEmployee = (props: {
           <div className="flex w-[23%] flex-col">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
-              placeholder="--"
+              placeholder="Mobile Number"
               type="number"
               className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-800 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
               onKeyDown={(e) => {
@@ -500,6 +504,7 @@ export const CreateEmployee = (props: {
           <div className="flex w-full flex-wrap gap-3 py-2.5">
             <div className="flex w-[23%] flex-col">
               <label className="sm:text-sm">Country</label>
+              <span className="text-sm text-red-500">*</span>
               <Select
                 name={"address.country"}
                 id="address.country"
@@ -730,30 +735,32 @@ export const CreateEmployee = (props: {
               <AlertInput>{errors?.address?.baranggay?.message}</AlertInput>
             </div>
             <div className="flex w-[23%] flex-col ">
-              <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
+              {/* <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
                 Street
-              </label>
+              </label> */}
               <InputField
                 type={"text"}
-                label={""}
+                label={"Street"}
                 placeholder="Street"
                 disabled={country === ""}
                 name={"address.street"}
                 register={register}
+                required
               />
               <AlertInput>{errors?.address?.street?.message}</AlertInput>
             </div>
 
             <div className="flex w-[23%] flex-col">
-              <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
+              {/* <label className="disabled:bg-gray-300 disabled:text-gray-500 sm:text-sm">
                 Zip Code
-              </label>
+              </label> */}
               <InputField
-                type={"number"}
-                label={""}
+                type={"text"}
+                label={"Zip Code"}
                 disabled={country === ""}
                 name={"address.zip"}
                 register={register}
+                required
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
             </div>

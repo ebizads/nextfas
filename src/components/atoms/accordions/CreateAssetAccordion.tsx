@@ -183,6 +183,7 @@ const CreateAssetAccordion = () => {
                   title={"Type"}
                   placeholder={"Select Type"}
                   data={typesList ?? []}
+                  required
                 />
                 <AlertInput>{errors?.typeId?.message}</AlertInput>
               </div>
@@ -197,7 +198,7 @@ const CreateAssetAccordion = () => {
                   placeholder="Caliber"
                   required
                 />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                <AlertInput>{errors?.caliber?.message}</AlertInput>
               </div>
               <div className="col-span-4 pt-1">
                 <TypeSelect
@@ -207,6 +208,7 @@ const CreateAssetAccordion = () => {
                   title={"Action Type"}
                   placeholder={"Select Action Type"}
                   data={actionTypesList ?? []}
+                  required
                 />
                 <AlertInput>{errors?.actionTypeId?.message}</AlertInput>
               </div>

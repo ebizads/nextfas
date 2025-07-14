@@ -81,7 +81,7 @@ const Register2 = () => {
         city: "",
         country: "",
         street: "",
-        zip: 0,
+        zip: "",
       },
       profile: {
         first_name: "",
@@ -290,6 +290,7 @@ const Register2 = () => {
               name="profile.first_name"
               type={"text"}
               label={"First Name"}
+              placeholder="First Name"
               required
             />
             <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
@@ -300,6 +301,7 @@ const Register2 = () => {
               type={"text"}
               label={"Middle Name (Optional)"}
               name={"profile.middle_name"}
+              placeholder="Middle Name"
               register={register}
             />
           </div>
@@ -310,6 +312,7 @@ const Register2 = () => {
               label={"Last Name"}
               name={"profile.last_name"}
               register={register}
+              placeholder="Last Name"
               required
             />
             <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
@@ -352,6 +355,7 @@ const Register2 = () => {
               label={"Designation / Position"}
               name={"position"}
               register={register}
+              placeholder="Designation / Position"
               required
             />
 
@@ -368,7 +372,7 @@ const Register2 = () => {
               label={"Email"}
               name={"email"}
               register={register}
-              placeholder={"--@email.com"}
+              placeholder={"example@email.com"}
               required
             />
             <AlertInput>{errors?.email?.message}</AlertInput>
@@ -377,6 +381,8 @@ const Register2 = () => {
             <label className="!mb-2 sm:text-sm">Mobile Number</label>
             <input
               type="number"
+              pattern="[0-9]*"
+              placeholder="Mobile Number"
               className="!my-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 outline-none  ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2"
               onKeyDown={(e) => {
                 if (e.key === "e") {
@@ -415,6 +421,7 @@ const Register2 = () => {
         <div className="col-span-9 grid grid-cols-8 gap-7">
           <div className="col-span-2">
             <label className="sm:text-sm">Country</label>
+            <span className="text-sm text-red-500">*</span>
             <Select
               name={"address.country"}
               id="address.country"
@@ -669,17 +676,19 @@ const Register2 = () => {
                 disabled={country === ""}
                 name={"address.street"}
                 register={register}
+                required
               />
               <AlertInput>{errors?.address?.street?.message}</AlertInput>
             </div>
 
             <div className="col-span-2">
               <InputField
-                type={"number"}
+                type={"text"}
                 label={"Zip Code"}
                 disabled={country === ""}
                 name={"address.zip"}
                 register={register}
+                required
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
             </div>

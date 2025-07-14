@@ -627,11 +627,12 @@ const UpdateUserModal = (props: {
 
             <div className="col-span-2">
               <InputField
-                type={"number"}
+                type={"text"}
                 label={"Zip Code"}
                 disabled={country === ""}
                 name={"address.zip"}
                 register={register}
+                required
               />
               <AlertInput>{errors?.address?.zip?.message}</AlertInput>
             </div>

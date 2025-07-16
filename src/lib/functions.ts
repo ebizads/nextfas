@@ -17,7 +17,13 @@ import { ExcelExportAssetType } from "../types/asset"
 const router = Router
 export const getProperty = (
   filter: string,
-  type: AssetType | EmployeeType | UserType | AssetDevice | Asset | HistoryLogType
+  type:
+    | AssetType
+    | EmployeeType
+    | UserType
+    | AssetDevice
+    | Asset
+    | HistoryLogType
   //subfilter?: string
 ) => {
   //get object property
@@ -30,7 +36,9 @@ export const getProperty = (
       Object.getOwnPropertyDescriptor(property, getObj[1] ?? "--")?.value ??
       "--"
 
-    return Object.getOwnPropertyDescriptor(value, "name")?.value ?? value ?? "--"
+    return (
+      Object.getOwnPropertyDescriptor(value, "name")?.value ?? value ?? "--"
+    )
   }
 
   const property = Object.getOwnPropertyDescriptor(type, filter)?.value ?? "--"
@@ -85,41 +93,41 @@ export const getName = (filter: string, type: EmployeeType) => {
   return filter === "first_name"
     ? Object.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-      ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
-      : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+    ? Object.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")?.value
+    : Object.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getNameUser = (filter: string, type: UserType) => {
   return filter === "first_name"
     ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "first_name")?.value
     : filter === "middle_name"
-      ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
+    ? Object?.getOwnPropertyDescriptor(type?.profile || {}, "middle_name")
         ?.value
-      : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
+    : Object?.getOwnPropertyDescriptor(type?.profile || {}, "last_name")?.value
 }
 
 export const getAddressUser = (
   type:
     | UserType
     | (Company & {
-      address: Address | null
-    })
+        address: Address | null
+      })
 ) => {
   return type?.address?.country !== null
     ? type?.address?.country !== ""
       ? type?.address?.country === "Philippines"
         ? (type?.address?.street ? type?.address?.street + ", " : "") +
-        (type?.address?.baranggay ? type?.address?.baranggay + ", " : "") +
-        (type?.address?.city ? type?.address?.city + ", " : "") +
-        (type?.address?.province ? type?.address?.province + ", " : "") +
-        (type?.address?.region ? type?.address?.region + ", " : "") +
-        (type?.address?.country ? type?.address?.country + ", " : "") +
-        (type?.address?.zip ?? "")
+          (type?.address?.baranggay ? type?.address?.baranggay + ", " : "") +
+          (type?.address?.city ? type?.address?.city + ", " : "") +
+          (type?.address?.province ? type?.address?.province + ", " : "") +
+          (type?.address?.region ? type?.address?.region + ", " : "") +
+          (type?.address?.country ? type?.address?.country + ", " : "") +
+          (type?.address?.zip ?? "")
         : (type?.address?.street ? type?.address?.street + ", " : "") +
-        (type?.address?.city ? type?.address?.city + ", " : "") +
-        (type?.address?.province ? type?.address?.province + ", " : "") +
-        (type?.address?.country ? type?.address?.country + ", " : "") +
-        (String(type?.address?.zip) ?? "")
+          (type?.address?.city ? type?.address?.city + ", " : "") +
+          (type?.address?.province ? type?.address?.province + ", " : "") +
+          (type?.address?.country ? type?.address?.country + ", " : "") +
+          (String(type?.address?.zip) ?? "")
       : "--"
     : "--"
 }
@@ -132,24 +140,24 @@ export const getAddress = (
   type:
     | EmployeeType
     | (Company & {
-      address: Address | null
-    })
+        address: Address | null
+      })
 ) => {
   return type?.address?.country !== null
     ? type?.address?.country !== ""
       ? type?.address?.country === "Philippines"
         ? (type?.address?.street ? type?.address?.street + ", " : "") +
-        (type?.address?.baranggay ? type?.address?.baranggay + ", " : "") +
-        (type?.address?.city ? type?.address?.city + ", " : "") +
-        (type?.address?.province ? type?.address?.province + ", " : "") +
-        (type?.address?.region ? type?.address?.region + ", " : "") +
-        (type?.address?.country ? type?.address?.country + ", " : "") +
-        (type?.address?.zip ?? "")
+          (type?.address?.baranggay ? type?.address?.baranggay + ", " : "") +
+          (type?.address?.city ? type?.address?.city + ", " : "") +
+          (type?.address?.province ? type?.address?.province + ", " : "") +
+          (type?.address?.region ? type?.address?.region + ", " : "") +
+          (type?.address?.country ? type?.address?.country + ", " : "") +
+          (type?.address?.zip ?? "")
         : (type?.address?.street ? type?.address?.street + ", " : "") +
-        (type?.address?.city ? type?.address?.city + ", " : "") +
-        (type?.address?.province ? type?.address?.province + ", " : "") +
-        (type?.address?.country ? type?.address?.country + ", " : "") +
-        (String(type?.address?.zip) ?? "")
+          (type?.address?.city ? type?.address?.city + ", " : "") +
+          (type?.address?.province ? type?.address?.province + ", " : "") +
+          (type?.address?.country ? type?.address?.country + ", " : "") +
+          (String(type?.address?.zip) ?? "")
       : "--"
     : "--"
 }
@@ -180,7 +188,23 @@ export const downloadExcel = (data: ExcelExportType[]) => {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "Employee_Sheet.xlsx")
+  // XLSX.writeFile(workbook, "Employee_Sheet.xlsx")
+
+  const wbout = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  })
+
+  const blob = new Blob([wbout], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  })
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "Employee_Sheet.xlsx"
+  a.click()
+  URL.revokeObjectURL(url)
   // }
 
   return
@@ -196,7 +220,23 @@ export const downloadExcel_template = (data: ExcelExportType[]) => {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "Employee_Template.xlsx")
+  // XLSX.writeFile(workbook, "Employee_Template.xlsx")
+
+  const wbout = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  })
+
+  const blob = new Blob([wbout], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  })
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "Employee_Template.xlsx"
+  a.click()
+  URL.revokeObjectURL(url)
   // }
 
   return
@@ -223,7 +263,23 @@ export const downloadExcel_templateAssets = (data: ExcelExportAssetType[]) => {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "Asset_Template.xlsx")
+  // XLSX.writeFile(workbook, "Asset_Template.xlsx")
+
+  const wbout = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  })
+
+  const blob = new Blob([wbout], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  })
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "Asset_Template.xlsx"
+  a.click()
+  URL.revokeObjectURL(url)
   // }
 
   return
@@ -239,7 +295,23 @@ export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
   //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
   //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  XLSX.writeFile(workbook, "Asset_Sheet.xlsx")
+  // XLSX.writeFile(workbook, "Asset_Sheet.xlsx")
+
+  const wbout = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  })
+
+  const blob = new Blob([wbout], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  })
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "Asset_Sheet.xlsx"
+  a.click()
+  URL.revokeObjectURL(url)
   // }
 
   return
@@ -280,8 +352,8 @@ export const getLifetime = (start_date: Date, end_date: Date) => {
   return differenceInDay > 364
     ? `${convertDaysToYears(differenceInDay)} year/s`
     : differenceInDay > 30
-      ? `${convertDaysToMonths(differenceInDay)} month/s`
-      : `${differenceInDay} day/s`
+    ? `${convertDaysToMonths(differenceInDay)} month/s`
+    : `${differenceInDay} day/s`
 }
 
 export const convertDaysToYears = (days: number) => {

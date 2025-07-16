@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Pagination } from "@mantine/core"
 import AssetTable, { AssetDeleteModal } from "../atoms/table/AssetTable"
-import { Asset, AssetType } from "../../types/generic"
+import { Asset } from "../../types/generic"
 import { columns } from "../../lib/table"
 import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import FilterPopOver from "../atoms/popover/FilterPopOver"
@@ -12,9 +12,7 @@ import {
 } from "../../lib/functions"
 import { UserType } from "../../types/generic"
 import { ExcelExportAssetType } from "../../types/asset"
-import { trpc } from "../../utils/trpc"
 import Modal from "../headless/modal/modal"
-import DropZone from "../dropzone/DropZone"
 import AddAssetPopOver from "../atoms/popover/AddAssetPopOver"
 import DropZone_asset from "../dropzone/Asset dropzone/DropZone_asset"
 

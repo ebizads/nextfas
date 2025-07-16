@@ -175,15 +175,20 @@ export const AssetEditInput = z.object({
     }
   }), // type: z.string(),
   // action_type: z.string().nullish(),
-  typeId: z.number({
-    required_error: "Type is required",
-    invalid_type_error: "Type must be a number",
-  }),
+  // typeId: z.number({
+  //   required_error: "Type is required",
+  //   invalid_type_error: "Type must be a number",
+  // }),
 
-  actionTypeId: z.number({
-    required_error: "Action Type is required",
-    invalid_type_error: "Action type must be a number",
+  // actionTypeId: z.number({
+  //   required_error: "Action Type is required",
+  //   invalid_type_error: "Action type must be a number",
+  // }),
+  type: z.string({
+    required_error: "Type is required",
+    invalid_type_error: "Type must be a String",
   }),
+  action_type: z.string().nullish(),
   // caliber: z.string().nullish(),
   caliber: z.string().superRefine((val, ctx) => {
     if (!val || val.trim() === "") {
@@ -281,16 +286,16 @@ export const AssetTransformInput = z.object({
     }
   }),
   type: z.string(),
-  // action_type: z.string().nullish(),
+  action_type: z.string(),
   // typeId: z.number({
   //   required_error: "Type is required",
   //   invalid_type_error: "Type must be a number",
   // }),
 
-  actionTypeId: z.number({
-    required_error: "Action Type is required",
-    invalid_type_error: "Action type must be a number",
-  }),
+  // actionTypeId: z.number({
+  //   required_error: "Action Type is required",
+  //   invalid_type_error: "Action type must be a number",
+  // }),
   // caliber: z.string(),
   caliber: z.string().superRefine((val, ctx) => {
     if (!val || val.trim() === "") {

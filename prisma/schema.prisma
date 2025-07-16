@@ -441,7 +441,6 @@ model Asset {
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   deletedAt         DateTime?
-  issuedAt          DateTime?
   deleted           Boolean          @default(false)
   departmentId      Int?
   subsidiaryId      Int?
@@ -456,6 +455,7 @@ model Asset {
   issuedById        Int?
   issuedToId        Int?
   pastIssuanceId    Int?
+  issuedAt          DateTime?
   actionType        AssetActionType? @relation(fields: [actionTypeId], references: [id], onDelete: Cascade)
   addedBy           User?            @relation(fields: [addedById], references: [id], onDelete: Cascade)
   project           AssetProject?    @relation(fields: [assetProjectId], references: [id])

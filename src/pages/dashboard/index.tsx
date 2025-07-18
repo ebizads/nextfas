@@ -404,7 +404,7 @@ const Dashboard = () => {
           <h3 className="text-xl font-medium">Recent Issuance</h3>
           <DisplayDashboard
             total={dataAssets?.count ?? 0}
-            assets={assets}
+            assets={dataAssets?.assets ?? []}
             accessiblePage={accessiblePage}
             page={page}
             setPage={setPage}

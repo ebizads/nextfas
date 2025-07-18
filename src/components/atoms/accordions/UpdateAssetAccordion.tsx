@@ -256,7 +256,7 @@ const UpdateAssetAccordion = () => {
           <div>
             <div className="grid grid-cols-9 gap-7 ">
               <div className="col-span-9 grid grid-cols-12 gap-7">
-                <div className="col-span-6">
+                <div className="col-span-4">
                   <InputField
                     register={register}
                     label="Asset Name"
@@ -267,7 +267,16 @@ const UpdateAssetAccordion = () => {
                   <AlertInput>{errors?.name?.message}</AlertInput>
                 </div>
 
-                <div className="col-span-6">
+                <div className="col-span-4">
+                  <InputField
+                    register={register}
+                    label="Firearm Serial Number"
+                    placeholder="Firearm Serial Number"
+                    name="serial_no"
+                  />
+                  <AlertInput>{errors?.serial_no?.message}</AlertInput>
+                </div>
+                <div className="col-span-4">
                   <InputField
                     register={register}
                     label="Asset ID"
@@ -277,7 +286,7 @@ const UpdateAssetAccordion = () => {
                   />
                 </div>
               </div>
-              <div className="col-span-9 grid grid-cols-12 gap-7">
+              {/* <div className="col-span-9 grid grid-cols-12 gap-7">
                 <div className="col-span-6">
                   <InputField
                     register={register}
@@ -288,16 +297,7 @@ const UpdateAssetAccordion = () => {
                   />
                   <AlertInput>{errors?.barcode?.message}</AlertInput>
                 </div>
-                <div className="col-span-6">
-                  <InputField
-                    register={register}
-                    label="Firearm Serial Number"
-                    placeholder="Firearm Serial Number"
-                    name="serial_no"
-                  />
-                  <AlertInput>{errors?.serial_no?.message}</AlertInput>
-                </div>
-              </div>
+              </div> */}
 
               <div className="col-span-9 grid grid-cols-12 gap-7">
                 <div className="col-span-4">
@@ -392,7 +392,7 @@ const UpdateAssetAccordion = () => {
           </button>
           <button
             type="submit"
-            className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            className="text-dark-primary rounded-md  bg-tangerine-300 px-6 py-2 font-medium outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             onClick={() => console.log(errors)}
           >
             {isLoading || loading ? "Saving..." : "Save"}

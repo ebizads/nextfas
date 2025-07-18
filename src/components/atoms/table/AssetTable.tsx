@@ -162,17 +162,6 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Name</p>
                       <p className="font-medium">{props.asset?.name}</p>
                     </div>
-
-                    <div className="col-span-1">
-                      <p className="font-light">RFID/ Barcode ID</p>
-                      <p className="font-medium">
-                        {props.asset?.barcode !== ""
-                          ? props.asset?.barcode
-                          : "--"}
-                      </p>
-                    </div>
-                  </section>
-                  <section className="grid grid-cols-3">
                     <div className="col-span-1">
                       <p className="font-light">Firearm Serial Number</p>
                       <p className="font-medium">
@@ -181,6 +170,16 @@ const AssetDetailsModal = (props: {
                           : "--"}
                       </p>
                     </div>
+                    {/* <div className="col-span-1">
+                      <p className="font-light">RFID/ Barcode ID</p>
+                      <p className="font-medium">
+                        {props.asset?.barcode !== ""
+                          ? props.asset?.barcode
+                          : "--"}
+                      </p>
+                    </div> */}
+                  </section>
+                  <section className="grid grid-cols-3">
                     <div className="col-span-1">
                       <p className="font-light">Brand</p>
                       <p className="font-medium">
@@ -195,6 +194,12 @@ const AssetDetailsModal = (props: {
                           : "--"}
                       </p>
                     </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Caliber</p>
+                      <p className="font-medium">
+                        {props.asset?.caliber ?? "--"}
+                      </p>
+                    </div>
                   </section>
                   <section className="grid grid-cols-3">
                     <div className="col-span-1">
@@ -206,26 +211,21 @@ const AssetDetailsModal = (props: {
                       </p>
                     </div>
                     <div className="col-span-1">
-                      <p className="font-light">Caliber</p>
-                      <p className="font-medium">
-                        {props.asset?.caliber ?? "--"}
-                      </p>
-                    </div>
-                    <div className="col-span-1">
                       <p className="font-light">Action Type</p>
                       <p className="font-medium">
                         {props.asset?.actionType?.name ?? "--"}
                       </p>
                     </div>
-                  </section>
-                  <section className="grid grid-cols-3">
-                    <div className="col-span-3">
+                    <div className="col-span-1">
                       <p className="font-light">Description</p>
                       <p className="font-medium">
                         {props.asset?.description ?? "--"}
                       </p>
                     </div>
                   </section>
+                  {/* <section className="grid grid-cols-3">
+                    
+                  </section> */}
                 </div>
               </section>
               <div className="space-y flex flex-col">
@@ -661,6 +661,8 @@ const AssetTable = (props: {
                     >
                       {col.value == "typeId"
                         ? row?.type?.name
+                        : col.value == "actionTypeId"
+                        ? row?.actionType?.name
                         : getProperty(col.value, row)}
                     </td>
                   ))}

@@ -6,8 +6,9 @@ import { ColumnType, DetailType, NavType } from "../types/table"
 export const columns = [
   { value: "number", name: "ASSET ID" },
   { value: "name", name: "ASSET NAME" },
-  { value: "barcode", name: "RFID/BARCODE ID" },
+  // { value: "barcode", name: "RFID/BARCODE ID" },
   { value: "typeId", name: "TYPE" },
+  { value: "actionTypeId", name: "ACTION TYPE" },
   { value: "status", name: "STATUS" },
 ] as ColumnType[]
 
@@ -192,6 +193,6 @@ export const historyLogColumns = [
   { value: "asset.name", name: "ASSET NAME" },
   { value: "gunNumber", name: "RFID/BARCODE ID" },
   { value: "participant", name: "COMPLETED BY" },
-  { value: "createdAt", name: "DATE COMPLETED" }, 
+  { value: "createdAt", name: "DATE COMPLETED" },
   { value: "action", name: "ACTION" },
 ] as ColumnType[]

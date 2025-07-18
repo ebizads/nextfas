@@ -248,7 +248,6 @@ export const downloadExcel_templateAssets = (data: ExcelExportAssetType[]) => {
   const worksheet = XLSX.utils.aoa_to_sheet([
     [
       "name",
-      "asset_number",
       "serial_no",
       "barcode",
       "brand",

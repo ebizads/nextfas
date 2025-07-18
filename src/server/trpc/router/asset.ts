@@ -303,21 +303,21 @@ export const assetRouter = t.router({
           include: {
             type: true, // Added type relation
             actionType: true, // Added actionType relation
-            department: {
-              include: {
-                location: true,
-                company: true,
-                teams: true,
-                building: true,
-              },
-            },
-            parent: true,
-            custodian: true,
-            vendor: true,
-            management: true,
-            addedBy: true,
-            assetTag: true,
-            AssetIssuance: true,
+            // department: {
+            //   include: {
+            //     location: true,
+            //     company: true,
+            //     teams: true,
+            //     building: true,
+            //   },
+            // },
+            // parent: true,
+            // custodian: true,
+            // vendor: true,
+            // management: true,
+            // addedBy: true,
+            // assetTag: true,
+            // AssetIssuance: true,
           },
           where: {
             NOT: {
@@ -352,7 +352,7 @@ export const assetRouter = t.router({
                 id: 999999,
               },
             },
-            createdAt: {
+            issuedAt: {
               gte: start,
               lte: end,
             },
@@ -729,7 +729,7 @@ export const assetRouter = t.router({
   createOrUpdate: authedProcedure
     .input(AssetTransformInput)
     .mutation(async ({ ctx, input }) => {
-      const { number, type, action_type, ...rest } = input
+      const { type, action_type, ...rest } = input
 
       // Validate type exists if provided
       let typeId
@@ -762,68 +762,45 @@ export const assetRouter = t.router({
         } else [(action_typeId = action_typeExists.id)]
       }
 
-      const existAssets = await ctx.prisma.asset.findFirst({
-        where: {
-          number: number ?? "",
+      const allAssets = await ctx.prisma.asset.findMany()
+      let assetNumber = ""
+
+      for (let x = 0; x <= (allAssets?.length || 0) + 1; x++) {
+        const formattedNumber = `GUN-${String(x + 1).padStart(4, "0")}`
+        if (!allAssets?.some((item) => item.number === formattedNumber)) {
+          assetNumber = formattedNumber
+          break
+        }
+      }
+      // Create new asset
+      const newAsset = await ctx.prisma.asset.create({
+        data: {
+          ...rest,
+          number: assetNumber,
+          status: "in",
+          type: {
+            connect: {
+              id: typeId, // Connect to AssetType if typeId is provided
+            },
+          }, // Connect to AssetType
+          actionType: {
+            connect: {
+              id: action_typeId, // Connect to AssetType if typeId is provided
+            },
+          }, // Connect to AssetType
+        },
+        include: {
+          type: true,
         },
       })
-
-      if (existAssets?.id) {
-        // Update existing asset
-        const updatedAsset = await ctx.prisma.asset.update({
-          where: { number: number },
-          data: {
-            ...rest,
-            type: {
-              connect: {
-                id: typeId, // Connect to AssetType if typeId is provided
-              },
-            }, // Connect to AssetType
-            actionType: {
-              connect: {
-                id: action_typeId, // Connect to AssetType if typeId is provided
-              },
-            }, // Connect to AssetType
-          },
-          include: {
-            type: true, // Include the type in the response
-          },
-        })
-        return updatedAsset
-      } else {
-        const allAssets = await ctx.prisma.asset.findMany()
-        let assetNumber = ""
-
-        for (let x = 0; x <= (allAssets?.length || 0) + 1; x++) {
-          const formattedNumber = `GUN-${String(x + 1).padStart(4, "0")}`
-          if (!allAssets?.some((item) => item.number === formattedNumber)) {
-            assetNumber = formattedNumber
-            break
-          }
-        }
-        // Create new asset
-        const newAsset = await ctx.prisma.asset.create({
-          data: {
-            ...rest,
-            number: assetNumber,
-            status: "in",
-            type: {
-              connect: {
-                id: typeId, // Connect to AssetType if typeId is provided
-              },
-            }, // Connect to AssetType
-            actionType: {
-              connect: {
-                id: action_typeId, // Connect to AssetType if typeId is provided
-              },
-            }, // Connect to AssetType
-          },
-          include: {
-            type: true,
-          },
-        })
-        return newAsset
-      }
+      const historyLog = await ctx.prisma.historyLogs.create({
+        data: {
+          gunNumber: newAsset.number ?? "",
+          participant: ctx.session.user.name,
+          action: "in",
+        },
+      })
+      return newAsset
     }),
 
   // await ctx.prisma.asset.upsert({
@@ -1029,6 +1006,7 @@ export const assetRouter = t.router({
             id,
           },
           data: {
+            issuedAt: status === "issued" ? new Date() : null,
             status: status,
           },
         })

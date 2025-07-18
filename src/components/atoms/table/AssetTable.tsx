@@ -12,6 +12,7 @@ import JsBarcode from "jsbarcode"
 import Link from "next/link"
 import { useSearchStore } from "../../../store/useStore"
 import QRCode from "react-qr-code"
+
 const AssetDetailsModal = (props: {
   asset: Asset | null
   openModalDesc: boolean

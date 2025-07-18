@@ -10,23 +10,25 @@ import Modal from "../../components/asset/Modal"
 const Assets = () => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
+  const [typeFilter, setTypeFilter] = useState<string[]>([])
+  const [actionTypeFilter, setActionTypeFilter] = useState<string[]>([])
+  const [statusFilter, setStatusFilter] = useState<string[]>([])
   const router = useRouter()
   const { search } = useSearchStore()
   // Get asset by asset id
+
   const { data: dataAssets, refetch } = trpc.asset.findAll.useQuery({
-    search: { name: search },
+    search: search,
     limit,
     page,
+    filter: {
+      type: typeFilter,
+      actionType: actionTypeFilter,
+      status: statusFilter,
+    },
   })
-  const { data: sample } = trpc.asset.findAllSample.useQuery({
-    search: { name: search },
-    limit,
-    page,
-  })
-  const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [assets, setAssets] = useState<Asset[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
-  const [sampleAssets, setSampleAssets] = useState<Asset[]>([])
 
   useEffect(() => {
     //get and parse all data
@@ -34,10 +36,7 @@ const Assets = () => {
       setAssets(dataAssets.assets as Asset[])
       setAccessiblePage(Math.ceil(dataAssets?.count / limit))
     }
-    if (sample) {
-      setSampleAssets(sample.assets as Asset[])
-    }
-  }, [dataAssets, limit, router, sample, sampleAssets, search])
+  }, [dataAssets, limit, router, search])
 
   return (
     <DashboardLayout>
@@ -46,7 +45,6 @@ const Assets = () => {
         <DisplayAssets
           total={dataAssets?.count ?? 0}
           assets={assets}
-          assetsSample={sampleAssets}
           accessiblePage={accessiblePage}
           page={page}
           setPage={setPage}
@@ -54,6 +52,12 @@ const Assets = () => {
           setLimit={setLimit}
           user={null}
           refetch={refetch}
+          actionTypeFilter={actionTypeFilter}
+          setActionTypeFilter={setActionTypeFilter}
+          typeFilter={typeFilter}
+          setTypeFilter={setTypeFilter}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
         />
       </div>
     </DashboardLayout>

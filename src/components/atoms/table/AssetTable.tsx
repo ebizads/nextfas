@@ -58,18 +58,18 @@ const AssetDetailsModal = (props: {
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
     setGenBarcode(true)
-    JsBarcode("#barcode", props.asset ? props.asset!.serial_no! : "No data", {
+    JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
       textAlign: "left",
       textPosition: "bottom",
       fontOptions: "",
       fontSize: 12,
       textMargin: 9,
       height: 50,
-      width: 2,
+      width: 1,
     }),
       JsBarcode(
         "#barcode-show",
-        props.asset ? props.asset!.serial_no! : "No data",
+        props.asset ? props.asset!.number! : "No data",
         {
           textAlign: "left",
           textPosition: "bottom",
@@ -88,7 +88,7 @@ const AssetDetailsModal = (props: {
   const jsonData = {
     asset_no: props.asset?.number,
     asset_name: props.asset?.name,
-    asset_desc: props.asset?.description,
+    asset_serial: props.asset?.serial_no,
   }
   const stringifiedData = JSON.stringify(jsonData)
 
@@ -142,12 +142,13 @@ const AssetDetailsModal = (props: {
         isOpen={props.openModalDesc}
         setIsOpen={props.setOpenModalDesc}
         preventClose={confirmationModalOpen}
+        className={""}
       >
-        <div className="px-8 py-6">
+        <div className="h px-8 py-6 ">
           <div className="flex w-full text-sm text-light-primary">
-            <div className="flex w-[80%]  flex-col gap-2">
+            <div className="flex h-full  w-[80%] flex-col justify-between">
               {/* asset information */}
-              <section className=" pb-4">
+              <section className="h-[30vh] pb-4">
                 <p className="text-base font-medium text-neutral-600">
                   Asset Information
                 </p>
@@ -228,7 +229,7 @@ const AssetDetailsModal = (props: {
                   </section> */}
                 </div>
               </section>
-              <div className="space-y flex flex-col">
+              <section className="space-y flex flex-col ">
                 <button
                   className="outline-none focus:outline-none"
                   onClick={() => props.setOpenModalDesc(false)}
@@ -238,7 +239,7 @@ const AssetDetailsModal = (props: {
                 </button>
                 <p className="font-medium xl:text-lg">Asset Options</p>
                 <nav className="relative my-2 flex flex-1 gap-2 ">
-                  {props.asset?.status === "issued" && (
+                  {/* {props.asset?.status === "issued" && (
                     <button
                       onClick={() => {
                         setStatusToUpdate("in")
@@ -250,7 +251,7 @@ const AssetDetailsModal = (props: {
                         In
                       </div>
                     </button>
-                  )}
+                  )} */}
 
                   {/* //TODO:  Fix this when we have Asset Issuance READY */}
                   {/* {props.asset?.status === null && (
@@ -305,7 +306,7 @@ const AssetDetailsModal = (props: {
                   </button>
                 ))} */}
                 </nav>
-              </div>
+              </section>
             </div>
             <button
               className="outline-none focus:outline-none"

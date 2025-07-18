@@ -51,8 +51,32 @@ export const UpdateUser = (props: {
   const [city, setCity] = useState("")
   const [barangay, setBarangay] = useState("")
   const [isSuccess, setIsSuccess] = useState(false)
-
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [usernameError, setUsernameError] = useState("")
+  const [emailError, setEmailError] = useState("")
   const { data: user } = trpc.user.findOne.useQuery(Number(props.user?.id) ?? 0)
+
+  const { data: usernameChecker } = trpc.user.usernameChecker.useQuery({
+    username: username,
+    id: props.user?.id,
+  })
+  const { data: emailChecker } = trpc.user.emailChecker.useQuery({
+    email: email,
+    id: props.user?.id,
+  })
+
+  useEffect(() => {
+    if (emailChecker) {
+      setEmailError("A user with this email already exists")
+    } else setEmailError("")
+  }, [emailChecker])
+
+  useEffect(() => {
+    if (usernameChecker) {
+      setUsernameError("A user with this username already exists")
+    } else setUsernameError("")
+  }, [usernameChecker])
 
   const lockedChecker =
     futureDate < (props.user?.lockedUntil ?? "") ? true : false
@@ -400,7 +424,34 @@ export const UpdateUser = (props: {
         </div>
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
-          <div className="col-span-6">
+          <div className="col-span-4">
+            {/* <label className="sm:text-sm ">Hired Date</label> */}
+            <InputField
+              type={"text"}
+              label={"Username"}
+              name={"username"}
+              register={register}
+              placeholder={"username"}
+              onChange={setUsername}
+              required
+            />
+            <AlertInput>{usernameError}</AlertInput>
+          </div>
+          <div className="col-span-4">
+            {/* <label className="sm:text-sm">Email</label> */}
+            <InputField
+              // disabled={!editable}
+              type={"text"}
+              label={"Email"}
+              name={"email"}
+              register={register}
+              onChange={setEmail}
+              placeholder={"example@email.com"}
+              required
+            />
+            <AlertInput>{emailError}</AlertInput>
+          </div>
+          <div className="col-span-4">
             <label className="mb-2 sm:text-sm">Mobile Number</label>
             <input
               type="number"
@@ -427,18 +478,6 @@ export const UpdateUser = (props: {
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
 
-          <div className="col-span-6">
-            {/* <label className="sm:text-sm">Email</label> */}
-            <InputField
-              type={"text"}
-              label={"Email"}
-              name={"email"}
-              placeholder="Email"
-              register={register}
-              required
-            />
-            <AlertInput>{errors?.email?.message}</AlertInput>
-          </div>
           {/* <div className="col-span-4">
             <label className="sm:text-sm">Device</label>
             <Select

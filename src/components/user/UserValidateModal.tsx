@@ -11,6 +11,7 @@ import { useUserEditableStore } from "../../store/useStore"
 import AlertInput from "../atoms/forms/AlertInput"
 // import register from "../../pages/user-management/register/register"
 import InputNumberField from "../atoms/forms/InputNumberField"
+import InputField from "../atoms/forms/InputField"
 
 export type User = z.infer<typeof EditUserInput>
 
@@ -38,13 +39,36 @@ const UserValidateModal = (props: {
   const { data: user } = trpc.user.findOne.useQuery(userId)
   // const { data: user } = trpc.user.findOne.useQuery(
   //   Number(props.user?.user_Id) ?? 0
-
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [usernameError, setUsernameError] = useState("")
+  const [emailError, setEmailError] = useState("")
   const [searchValue, onSearchChange] = useState<string>(
     user?.teamId?.toString() ?? "0"
   )
   const futureDate = new Date()
 
   futureDate.setFullYear(futureDate.getFullYear() + 1)
+  const { data: usernameChecker } = trpc.user.usernameChecker.useQuery({
+    username: username,
+    id: userId,
+  })
+  const { data: emailChecker } = trpc.user.emailChecker.useQuery({
+    email: email,
+    id: userId,
+  })
+
+  useEffect(() => {
+    if (emailChecker) {
+      setEmailError("A user with this email already exists")
+    } else setEmailError("")
+  }, [emailChecker])
+
+  useEffect(() => {
+    if (usernameChecker) {
+      setUsernameError("A user with this username already exists")
+    } else setUsernameError("")
+  }, [usernameChecker])
 
   useEffect(() => {
     setUserId(Number(session?.user?.id))
@@ -238,28 +262,85 @@ const UserValidateModal = (props: {
               />
             </div>
           </div>
-
-          <div className="flex flex-wrap gap-4 py-2.5">
-            <div className="flex w-[49%] flex-col">
-              <label className="sm:text-sm">Email</label>
+          <div className="flex w-full flex-wrap gap-4 py-2.5">
+            <div className="flex w-[32%] flex-col">
+              <label className="sm:text-sm">User Number</label>
+              {/* <InputField
+                disabled={!isEditable}
+                register={register}
+                name="user?.profile?.first_name"
+                type={"text"}
+                label={""}
+              />
+              <AlertInput>{errors?.profile?.first_name?.message}</AlertInput> */}
               <input
                 className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                disabled={!isEditable}
+                id="profile.number"
                 type={"text"}
-                name={"email"}
-                placeholder={user?.email}
-                onChange={(e) => {
-                  setValue("email", e.currentTarget.value)
-                }}
+                placeholder={user?.user_Id ?? ""}
+                disabled={true}
               />
             </div>
-            <div className="flex w-[49%] flex-col">
+            <div className="flex w-[32%] flex-col">
+              <label className="sm:text-sm">Designation / Position</label>
+              <input
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                id="profile.middle_name"
+                type={"text"}
+                placeholder={user?.position ?? ""}
+                disabled={true}
+              />
+            </div>
+            <div className="flex w-[32%] flex-col">
+              <label className="sm:text-sm">Role</label>
+              <input
+                className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
+                id="profile.last_name"
+                type={"text"}
+                placeholder={user?.user_type ?? ""}
+                disabled={true}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-4 py-2.5">
+            <div className="flex w-[32%] flex-col">
+              <InputField
+                // disabled={!editable}
+                type={"text"}
+                label={"Username"}
+                name={"username"}
+                register={register}
+                placeholder={user?.username ?? "username"}
+                onChange={setUsername}
+                disabled={!isEditable}
+                isEdit
+                required
+              />
+              <AlertInput>{usernameError}</AlertInput>
+            </div>
+            <div className="flex w-[32%] flex-col">
+              <InputField
+                // disabled={!editable}
+                type={"text"}
+                label={"Email"}
+                name={"email"}
+                register={register}
+                onChange={setEmail}
+                placeholder={user?.email ?? "example@email.com"}
+                disabled={!isEditable}
+                isEdit
+                required
+              />
+              <AlertInput>{emailError}</AlertInput>
+            </div>
+            <div className="flex w-[32%] flex-col">
               <label className="mb-2 sm:text-sm">Mobile Number</label>
               <input
                 disabled={!isEditable}
                 type="number"
                 pattern="[0-9]*"
-                defaultValue={user?.profile?.phone_no ?? "--"}
+                placeholder={user?.profile?.phone_no ?? "--"}
                 className={
                   isEditable
                     ? "mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent py-2 px-4  text-gray-800 placeholder-gray-600  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2 "
@@ -366,11 +447,12 @@ const UserValidateModal = (props: {
               </div>
               <div className="flex w-[18.4%] flex-col">
                 <InputNumberField
-                  placeholder="Zip Code"
+                  placeholder={user?.address?.zip ?? "Zip Code"}
                   register={register}
                   label="Zip Code"
                   name="address.zip"
                   disabled={!isEditable}
+                  isEdit
                 />
               </div>
               <div className="flex w-[18.4%] flex-col">

@@ -82,27 +82,7 @@ export const historyLogRouter = t.router({
         .object({
           page: z.number().optional(),
           limit: z.number().optional(),
-          search: z
-            .object({
-              name: z.string().optional(),
-              number: z.string().optional(),
-              serial_no: z.string().optional(),
-              barcode: z.string().optional(),
-              description: z.string().optional(),
-              remarks: z.string().optional(),
-              invoiceNum: z.string().optional(),
-              purchaseOrder: z.string().optional(),
-              deployment_status: z.string().optional(),
-              custodianId: z.number().optional(),
-              departmentId: z.number().optional(),
-              vendorId: z.number().optional(),
-              subsidiaryId: z.number().optional(),
-              assetProjectId: z.number().optional(),
-              parentId: z.number().optional(),
-              typeId: z.number().optional(),
-              actionTypeId: z.number().optional(), // Added typeId to search
-            })
-            .optional(),
+          search: z.string().optional(),
           filter: z
             .object({
               updatedAt: z.date().optional(),
@@ -117,43 +97,15 @@ export const historyLogRouter = t.router({
           orderBy: {
             createdAt: "desc",
           },
-          include: {
-            asset: {
-              include: {
-                type: true, // Added type relation
-                actionType: true, // Added actionType relation
-                department: {
-                  include: {
-                    location: true,
-                    company: true,
-                    teams: true,
-                    building: true,
-                  },
-                },
-                parent: true,
-                custodian: true,
-                vendor: true,
-                management: true,
-                addedBy: true,
-                assetTag: true,
-                AssetIssuance: true,
-              },
-            },
-          },
           where: {
             NOT: {
               deleted: true,
             },
-            OR: {
-              NOT: {
-                id: 999999,
-              },
-            },
-            // gunNumber: {contains: intpu?.searc}
-            // participant: { contains: input?.search?.name, mode: "insensitive" },
-            // number: { contains: input?.search?.number, mode: "insensitive" },
-            // typeId: input?.search?.typeId, // Added type filter
-            // actionTypeId: input?.search?.actionTypeId, // Added actionType filter
+            OR: [
+              { gunNumber: { contains: input?.search, mode: "insensitive" } },
+              { participant: { contains: input?.search, mode: "insensitive" } },
+              { action: { contains: input?.search, mode: "insensitive" } },
+            ],
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)
@@ -165,15 +117,11 @@ export const historyLogRouter = t.router({
             NOT: {
               deleted: true,
             },
-            OR: {
-              NOT: {
-                id: 999999,
-              },
-            },
-            // name: { contains: input?.search?.name, mode: "insensitive" },
-            // number: { contains: input?.search?.number, mode: "insensitive" },
-            // typeId: input?.search?.typeId, // Added type filter
-            // actionTypeId: input?.search?.actionTypeId, // Added actionType filter
+            OR: [
+              { gunNumber: { contains: input?.search, mode: "insensitive" } },
+              { participant: { contains: input?.search, mode: "insensitive" } },
+              { action: { contains: input?.search, mode: "insensitive" } },
+            ],
           },
         }),
       ])

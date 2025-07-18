@@ -30,21 +30,28 @@ type User = z.infer<typeof CreateUserInput>
 
 const Register2 = () => {
   const [userId, setUserId] = useState<string>("")
-  const [date, setDate] = useState<Date>(new Date())
   const [completeModal, setCompleteModal] = useState<boolean>(false)
   const [passwordCheck, setPassword] = useState<string>("")
   const [certificateCheck, setCertificate] = useState<string>("")
-  const [searchValue, onSearchChange] = useState<string>("")
   const [images, setImage] = useState<ImageJSON[]>([])
-  const [isLoadingNow, setIsLoading] = useState<boolean>(false)
   const [country, setCountry] = useState("")
   const [region, setRegion] = useState("")
   const [province, setProvince] = useState("")
   const [city, setCity] = useState("")
   const [barangay, setBarangay] = useState("")
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [usernameError, setUsernameError] = useState("")
+  const [emailError, setEmailError] = useState("")
   const futureDate = new Date()
   futureDate.setFullYear(futureDate.getFullYear() + 1)
 
+  const { data: usernameChecker } = trpc.user.usernameChecker.useQuery({
+    username: username,
+  })
+  const { data: emailChecker } = trpc.user.emailChecker.useQuery({
+    email: email,
+  })
   const { mutate, isLoading, error } = trpc.user.create.useMutation({
     onSuccess() {
       setCompleteModal(true)
@@ -59,6 +66,18 @@ const Register2 = () => {
   })
 
   useEffect(() => {
+    if (emailChecker) {
+      setEmailError("A user with this email already exists")
+    } else setEmailError("")
+  }, [emailChecker])
+
+  useEffect(() => {
+    if (usernameChecker) {
+      setUsernameError("A user with this username already exists")
+    } else setUsernameError("")
+  }, [usernameChecker])
+
+  useEffect(() => {
     setUserId(moment().format("YY-MDhms"))
     setCertificate(generateCertificate())
   }, [setUserId, setCertificate])
@@ -66,7 +85,7 @@ const Register2 = () => {
   const {
     register,
     handleSubmit,
-    watch,
+
     setValue,
     reset,
     formState: { errors },
@@ -119,6 +138,7 @@ const Register2 = () => {
         phone_no: user.profile.phone_no,
       },
       email: user.email,
+      username: user.username,
       address: {
         city: user.address?.city,
         country: user.address?.country,
@@ -365,6 +385,20 @@ const Register2 = () => {
 
         <div className="col-span-9 grid grid-cols-12 gap-7">
           <div className="col-span-4">
+            {/* <label className="sm:text-sm ">Hired Date</label> */}
+            <InputField
+              // disabled={!editable}
+              type={"text"}
+              label={"Username"}
+              name={"username"}
+              register={register}
+              placeholder={"username"}
+              onChange={setUsername}
+              required
+            />
+            <AlertInput>{usernameError}</AlertInput>
+          </div>
+          <div className="col-span-4">
             {/* <label className="sm:text-sm">Email</label> */}
             <InputField
               // disabled={!editable}
@@ -372,10 +406,11 @@ const Register2 = () => {
               label={"Email"}
               name={"email"}
               register={register}
+              onChange={setEmail}
               placeholder={"example@email.com"}
               required
             />
-            <AlertInput>{errors?.email?.message}</AlertInput>
+            <AlertInput>{emailError}</AlertInput>
           </div>
           <div className="col-span-4">
             <label className="!mb-2 sm:text-sm">Mobile Number</label>
@@ -401,21 +436,6 @@ const Register2 = () => {
             />
             <AlertInput>{errors?.profile?.phone_no?.message}</AlertInput>
           </div>
-          {/* <div className="col-span-4">
-            <label className="sm:text-sm ">Hired Date</label>
-
-            <DatePicker
-              dropdownType="modal"
-              placeholder="Pick Date"
-              size="sm"
-              variant="unstyled"
-              value={date}
-              onChange={(value) => {
-                value === null ? setDate(new Date()) : setDate(value)
-              }}
-              className="my-2 w-full rounded-md border-2 border-gray-400 bg-transparent p-0.5 px-4 text-gray-600 outline-none  ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-            />
-          </div> */}
         </div>
 
         <div className="col-span-9 grid grid-cols-8 gap-7">
@@ -713,7 +733,7 @@ const Register2 = () => {
           </button>
           <button
             type="submit"
-            className=" rounded-md bg-tangerine-500  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+            className=" text-dark-primary rounded-md  bg-tangerine-500 px-6 py-2 font-medium outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             disabled={isLoading}
             onClick={() => setPassword(generateRandomPass())}
           >

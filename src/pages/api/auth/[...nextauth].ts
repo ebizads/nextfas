@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
         password: { type: "password" },
       },
       async authorize(credentials) {
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
           where: {
             username: credentials?.username,
           },
@@ -51,6 +51,7 @@ export const authOptions: NextAuthOptions = {
             )
             console.log("Date: " + dateBetween)
             //throw new Error(dateBetween.toString())
+
             if (dateBetween > 30 && dateBetween < 60) {
               throw new Error(
                 `This user is currently locked. Please contact administrator.`
@@ -58,7 +59,7 @@ export const authOptions: NextAuthOptions = {
             } else if (dateBetween >= 60 && dateBetween < 90) {
               await prisma.user.update({
                 where: {
-                  username: credentials?.username,
+                  id: user.id,
                 },
                 data: {
                   deleted: true,
@@ -126,7 +127,7 @@ export const authOptions: NextAuthOptions = {
           if (isValid) {
             await prisma.user.update({
               where: {
-                username: credentials?.username,
+                id: user.id,
               },
               data: { attempts: 0, inactivityDate: new Date() },
             })
@@ -239,7 +240,7 @@ export const authOptions: NextAuthOptions = {
           }
           await prisma.user.update({
             where: {
-              username: credentials?.username,
+              id: user.id,
             },
             data,
           })

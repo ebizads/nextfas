@@ -350,4 +350,19 @@ export const assetTypeRouter = t.router({
         })
       }
     }),
+
+  findAllFilter: authedProcedure.query(async ({ ctx }) => {
+    try {
+      const actionType = await ctx.prisma.assetType.findMany({
+        where: {
+          NOT: {
+            deleted: true,
+          },
+        },
+      })
+      return actionType
+    } catch (e) {
+      console.log(e)
+    }
+  }),
 })

@@ -161,11 +161,11 @@ export const navigations = [
     icon: "fa-solid fa-clock-rotate-left",
     link: "/historylogs",
   },
-  {
-    name: "Employees",
-    icon: "fa-users",
-    link: "/employees",
-  },
+  // {
+  //   name: "Employees",
+  //   icon: "fa-users",
+  //   link: "/employees",
+  // },
   // {
   //   name: "Asset Issuance",
   //   icon: "fa-users",
@@ -190,7 +190,6 @@ export const navigations = [
 ] as NavType[]
 
 export const historyLogColumns = [
-  { value: "asset.name", name: "ASSET NAME" },
   { value: "gunNumber", name: "RFID/BARCODE ID" },
   { value: "participant", name: "COMPLETED BY" },
   { value: "createdAt", name: "DATE COMPLETED" },

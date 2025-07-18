@@ -301,4 +301,18 @@ export const assetActionTypeRouter = t.router({
         })
       }
     }),
+  findAllFilter: authedProcedure.query(async ({ ctx }) => {
+    try {
+      const actionType = await ctx.prisma.assetActionType.findMany({
+        where: {
+          NOT: {
+            deleted: true,
+          },
+        },
+      })
+      return actionType
+    } catch (e) {
+      console.log(e)
+    }
+  }),
 })

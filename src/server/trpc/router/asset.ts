@@ -40,7 +40,7 @@ export const assetRouter = t.router({
   findOneWithBarcode: authedProcedure.input(z.string().nullish()).query(async ({ ctx, input }) => {
     const asset = await ctx.prisma.asset.findFirst({
       where: {
-        serial_no: input,
+        number: input,
       },
       include: {
         type: true, // Added type relation

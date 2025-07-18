@@ -58,18 +58,18 @@ const AssetDetailsModal = (props: {
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
     setGenBarcode(true)
-    JsBarcode("#barcode", props.asset ? props.asset!.serial_no! : "No data", {
-      textAlign: "left",
-      textPosition: "bottom",
-      fontOptions: "",
-      fontSize: 12,
-      textMargin: 9,
-      height: 50,
-      width: 2,
-    }),
+    // JsBarcode("#barcode", props.asset ? props.asset!.serial_no! : "No data", {
+    //   textAlign: "left",
+    //   textPosition: "bottom",
+    //   fontOptions: "",
+    //   fontSize: 12,
+    //   textMargin: 9,
+    //   height: 50,
+    //   width: 2,
+    // }),
       JsBarcode(
         "#barcode-show",
-        props.asset ? props.asset!.serial_no! : "No data",
+        props.asset ? props.asset!.number! : "No data",
         {
           textAlign: "left",
           textPosition: "bottom",
@@ -238,7 +238,7 @@ const AssetDetailsModal = (props: {
                 </button>
                 <p className="font-medium xl:text-lg">Asset Options</p>
                 <nav className="relative my-2 flex flex-1 gap-2 ">
-                  {props.asset?.status === "issued" && (
+                  {/* {props.asset?.status === "issued" && (
                     <button
                       onClick={() => {
                         setStatusToUpdate("in")
@@ -250,7 +250,7 @@ const AssetDetailsModal = (props: {
                         In
                       </div>
                     </button>
-                  )}
+                  )} */}
 
                   {/* //TODO:  Fix this when we have Asset Issuance READY */}
                   {/* {props.asset?.status === null && (
@@ -326,12 +326,12 @@ const AssetDetailsModal = (props: {
                       </button>
                     )}
 
-                    <div id="printSVG" className="relative z-20">
+                    {/* <div id="printSVG" className="relative z-20">
                       <svg id="barcode-show" />
-                    </div>
+                    </div> */}
                     <div ref={barcodeRef}>
                       <svg
-                        id="barcode"
+                        id="barcode-show"
                         className={
                           "pointer-events-none absolute top-0 z-0 " +
                           `w-[${divOpacity}%]`
@@ -416,7 +416,7 @@ const AssetDetailsModal = (props: {
       >
         <div className="flex flex-col items-center gap-5 px-8 py-4">
           <p>
-            Would you like to tag this asset as{" "}
+            Set asset status to{" "}
             <span className={`text-red-500`}>&quot;{statusToUpdate}&quot;</span>
             ?
           </p>
@@ -492,9 +492,8 @@ export const AssetDeleteModal = (props: {
               {props.checkboxes.length}
               {props.checkboxes.length > 1 ? "records" : "record"}
               <i
-                className={`fa-solid ${
-                  showList ? " fa-caret-up" : " fa-caret-down"
-                }`}
+                className={`fa-solid ${showList ? " fa-caret-up" : " fa-caret-down"
+                  }`}
               />
             </button>
             from <span className="text-tangerine-600">Assets Table</span>.
@@ -531,7 +530,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-              // disabled={isLoading}
+            // disabled={isLoading}
             >
               Yes, delete record/s
             </button>
@@ -581,9 +580,8 @@ const AssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-full"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -650,9 +648,8 @@ const AssetTable = (props: {
                   .map((col) => (
                     <td
                       key={col.value}
-                      className={`max-w-[10rem] cursor-pointer truncate py-2 px-6 ${
-                        col.value == "status" && "capitalize"
-                      }`}
+                      className={`max-w-[10rem] cursor-pointer truncate py-2 px-6 ${col.value == "status" && "capitalize"
+                        }`}
                       onClick={() => {
                         setOpenModalDesc(true)
                         setSelectedAsset(null)

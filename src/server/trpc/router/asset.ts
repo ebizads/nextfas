@@ -37,35 +37,33 @@ export const assetRouter = t.router({
     })
     return asset
   }),
-  findOneWithBarcode: authedProcedure
-    .input(z.string().nullish())
-    .query(async ({ ctx, input }) => {
-      const asset = await ctx.prisma.asset.findFirst({
-        where: {
-          serial_no: input,
-        },
-        include: {
-          type: true, // Added type relation
-          actionType: true, // Added actionType relation
-          department: {
-            include: {
-              location: true,
-              company: true,
-              teams: true,
-              building: true,
-            },
+  findOneWithBarcode: authedProcedure.input(z.string().nullish()).query(async ({ ctx, input }) => {
+    const asset = await ctx.prisma.asset.findFirst({
+      where: {
+        number: input ?? undefined,
+      },
+      include: {
+        type: true, // Added type relation
+        actionType: true, // Added actionType relation
+        department: {
+          include: {
+            location: true,
+            company: true,
+            teams: true,
+            building: true,
           },
-          parent: true,
-          custodian: true,
-          vendor: true,
-          management: true,
-          addedBy: true,
-          assetTag: true,
-          AssetIssuance: true,
         },
-      })
-      return asset
-    }),
+        parent: true,
+        custodian: true,
+        vendor: true,
+        management: true,
+        addedBy: true,
+        assetTag: true,
+        AssetIssuance: true,
+      },
+    })
+    return asset
+  }),
   findOneTable: authedProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
@@ -756,7 +754,7 @@ export const assetRouter = t.router({
             },
           })
           typeId = inner_type.id
-        } else [(typeId = typeExists.id)]
+        } else[(typeId = typeExists.id)]
       }
       if (action_type) {
         const action_typeExists = await ctx.prisma.assetActionType.findUnique({
@@ -770,7 +768,7 @@ export const assetRouter = t.router({
               },
             })
           action_typeId = inner_action_typeExists.id
-        } else [(action_typeId = action_typeExists.id)]
+        } else[(action_typeId = action_typeExists.id)]
       }
 
       const allAssets = await ctx.prisma.asset.findMany()
@@ -863,7 +861,7 @@ export const assetRouter = t.router({
               },
             })
             typeId = inner_type.id
-          } else [(typeId = typeExists.id)]
+          } else[(typeId = typeExists.id)]
         }
         if (action_type) {
           const action_typeExists = await ctx.prisma.assetActionType.findUnique(
@@ -879,7 +877,7 @@ export const assetRouter = t.router({
                 },
               })
             action_typeId = inner_action_typeExists.id
-          } else [(action_typeId = action_typeExists.id)]
+          } else[(action_typeId = action_typeExists.id)]
         }
 
         await ctx.prisma.asset.update({

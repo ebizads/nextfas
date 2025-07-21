@@ -52,7 +52,7 @@ const AddActionTypePopOver = (props: {
           >
             Add single record
           </button>
-          <button
+          {/* <button
             onClick={() => {
               props.setAddBulkRecord(true)
               props.setOpenPopover(false)
@@ -60,7 +60,7 @@ const AddActionTypePopOver = (props: {
             className="px-6 py-2 hover:bg-tangerine-100"
           >
             Add bulk record
-          </button>
+          </button> */}
         </div>
       </Popover.Dropdown>
     </Popover>

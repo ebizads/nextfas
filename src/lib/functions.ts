@@ -241,14 +241,13 @@ export const downloadExcel_template = (data: ExcelExportType[]) => {
 
   return
 }
-export const downloadExcel_templateAssets = (data: ExcelExportAssetType[]) => {
+export const downloadExcel_templateAssets = () => {
   // const worksheet = XLSX.utils.json_to_sheet(
   //   data !== null && data !== undefined ? data : []
   // )
   const worksheet = XLSX.utils.aoa_to_sheet([
     [
       "name",
-      "asset_number",
       "serial_no",
       "barcode",
       "brand",

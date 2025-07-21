@@ -20,6 +20,17 @@ export const CreateUserInput = z.object({
         })
       }
     }),
+  username: z
+    .string()
+    .transform((val) => val.trim())
+    .superRefine((val, ctx) => {
+      if (val === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Username is required",
+        })
+      }
+    }),
   password: z.string(),
   // .regex(
   //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{1,}$/,
@@ -131,6 +142,17 @@ export const EditUserInput = z.object({
   id: z.number(),
   name: z.string().optional(),
   // email: z.string().optional(),
+  username: z
+    .string()
+    .transform((val) => val.trim())
+    .superRefine((val, ctx) => {
+      if (val === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Username is required",
+        })
+      }
+    }),
   email: z
     .string()
     .transform((val) => val.trim())

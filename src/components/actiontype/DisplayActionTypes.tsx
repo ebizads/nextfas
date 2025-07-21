@@ -8,7 +8,7 @@ import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import AddActionTypePopOver from "../atoms/popover/AddActionTypePopOver"
 import Modal from "../headless/modal/modal"
 import { CreateActionType } from "./CreateActionType"
-import DropZone from "../dropzone/DropZone"
+// import DropZone from "../dropzone/DropZone"
 import { trpc } from "../../utils/trpc"
 import { useSearchStore } from "../../store/useStore"
 
@@ -214,7 +214,7 @@ const DisplayActionTypes = (props: {
         />
       </Modal>
 
-      <Modal
+      {/* <Modal
         title="Add Bulk Action Types"
         isVisible={addBulkRecord}
         setIsVisible={setAddBulkRecord}
@@ -227,7 +227,7 @@ const DisplayActionTypes = (props: {
           setIsLoading={setIsLoading}
           setIsVisible={setAddBulkRecord}
         />
-      </Modal>
+      </Modal> */}
 
       <Modal
         title="Confirm Deletion"

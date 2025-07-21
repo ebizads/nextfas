@@ -33,22 +33,22 @@ export const AssetCreateInput = z.object({
   alt_number: z.string().nullish(),
   serial_no: z.string().nullish(),
   // barcode: z.string().nullish(),
-  barcode: z.string().superRefine((val, ctx) => {
-    if (!val || val.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "RFID Tag ID / Barcode is required",
-      })
-    } else if (val.length < 8) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 8,
-        inclusive: true,
-        message: "RFID Tag ID / Barcode is too short",
-      })
-    }
-  }),
+  // barcode: z.string().superRefine((val, ctx) => {
+  //   if (!val || val.trim() === "") {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.custom,
+  //       message: "RFID Tag ID / Barcode is required",
+  //     })
+  //   } else if (val.length < 8) {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.too_small,
+  //       type: "string",
+  //       minimum: 8,
+  //       inclusive: true,
+  //       message: "RFID Tag ID / Barcode is too short",
+  //     })
+  //   }
+  // }),
   description: z.string().nullish(),
   remarks: z.string().nullish(),
   // brand: z.string().nullish(),
@@ -137,7 +137,6 @@ export const AssetEditInput = z.object({
       })
     }
   }),
-  number: z.string().optional(),
   serial_no: z.string().optional().nullish(),
   // barcode: z.string().nullish().optional(),
   barcode: z.string().superRefine((val, ctx) => {
@@ -251,23 +250,7 @@ export const AssetTransformInput = z.object({
   }),
   serial_no: z.string().nullish(),
   // barcode: z.string(),
-  barcode: z.string().superRefine((val, ctx) => {
-    if (!val || val.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "RFID Tag ID / Barcode is required",
-      })
-    } else if (val.length < 8) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 8,
-        inclusive: true,
-        message: "RFID Tag ID / Barcode is too short",
-      })
-    }
-  }),
-  number: z.string().optional(),
+  // number: z.string().optional(),
   // brand: z.string(),
   brand: z.string().superRefine((val, ctx) => {
     if (!val || val.trim() === "") {

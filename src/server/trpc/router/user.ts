@@ -136,29 +136,64 @@ export const userRouter = t.router({
       })
       return validate
     }),
+
+  usernameChecker: authedProcedure
+    .input(
+      z.object({ username: z.string().optional(), id: z.number().optional() })
+    )
+    .query(async ({ ctx, input }) => {
+      const username = input.username
+      const id = input.id
+
+      const checker = await ctx.prisma.user.findFirst({
+        where: {
+          username,
+          NOT: {
+            OR: [{ deleted: true }, { id }],
+          },
+        },
+      })
+
+      if (checker) return true
+      else return false
+    }),
+
+  emailChecker: authedProcedure
+    .input(
+      z.object({ email: z.string().optional(), id: z.number().optional() })
+    )
+    .query(async ({ ctx, input }) => {
+      const email = input.email
+      const id = input.id
+
+      const checker = await ctx.prisma.user.findFirst({
+        where: {
+          email,
+          NOT: {
+            OR: [{ deleted: true }, { id }],
+          },
+        },
+      })
+
+      if (checker) return true
+      else return false
+    }),
+
   create: authedProcedure
     .input(CreateUserInput)
     .mutation(async ({ input, ctx }) => {
-      const { address, profile, password, validateTable, name, ...rest } = input
-      let username = (profile.first_name[0] + profile.last_name)
-        .replace(" ", "")
-        .toLowerCase()
-
+      const {
+        address,
+        profile,
+        password,
+        validateTable,
+        name,
+        email,
+        ...rest
+      } = input
       const encryptedPassword = await bcrypt.hash(password, 10)
 
       try {
-        const user = await ctx.prisma.user.findMany({
-          where: {
-            username: {
-              contains: username,
-            },
-          },
-        })
-
-        if (user.length !== 0) {
-          username = username + user.length
-        }
-
         await ctx.prisma.user.create({
           data: {
             ...rest,
@@ -174,10 +209,9 @@ export const userRouter = t.router({
             oldPassword: {
               set: encryptedPassword ?? "",
             },
-            name: name,
+            name,
             password: encryptedPassword,
-            email: username + env.NEXT_PUBLIC_CLIENT_EMAIL,
-            username,
+            email,
           },
         })
         return "User created successfully"

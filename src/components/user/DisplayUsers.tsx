@@ -26,7 +26,7 @@ const DisplayUsers = (props: {
   setLimit: React.Dispatch<React.SetStateAction<number>>
 }) => {
   const [checkboxes, setCheckboxes] = useState<number[]>([])
-  const [openPopover, setOpenPopover] = useState<boolean>(false)
+  // const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [paginationPopover, setPaginationPopover] = useState<boolean>(false)
   const [filterBy, setFilterBy] = useState<string[]>(
     employeeColumns.map((i) => i.value)
@@ -56,13 +56,13 @@ const DisplayUsers = (props: {
                     onChange={(e) => setSearch(e.currentTarget.value)}
                   ></input>
                 </div>
-                <FilterPopOver
+                {/* <FilterPopOver
                   openPopover={openPopover}
                   setOpenPopover={setOpenPopover}
                   filterBy={filterBy}
                   setFilterBy={setFilterBy}
                   columns={userColumns}
-                />
+                /> */}
               </div>
               {checkboxes.length > 0 && (
                 <button

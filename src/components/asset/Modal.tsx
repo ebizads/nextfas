@@ -5,26 +5,26 @@ const getSize = (size: number) => {
   return size === 1
     ? "max-w-xs"
     : size === 2
-      ? "max-w-sm"
-      : size === 3
-        ? "max-w-md"
-        : size === 4
-          ? "max-w-lg"
-          : size === 5
-            ? "max-w-xl"
-            : size === 6
-              ? "max-w-2xl"
-              : size === 7
-                ? "max-w-3xl"
-                : size === 8
-                  ? "max-w-4xl"
-                  : size === 9
-                    ? "max-w-5xl"
-                    : size === 10
-                      ? "max-w-6xl"
-                      : size === 11
-                        ? "max-w-7xl"
-                        : "max-w-full"
+    ? "max-w-sm"
+    : size === 3
+    ? "max-w-md"
+    : size === 4
+    ? "max-w-lg"
+    : size === 5
+    ? "max-w-xl"
+    : size === 6
+    ? "max-w-2xl"
+    : size === 7
+    ? "max-w-3xl"
+    : size === 8
+    ? "max-w-4xl"
+    : size === 9
+    ? "max-w-5xl"
+    : size === 10
+    ? "max-w-6xl"
+    : size === 11
+    ? "max-w-7xl"
+    : "max-w-full"
 }
 
 const Modal = ({
@@ -50,7 +50,6 @@ const Modal = ({
 
   return (
     <>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -79,10 +78,10 @@ const Modal = ({
                 <Dialog.Panel
                   className={
                     className
-                      ? `${className} ${getSize(size - 3)} xl:${getSize(size)}`
+                      ? `${className}  ${getSize(size - 3)} xl:${getSize(size)}`
                       : `${getSize(size - 3)} xl:${getSize(
-                        size
-                      )} min-w-lg w-full transform overflow-hidden rounded-xl bg-neutral-50 text-left align-middle shadow-xl transition-all`
+                          size
+                        )} min-w-lg w-full transform overflow-hidden rounded-xl bg-neutral-50 text-left align-middle shadow-xl transition-all`
                   }
                 >
                   {children}

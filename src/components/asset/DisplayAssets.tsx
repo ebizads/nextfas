@@ -15,18 +15,25 @@ import { ExcelExportAssetType } from "../../types/asset"
 import Modal from "../headless/modal/modal"
 import AddAssetPopOver from "../atoms/popover/AddAssetPopOver"
 import DropZone_asset from "../dropzone/Asset dropzone/DropZone_asset"
+import AssetFilter from "../atoms/popover/AssetFilter"
+import { trpc } from "../../utils/trpc"
 
 const DisplayAssets = (props: {
   user: UserType
   total: number
   assets: Asset[]
-  assetsSample: Asset[]
   accessiblePage: number
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
   limit: number
   setLimit: React.Dispatch<React.SetStateAction<number>>
   refetch: () => Promise<{ data?: any }>
+  typeFilter: string[]
+  actionTypeFilter: string[]
+  statusFilter: string[]
+  setTypeFilter: React.Dispatch<React.SetStateAction<string[]>>
+  setActionTypeFilter: React.Dispatch<React.SetStateAction<string[]>>
+  setStatusFilter: React.Dispatch<React.SetStateAction<string[]>>
 }) => {
   const { setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
@@ -42,6 +49,10 @@ const DisplayAssets = (props: {
   const [filterBy, setFilterBy] = useState<string[]>(
     columns.map((i) => i.value)
   )
+
+  const { data: assetType } = trpc.assetType.findAllFilter.useQuery()
+  const { data: assetActionType } =
+    trpc.assetActionType.findAllFilter.useQuery()
 
   useEffect(() => {
     setSearch("")
@@ -63,12 +74,17 @@ const DisplayAssets = (props: {
                   />
                   <i className="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
                 </div>
-                <FilterPopOver
+                <AssetFilter
                   openPopover={openPopover}
                   setOpenPopover={setOpenPopover}
-                  filterBy={filterBy}
-                  setFilterBy={setFilterBy}
-                  columns={columns}
+                  actionTypeFilter={props.actionTypeFilter}
+                  setActionTypeFilter={props.setActionTypeFilter}
+                  typeFilter={props.typeFilter}
+                  setTypeFilter={props.setTypeFilter}
+                  actionTypeData={assetActionType || []}
+                  typeData={assetType}
+                  statusFilter={props.statusFilter}
+                  setStatusFilter={props.setStatusFilter}
                 />
               </div>
               {checkboxes.length > 0 && (
@@ -86,31 +102,7 @@ const DisplayAssets = (props: {
             <button
               title="Download Template"
               onClick={() => {
-                const downloadableAssets = props.assetsSample.map((assets) => {
-                  if (assets) {
-                    // && assets?.['model'] && assets?.model?.['category'] && assets?.model?.['class'] && assets?.model?.['type']
-                    const {
-                      createdAt,
-                      updatedAt,
-                      deleted,
-                      deletedAt,
-                      ...rest
-                    } = assets //project, parent, vendor, subsidiary, addedBy, custodian,
-
-                    return {
-                      ...rest,
-                      // remarks: rest?.remarks,
-                      id: rest.id,
-                      // number: rest.number,
-                      createdAt: createdAt,
-                      updatedAt: updatedAt,
-                      deletedAt: deletedAt,
-                      deleted: deleted,
-                    }
-                  }
-                }) as ExcelExportAssetType[]
-
-                downloadExcel_templateAssets(downloadableAssets)
+                downloadExcel_templateAssets()
               }}
               className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
             >

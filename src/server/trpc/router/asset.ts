@@ -155,36 +155,29 @@ export const assetRouter = t.router({
         .object({
           page: z.number().optional(),
           limit: z.number().optional(),
-          search: z
-            .object({
-              name: z.string().optional(),
-              number: z.string().optional(),
-              serial_no: z.string().optional(),
-              barcode: z.string().optional(),
-              description: z.string().optional(),
-              remarks: z.string().optional(),
-              invoiceNum: z.string().optional(),
-              purchaseOrder: z.string().optional(),
-              deployment_status: z.string().optional(),
-              custodianId: z.number().optional(),
-              departmentId: z.number().optional(),
-              vendorId: z.number().optional(),
-              subsidiaryId: z.number().optional(),
-              assetProjectId: z.number().optional(),
-              parentId: z.number().optional(),
-              typeId: z.number().optional(),
-              actionTypeId: z.number().optional(), // Added typeId to search
-            })
-            .optional(),
+          search: z.string().optional(),
           filter: z
             .object({
-              updatedAt: z.date().optional(),
+              actionType: z.array(z.string().optional()).optional(),
+              type: z.array(z.string().optional()).optional(),
+              status: z.array(z.string().optional()).optional(),
             })
             .optional(),
         })
         .optional()
     )
     .query(async ({ ctx, input }) => {
+      //filters out empty string, properly check if it has a value
+      const typeNames = input?.filter?.type?.filter(
+        (x): x is string => typeof x === "string"
+      )
+      const actionTypeNames = input?.filter?.actionType?.filter(
+        (x): x is string => typeof x === "string"
+      )
+      const statusNames = input?.filter?.status?.filter(
+        (x): x is string => typeof x === "string"
+      )
+
       const [assets, count] = await ctx.prisma.$transaction([
         ctx.prisma.asset.findMany({
           orderBy: {
@@ -213,15 +206,23 @@ export const assetRouter = t.router({
             NOT: {
               deleted: true,
             },
-            OR: {
-              NOT: {
-                id: 999999,
+            OR: [
+              { name: { contains: input?.search, mode: "insensitive" } },
+              { number: { contains: input?.search, mode: "insensitive" } },
+            ],
+            ...(actionTypeNames?.length && {
+              actionType: {
+                name: { in: actionTypeNames },
               },
-            },
-            name: { contains: input?.search?.name, mode: "insensitive" },
-            number: { contains: input?.search?.number, mode: "insensitive" },
-            typeId: input?.search?.typeId, // Added type filter
-            actionTypeId: input?.search?.actionTypeId, // Added actionType filter
+            }),
+            ...(typeNames?.length && {
+              type: {
+                name: { in: typeNames },
+              },
+            }),
+            ...(statusNames?.length && {
+              status: { in: statusNames },
+            }),
           },
           skip: input?.page
             ? (input.page - 1) * (input.limit ?? 10)
@@ -233,15 +234,25 @@ export const assetRouter = t.router({
             NOT: {
               deleted: true,
             },
-            OR: {
-              NOT: {
-                id: 999999,
+
+            OR: [
+              { name: { contains: input?.search, mode: "insensitive" } },
+              { number: { contains: input?.search, mode: "insensitive" } },
+            ],
+
+            ...(actionTypeNames?.length && {
+              actionType: {
+                name: { in: actionTypeNames },
               },
-            },
-            name: { contains: input?.search?.name, mode: "insensitive" },
-            number: { contains: input?.search?.number, mode: "insensitive" },
-            typeId: input?.search?.typeId, // Added type filter
-            actionTypeId: input?.search?.actionTypeId, // Added actionType filter
+            }),
+            ...(typeNames?.length && {
+              type: {
+                name: { in: typeNames },
+              },
+            }),
+            ...(statusNames?.length && {
+              status: { in: statusNames },
+            }),
           },
         }),
       ])
@@ -299,21 +310,21 @@ export const assetRouter = t.router({
           include: {
             type: true, // Added type relation
             actionType: true, // Added actionType relation
-            department: {
-              include: {
-                location: true,
-                company: true,
-                teams: true,
-                building: true,
-              },
-            },
-            parent: true,
-            custodian: true,
-            vendor: true,
-            management: true,
-            addedBy: true,
-            assetTag: true,
-            AssetIssuance: true,
+            // department: {
+            //   include: {
+            //     location: true,
+            //     company: true,
+            //     teams: true,
+            //     building: true,
+            //   },
+            // },
+            // parent: true,
+            // custodian: true,
+            // vendor: true,
+            // management: true,
+            // addedBy: true,
+            // assetTag: true,
+            // AssetIssuance: true,
           },
           where: {
             NOT: {
@@ -348,7 +359,7 @@ export const assetRouter = t.router({
                 id: 999999,
               },
             },
-            createdAt: {
+            issuedAt: {
               gte: start,
               lte: end,
             },
@@ -725,7 +736,7 @@ export const assetRouter = t.router({
   createOrUpdate: authedProcedure
     .input(AssetTransformInput)
     .mutation(async ({ ctx, input }) => {
-      const { number, type, action_type, ...rest } = input
+      const { type, action_type, ...rest } = input
 
       // Validate type exists if provided
       let typeId
@@ -758,68 +769,45 @@ export const assetRouter = t.router({
         } else [(action_typeId = action_typeExists.id)]
       }
 
-      const existAssets = await ctx.prisma.asset.findFirst({
-        where: {
-          number: number ?? "",
+      const allAssets = await ctx.prisma.asset.findMany()
+      let assetNumber = ""
+
+      for (let x = 0; x <= (allAssets?.length || 0) + 1; x++) {
+        const formattedNumber = `GUN-${String(x + 1).padStart(4, "0")}`
+        if (!allAssets?.some((item) => item.number === formattedNumber)) {
+          assetNumber = formattedNumber
+          break
+        }
+      }
+      // Create new asset
+      const newAsset = await ctx.prisma.asset.create({
+        data: {
+          ...rest,
+          number: assetNumber,
+          status: "in",
+          type: {
+            connect: {
+              id: typeId, // Connect to AssetType if typeId is provided
+            },
+          }, // Connect to AssetType
+          actionType: {
+            connect: {
+              id: action_typeId, // Connect to AssetType if typeId is provided
+            },
+          }, // Connect to AssetType
+        },
+        include: {
+          type: true,
         },
       })
-
-      if (existAssets?.id) {
-        // Update existing asset
-        const updatedAsset = await ctx.prisma.asset.update({
-          where: { number: number },
-          data: {
-            ...rest,
-            type: {
-              connect: {
-                id: typeId, // Connect to AssetType if typeId is provided
-              },
-            }, // Connect to AssetType
-            actionType: {
-              connect: {
-                id: action_typeId, // Connect to AssetType if typeId is provided
-              },
-            }, // Connect to AssetType
-          },
-          include: {
-            type: true, // Include the type in the response
-          },
-        })
-        return updatedAsset
-      } else {
-        const allAssets = await ctx.prisma.asset.findMany()
-        let assetNumber = ""
-
-        for (let x = 0; x <= (allAssets?.length || 0) + 1; x++) {
-          const formattedNumber = `GUN-${String(x + 1).padStart(4, "0")}`
-          if (!allAssets?.some((item) => item.number === formattedNumber)) {
-            assetNumber = formattedNumber
-            break
-          }
-        }
-        // Create new asset
-        const newAsset = await ctx.prisma.asset.create({
-          data: {
-            ...rest,
-            number: assetNumber,
-            status: "in",
-            type: {
-              connect: {
-                id: typeId, // Connect to AssetType if typeId is provided
-              },
-            }, // Connect to AssetType
-            actionType: {
-              connect: {
-                id: action_typeId, // Connect to AssetType if typeId is provided
-              },
-            }, // Connect to AssetType
-          },
-          include: {
-            type: true,
-          },
-        })
-        return newAsset
-      }
+      const historyLog = await ctx.prisma.historyLogs.create({
+        data: {
+          gunNumber: newAsset.number ?? "",
+          participant: ctx.session.user.name,
+          action: "in",
+        },
+      })
+      return newAsset
     }),
 
   // await ctx.prisma.asset.upsert({
@@ -1025,6 +1013,7 @@ export const assetRouter = t.router({
             id,
           },
           data: {
+            issuedAt: status === "issued" ? new Date() : null,
             status: status,
           },
         })

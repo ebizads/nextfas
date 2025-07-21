@@ -1,20 +1,22 @@
 import { Accordion } from "@mantine/core"
 // import { ExcelExportType } from "../../../types/asset"
 import { ExcelExportAssetType } from "../../../types/asset"
+import { useState } from "react"
 
 const AssetRecordsAccordion = (props: {
   incomingChanges: ExcelExportAssetType[]
 }) => {
+  const [openedItem, setOpenedItem] = useState<string | null>(null)
+
   return (
-    <Accordion>
+    <Accordion value={openedItem} onChange={setOpenedItem}>
       {props.incomingChanges?.map((asset, idx) => (
         <Accordion.Item
-          value={asset?.id?.toString() ?? (0).toString()}
+          value={asset?.id?.toString() ?? idx.toString()}
           key={idx}
         >
           <Accordion.Control className="uppercase">
             <div className="grid w-1/2 grid-cols-2 gap-1">
-              <p>{asset?.number}</p>
               <p>{asset?.name}</p>
             </div>
           </Accordion.Control>
@@ -26,11 +28,7 @@ const AssetRecordsAccordion = (props: {
                     Incoming Change
                   </p>
                   <pre className="text-sm">
-                    {props.incomingChanges ? (
-                      JSON.stringify(props.incomingChanges[idx], null, 2)
-                    ) : (
-                      <></>
-                    )}
+                    {JSON.stringify(asset, null, 2)}
                   </pre>
                 </div>
               </div>

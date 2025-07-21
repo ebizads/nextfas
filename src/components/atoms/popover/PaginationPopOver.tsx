@@ -40,8 +40,11 @@ const PaginationPopOver = (props: {
               key={i}
               className="cursor-pointer hover:bg-tangerine-50"
               onClick={() => {
-                props.setLimit(i)
-                props.setPage(1)
+                props.setPaginationPopover(!props.paginationPopover)
+                setTimeout(function () {
+                  props.setLimit(i)
+                  props.setPage(1)
+                }, 200)
               }}
             >
               {i}

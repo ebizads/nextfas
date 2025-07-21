@@ -11,17 +11,11 @@ import Image from "next/image"
 import * as XLSX from "xlsx"
 import { ExcelExportType } from "../../types/employee"
 import { trpc } from "../../utils/trpc"
-import DuplicateAccordion from "../atoms/accordions/DuplicateAccordion"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { prisma } from "../../server/db/client"
 import { EmployeeEditInput } from "../../server/schemas/employee"
 import { z } from "zod"
 import EmployeeRecordsAccordion from "../atoms/accordions/EmployeeRecordsAccordion"
 import Employee from "../../pages/employees"
-import Modal from "../headless/modal/modal"
 import { DropZoneModal } from "./DropZoneModal"
-import moment from "moment"
-import { env } from "../../env/client.mjs"
 import { EmployeeType } from "../../types/generic"
 
 export type Employee = z.infer<typeof EmployeeEditInput>
@@ -263,55 +257,55 @@ export default function DropZone({
     )
     // setChecker(employeeRandomizer)
     for (let i = 0; i < duplicatedEmployees.length; i++) {
-      mutate({
-        id: duplicatedEmployees[i]?.id ?? 0,
-        name: duplicatedEmployees[i]?.name ?? "",
-        position: duplicatedEmployees[i]?.position,
-        employee_id:
-          String(duplicatedEmployees[i]?.teamId).padStart(2, "0") +
-          employeeId[i],
-        email: duplicatedEmployees[i]?.email,
-        teamId: duplicatedEmployees[i]?.teamId ?? 0,
-        superviseeId: duplicatedEmployees[i]?.superviseeId ?? null,
-        // createdAt: duplicatedEmployees[i]?.createdAt,
-        // updatedAt: duplicatedEmployees[i]?.updatedAt?,
-        deleted: duplicatedEmployees[i]?.deleted ?? false,
-        deletedAt: duplicatedEmployees[i]?.deletedAt,
-        workMode: duplicatedEmployees[i]?.workMode,
-        workStation: duplicatedEmployees[i]?.workStation,
-        address: {
-          // id: duplicatedEmployees[i]?.address?.id ?? 0,
-          street: duplicatedEmployees[i]?.address?.street,
-          city: duplicatedEmployees[i]?.address?.city,
-          region: duplicatedEmployees[i]?.address?.region,
-          zip: duplicatedEmployees[i]?.address?.zip,
-          country: duplicatedEmployees[i]?.address?.country,
-          baranggay: duplicatedEmployees[i]?.address?.baranggay,
-          province: duplicatedEmployees[i]?.address?.province,
-          // createdAt: duplicatedEmployees[i]?.address?.createdAt,
-          // updatedAt: duplicatedEmployees[i]?.address?.updatedAt,
-          //may laktaw po ito
-          // deleted: duplicatedEmployees[i]?.address?.deleted,
-          // deletedAt: duplicatedEmployees[i]?.address?.deletedAt,
-          // userId: duplicatedEmployees[i]?.address?.userId ?? 0,
-          // companyId: duplicatedEmployees[i]?.address?.companyId,
-          // vendorId: duplicatedEmployees[i]?.address?.vendorId,
-          // employeeId: duplicatedEmployees[i]?.address?.employeeId,
-        },
-        profile: {
-          // id: duplicatedEmployees[i]?.profile?.id,
-          first_name: duplicatedEmployees[i]?.profile?.first_name ?? "",
-          middle_name: duplicatedEmployees[i]?.profile?.middle_name,
-          last_name: duplicatedEmployees[i]?.profile?.last_name ?? "",
-          suffix: duplicatedEmployees[i]?.profile?.suffix,
-          gender: duplicatedEmployees[i]?.profile?.gender,
-          image: duplicatedEmployees[i]?.profile?.image,
-          date_of_birth: duplicatedEmployees[i]?.profile?.date_of_birth,
-          // userId: duplicatedEmployees[i]?.profile?.userId,
-          // employeeId: duplicatedEmployees[i]?.profile?.employeeId,
-          phone_no: duplicatedEmployees[i]?.profile?.phone_no,
-        },
-      })
+      // mutate({
+      //   id: duplicatedEmployees[i]?.id ?? 0,
+      //   name: duplicatedEmployees[i]?.name ?? "",
+      //   position: duplicatedEmployees[i]?.position,
+      //   employee_id:
+      //     String(duplicatedEmployees[i]?.teamId).padStart(2, "0") +
+      //     employeeId[i],
+      //   email: duplicatedEmployees[i]?.email,
+      //   teamId: duplicatedEmployees[i]?.teamId ?? 0,
+      //   superviseeId: duplicatedEmployees[i]?.superviseeId ?? null,
+      //   // createdAt: duplicatedEmployees[i]?.createdAt,
+      //   // updatedAt: duplicatedEmployees[i]?.updatedAt?,
+      //   deleted: duplicatedEmployees[i]?.deleted ?? false,
+      //   deletedAt: duplicatedEmployees[i]?.deletedAt,
+      //   workMode: duplicatedEmployees[i]?.workMode,
+      //   workStation: duplicatedEmployees[i]?.workStation,
+      //   address: {
+      //     // id: duplicatedEmployees[i]?.address?.id ?? 0,
+      //     street: duplicatedEmployees[i]?.address?.street,
+      //     city: duplicatedEmployees[i]?.address?.city,
+      //     region: duplicatedEmployees[i]?.address?.region,
+      //     zip: duplicatedEmployees[i]?.address?.zip,
+      //     country: duplicatedEmployees[i]?.address?.country,
+      //     baranggay: duplicatedEmployees[i]?.address?.baranggay,
+      //     province: duplicatedEmployees[i]?.address?.province,
+      //     // createdAt: duplicatedEmployees[i]?.address?.createdAt,
+      //     // updatedAt: duplicatedEmployees[i]?.address?.updatedAt,
+      //     //may laktaw po ito
+      //     // deleted: duplicatedEmployees[i]?.address?.deleted,
+      //     // deletedAt: duplicatedEmployees[i]?.address?.deletedAt,
+      //     // userId: duplicatedEmployees[i]?.address?.userId ?? 0,
+      //     // companyId: duplicatedEmployees[i]?.address?.companyId,
+      //     // vendorId: duplicatedEmployees[i]?.address?.vendorId,
+      //     // employeeId: duplicatedEmployees[i]?.address?.employeeId,
+      //   },
+      //   profile: {
+      //     // id: duplicatedEmployees[i]?.profile?.id,
+      //     first_name: duplicatedEmployees[i]?.profile?.first_name ?? "",
+      //     middle_name: duplicatedEmployees[i]?.profile?.middle_name,
+      //     last_name: duplicatedEmployees[i]?.profile?.last_name ?? "",
+      //     suffix: duplicatedEmployees[i]?.profile?.suffix,
+      //     gender: duplicatedEmployees[i]?.profile?.gender,
+      //     image: duplicatedEmployees[i]?.profile?.image,
+      //     date_of_birth: duplicatedEmployees[i]?.profile?.date_of_birth,
+      //     // userId: duplicatedEmployees[i]?.profile?.userId,
+      //     // employeeId: duplicatedEmployees[i]?.profile?.employeeId,
+      //     phone_no: duplicatedEmployees[i]?.profile?.phone_no,
+      //   },
+      // })
     }
   }
   checkDuplicated()
@@ -510,7 +504,7 @@ export default function DropZone({
                 conflicts before proceeding.
               </p>
             </div>
-            {duplicates != null ? (
+            {/* {duplicates != null ? (
               <DuplicateAccordion
                 currentRecords={duplicates?.sort(
                   (a: { id: number }, b: { id: number }) => a.id - b.id
@@ -519,7 +513,7 @@ export default function DropZone({
               />
             ) : (
               <></>
-            )}
+            )} */}
             <div className="mt-4 flex items-center justify-end gap-2">
               <button
                 className="px-4 py-2 font-medium underline"

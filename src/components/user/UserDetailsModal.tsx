@@ -102,15 +102,6 @@ export const UserDetailsModal = (props: {
               </section>
               <section className="grid grid-cols-9">
                 <div className="col-span-3">
-                  <p className="font-light">Role</p>
-                  <p className="font-medium">
-                    {/* {props.asset?.serial_no !== "" */}
-                    {/* // ? props.asset?.serial_no */}
-                    {/* // : "--"} */}
-                    {props.user?.user_type ?? "--"}
-                  </p>
-                </div>
-                <div className="col-span-3">
                   <p className="font-light">User Number</p>
                   <p className="font-medium">
                     {/* {props.asset?.model?.name */}
@@ -133,9 +124,27 @@ export const UserDetailsModal = (props: {
                       : "--"}
                   </p>
                 </div>
+                <div className="col-span-3">
+                  <p className="font-light">Role</p>
+                  <p className="font-medium">
+                    {/* {props.asset?.serial_no !== "" */}
+                    {/* // ? props.asset?.serial_no */}
+                    {/* // : "--"} */}
+                    {props.user?.user_type ?? "--"}
+                  </p>
+                </div>
               </section>
 
-              <section className="grid grid-cols-4">
+              <section className="grid grid-cols-6">
+                <div className="col-span-2">
+                  <p className="font-light">Username</p>
+                  <p className="font-medium">
+                    {/* {props.asset?.management?.currency}{" "} */}
+                    {/* {props.asset?.management?.original_cost ?? 
+                      "no information"}*/}
+                    {props.user?.username ?? "--"}
+                  </p>
+                </div>{" "}
                 <div className="col-span-2">
                   <p className="font-light">Email</p>
                   <p className="font-medium">

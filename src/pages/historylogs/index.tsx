@@ -16,13 +16,16 @@ const HistoryLogs = () => {
   const router = useRouter()
   const { search } = useSearchStore()
   // Get asset by asset id
-  const { data: dataHistoryLogs, refetch } = trpc.historyLogs.findAll.useQuery({
-    search: { name: search },
-    limit,
-    page
-  }, {
-    refetchInterval: 5000,
-  })
+  const { data: dataHistoryLogs, refetch } = trpc.historyLogs.findAll.useQuery(
+    {
+      search: search,
+      limit,
+      page,
+    },
+    {
+      refetchInterval: 5000,
+    }
+  )
 
   const [historyLogs, setHistoryLogs] = useState<HistoryLogType[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
@@ -33,7 +36,6 @@ const HistoryLogs = () => {
       setHistoryLogs(dataHistoryLogs.historyLogs as HistoryLogType[])
       setAccessiblePage(Math.ceil(dataHistoryLogs?.count / limit))
     }
-
   }, [dataHistoryLogs, limit, search])
 
   return (

@@ -8,7 +8,7 @@ import PaginationPopOver from "../atoms/popover/PaginationPopOver"
 import AddTypePopOver from "../atoms/popover/AddTypePopOver"
 import Modal from "../headless/modal/modal"
 import { CreateType } from "./CreateType"
-import DropZone from "../dropzone/DropZone"
+// import DropZone from "../dropzone/DropZone"
 import { trpc } from "../../utils/trpc"
 import { useSearchStore } from "../../store/useStore"
 
@@ -222,7 +222,7 @@ const DisplayTypes = (props: {
         />
       </Modal>
 
-      <Modal
+      {/* <Modal
         title="Add Bulk Types"
         isVisible={addBulkRecord}
         setIsVisible={setAddBulkRecord}
@@ -235,7 +235,7 @@ const DisplayTypes = (props: {
           setIsLoading={setIsLoading}
           setIsVisible={setAddBulkRecord}
         />
-      </Modal>
+      </Modal> */}
 
       <Modal
         title="Confirm Deletion"

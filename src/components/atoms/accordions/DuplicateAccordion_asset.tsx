@@ -55,13 +55,12 @@ const DuplicateAccordion_asset = (props: {
       mutate({
         id: assetId ?? 0,
         name: props.incomingChanges[splice]?.name ?? "",
-        number: props.incomingChanges[splice]?.asset_number ?? "",
         serial_no: props.incomingChanges[splice]?.serial_no ?? "",
-        barcode: props.incomingChanges[splice]?.barcode,
-        brand: props.incomingChanges[splice]?.brand,
+        barcode: props.incomingChanges[splice]?.barcode ?? "",
+        brand: props.incomingChanges[splice]?.brand ?? "",
         type: props.incomingChanges[splice]?.type ?? "",
-        caliber: props.incomingChanges[splice]?.caliber,
-        models: props.incomingChanges[splice]?.models,
+        caliber: props.incomingChanges[splice]?.caliber ?? "",
+        models: props.incomingChanges[splice]?.models ?? "",
         action_type: props.incomingChanges[splice]?.models,
         description: props.incomingChanges[splice]?.description ?? "",
       })
@@ -97,7 +96,6 @@ const DuplicateAccordion_asset = (props: {
                       {JSON.stringify(
                         {
                           name: asset?.name ?? "",
-                          asset_number: asset?.number ?? "",
                           serial_no: asset?.serial_no ?? "",
                           barcode: asset?.barcode ?? "",
                           brand: asset?.brand ?? "",

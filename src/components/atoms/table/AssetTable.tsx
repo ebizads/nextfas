@@ -58,18 +58,18 @@ const AssetDetailsModal = (props: {
   const [genBarcode, setGenBarcode] = useState(false)
   const genBar = () => {
     setGenBarcode(true)
-    JsBarcode("#barcode", props.asset ? props.asset!.serial_no! : "No data", {
+    JsBarcode("#barcode", props.asset ? props.asset!.number! : "No data", {
       textAlign: "left",
       textPosition: "bottom",
       fontOptions: "",
       fontSize: 12,
       textMargin: 9,
       height: 50,
-      width: 2,
+      width: 1,
     }),
       JsBarcode(
         "#barcode-show",
-        props.asset ? props.asset!.serial_no! : "No data",
+        props.asset ? props.asset!.number! : "No data",
         {
           textAlign: "left",
           textPosition: "bottom",
@@ -88,7 +88,7 @@ const AssetDetailsModal = (props: {
   const jsonData = {
     asset_no: props.asset?.number,
     asset_name: props.asset?.name,
-    asset_desc: props.asset?.description,
+    asset_serial: props.asset?.serial_no,
   }
   const stringifiedData = JSON.stringify(jsonData)
 
@@ -142,12 +142,13 @@ const AssetDetailsModal = (props: {
         isOpen={props.openModalDesc}
         setIsOpen={props.setOpenModalDesc}
         preventClose={confirmationModalOpen}
+        className={""}
       >
-        <div className="px-8 py-6">
+        <div className="h px-8 py-6 ">
           <div className="flex w-full text-sm text-light-primary">
-            <div className="flex w-[80%]  flex-col gap-2">
+            <div className="flex h-full  w-[80%] flex-col justify-between">
               {/* asset information */}
-              <section className=" pb-4">
+              <section className="h-[30vh] pb-4">
                 <p className="text-base font-medium text-neutral-600">
                   Asset Information
                 </p>
@@ -162,17 +163,6 @@ const AssetDetailsModal = (props: {
                       <p className="font-light">Name</p>
                       <p className="font-medium">{props.asset?.name}</p>
                     </div>
-
-                    <div className="col-span-1">
-                      <p className="font-light">RFID/ Barcode ID</p>
-                      <p className="font-medium">
-                        {props.asset?.barcode !== ""
-                          ? props.asset?.barcode
-                          : "--"}
-                      </p>
-                    </div>
-                  </section>
-                  <section className="grid grid-cols-3">
                     <div className="col-span-1">
                       <p className="font-light">Firearm Serial Number</p>
                       <p className="font-medium">
@@ -181,6 +171,16 @@ const AssetDetailsModal = (props: {
                           : "--"}
                       </p>
                     </div>
+                    {/* <div className="col-span-1">
+                      <p className="font-light">RFID/ Barcode ID</p>
+                      <p className="font-medium">
+                        {props.asset?.barcode !== ""
+                          ? props.asset?.barcode
+                          : "--"}
+                      </p>
+                    </div> */}
+                  </section>
+                  <section className="grid grid-cols-3">
                     <div className="col-span-1">
                       <p className="font-light">Brand</p>
                       <p className="font-medium">
@@ -195,6 +195,12 @@ const AssetDetailsModal = (props: {
                           : "--"}
                       </p>
                     </div>
+                    <div className="col-span-1">
+                      <p className="font-light">Caliber</p>
+                      <p className="font-medium">
+                        {props.asset?.caliber ?? "--"}
+                      </p>
+                    </div>
                   </section>
                   <section className="grid grid-cols-3">
                     <div className="col-span-1">
@@ -206,29 +212,24 @@ const AssetDetailsModal = (props: {
                       </p>
                     </div>
                     <div className="col-span-1">
-                      <p className="font-light">Caliber</p>
-                      <p className="font-medium">
-                        {props.asset?.caliber ?? "--"}
-                      </p>
-                    </div>
-                    <div className="col-span-1">
                       <p className="font-light">Action Type</p>
                       <p className="font-medium">
                         {props.asset?.actionType?.name ?? "--"}
                       </p>
                     </div>
-                  </section>
-                  <section className="grid grid-cols-3">
-                    <div className="col-span-3">
+                    <div className="col-span-1">
                       <p className="font-light">Description</p>
                       <p className="font-medium">
                         {props.asset?.description ?? "--"}
                       </p>
                     </div>
                   </section>
+                  {/* <section className="grid grid-cols-3">
+                    
+                  </section> */}
                 </div>
               </section>
-              <div className="space-y flex flex-col">
+              <section className="space-y flex flex-col ">
                 <button
                   className="outline-none focus:outline-none"
                   onClick={() => props.setOpenModalDesc(false)}
@@ -238,7 +239,7 @@ const AssetDetailsModal = (props: {
                 </button>
                 <p className="font-medium xl:text-lg">Asset Options</p>
                 <nav className="relative my-2 flex flex-1 gap-2 ">
-                  {props.asset?.status === "issued" && (
+                  {/* {props.asset?.status === "issued" && (
                     <button
                       onClick={() => {
                         setStatusToUpdate("in")
@@ -250,7 +251,7 @@ const AssetDetailsModal = (props: {
                         In
                       </div>
                     </button>
-                  )}
+                  )} */}
 
                   {/* //TODO:  Fix this when we have Asset Issuance READY */}
                   {/* {props.asset?.status === null && (
@@ -305,7 +306,7 @@ const AssetDetailsModal = (props: {
                   </button>
                 ))} */}
                 </nav>
-              </div>
+              </section>
             </div>
             <button
               className="outline-none focus:outline-none"
@@ -482,7 +483,7 @@ export const AssetDeleteModal = (props: {
       <div className="m-4 flex flex-col ">
         <div className="flex flex-col items-center gap-8 text-center">
           <div>
-            You are about to permanently delete
+            This action will permanently delete&nbsp;
             <button
               className="border-b border-tangerine-600 text-tangerine-600 hover:bg-tangerine-100"
               onClick={() => {
@@ -497,7 +498,7 @@ export const AssetDeleteModal = (props: {
                 }`}
               />
             </button>
-            from <span className="text-tangerine-600">Assets Table</span>.
+            . Continue?
           </div>
           {showList && props.assets && (
             <ul className="min-h-10 flex max-h-20 w-fit flex-col overflow-y-auto px-4">
@@ -586,7 +587,7 @@ const AssetTable = (props: {
       } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
-      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 ">
         <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
             {showCheckboxes && (
@@ -661,6 +662,8 @@ const AssetTable = (props: {
                     >
                       {col.value == "typeId"
                         ? row?.type?.name
+                        : col.value == "actionTypeId"
+                        ? row?.actionType?.name
                         : getProperty(col.value, row)}
                     </td>
                   ))}

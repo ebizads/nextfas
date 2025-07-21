@@ -32,11 +32,27 @@ const CreateAssetAccordion = () => {
     reset,
     setValue,
     getValues,
+    trigger,
     watch,
     formState: { errors, isDirty, isValid },
   } = useForm<AssetFieldValues>({
     resolver: zodResolver(AssetCreateInput),
   })
+
+  const [isFormValid, setIsFormValid] = useState(false)
+
+  useEffect(() => {
+    const checkValidity = async () => {
+      const valid = await trigger()
+      setIsFormValid(valid)
+    }
+
+    const subscription = watch(() => {
+      checkValidity()
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch, trigger])
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAll.useQuery()
@@ -94,7 +110,7 @@ const CreateAssetAccordion = () => {
 
   return (
     <div id="contents">
-      {formError && <FormErrorMessage setFormError={setFormError} />}
+      {/* {formError && <FormErrorMessage setFormError={setFormError} />} */}
       {assetsData && (
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -110,7 +126,7 @@ const CreateAssetAccordion = () => {
 
           <div className="grid grid-cols-9 gap-7">
             <div className="col-span-9 grid grid-cols-12 gap-7">
-              <div className="col-span-6">
+              <div className="col-span-4">
                 <InputField
                   register={register}
                   label="Asset Name"
@@ -118,9 +134,18 @@ const CreateAssetAccordion = () => {
                   placeholder="Asset Name"
                   required
                 />
-                <AlertInput>{errors?.name?.message}</AlertInput>
+                {/* <AlertInput>{errors?.name?.message}</AlertInput> */}
               </div>
-              <div className="col-span-6">
+              <div className="col-span-4">
+                <InputField
+                  register={register}
+                  label="Firearm Serial Number"
+                  placeholder="Firearm Serial Number"
+                  name="serial_no"
+                />
+                {/* <AlertInput>{errors?.serial_no?.message}</AlertInput> */}
+              </div>
+              <div className="col-span-4">
                 <InputField
                   register={register}
                   label="Asset ID"
@@ -133,7 +158,7 @@ const CreateAssetAccordion = () => {
                 />
               </div>
             </div>
-            <div className="col-span-9 grid grid-cols-12 gap-7">
+            {/* <div className="col-span-9 grid grid-cols-12 gap-7">
               <div className="col-span-6">
                 <InputField
                   register={register}
@@ -144,16 +169,7 @@ const CreateAssetAccordion = () => {
                 />
                 <AlertInput>{errors?.barcode?.message}</AlertInput>
               </div>
-              <div className="col-span-6">
-                <InputField
-                  register={register}
-                  label="Firearm Serial Number"
-                  placeholder="Firearm Serial Number"
-                  name="serial_no"
-                />
-                <AlertInput>{errors?.serial_no?.message}</AlertInput>
-              </div>
-            </div>
+            </div> */}
             <div className="col-span-9 grid grid-cols-12 gap-7">
               <div className="col-span-4">
                 <InputField
@@ -163,7 +179,7 @@ const CreateAssetAccordion = () => {
                   placeholder="Brand"
                   required
                 />
-                <AlertInput>{errors?.brand?.message}</AlertInput>
+                {/* <AlertInput>{errors?.brand?.message}</AlertInput> */}
               </div>
               <div className="col-span-4">
                 <InputField
@@ -173,7 +189,7 @@ const CreateAssetAccordion = () => {
                   placeholder="Model"
                   required
                 />
-                <AlertInput>{errors?.models?.message}</AlertInput>
+                {/* <AlertInput>{errors?.models?.message}</AlertInput> */}
               </div>
               <div className="col-span-4 pt-1">
                 <TypeSelect
@@ -185,7 +201,7 @@ const CreateAssetAccordion = () => {
                   data={typesList ?? []}
                   required
                 />
-                <AlertInput>{errors?.typeId?.message}</AlertInput>
+                {/* <AlertInput>{errors?.typeId?.message}</AlertInput> */}
               </div>
             </div>
 
@@ -198,7 +214,7 @@ const CreateAssetAccordion = () => {
                   placeholder="Caliber"
                   required
                 />
-                <AlertInput>{errors?.caliber?.message}</AlertInput>
+                {/* <AlertInput>{errors?.caliber?.message}</AlertInput> */}
               </div>
               <div className="col-span-4 pt-1">
                 <TypeSelect
@@ -210,7 +226,7 @@ const CreateAssetAccordion = () => {
                   data={actionTypesList ?? []}
                   required
                 />
-                <AlertInput>{errors?.actionTypeId?.message}</AlertInput>
+                {/* <AlertInput>{errors?.actionTypeId?.message}</AlertInput> */}
               </div>
             </div>
 
@@ -238,15 +254,15 @@ const CreateAssetAccordion = () => {
           <div className="mt-2 flex w-full justify-center gap-2 text-lg">
             <button
               type="button"
-              className="rounded-md bg-gray-300 px-4 py-2 font-medium text-dark-primary outline-none hover:bg-gray-400 focus:outline-none"
+              className="text-dark-primary rounded-md bg-gray-300 px-4 py-2 font-medium outline-none hover:bg-gray-400 focus:outline-none"
               onClick={() => clearAndGoBack()}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={(!isValid && !isDirty) || isLoading}
-              className="rounded-md bg-tangerine-300 px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+              disabled={(!isValid && !isDirty) || isLoading || !isFormValid}
+              className="text-dark-primary rounded-md bg-tangerine-300 px-6 py-2 font-medium outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
             >
               {isLoading || loading ? "Saving..." : "Save"}
             </button>
@@ -258,3 +274,4 @@ const CreateAssetAccordion = () => {
 }
 
 export default CreateAssetAccordion
+//

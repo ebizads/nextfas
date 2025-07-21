@@ -17,6 +17,12 @@ export type AssetTypeTable = inferProcedureOutput<
 export type AssetTypeDashboard = inferProcedureOutput<
   AppRouter["assetType"]["findOneDashboard"]
 >
+export type AssetTypeFilter = inferProcedureOutput<
+  AppRouter["assetType"]["findAllFilter"]
+>
+export type AssetActionTypeFilter = inferProcedureOutput<
+  AppRouter["assetActionType"]["findAllFilter"]
+>
 
 export type AssetActionType = inferProcedureOutput<
   AppRouter["assetActionType"]["findOne"]
@@ -48,5 +54,6 @@ export type AssetEditFieldValues = z.infer<typeof AssetUpdateInput>
 
 export type UserType = inferProcedureOutput<AppRouter["user"]["findOne"]>
 
-export type HistoryLogType = inferProcedureOutput<AppRouter["historyLogs"]["findOne"]>
-
+export type HistoryLogType = inferProcedureOutput<
+  AppRouter["historyLogs"]["findOne"]
+>

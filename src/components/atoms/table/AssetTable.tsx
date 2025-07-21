@@ -483,7 +483,7 @@ export const AssetDeleteModal = (props: {
       <div className="m-4 flex flex-col ">
         <div className="flex flex-col items-center gap-8 text-center">
           <div>
-            You are about to permanently delete
+            This action will permanently delete&nbsp;
             <button
               className="border-b border-tangerine-600 text-tangerine-600 hover:bg-tangerine-100"
               onClick={() => {
@@ -498,7 +498,7 @@ export const AssetDeleteModal = (props: {
                 }`}
               />
             </button>
-            from <span className="text-tangerine-600">Assets Table</span>.
+            . Continue?
           </div>
           {showList && props.assets && (
             <ul className="min-h-10 flex max-h-20 w-fit flex-col overflow-y-auto px-4">
@@ -587,7 +587,7 @@ const AssetTable = (props: {
       } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
-      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 ">
         <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
             {showCheckboxes && (

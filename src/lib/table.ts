@@ -160,11 +160,11 @@ export const navigations = [
     icon: "fa-solid fa-clock-rotate-left",
     link: "/historylogs",
   },
-  // {
-  //   name: "Employees",
-  //   icon: "fa-users",
-  //   link: "/employees",
-  // },
+  {
+    name: "Employees",
+    icon: "fa-users",
+    link: "/employees",
+  },
   // {
   //   name: "Asset Issuance",
   //   icon: "fa-users",

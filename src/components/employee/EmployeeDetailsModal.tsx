@@ -66,7 +66,7 @@ export const EmployeeDetailsModal = (props: {
             (props.employee?.address?.country
               ? props.employee?.address?.country + ", "
               : "") +
-            (String(props.employee?.address?.zip) ?? "")
+            (props.employee?.address?.zip ?? "")
         : "--"
       : "--"
   }
@@ -93,7 +93,7 @@ export const EmployeeDetailsModal = (props: {
                 <div className="col-span-1">
                   <p className="font-light">Middle Name</p>
                   <p className="font-medium">
-                    {props.employee?.profile?.middle_name ?? "--"}
+                    {props.employee?.profile?.middle_name || "--"}
                     {/* {props.asset?.alt_number !== "" */}
                     {/* // ? props.asset?.alt_number */}
                     {/* // : "No Alternate Number"} */}

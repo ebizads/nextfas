@@ -7,7 +7,7 @@ import {
   HistoryLogType,
   Asset,
 } from "../types/generic"
-import * as XLSX from "xlsx"
+import XLSX from "xlsx/dist/xlsx.full.min.js"
 import { ExcelExportType } from "../types/employee"
 import { Address, Company } from "@prisma/client"
 import Router from "next/router"

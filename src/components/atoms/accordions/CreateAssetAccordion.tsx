@@ -55,7 +55,7 @@ const CreateAssetAccordion = () => {
   }, [watch, trigger])
 
   //gets and sets all assets
-  const { data: assetsData } = trpc.asset.findAll.useQuery()
+  const { data: assetsData } = trpc.asset.findAllAssetForAssetCreate.useQuery()
   const { data: typesData } = trpc.assetType.findAll.useQuery()
   const { data: actionTypesData } = trpc.assetActionType.findAll.useQuery()
 

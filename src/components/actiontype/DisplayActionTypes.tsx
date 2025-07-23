@@ -192,7 +192,7 @@ const DisplayActionTypes = (props: {
         className="max-w-4xl"
       >
         <CreateActionType
-          setIsVisible={setOpenUpdatePopover}
+          setIsVisible={setAddSingleRecord}
           setIsSuccessVisible={setIsSuccessVisible}
           isSuccessVisible={isSuccessVisible}
         />

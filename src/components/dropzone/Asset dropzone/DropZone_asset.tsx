@@ -69,7 +69,7 @@ export default function DropZone_asset({
     const checker = data.some((asset) => asset.length !== 8)
     if (checker) {
       setError(
-        "An entry does not match the number of colums. Please check the template and try again."
+        "An entry does not match the number of columns. Please check the template and try again."
       )
       setIsLoading(false)
 
@@ -109,17 +109,19 @@ export default function DropZone_asset({
 
     dupAssetList.forEach((ast) => {
       const data_structure = {
-        name: (ast as (string | number | null)[])[0] as string,
-        serial_no: (ast as (string | number | null)[])[1] as string,
-        brand: (ast as (string | number | null)[])[2] as string,
-        type: (ast as (string | number | null)[])[3] as string,
-        caliber: (ast as (number | null | string)[])[4] as string,
-        models: (ast as (number | null | string)[])[5] as string,
-        action_type: (ast as (number | null | string)[])[6] as string,
-        description: (ast as (number | null | string)[])[7] as string,
+        name: ((ast as (string | null)[])[0] as string).toString(),
+        serial_no: ((ast as (string | null)[])[1] as string).toString(),
+        brand: ((ast as (string | null)[])[2] as string).toString(),
+        type: ((ast as (string | null)[])[3] as string).toString(),
+        caliber: ((ast as (null | string)[])[4] as string).toString(),
+        models: ((ast as (null | string)[])[5] as string).toString(),
+        action_type: ((ast as (null | string)[])[6] as string).toString(),
+        description: ((ast as (null | string)[])[7] as string).toString(),
       } as ExcelAssetCheckerType
       final_dupList.push(data_structure)
     })
+
+    console.log(final_dupList)
 
     setDuplicatedAssets(final_dupList)
   }

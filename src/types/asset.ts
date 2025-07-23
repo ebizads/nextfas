@@ -6,7 +6,6 @@ export type ExcelAssetCheckerType = Partial<{
   name: string
   asset_number: string
   serial_no: string
-  barcode: string
   brand: string
   type: string
   caliber: string

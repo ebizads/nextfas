@@ -249,7 +249,6 @@ export const downloadExcel_templateAssets = () => {
     [
       "name",
       "serial_no",
-      "barcode",
       "brand",
       "type",
       "caliber",
@@ -277,8 +276,13 @@ export const downloadExcel_templateAssets = () => {
   const a = document.createElement("a")
   a.href = url
   a.download = "Asset_Template.xlsx"
-  a.click()
-  URL.revokeObjectURL(url)
+  document.body.appendChild(a)
+
+  setTimeout(() => {
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, 0)
   // }
 
   return
@@ -309,8 +313,13 @@ export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
   const a = document.createElement("a")
   a.href = url
   a.download = "Asset_Sheet.xlsx"
-  a.click()
-  URL.revokeObjectURL(url)
+  document.body.appendChild(a)
+
+  setTimeout(() => {
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, 0)
   // }
 
   return

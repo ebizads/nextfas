@@ -92,9 +92,13 @@ InputFieldType) => {
                 e.preventDefault() // ❌ block the character
               }
             }}
-            onChange={(e) => {
-              onChange ? handleChange(e) : null
-            }}
+            {...(onChange
+              ? {
+                  onChange: (e) => {
+                    handleChange(e)
+                  },
+                }
+              : null)}
             value={value}
             className={
               className

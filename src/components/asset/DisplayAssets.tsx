@@ -42,7 +42,6 @@ const DisplayAssets = (props: {
   const [openPopover, setOpenPopover] = useState<boolean>(false)
   const [openAddPopover, setOpenAddPopover] = useState<boolean>(false)
 
-  const [firstLogin, setFirstLogin] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
 

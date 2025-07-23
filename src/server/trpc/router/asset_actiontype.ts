@@ -73,7 +73,7 @@ export const assetActionTypeRouter = t.router({
       const [assetActionTypes, count] = await ctx.prisma.$transaction([
         ctx.prisma.assetActionType.findMany({
           orderBy: {
-            id: "asc",
+            id: "desc",
           },
           where: {
             deleted: deletedFilter,
@@ -196,6 +196,20 @@ export const assetActionTypeRouter = t.router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const existing = await ctx.prisma.assetActionType.findFirst({
+        where: {
+          name: input.name,
+          deleted: false, // only block if not soft-deleted
+        },
+      })
+
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "An asset type with this name already exists",
+        })
+      }
+
       const assetActionType = await ctx.prisma.assetActionType.create({
         data: {
           name: input.name,

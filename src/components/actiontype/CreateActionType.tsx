@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { trpc } from "../../utils/trpc"
@@ -27,6 +27,7 @@ export const CreateActionType = (props: {
   isUpdating?: boolean
 }) => {
   const utils = trpc.useContext()
+  const [successChecker, setSuccessChecker] = useState(false)
 
   useEffect(() => {
     if (props.selectedActionType && props.selectedActionType.id !== 0) {
@@ -43,9 +44,17 @@ export const CreateActionType = (props: {
     onSuccess: () => {
       utils.assetActionType.findAll.invalidate()
       props.setIsSuccessVisible(true)
+      setSuccessChecker(true)
       reset()
     },
   })
+
+  useEffect(() => {
+    if (!props.isSuccessVisible && successChecker) {
+      props.setIsVisible(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.isSuccessVisible])
 
   const {
     register,
@@ -103,7 +112,9 @@ export const CreateActionType = (props: {
       >
         <div className="flex w-full flex-wrap gap-4 py-2.5">
           <div className="flex w-full flex-col">
-            <label className="sm:text-sm">Action Type Name*</label>
+            <label className="sm:text-sm">
+              Action Type Name<span className="text-red-600">*</span>
+            </label>
             <InputField
               register={props.selectedActionType ? registerUpdate : register}
               name="name"

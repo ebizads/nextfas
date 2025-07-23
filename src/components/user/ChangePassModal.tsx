@@ -31,6 +31,9 @@ const ChangePassModal = (props: {
   const [prompterString, setPrompterString] = useState<string | null>(null)
   const { data: session } = useSession()
   const { data: user, refetch } = trpc.user.findOne.useQuery(userId)
+  const [inputTypePassword, setInputTypePassword] = useState<string>("password")
+  const [inputTypeConfirmPassword, setInputTypeConfirmPassword] =
+    useState<string>("password")
 
   const clearAndClose = () => {
     setPassword("")
@@ -191,26 +194,66 @@ const ChangePassModal = (props: {
         >
           {/* <div className="flex w-full gap-7 py-2"> */}
           <div className="mb-4 flex w-full flex-col gap-4 py-2">
-            <label className="font-semibold">Password</label>
+            <div className="relative z-0 flex">
+              <div className="flex flex-1 flex-col gap-2">
+                <label className="font-semibold">Password</label>
 
-            <input
-              name="password"
-              type="password"
-              className="w-full rounded-md border-2 border-gray-400  p-1  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-              onChange={(event) => {
-                setValue("password", event.currentTarget.value)
-                setPassword(event.currentTarget.value)
-              }}
-            />
+                <input
+                  name="password"
+                  type={inputTypePassword}
+                  className="no-password-icon w-full rounded-md border-2 border-gray-400  p-1  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  onChange={(event) => {
+                    setValue("password", event.currentTarget.value)
+                    setPassword(event.currentTarget.value)
+                  }}
+                />
+                <div
+                  className="absolute bottom-2 right-2 cursor-pointer text-gray-400 peer-focus:text-tangerine-500"
+                  onClick={() => {
+                    setInputTypePassword((prev) =>
+                      prev === "text" ? "password" : "text"
+                    )
+                  }}
+                >
+                  <i
+                    className={
+                      inputTypePassword === "password"
+                        ? "fa-solid fa-eye-slash"
+                        : "fa-solid fa-eye"
+                    }
+                  />
+                </div>
+              </div>
+            </div>
             {password && <PasswordChecker password={watch().password} />}
 
-            <label className="font-semibold">Confirm Password</label>
-            <input
-              name="confirmpassword"
-              type="password"
-              className="w-full rounded-md border-2 border-gray-400 p-1  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
-              onChange={(event) => setConfirmPassword(event.target.value)}
-            />
+            <div className="relative z-0 flex">
+              <div className="flex flex-1 flex-col gap-2">
+                <label className="font-semibold">Confirm Password</label>
+                <input
+                  name="confirmpassword"
+                  type={inputTypeConfirmPassword}
+                  className="no-password-icon w-full rounded-md border-2 border-gray-400 p-1  outline-none ring-tangerine-400/40 focus:border-tangerine-400 focus:outline-none focus:ring-2"
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                />
+                <div
+                  className="absolute bottom-2 right-2 cursor-pointer text-gray-400 peer-focus:text-tangerine-500"
+                  onClick={() => {
+                    setInputTypeConfirmPassword((prev) =>
+                      prev === "text" ? "password" : "text"
+                    )
+                  }}
+                >
+                  <i
+                    className={
+                      inputTypeConfirmPassword === "password"
+                        ? "fa-solid fa-eye-slash"
+                        : "fa-solid fa-eye"
+                    }
+                  />
+                </div>
+              </div>
+            </div>
             {passIncorrect && (
               <div>
                 <p className="text-red-600">Passwords do not match.</p>
@@ -230,7 +273,7 @@ const ChangePassModal = (props: {
             </button>
             <button
               type="submit"
-              className="rounded-md bg-tangerine-300  px-6 py-2 font-medium text-dark-primary outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
+              className="text-dark-primary rounded-md  bg-tangerine-300 px-6 py-2 font-medium outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Saving..." : "Change"}

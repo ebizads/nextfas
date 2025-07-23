@@ -2,7 +2,7 @@ import { Checkbox } from "@mantine/core"
 import { signIn } from "next-auth/react"
 import Head from "next/head"
 import Image from "next/image"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { InputField } from "../../components/atoms/forms/InputField"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -63,6 +63,8 @@ function LoginForm() {
     handleSubmit,
     // watch,
     clearErrors,
+    getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<User>({
     resolver: zodResolver(userSchema), // Configuration the validation with the zod schema.
@@ -70,6 +72,10 @@ function LoginForm() {
       username: "",
       password: "",
     },
+  })
+
+  useEffect(() => {
+    console.log(getValues("password"))
   })
 
   // The onSubmit function is invoked by RHF only if the validation is OK.
@@ -84,7 +90,7 @@ function LoginForm() {
 
     setError(res?.error as string)
     if (res?.error) {
-      console.log("May error ", res?.error)
+      console.log("May error ", res?.error, user)
     } else {
       router.push(res?.url as string)
     }

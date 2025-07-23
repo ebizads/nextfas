@@ -107,7 +107,7 @@ export const assetTypeRouter = t.router({
       const [assetTypes, count] = await ctx.prisma.$transaction([
         ctx.prisma.assetType.findMany({
           orderBy: {
-            id: "asc",
+            id: "desc",
           },
           where: {
             deleted: deletedFilter, // Use the computed deleted filter

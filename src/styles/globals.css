@@ -18,3 +18,12 @@
     -moz-appearance: textfield !important;
   }
 }
+
+.no-password-icon::-ms-reveal,
+.no-password-icon::-ms-clear,
+.no-password-icon::-webkit-credentials-auto-fill-button {
+  display: none !important;
+}
+.no-password-icon::-webkit-textfield-decoration-container {
+  display: none !important;
+}

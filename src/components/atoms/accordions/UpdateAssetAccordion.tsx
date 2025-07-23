@@ -34,9 +34,19 @@ const UpdateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.update.useMutation({
     onSuccess() {
       console.log("successfully updated")
+      setTimeout(function () {
+        setIsLoading(false)
+        reset()
+        setTypeId(null)
+        setCompanyId(null)
+        setDepartmentId(null)
+        setSelectedAsset(null)
+      }, 3000)
       router.push("/assets")
     },
     onError(error) {
+      setIsLoading(false)
+
       console.error("error updating", error)
     },
   })
@@ -203,15 +213,6 @@ const UpdateAssetAccordion = () => {
       mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
 
       // ticketTable.mutate({ addedById});
-      setTimeout(function () {
-        setIsLoading(false)
-      }, 3000)
-
-      reset()
-      setTypeId(null)
-      setCompanyId(null)
-      setDepartmentId(null)
-      setSelectedAsset(null)
     }
   }
 

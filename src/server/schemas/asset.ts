@@ -20,11 +20,11 @@ export const AssetCreateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Asset Name is required",
       })
-    } else if (val.length < 6) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 6,
+        minimum: 3,
         inclusive: true,
         message: "Asset name is too short",
       })
@@ -50,7 +50,7 @@ export const AssetCreateInput = z.object({
   //   }
   // }),
   description: z.string().nullish(),
-  remarks: z.string().nullish(),
+  // remarks: z.string().nullish(),
   // brand: z.string().nullish(),
   brand: z.string().superRefine((val, ctx) => {
     if (!val || val.trim() === "") {
@@ -58,11 +58,11 @@ export const AssetCreateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Brand is required",
       })
-    } else if (val.length < 5) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 5,
+        minimum: 3,
         inclusive: true,
         message: "Brand is too short",
       })
@@ -103,11 +103,11 @@ export const AssetCreateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Model is required",
       })
-    } else if (val.length < 5) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 5,
+        minimum: 3,
         inclusive: true,
         message: "Model is too short",
       })
@@ -127,11 +127,11 @@ export const AssetEditInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Asset Name is required",
       })
-    } else if (val.length < 6) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 6,
+        minimum: 3,
         inclusive: true,
         message: "Asset name is too short",
       })
@@ -139,22 +139,22 @@ export const AssetEditInput = z.object({
   }),
   serial_no: z.string().optional().nullish(),
   // barcode: z.string().nullish().optional(),
-  barcode: z.string().superRefine((val, ctx) => {
-    if (!val || val.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "RFID Tag ID / Barcode is required",
-      })
-    } else if (val.length < 8) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 8,
-        inclusive: true,
-        message: "RFID Tag ID / Barcode is too short",
-      })
-    }
-  }),
+  // barcode: z.string().superRefine((val, ctx) => {
+  //   if (!val || val.trim() === "") {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.custom,
+  //       message: "RFID Tag ID / Barcode is required",
+  //     })
+  //   } else if (val.length < 8) {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.too_small,
+  //       type: "string",
+  //       minimum: 8,
+  //       inclusive: true,
+  //       message: "RFID Tag ID / Barcode is too short",
+  //     })
+  //   }
+  // }),
   description: z.string().optional().nullish(),
   // brand: z.string().nullish(),
   brand: z.string().superRefine((val, ctx) => {
@@ -163,11 +163,11 @@ export const AssetEditInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Brand is required",
       })
-    } else if (val.length < 5) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 5,
+        minimum: 3,
         inclusive: true,
         message: "Brand is too short",
       })
@@ -212,11 +212,11 @@ export const AssetEditInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Model is required",
       })
-    } else if (val.length < 5) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 5,
+        minimum: 3,
         inclusive: true,
         message: "Model is too short",
       })
@@ -238,11 +238,11 @@ export const AssetTransformInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Asset Name is required",
       })
-    } else if (val.length < 6) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 6,
+        minimum: 3,
         inclusive: true,
         message: "Asset name is too short",
       })
@@ -258,11 +258,11 @@ export const AssetTransformInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Brand is required",
       })
-    } else if (val.length < 5) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 5,
+        minimum: 3,
         inclusive: true,
         message: "Brand is too short",
       })
@@ -303,11 +303,11 @@ export const AssetTransformInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Model is required",
       })
-    } else if (val.length < 5) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 5,
+        minimum: 3,
         inclusive: true,
         message: "Model is too short",
       })
@@ -333,11 +333,11 @@ export const AssetUpdateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Asset Name is required",
       })
-    } else if (val.length < 6) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 6,
+        minimum: 3,
         inclusive: true,
         message: "Asset name is is too short",
       })
@@ -347,22 +347,22 @@ export const AssetUpdateInput = z.object({
   alt_number: z.string().nullish(),
   serial_no: z.string().nullish(),
   // barcode: z.string().min(3, "RFID Tag ID / Barcode is required"),
-  barcode: z.string().superRefine((val, ctx) => {
-    if (!val || val.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "RFID Tag ID / Barcode is required",
-      })
-    } else if (val.length < 8) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 8,
-        inclusive: true,
-        message: "RFID Tag ID / Barcode is too short",
-      })
-    }
-  }),
+  // barcode: z.string().superRefine((val, ctx) => {
+  //   if (!val || val.trim() === "") {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.custom,
+  //       message: "RFID Tag ID / Barcode is required",
+  //     })
+  //   } else if (val.length < 8) {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.too_small,
+  //       type: "string",
+  //       minimum: 8,
+  //       inclusive: true,
+  //       message: "RFID Tag ID / Barcode is too short",
+  //     })
+  //   }
+  // }),
   description: z.string().nullish(),
   remarks: z.string().nullish(),
   // brand: z.string().min(1, "Brand is required"),
@@ -372,11 +372,11 @@ export const AssetUpdateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Brand is required",
       })
-    } else if (val.length < 5) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 5,
+        minimum: 3,
         inclusive: true,
         message: "Brand is too short",
       })
@@ -418,11 +418,11 @@ export const AssetUpdateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Model is required",
       })
-    } else if (val.length < 5) {
+    } else if (val.length < 3) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         type: "string",
-        minimum: 5,
+        minimum: 3,
         inclusive: true,
         message: "Model is too short",
       })

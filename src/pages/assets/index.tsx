@@ -38,6 +38,10 @@ const Assets = () => {
     }
   }, [dataAssets, limit, router, search])
 
+  useEffect(() => {
+    setPage(1)
+  }, [statusFilter, actionTypeFilter, typeFilter])
+
   return (
     <DashboardLayout>
       {/* <pre>{JSON.stringify(assets, null, 2)}</pre> */}

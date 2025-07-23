@@ -268,7 +268,9 @@ export const downloadExcel_templateAssets = () => {
     type: "array",
   })
 
-  const blob = new Blob([wbout], {
+  const uint8Array = new Uint8Array(wbout)
+
+  const blob = new Blob([uint8Array], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   })
 
@@ -305,7 +307,8 @@ export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
     type: "array",
   })
 
-  const blob = new Blob([wbout], {
+  const uint8Array = new Uint8Array(wbout)
+  const blob = new Blob([uint8Array], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   })
 

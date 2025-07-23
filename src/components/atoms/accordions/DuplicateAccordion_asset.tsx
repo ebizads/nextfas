@@ -56,7 +56,6 @@ const DuplicateAccordion_asset = (props: {
         id: assetId ?? 0,
         name: props.incomingChanges[splice]?.name ?? "",
         serial_no: props.incomingChanges[splice]?.serial_no ?? "",
-        barcode: props.incomingChanges[splice]?.barcode ?? "",
         brand: props.incomingChanges[splice]?.brand ?? "",
         type: props.incomingChanges[splice]?.type ?? "",
         caliber: props.incomingChanges[splice]?.caliber ?? "",

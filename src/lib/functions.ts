@@ -7,7 +7,7 @@ import {
   HistoryLogType,
   Asset,
 } from "../types/generic"
-import XLSX from "xlsx/dist/xlsx.full.min.js"
+import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
 import { Address, Company } from "@prisma/client"
 import Router from "next/router"
@@ -258,36 +258,30 @@ export const downloadExcel_templateAssets = () => {
     ],
   ])
   const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  // XLSX.writeFile(workbook, "Asset_Template.xlsx")
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Assets")
 
-  const wbout = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
-  })
+  // Write workbook to binary array
+  const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" })
 
-  const uint8Array = new Uint8Array(wbout)
-
-  const blob = new Blob([uint8Array], {
+  // Convert to Blob using Uint8Array
+  const blob = new Blob([new Uint8Array(wbout)], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   })
 
+  // Create a download link
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = url
   a.download = "Asset_Template.xlsx"
   document.body.appendChild(a)
 
+  // Simulate click and cleanup
   setTimeout(() => {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
   }, 0)
   // }
-
-  return
 }
 
 export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
@@ -297,35 +291,30 @@ export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
     data !== null && data !== undefined ? data : []
   )
   const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  // XLSX.writeFile(workbook, "Asset_Sheet.xlsx")
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Assets")
 
-  const wbout = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
-  })
+  // Write workbook to binary array
+  const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" })
 
-  const uint8Array = new Uint8Array(wbout)
-  const blob = new Blob([uint8Array], {
+  // Convert to Blob using Uint8Array
+  const blob = new Blob([new Uint8Array(wbout)], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   })
 
+  // Create a download link
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = url
   a.download = "Asset_Sheet.xlsx"
   document.body.appendChild(a)
 
+  // Simulate click and cleanup
   setTimeout(() => {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
   }, 0)
   // }
-
-  return
 }
 
 export const straightLine = (

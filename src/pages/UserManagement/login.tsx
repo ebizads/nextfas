@@ -98,7 +98,7 @@ function LoginForm() {
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="w-[65%] space-y-8">
+      <div className="md:w-[65%]  space-y-8">
         <h3 className="text-xl font-bold leading-normal text-tangerine-500 md:text-[2rem]">
           Login
         </h3>
@@ -178,19 +178,19 @@ const Login = () => {
   return (
     <>
       <Head>
-        <title>FAS Server</title>
-        <meta name="description" content="Fixed Asset System server" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Activos Server</title>
+        <meta name="description" content="Activos Server" />
+        <link rel="icon" href="/Activos-Favicon.svg" />
       </Head>
       <main className="flex min-h-screen items-center justify-center border">
-        <div className="grid h-[495px] w-[70%] grid-cols-2 rounded-3xl shadow-md transition-width duration-150 xl:w-[55%]">
+        <div className="grid h-[495px] w-[80%] md:w-[70%] md:grid-cols-2 rounded-3xl shadow-md transition-width duration-150 xl:w-[55%]">
           <div className="relative h-full w-full">
             <Image
               src="/login.svg"
               alt="no image"
               objectFit="cover"
               layout="fill"
-              className="rounded-tl-3xl rounded-bl-3xl"
+              className="rounded-tl-3xl md:rounded-bl-3xl"
             />
           </div>
           <LoginForm />

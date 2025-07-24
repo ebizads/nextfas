@@ -23,7 +23,7 @@ const Home: NextPage = () => {
       <Head>
         <title>FAS Server</title>
         <meta name="description" content="Fixed Asset System server" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/Activos-Favicon.svg" />
       </Head>
       <main className="mx-auto flex min-h-screen flex-col items-center justify-center p-4">
         <h1 className="text-5xl font-extrabold leading-normal text-gray-700 md:text-[5rem]">

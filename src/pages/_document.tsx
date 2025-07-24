@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html className="dark scrollbar scrollbar-thumb-green-50 scrollbar-track-green-400 scroll-smooth">
       <Head>
+        <link rel="icon" type="image/svg+xml" href="/Activos-Favicon.svg" />
         <link
           rel="stylesheet"
           href="https://kit-pro.fontawesome.com/releases/v6.1.1/css/pro.css"

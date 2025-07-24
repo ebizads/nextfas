@@ -161,6 +161,11 @@ export const navigations = [
     icon: "fa-solid fa-clock-rotate-left",
     link: "/historylogs",
   },
+  {
+    name: "Scan",
+    icon: "fa-solid fa-barcode",
+    link: "/scan",
+  },
   // {
   //   name: "Employees",
   //   icon: "fa-users",

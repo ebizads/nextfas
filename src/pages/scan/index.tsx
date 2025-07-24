@@ -6,11 +6,12 @@ import { Select } from "@mantine/core"
 import { procedureTypes } from "@trpc/server";
 import { useRouter } from "next/router";
 import AssetModal from "../../components/scan/AssetModal";
+import { signOut } from "next-auth/react"
+import Image from "next/image";
 
 const BarcodeScanner = dynamic(() => import("react-qr-barcode-scanner"), {
     ssr: false,
 })
-
 
 const Scanner = () => {
     const router = useRouter();
@@ -55,15 +56,35 @@ const Scanner = () => {
     return (
         <>
             <nav className="fixed top-0 left-0 right-0 h-16 bg-tangerine-50 z-50 shadow-lg p-5">
-                <button
-                    className=""
-                    onClick={() => {
-                        if (scanMode == "" || scanMode == null) { router.back() }
-                        else { setScanMode("") }
-                    }}
-                >
-                    <i className="fa-solid fa-arrow-left"></i> Back
-                </button>
+                <div className="w-full grid grid-cols-3">
+                    <button
+                        className="flex justify-start items-center gap-1 hover:text-tangerine-500"
+                        onClick={() => {
+                            if (scanMode == "" || scanMode == null) { router.back() }
+                            else { setScanMode("") }
+                        }}
+                    >
+                        <i className="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    <Image
+                        src={"/Activos-Secondary-Logo.svg"}
+                        alt="This is a ACTIVOS Logo"
+                        width={100}
+                        height={1}
+                        className=""
+                    />
+                    <div className="flex items-center justify-end gap-2"
+                    >
+                        <button
+                            onClick={() => {
+                                signOut({ callbackUrl: `${window.location.origin}` })
+                            }}
+                        >
+                            <i className="fa-solid fa-right-from-bracket hover:text-tangerine-500 text-lg" />
+                            {/* <span>Log Out</span> */}
+                        </button>
+                    </div>
+                </div>
             </nav>
             <main className="w-full h-full flex flex-col justify-center items-center p-5 mt-[60px]" >
                 <div className="flex flex-col gap-5 w-full h-full sm:w-auto">

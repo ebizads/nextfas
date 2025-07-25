@@ -332,7 +332,7 @@ export const convertDaysToMonths = (days: number) => {
 
 export const clearAndGoBack = () => {
   document.forms[0]?.reset()
-  router.back()
+  router.push("/assets")
 }
 
 // export const passArrayCheck = async (array: Array<string>, password: string) => {

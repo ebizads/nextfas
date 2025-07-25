@@ -77,7 +77,22 @@ export default function DropZone_asset({
     }
     //filters duplicated ID
 
-    const dupAssetList = data
+    const dupAssetList = data.filter(
+      (row) => !row.every((item) => item === null)
+    )
+
+    const invalidRows = dupAssetList.filter((row, idx) => {
+      return row.some((value, i) => {
+        if (i === 1 || i === 7) return false // skip optional fields
+        return value == null || value === "" // treat null or empty string as missing
+      })
+    })
+
+    if (invalidRows.length > 0) {
+      setError(
+        "An entry has some missing required fields. Please check the file and try again."
+      )
+    }
 
     function excelSerialDateToJSDate(serialDate: number) {
       const millisecondsPerDay = 24 * 60 * 60 * 1000
@@ -109,19 +124,17 @@ export default function DropZone_asset({
 
     dupAssetList.forEach((ast) => {
       const data_structure = {
-        name: ((ast as (string | null)[])[0] as string).toString(),
-        serial_no: ((ast as (string | null)[])[1] as string).toString(),
-        brand: ((ast as (string | null)[])[2] as string).toString(),
-        type: ((ast as (string | null)[])[3] as string).toString(),
-        caliber: ((ast as (null | string)[])[4] as string).toString(),
-        models: ((ast as (null | string)[])[5] as string).toString(),
-        action_type: ((ast as (null | string)[])[6] as string).toString(),
-        description: ((ast as (null | string)[])[7] as string).toString(),
+        name: ((ast as (string | null)[])[0] as string)?.toString(),
+        serial_no: ((ast as (string | null)[])[1] as string)?.toString(),
+        brand: ((ast as (string | null)[])[2] as string)?.toString(),
+        type: ((ast as (string | null)[])[3] as string)?.toString(),
+        caliber: ((ast as (null | string)[])[4] as string)?.toString(),
+        models: ((ast as (null | string)[])[5] as string)?.toString(),
+        action_type: ((ast as (null | string)[])[6] as string)?.toString(),
+        description: ((ast as (null | string)[])[7] as string)?.toString(),
       } as ExcelAssetCheckerType
       final_dupList.push(data_structure)
     })
-
-    console.log(final_dupList)
 
     setDuplicatedAssets(final_dupList)
   }

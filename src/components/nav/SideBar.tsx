@@ -33,8 +33,8 @@ const SideBar = () => {
         }}
       >
         <Image
-          src={"/FAS-Logo.svg"}
-          alt="This is a FAS Logo"
+          src={"/Activos-Primary-Logo.svg"}
+          alt="This is a ACTIVOS Logo"
           width={450}
           height={200}
           className=""

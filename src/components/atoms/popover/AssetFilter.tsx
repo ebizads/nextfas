@@ -75,7 +75,7 @@ const AssetFilter = (props: {
           </Checkbox.Group>{" "}
           <Checkbox.Group
             orientation="vertical"
-            description="Type"
+            description="Action Type"
             value={props.actionTypeFilter}
             onChange={props.setActionTypeFilter}
           >

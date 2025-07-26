@@ -550,6 +550,8 @@ const AssetTable = (props: {
   columns: ColumnType[]
   showCheckboxes?: boolean
   refetch: () => Promise<{ data?: any }>
+  newAssetId: number | null
+  setNewAssetId: React.Dispatch<React.SetStateAction<number | null>>
 }) => {
   const showCheckboxes = props.showCheckboxes ?? true
   //minimize screen toggle
@@ -621,52 +623,73 @@ const AssetTable = (props: {
           </tr>
         </thead>
         <tbody>
-          {props.rows
+          {/* {props.rows
             .sort((a, b) => (b?.id ?? 0) - (a?.id ?? 0))
             .map((row, idx) => (
+              console.log('asset.id:', asset.id, 'newAssetId:', newAssetId);
+
               <tr
                 key={row?.id ?? idx}
-                className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-              >
-                {showCheckboxes && (
-                  <td className="w-4 p-2">
-                    <div className="flex items-center justify-center">
-                      <Checkbox
-                        value={row?.id ?? idx}
-                        color={"orange"}
-                        onChange={(e) => toggleCheckbox(Number(e.target.value))}
-                        checked={props.checkboxes.includes(row?.id ?? idx)}
-                        classNames={{
-                          input:
-                            "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none outline-none",
-                        }}
-                      />
-                    </div>
-                  </td>
-                )}
-
-                {columns
-                  .filter((col) => props.filterBy.includes(col.value))
-                  .map((col) => (
-                    <td
-                      key={col.value}
-                      className={`max-w-[10rem] cursor-pointer truncate py-2 px-6 ${
-                        col.value == "status" && "capitalize"
-                      }`}
-                      onClick={() => {
-                        setOpenModalDesc(true)
-                        setSelectedAsset(null)
-                        setSelectedAsset(row)
-                      }}
-                    >
-                      {col.value == "typeId"
-                        ? row?.type?.name
-                        : col.value == "actionTypeId"
-                        ? row?.actionType?.name
-                        : getProperty(col.value, row)}
+                className={`${
+                  row?.id === props.newAssetId
+                    ? "bg-red-100 transition-colors"
+                    : ""
+                } border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600`}
+              > */}
+          {props.rows
+            .sort((a, b) => (b?.id ?? 0) - (a?.id ?? 0))
+            .map((row, idx) => {
+              console.log("asset.id:", row?.id, "newAssetId:", props.newAssetId)
+              return (
+                <tr
+                  key={row?.id ?? idx}
+                  className={`${
+                    row?.id === props.newAssetId
+                      ? "bg-red-100 transition-colors"
+                      : ""
+                  } border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600`}
+                >
+                  {showCheckboxes && (
+                    <td className="w-4 p-2">
+                      <div className="flex items-center justify-center">
+                        <Checkbox
+                          value={row?.id ?? idx}
+                          color={"orange"}
+                          onChange={(e) =>
+                            toggleCheckbox(Number(e.target.value))
+                          }
+                          checked={props.checkboxes.includes(row?.id ?? idx)}
+                          classNames={{
+                            input:
+                              "border-2 border-neutral-400 checked:bg-tangerine-500 focus:outline-none outline-none",
+                          }}
+                        />
+                      </div>
                     </td>
-                  ))}
-                {/* <td className="max-w-[10rem] space-x-2 text-center">
+                  )}
+
+                  {columns
+                    .filter((col) => props.filterBy.includes(col.value))
+                    .map((col) => (
+                      <td
+                        key={col.value}
+                        className={`max-w-[10rem] cursor-pointer truncate py-2 px-6 ${
+                          col.value == "status" && "capitalize"
+                        }`}
+                        onClick={() => {
+                          setOpenModalDesc(true)
+                          setSelectedAsset(null)
+                          setSelectedAsset(row)
+                        }}
+                      >
+                        {col.value == "typeId"
+                          ? row?.type?.name
+                          : col.value == "actionTypeId"
+                          ? row?.actionType?.name
+                          : getProperty(col.value, row)}
+                      </td>
+                    ))}
+                  {/* <td className="max-w-[10rem] space-x-2 text-center">
                 <Link href={"/assets/update"} onClick={() => {
                   setSelectedAsset(row)
                 }}>
@@ -681,8 +704,9 @@ const AssetTable = (props: {
                   <i className="fa-light fa-trash-can text-red-500" />
                 </button>
               </td> */}
-              </tr>
-            ))}
+                </tr>
+              )
+            })}
         </tbody>
       </table>
 

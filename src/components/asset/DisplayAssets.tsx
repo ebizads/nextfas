@@ -34,6 +34,8 @@ const DisplayAssets = (props: {
   setTypeFilter: React.Dispatch<React.SetStateAction<string[]>>
   setActionTypeFilter: React.Dispatch<React.SetStateAction<string[]>>
   setStatusFilter: React.Dispatch<React.SetStateAction<string[]>>
+  newAssetId: number | null
+  setNewAssetId: React.Dispatch<React.SetStateAction<number | null>>
 }) => {
   const { setSearch } = useSearchStore()
   const [checkboxes, setCheckboxes] = useState<number[]>([])
@@ -44,6 +46,8 @@ const DisplayAssets = (props: {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [addBulkRecord, setAddBulkRecord] = useState<boolean>(false)
+
+  // const [newAssetId, setNewAssetId] = useState<number | null>(null)
 
   const [filterBy, setFilterBy] = useState<string[]>(
     columns.map((i) => i.value)
@@ -158,6 +162,8 @@ const DisplayAssets = (props: {
         filterBy={filterBy}
         columns={columns.filter((col) => filterBy.includes(col.value))}
         refetch={props.refetch}
+        newAssetId={props.newAssetId}
+        setNewAssetId={props.setNewAssetId}
       />
       <section className="mt-8 flex justify-between px-4">
         <div className="flex items-center gap-2">

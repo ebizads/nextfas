@@ -20,14 +20,6 @@ export const AssetCreateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Asset Name is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Asset name is too short",
-      })
     }
   }),
   alt_number: z.string().nullish(),
@@ -58,14 +50,6 @@ export const AssetCreateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Brand is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Brand is too short",
-      })
     }
   }),
   // typeId: z.number(),
@@ -86,14 +70,6 @@ export const AssetCreateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Caliber is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Caliber is too short",
-      })
     }
   }),
   // models: z.string().min(1, "Model is required"),
@@ -102,14 +78,6 @@ export const AssetCreateInput = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Model is required",
-      })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Model is too short",
       })
     }
   }),
@@ -126,14 +94,6 @@ export const AssetEditInput = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Asset Name is required",
-      })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Asset name is too short",
       })
     }
   }),
@@ -163,14 +123,6 @@ export const AssetEditInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Brand is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Brand is too short",
-      })
     }
   }), // type: z.string(),
   // action_type: z.string().nullish(),
@@ -195,14 +147,6 @@ export const AssetEditInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Caliber is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Caliber is too short",
-      })
     }
   }),
   // models: z.string().min(1, "Model is required"),
@@ -211,14 +155,6 @@ export const AssetEditInput = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Model is required",
-      })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Model is too short",
       })
     }
   }),
@@ -238,14 +174,6 @@ export const AssetTransformInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Asset Name is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Asset name is too short",
-      })
     }
   }),
   serial_no: z.string().nullish(),
@@ -257,14 +185,6 @@ export const AssetTransformInput = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Brand is required",
-      })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Brand is too short",
       })
     }
   }),
@@ -286,14 +206,6 @@ export const AssetTransformInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Caliber is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Caliber is too short",
-      })
     }
   }),
   // models: z.string(),
@@ -302,14 +214,6 @@ export const AssetTransformInput = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Model is required",
-      })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Model is too short",
       })
     }
   }),
@@ -332,14 +236,6 @@ export const AssetUpdateInput = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Asset Name is required",
-      })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Asset name is is too short",
       })
     }
   }),
@@ -372,14 +268,6 @@ export const AssetUpdateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Brand is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Brand is too short",
-      })
     }
   }),
   // typeId: z.number(),
@@ -401,14 +289,6 @@ export const AssetUpdateInput = z.object({
         code: z.ZodIssueCode.custom,
         message: "Caliber is required",
       })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Caliber is too short",
-      })
     }
   }),
   // models: z.string().min(1, "Model is required"),
@@ -417,14 +297,6 @@ export const AssetUpdateInput = z.object({
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Model is required",
-      })
-    } else if (val.length < 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        type: "string",
-        minimum: 3,
-        inclusive: true,
-        message: "Model is too short",
       })
     }
   }),

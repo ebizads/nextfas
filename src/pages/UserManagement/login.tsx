@@ -13,13 +13,14 @@ import AlertInput from "../../components/atoms/forms/AlertInput"
 import { router } from "trpc"
 import { userRouter } from "../../server/trpc/router/user"
 import { useRouter } from "next/router"
+import Link from "next/link"
 // input validations
 // Describe the correctness of data's form.
 const userSchema = z.object({
   username: z.string().min(1, { message: "The username is required" }).trim(),
   password: z
     .string()
-    .min(1, { message: "The password is invalid" })
+    .min(1, { message: "The password is required" })
     .max(20, { message: "The password is invalid" }),
   firstLogin: z.boolean().nullish(),
 })
@@ -102,9 +103,9 @@ function LoginForm() {
         <h3 className="text-xl font-bold leading-normal text-tangerine-500 md:text-[2rem]">
           Login
         </h3>
-        {Boolean(Object.keys(errors)?.length) && (
+        {/* {Boolean(Object.keys(errors)?.length) && (
           <Alert clearErrors={clearErrors}>There are errors in the form.</Alert>
-        )}
+        )} */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col space-y-4"
@@ -116,6 +117,7 @@ function LoginForm() {
               name="username"
               className="border-b"
               withIcon="fa-solid fa-user"
+              placeholder=""
             />
             <AlertInput>{errors?.username?.message}</AlertInput>
           </div>
@@ -128,6 +130,7 @@ function LoginForm() {
               className="border-b"
               withIcon="fa-solid fa-eye"
               isPassword
+              placeholder=""
             />
             <AlertInput>{errors?.password?.message}</AlertInput>
           </div>
@@ -149,12 +152,11 @@ function LoginForm() {
           </button>
         </form>
         <div className="w-full text-end">
-          <a
-            className="text-xs italic text-light-secondary hover:underline"
-            href="#"
-          >
-            Forgot Password?
-          </a>
+          <Link href="/UserManagement/forgot">
+            <p className="cursor-pointer text-xs italic text-light-secondary hover:underline">
+              Forgot Password?
+            </p>
+          </Link>
         </div>
         <div className="text-xs italic text-light-secondary">
           ver.0.0.1-test

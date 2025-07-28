@@ -481,25 +481,15 @@ export const AssetDeleteModal = (props: {
     >
       <div className="m-4 flex flex-col ">
         <div className="flex flex-col items-center gap-8 text-center">
-          <div>
+          <div className="flex">
             This action will permanently delete&nbsp;
-            <button
-              className="border-b border-tangerine-600 text-tangerine-600 hover:bg-tangerine-100"
-              onClick={() => {
-                setShowList(!showList)
-              }}
-            >
+            <p className=" border-tangerine-600 text-tangerine-600  ">
               {props.checkboxes.length}
-              {props.checkboxes.length > 1 ? "records" : "record"}
-              <i
-                className={`fa-solid ${
-                  showList ? " fa-caret-up" : " fa-caret-down"
-                }`}
-              />
-            </button>
+              {props.checkboxes.length > 1 ? " records" : " record"}
+            </p>
             . Continue?
           </div>
-          {showList && props.assets && (
+          {/* {showList && props.assets && (
             <ul className="min-h-10 flex max-h-20 w-fit flex-col overflow-y-auto px-4">
               {props.assets
                 .filter((asset) => props.checkboxes.includes(asset?.id ?? 0))
@@ -513,7 +503,7 @@ export const AssetDeleteModal = (props: {
                   </li>
                 ))}
             </ul>
-          )}
+          )} */}
           <p className="text-neutral-500">
             <i className="fa-regular fa-circle-exclamation" /> This action is
             irrevokable, please carefully review the action.

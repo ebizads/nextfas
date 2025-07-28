@@ -1,24 +1,36 @@
-// @ts-check
-import { env } from "./src/env/server.mjs";
+import withTM from "next-transpile-modules"
+import TerserPlugin from "terser-webpack-plugin"
 
-/**
- * Don't be scared of the generics here.
- * All they do is to give us autocompletion when using this.
- *
- * @template {import('next').NextConfig} T
- * @param {T} config - A generic parameter that flows through to the return type
- * @constraint {{import('next').NextConfig}}
- */
-function defineNextConfig(config) {
-  return config;
-}
-
-export default defineNextConfig({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // Next.js i18n docs: https://nextjs.org/docs/advanced-features/i18n-routing
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
   },
-});
+  webpack(config, { isServer }) {
+    if (!isServer && config.optimization?.minimizer) {
+      config.optimization.minimizer = config.optimization.minimizer.map(
+        (plugin) => {
+          // Safely recreate the plugin to avoid accessing private options
+          if (plugin.constructor.name === "TerserPlugin") {
+            return new TerserPlugin({
+              parallel: true,
+              terserOptions: {
+                format: {
+                  comments: false,
+                },
+              },
+              exclude: /node_modules\/xlsx/,
+            })
+          }
+          return plugin
+        }
+      )
+    }
+    return config
+  },
+}
+
+export default withTM(["xlsx"])(nextConfig)

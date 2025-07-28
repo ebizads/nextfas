@@ -81,6 +81,7 @@ model User {
   Userteam       Team?          @relation("Usermembers", fields: [teamId], references: [id])
   ticketTable    ticketTable[]
   validateTable  validateTable?
+  forgotToken    ForgotPassToken?
 }
 
 model UserArchive {
@@ -543,3 +544,14 @@ model HistoryLogs {
   deleted     Boolean  @default(false)
   asset       Asset    @relation(fields: [gunNumber], references: [number])
 }
+
+model ForgotPassToken {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  dateValid DateTime
+  userId    Int      @unique
+  active    Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+

@@ -29,8 +29,7 @@ const Assets = () => {
   })
   const [assets, setAssets] = useState<Asset[]>([])
   const [accessiblePage, setAccessiblePage] = useState<number>(0)
-  const [newAssetId, setNewAssetId] = useState<number | null>(null)
-
+ 
   useEffect(() => {
     //get and parse all data
     if (dataAssets) {
@@ -63,9 +62,7 @@ const Assets = () => {
           setTypeFilter={setTypeFilter}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
-          newAssetId={newAssetId}
-          setNewAssetId={setNewAssetId}
-        />
+          />
       </div>
     </DashboardLayout>
   )

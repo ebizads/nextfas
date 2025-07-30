@@ -1,6 +1,11 @@
-import path from 'path'
+import path from "path"
 
-export function setForgotEmailData(name: string, date: string | number | Date, code: string, baseUrl: string) {
+export function setForgotEmailData(
+  name: string,
+  date: string | number | Date,
+  code: string,
+  baseUrl: string
+) {
   return {
     subject: "Forgot Password Request",
     html: `
@@ -10,7 +15,9 @@ export function setForgotEmailData(name: string, date: string | number | Date, c
         <p>You have requested a new password for the FAS account associated with your email.</p>
         <p>No changes have been made to your account yet.</p>
         <br>
-        <p>You can reset your password by clicking the link below that will expire on ${new Date(date).toLocaleString("en-US", {
+        <p>You can reset your password by clicking the link below that will expire on ${new Date(
+          date
+        ).toLocaleString("en-US", {
           dateStyle: "medium",
           timeZone: "Asia/Shanghai",
           timeStyle: "medium",
@@ -21,20 +28,20 @@ export function setForgotEmailData(name: string, date: string | number | Date, c
         <br>
         <p>Thank you.</p>
         <br>
-        <img src="cid:fasLogo" alt="FAS Logo" style="width:200px;height:auto;"/>
+        <img src="cid:Activos-Secondary-Logo" alt="FAS Logo" style="width:200px;height:auto;"/>
         <br>
         <div>*** This is a system generated message. <strong>DO NOT REPLY TO THIS EMAIL</strong> ***</div>
       </div>
     `,
     attachments: [
       {
-        filename: "FASlogo.svg",
-        path: path.join(process.cwd(), 'public/FASlogo.svg'),
-        cid: "fasLogo"
-      }
+        filename: "Activos-Secondary-Logo.svg",
+        path: path.join(process.cwd(), "public/Activos-Secondary-Logo.svg"),
+        cid: "Activos-Secondary-Logo",
+      },
     ],
     headers: {
       "Message-ID": `<${Date.now()}@fas.local>`,
-    }
+    },
   }
 }

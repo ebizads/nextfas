@@ -7,8 +7,9 @@ import {
   CreateUserInput,
   EditUserInput,
 } from "../../schemas/user"
-import { authedProcedure, t } from "../trpc"
+import { authedProcedure, publicProcedure, t } from "../trpc"
 import bcrypt from "bcrypt"
+import { v7 as uuidv7 } from "uuid"
 
 export const userRouter = t.router({
   findOne: authedProcedure.input(z.number()).query(async ({ input, ctx }) => {
@@ -393,5 +394,125 @@ export const userRouter = t.router({
           ...rest,
         },
       })
+    }),
+
+  generateForgotToken: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ input, ctx }) => {
+      const email = input.email
+      const code = uuidv7()
+      const dateValid = new Date()
+      dateValid.setMinutes(dateValid.getMinutes() + 15)
+
+      try {
+        const user = await ctx.prisma.user.findFirst({
+          where: {
+            email: email,
+            NOT: {
+              deleted: true,
+            },
+          },
+          include: {
+            forgotToken: true,
+          },
+        })
+
+        if (!user) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Email does not exist.",
+          })
+        }
+
+        let tokenData
+        if (user.forgotToken) {
+          tokenData = await ctx.prisma.forgotPassToken.update({
+            where: { id: user.forgotToken.id },
+            data: {
+              ...user.forgotToken,
+              code,
+              dateValid,
+              active: true,
+            },
+          })
+        } else {
+          tokenData = await ctx.prisma.forgotPassToken.create({
+            data: {
+              code,
+              dateValid,
+              userId: user.id,
+              active: true,
+            },
+          })
+        }
+
+        return {
+          date: tokenData.dateValid,
+          email: user.email,
+          token: tokenData.code,
+          name: user.name,
+        }
+      } catch (e: any) {
+        console.log(e.toString(), "catch error")
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: e,
+        })
+      }
+    }),
+
+  verifyForgotToken: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const token = input
+      const dateValid = new Date()
+
+      try {
+        const tokenData = await ctx.prisma.forgotPassToken.findUnique({
+          where: {
+            code: token,
+          },
+        })
+
+        if (tokenData) {
+          if (tokenData.dateValid >= dateValid && tokenData.active) {
+            return true
+          } else throw new Error("Expired Token")
+        } else throw new Error("Invalid Token")
+      } catch (e) {}
+    }),
+  resetForgotPassword: publicProcedure
+    .input(
+      z.object({
+        code: z.string(),
+        newPassword: z.string().min(6),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const token = await ctx.prisma.forgotPassToken.findUnique({
+        where: { code: input.code },
+      })
+
+      if (!token || !token.active || new Date(token.dateValid) < new Date()) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid or expired code.",
+        })
+      }
+
+      await ctx.prisma.user.update({
+        where: { id: token.userId },
+        data: {
+          password: await bcrypt.hash(input.newPassword, 10),
+        },
+      })
+
+      // deactivate token
+      await ctx.prisma.forgotPassToken.update({
+        where: { id: token.id },
+        data: { active: false },
+      })
+
+      return { success: true }
     }),
 })

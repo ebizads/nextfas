@@ -7,7 +7,6 @@ import {
   HistoryLogType,
   Asset,
 } from "../types/generic"
-import * as XLSX from "xlsx"
 import { ExcelExportType } from "../types/employee"
 import { Address, Company } from "@prisma/client"
 import Router from "next/router"
@@ -179,150 +178,105 @@ export const formatBytes = (bytes: number) => {
 }
 
 export const downloadExcel = (data: ExcelExportType[]) => {
-  // if (!data) {  // csv null fall back
-  // const worksheet = XLSX.utils.json_to_sheet(data || [])
-  const worksheet = XLSX.utils.json_to_sheet(
-    data !== null && data !== undefined ? data : []
-  )
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  // XLSX.writeFile(workbook, "Employee_Sheet.xlsx")
-
-  const wbout = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
-  })
-
-  const blob = new Blob([wbout], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  })
-
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = "Employee_Sheet.xlsx"
-  a.click()
-  URL.revokeObjectURL(url)
-  // }
-
-  return
-}
-
-export const downloadExcel_template = (data: ExcelExportType[]) => {
-  // if (!data) {  // csv null fall back
-  // const worksheet = XLSX.utils.json_to_sheet(data || [])
-  const worksheet = XLSX.utils.json_to_sheet(
-    data !== null && data !== undefined ? data : []
-  )
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  // XLSX.writeFile(workbook, "Employee_Template.xlsx")
-
-  const wbout = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
-  })
-
-  const blob = new Blob([wbout], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  })
-
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = "Employee_Template.xlsx"
-  a.click()
-  URL.revokeObjectURL(url)
-  // }
-
-  return
-}
-export const downloadExcel_templateAssets = () => {
+  // // if (!data) {  // csv null fall back
+  // // const worksheet = XLSX.utils.json_to_sheet(data || [])
   // const worksheet = XLSX.utils.json_to_sheet(
   //   data !== null && data !== undefined ? data : []
   // )
-  const worksheet = XLSX.utils.aoa_to_sheet([
-    [
-      "name",
-      "serial_no",
-      "brand",
-      "type",
-      "caliber",
-      "models",
-      "action_type",
-      "description",
-    ],
-  ])
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  // XLSX.writeFile(workbook, "Asset_Template.xlsx")
+  // const workbook = XLSX.utils.book_new()
+  // XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+  // //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  // //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  // // XLSX.writeFile(workbook, "Employee_Sheet.xlsx")
+  // const wbout = XLSX.write(workbook, {
+  //   bookType: "xlsx",
+  //   type: "array",
+  // })
+  // const blob = new Blob([wbout], {
+  //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  // })
+  // const url = URL.createObjectURL(blob)
+  // const a = document.createElement("a")
+  // a.href = url
+  // a.download = "Employee_Sheet.xlsx"
+  // a.click()
+  // URL.revokeObjectURL(url)
+  // // }
+  // return
+}
 
-  const wbout = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
-  })
+export const downloadExcel_template = async (data: ExcelExportType[]) => {
+  // // if (!data) {  // csv null fall back
+  // // const worksheet = XLSX.utils.json_to_sheet(data || [])
+  // const worksheet = XLSX.utils.json_to_sheet(
+  //   data !== null && data !== undefined ? data : []
+  // )
+  // const workbook = XLSX.utils.book_new()
+  // XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+  // //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  // //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+  // // XLSX.writeFile(workbook, "Employee_Template.xlsx")
+  // const wbout = XLSX.write(workbook, {
+  //   bookType: "xlsx",
+  //   type: "array",
+  // })
+  // const blob = new Blob([wbout], {
+  //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  // })
+  // const url = URL.createObjectURL(blob)
+  // const a = document.createElement("a")
+  // a.href = url
+  // a.download = "Employee_Template.xlsx"
+  // a.click()
+  // URL.revokeObjectURL(url)
+  // // }
+  // return
+}
 
-  const blob = new Blob([wbout], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  })
+export const downloadExcel_templateAssets = async () => {
+  const response = await fetch("/api/download_template_asset")
 
-  const url = URL.createObjectURL(blob)
+  if (!response.ok) {
+    console.error("Failed to fetch Excel file")
+    return
+  }
+
+  const blob = await response.blob()
+  const url = window.URL.createObjectURL(blob)
+
   const a = document.createElement("a")
   a.href = url
   a.download = "Asset_Template.xlsx"
   document.body.appendChild(a)
-
-  setTimeout(() => {
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }, 0)
-  // }
-
-  return
+  a.click()
+  document.body.removeChild(a)
+  window.URL.revokeObjectURL(url)
 }
 
-export const downloadExcel_assets = (data: ExcelExportAssetType[]) => {
-  // if (!data) {  // csv null fall back
-  // const worksheet = XLSX.utils.json_to_sheet(data || [])
-  const worksheet = XLSX.utils.json_to_sheet(
-    data !== null && data !== undefined ? data : []
-  )
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-  //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-  // XLSX.writeFile(workbook, "Asset_Sheet.xlsx")
-
-  const wbout = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
+export const downloadExcel_assets = async (data: ExcelExportAssetType[]) => {
+  const response = await fetch("/api/download_asset", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ data }), // ✅ Proper JSON string
+    method: "POST",
   })
 
-  const blob = new Blob([wbout], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  })
+  if (!response.ok) {
+    console.error("Failed to fetch Excel file")
+    return
+  }
 
-  const url = URL.createObjectURL(blob)
+  const blob = await response.blob()
+  const url = window.URL.createObjectURL(blob)
+
   const a = document.createElement("a")
   a.href = url
-  a.download = "Asset_Sheet.xlsx"
+  a.download = "Asset_Template.xlsx"
   document.body.appendChild(a)
-
-  setTimeout(() => {
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }, 0)
-  // }
-
-  return
+  a.click()
+  document.body.removeChild(a)
+  window.URL.revokeObjectURL(url)
 }
 
 export const straightLine = (
@@ -378,7 +332,7 @@ export const convertDaysToMonths = (days: number) => {
 
 export const clearAndGoBack = () => {
   document.forms[0]?.reset()
-  router.back()
+  router.push("/assets")
 }
 
 // export const passArrayCheck = async (array: Array<string>, password: string) => {

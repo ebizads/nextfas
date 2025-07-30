@@ -100,9 +100,7 @@ const DisplayAssets = (props: {
 
             <button
               title="Download Template"
-              onClick={() => {
-                downloadExcel_templateAssets()
-              }}
+              onClick={downloadExcel_templateAssets}
               className="flex gap-2 rounded-md border-2 border-tangerine-500 bg-tangerine-500 py-2 px-4 text-xs text-neutral-50 outline-none hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
             >
               <i className="fa-solid fa-file-lines text-xs" />

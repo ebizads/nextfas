@@ -122,21 +122,32 @@ const DisplayActionTypes = (props: {
                   columns={columns}
                 />
               </div>
-              {checkboxes.length > 0 && (
-                <button
-                  onClick={() => setShowConfirm(true)}
-                  className={`flex gap-2 rounded-md p-2 text-xs font-medium text-red-500 underline underline-offset-4 outline-none focus:outline-none ${
-                    isDeleting ? "cursor-not-allowed opacity-50" : ""
-                  }`}
-                  disabled={isDeleting}
-                >
-                  {isDeleting
+              {/* {checkboxes.length > 0 && ( */}
+              <button
+                onClick={() => setShowConfirm(true)}
+                className={`flex items-center gap-2 rounded-md border-2 py-2 px-4 text-xs font-medium text-white outline-none ${
+                  checkboxes.length <= 0
+                    ? "cursor-not-allowed border-gray-300 bg-gray-300"
+                    : "border-tangerine-500 bg-tangerine-500 hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
+                }`}
+                disabled={checkboxes.length <= 0}
+              >
+                {/* className={`flex items-center gap-2 rounded-md border-2 py-2 px-4 text-xs font-medium text-white outline-none ${
+                  checkboxes.length <= 0
+                    ? "cursor-not-allowed border-gray-300 bg-gray-300"
+                    : "border-tangerine-500 bg-tangerine-500 hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
+                }`}
+                disabled={checkboxes.length <= 0}
+              > */}
+                <i className="fa-solid fa-trash h-full text-xs text-white" />
+
+                {/* {isDeleting
                     ? "Deleting..."
                     : checkboxes.includes(-1)
                     ? `Delete all record/s (${props.actionTypes.length}) ?`
-                    : `Delete selected record/s (${checkboxes.length})`}
-                </button>
-              )}
+                    : `Delete selected record/s (${checkboxes.length})`} */}
+              </button>
+              {/* )} */}
             </div>
             {/* Add your download template and download action types buttons here if needed */}
             <AddActionTypePopOver

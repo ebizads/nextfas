@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { trpc } from "../../utils/trpc"
+import { InputField } from "../../components/atoms/forms/InputField"
 
 const schema = z
   .object({
@@ -83,12 +84,17 @@ export default function ChangePassword() {
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium">New Password</label>
-                    <input
+                    <InputField
+                      register={register}
+                      label="New Password"
+                      name="password"
                       type="password"
-                      {...register("password")}
-                      className="w-full rounded border border-gray-300 p-2 focus:border-tangerine-500 focus:outline-none"
+                      className="border-b"
+                      withIcon="fa-solid fa-eye"
+                      isPassword
+                      placeholder=""
                     />
+
                     {errors.password && (
                       <span className="text-xs text-red-500">
                         {errors.password.message}
@@ -97,14 +103,17 @@ export default function ChangePassword() {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium">
-                      Confirm Password
-                    </label>
-                    <input
+                    <InputField
+                      register={register}
+                      label="Confirm Password"
+                      name="confirm"
                       type="password"
-                      {...register("confirm")}
-                      className="w-full rounded border border-gray-300 p-2 focus:border-tangerine-500 focus:outline-none"
+                      className="border-b"
+                      withIcon="fa-solid fa-eye"
+                      isPassword
+                      placeholder=""
                     />
+
                     {errors.confirm && (
                       <span className="text-xs text-red-500">
                         {errors.confirm.message}

@@ -18,6 +18,7 @@ export const assetRouter = t.router({
       include: {
         type: true, // Added type relation
         actionType: true, // Added actionType relation
+        ViewerList: true,
         // department: {
         //   include: {
         //     location: true,
@@ -205,6 +206,7 @@ export const assetRouter = t.router({
             addedBy: true,
             assetTag: true,
             AssetIssuance: true,
+            ViewerList: true,
           },
           where: {
             NOT: {
@@ -672,13 +674,11 @@ export const assetRouter = t.router({
             connect: {
               id: typeId, // Connect to AssetType if typeId is provided
             },
-            // Connect to AssetType if typeId is provided
-          }, // Connect to AssetType
+          },
           actionType: {
             connect: {
               id: actionTypeId, // Connect to AssetType if typeId is provided
             },
-            // Connect to AssetType if typeId is provided
           },
         },
         include: {
@@ -810,10 +810,15 @@ export const assetRouter = t.router({
             },
           }, // Connect to AssetType
         },
+        //     ViewerList: {
+        // connect: {
+        //   id: viewerId, // 👈 add the current user as initial viewer
+        // },
         include: {
           type: true,
         },
       })
+
       const historyLog = await ctx.prisma.historyLogs.create({
         data: {
           gunNumber: newAsset.number ?? "",
@@ -1163,4 +1168,26 @@ export const assetRouter = t.router({
   //       })
   //     }
   //   }),
+
+  updateViewerList: authedProcedure
+    .input(z.object({ assetId: z.number(), userId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const { assetId, userId } = input
+      try {
+        await ctx.prisma.asset.update({
+          where: {
+            id: assetId,
+          },
+          data: {
+            ViewerList: { connect: { id: userId } },
+          },
+        })
+        return "Asset updated successfully"
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: JSON.stringify(error),
+        })
+      }
+    }),
 })

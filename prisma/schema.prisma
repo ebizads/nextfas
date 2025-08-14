@@ -82,6 +82,7 @@ model User {
   ticketTable    ticketTable[]
   validateTable  validateTable?
   forgotToken    ForgotPassToken?
+  AssetViewed    Asset[]      @relation("AssetViewed")
 }
 
 model UserArchive {
@@ -478,6 +479,7 @@ model Asset {
   AssetRepair       AssetRepair?
   AssetTransfer     AssetTransfer?
   HistoryLogs       HistoryLogs[]
+  ViewerList        User[]           @relation("AssetViewed")
 
   @@unique([typeId, actionTypeId, parentId, modelId, custodianId, vendorId, assetProjectId, departmentId, subsidiaryId])
 }

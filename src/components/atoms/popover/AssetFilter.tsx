@@ -119,6 +119,18 @@ const AssetFilter = (props: {
                     label: "truncate",
                   }}
                 />
+              ))}
+            </div>
+            <div className="flex flex-row justify-evenly"></div>
+          </Checkbox.Group>{" "}
+          <Checkbox.Group
+            orientation="vertical"
+            description="Action Type"
+            value={props.actionTypeFilter}
+            onChange={props.setActionTypeFilter}
+          >
+            <div className="flex flex-col gap-2">
+              {props.actionTypeData?.map((col) => (
                 <Checkbox
                   color="orange"
                   key={"issued"}

@@ -12,6 +12,7 @@ import JsBarcode from "jsbarcode"
 import Link from "next/link"
 import { useSearchStore } from "../../../store/useStore"
 import QRCode from "react-qr-code"
+import { useSession } from "next-auth/react"
 
 const AssetDetailsModal = (props: {
   asset: Asset | null
@@ -550,6 +551,8 @@ const AssetTable = (props: {
   // const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
 
   const { selectedAsset, setSelectedAsset } = useUpdateAssetStore()
+  const { data: session } = useSession()
+  const utils = trpc.useContext()
 
   const selectAllCheckboxes = () => {
     if (props.checkboxes.length === 0) {
@@ -568,6 +571,16 @@ const AssetTable = (props: {
     // adds id
     props.setCheckboxes((prev) => [...prev, id])
   }
+
+  const { mutate: addViewer } = trpc.asset.updateViewerList.useMutation({
+    onSuccess(viewer) {
+      utils.asset.findAll.invalidate()
+      console.log(viewer)
+    },
+    onError(error) {
+      console.error("Error highlighting", error)
+    },
+  })
 
   return (
     <div
@@ -616,7 +629,11 @@ const AssetTable = (props: {
             .map((row, idx) => (
               <tr
                 key={row?.id ?? idx}
-                className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                className={`border-b hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-600 ${
+                  !row?.ViewerList.some((user) => user.id == session?.user?.id)
+                    ? "bg-[#F7F6FE] font-semibold text-black"
+                    : "bg-white dark:bg-gray-800"
+                }`}
               >
                 {showCheckboxes && (
                   <td className="w-4 p-2">
@@ -647,6 +664,10 @@ const AssetTable = (props: {
                         setOpenModalDesc(true)
                         setSelectedAsset(null)
                         setSelectedAsset(row)
+                        addViewer({
+                          assetId: row?.id ?? 0,
+                          userId: session?.user?.id ?? 0,
+                        })
                       }}
                     >
                       {col.value == "typeId"

@@ -56,29 +56,54 @@ const CreateAssetAccordion = () => {
 
   //gets and sets all assets
   const { data: assetsData } = trpc.asset.findAllAssetForAssetCreate.useQuery()
-  const { data: typesData } = trpc.assetType.findAll.useQuery()
-  const { data: actionTypesData } = trpc.assetActionType.findAll.useQuery()
+  const { data: typesData } = trpc.assetType.findAllFilter.useQuery()
+  const { data: actionTypesData } =
+    trpc.assetActionType.findAllFilter.useQuery()
+
+  // const typesList = useMemo(
+  //   () =>
+  //     typesData?.assetTypes
+  //       .filter((item) => item.id != 0)
+  //       .map((assetType) => {
+  //         return { value: assetType.id.toString(), label: assetType.name }
+  //       }),
+  //   [typesData]
+  // ) as SelectValueType[] | undefined
 
   const typesList = useMemo(
     () =>
-      typesData?.assetTypes
-        .filter((item) => item.id != 0)
-        .map((assetType) => {
-          return { value: assetType.id.toString(), label: assetType.name }
-        }),
+      typesData
+        ?.filter((item) => item.id != 0)
+        .map((assetType) => ({
+          value: assetType.id.toString(),
+          label: assetType.name,
+        })),
     [typesData]
   ) as SelectValueType[] | undefined
 
+  // const actionTypesList = useMemo(
+  //   () =>
+  //     // console.log("actionTypesData: ", actionTypesData)
+  //     // console.log("assetActionTypes: ", actionTypesData?.assetActionTypes)
+  //     actionTypesData?.assetActionTypes
+  //       .filter((item) => item.id != 0)
+  //       .map((assetActionType) => {
+  //         return {
+  //           value: assetActionType.id.toString(),
+  //           label: assetActionType.name,
+  //         }
+  //       }),
+  //   [actionTypesData]
+  // ) as SelectValueType[] | undefined
+
   const actionTypesList = useMemo(
     () =>
-      actionTypesData?.assetActionTypes
-        .filter((item) => item.id != 0)
-        .map((assetActionType) => {
-          return {
-            value: assetActionType.id.toString(),
-            label: assetActionType.name,
-          }
-        }),
+      actionTypesData
+        ?.filter((item) => item.id != 0)
+        .map((assetActionType) => ({
+          value: assetActionType.id.toString(),
+          label: assetActionType.name,
+        })),
     [actionTypesData]
   ) as SelectValueType[] | undefined
 

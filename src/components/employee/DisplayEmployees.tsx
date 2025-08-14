@@ -99,19 +99,27 @@ const DisplayEmployees = (props: {
                   columns={employeeColumns}
                 />
               </div>
-              {checkboxes.length > 0 && (
+              {/* {checkboxes.length > 0 && ( */}
                 <button
-                  className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
                   onClick={() => {
                     mutate(checkboxes)
                     setCheckboxes([])
+                    // className="-md flex gap-2 p-2 text-xs font-medium  text-red-500 underline underline-offset-4 outline-none focus:outline-none"
                   }}
+                  className={`flex items-center gap-2 rounded-md border-2 py-2 px-4 text-xs font-medium text-white outline-none ${
+                    checkboxes.length <= 0
+                      ? "cursor-not-allowed border-gray-300 bg-gray-300"
+                      : "border-tangerine-500 bg-tangerine-500 hover:border-tangerine-600 hover:bg-tangerine-600 focus:outline-none"
+                  }`}
+                  disabled={checkboxes.length <= 0}
                 >
-                  {checkboxes.includes(-1)
+                  <i className="fa-solid fa-trash h-full text-xs text-white" />
+
+                  {/* {checkboxes.includes(-1)
                     ? `Delete all record/s ( ${props.employees.length} ) ?`
-                    : `Delete selected record/s ( ${checkboxes.length} )`}
+                    : `Delete selected record/s ( ${checkboxes.length} )`} */}
                 </button>
-              )}
+              {/* )} */}
             </div>
             <button
               title="Download Template"

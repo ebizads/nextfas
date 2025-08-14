@@ -272,7 +272,7 @@ export const downloadExcel_assets = async (data: ExcelExportAssetType[]) => {
 
   const a = document.createElement("a")
   a.href = url
-  a.download = "Asset_Template.xlsx"
+  a.download = "Asset_Sheet.xlsx"
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)

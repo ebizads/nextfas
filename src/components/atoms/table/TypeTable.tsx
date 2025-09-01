@@ -45,7 +45,7 @@ const TypeTable = ({
 
   return (
     <div className="relative border shadow-md sm:rounded-full">
-      <table className="w-full rounded-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table className="w-fit rounded-full text-left text-sm text-gray-500 dark:text-gray-400">
         <thead className="sticky top-0 z-10 bg-gradient-to-r from-tangerine-500 via-tangerine-300 to-tangerine-500 text-xs uppercase text-neutral-50">
           <tr>
             <th className="py-1">
@@ -95,7 +95,7 @@ const TypeTable = ({
                 return (
                   <td
                     key={column.value}
-                    className="cursor-pointer px-6 py-2"
+                    className="cursor-pointer px-6 py-2 text-wrap "
                     onClick={() => {
                       setSelectedType(row)
                     }}

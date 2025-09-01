@@ -44,21 +44,21 @@ model VerificationToken {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   name           String
   email          String
   recovery_email String?
   username       String?
   password       String
   user_type      String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
   emailVerified  DateTime?
   image          String?
-  deleted        Boolean        @default(false)
+  deleted        Boolean          @default(false)
   deletedAt      DateTime?
   lockedUntil    DateTime?
-  attempts       Int            @default(0)
+  attempts       Int              @default(0)
   attemptDate    DateTime?
   oldPassword    String[]
   firstLogin     Boolean?
@@ -70,19 +70,19 @@ model User {
   teamId         Int?
   passwordAge    DateTime?
   position       String?
-  user_Id        String?        @unique
+  user_Id        String?          @unique
   accounts       Account[]
   address        Address?
   created_assets Asset[]
-  IssuedBy       Asset[]        @relation("Issuedby")
+  IssuedBy       Asset[]          @relation("Issuedby")
+  forgotToken    ForgotPassToken?
   profile        Profile?
   sessions       Session[]
-  Usersupervisee Team?          @relation("Usersupervisors", fields: [superviseeId], references: [id])
-  Userteam       Team?          @relation("Usermembers", fields: [teamId], references: [id])
+  Usersupervisee Team?            @relation("Usersupervisors", fields: [superviseeId], references: [id])
+  Userteam       Team?            @relation("Usermembers", fields: [teamId], references: [id])
   ticketTable    ticketTable[]
   validateTable  validateTable?
-  forgotToken    ForgotPassToken?
-  AssetViewed    Asset[]      @relation("AssetViewed")
+  AssetViewed    Asset[]          @relation("AssetViewed")
 }
 
 model UserArchive {
@@ -555,5 +555,3 @@ model ForgotPassToken {
   active    Boolean  @default(false)
   user      User     @relation(fields: [userId], references: [id])
 }
-
-

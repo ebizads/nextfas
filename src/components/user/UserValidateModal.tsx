@@ -36,7 +36,7 @@ const UserValidateModal = (props: {
   const [userId, setUserId] = useState<number>(0)
   const [name, setName] = useState<string>("")
   const { data: session } = useSession()
-  const { data: user } = trpc.user.findOne.useQuery(userId)
+  const { data: user } = trpc.user.findOneValidate.useQuery(userId)
   // const { data: user } = trpc.user.findOne.useQuery(
   //   Number(props.user?.user_Id) ?? 0
   const [username, setUsername] = useState("")
@@ -71,14 +71,31 @@ const UserValidateModal = (props: {
   }, [usernameChecker])
 
   useEffect(() => {
-    setUserId(Number(session?.user?.id))
+    if (!userId) {
+      setUserId(Number(session?.user?.id))
+    }
     setName(user?.name ?? "")
     setCertificate(generateCertificate())
 
     if (!props.openModalDesc) {
       setIsEditable(false)
+      if (user) {
+        console.log(user, ' check user')
+        reset({
+          ...user,
+          username: user.username ?? "",
+          position: user.position ?? "",
+          profile: {
+            ...user.profile
+          },
+          address: {
+            ...user.address
+          }
+        })
+      }
     }
-  }, [props.openModalDesc, session, session?.user?.id, user?.name])
+
+  }, [props.openModalDesc, session, session?.user?.id, user])
 
   const {
     mutate,
@@ -96,6 +113,7 @@ const UserValidateModal = (props: {
     reset,
     register,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<User>({
     resolver: zodResolver(EditUserInput),
@@ -109,15 +127,13 @@ const UserValidateModal = (props: {
   const onSubmit = async (userForm: User) => {
     mutate({
       ...userForm,
-      name: `${
-        userForm.profile?.first_name
-          ? userForm.profile?.first_name
-          : user?.profile?.first_name
-      } ${
-        userForm.profile?.last_name
+      name: `${userForm.profile?.first_name
+        ? userForm.profile?.first_name
+        : user?.profile?.first_name
+        } ${userForm.profile?.last_name
           ? userForm.profile?.last_name
           : user?.profile?.last_name
-      }`,
+        }`,
 
       id: userId,
       validateTable: {
@@ -127,6 +143,28 @@ const UserValidateModal = (props: {
     })
     setName(userForm?.name?.toString() ?? "")
   }
+
+  useEffect(() => {
+    const id = getValues().id;
+
+    if (user && !id) {
+      console.log(user, ' check user')
+      reset({
+        ...user,
+        username: user.username ?? "",
+        position: user.position ?? "",
+        profile: {
+          ...user.profile
+        },
+        address: {
+          ...user.address
+        }
+      })
+    }
+  }, [user])
+
+  useEffect(() => { console.log(errors, ' cbeck err') }, [errors])
+
   // async (user: User) => {
   //   // Register function
   //   mutate({
@@ -209,7 +247,10 @@ const UserValidateModal = (props: {
         >
           <div className="flex w-full flex-wrap gap-4 py-2.5">
             <div className="flex w-[32%] flex-col">
-              <label className="sm:text-sm">First Name</label>
+
+              <label className="sm:text-sm">
+                First Name<span className="text-sm text-red-500">*</span>
+              </label>
               {/* <InputField
                 disabled={!isEditable}
                 register={register}
@@ -228,6 +269,8 @@ const UserValidateModal = (props: {
                 }}
                 disabled={!isEditable}
               />
+              <AlertInput>{errors?.profile?.first_name?.message}</AlertInput>
+
             </div>
             <div className="flex w-[32%] flex-col">
               <label className="sm:text-sm">Middle Name (Optional)</label>
@@ -249,8 +292,9 @@ const UserValidateModal = (props: {
               />
             </div>
             <div className="flex w-[32%] flex-col">
-              <label className="sm:text-sm">Last Name</label>
-              <input
+              <label className="sm:text-sm">
+                Last Name<span className="text-sm text-red-500">*</span>
+              </label>              <input
                 className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
                 id="profile.last_name"
                 type={"text"}
@@ -260,6 +304,8 @@ const UserValidateModal = (props: {
                 }}
                 disabled={!isEditable}
               />
+              <AlertInput>{errors?.profile?.last_name?.message}</AlertInput>
+
             </div>
           </div>
           <div className="flex w-full flex-wrap gap-4 py-2.5">
@@ -275,27 +321,32 @@ const UserValidateModal = (props: {
               <AlertInput>{errors?.profile?.first_name?.message}</AlertInput> */}
               <input
                 className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                id="profile.number"
+                id="user_Id"
                 type={"text"}
                 placeholder={user?.user_Id ?? ""}
                 disabled={true}
               />
             </div>
             <div className="flex w-[32%] flex-col">
-              <label className="sm:text-sm">Designation / Position</label>
+              <label className="sm:text-sm">
+                Designation / Position<span className="text-sm text-red-500">*</span>
+              </label>
               <input
                 className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                id="profile.middle_name"
+                id="position"
                 type={"text"}
                 placeholder={user?.position ?? ""}
                 disabled={true}
               />
+              <AlertInput>{errors?.position?.message}</AlertInput>
+
             </div>
+
             <div className="flex w-[32%] flex-col">
               <label className="sm:text-sm">Role</label>
               <input
                 className="mt-2 w-full rounded-md border-2 border-gray-400 bg-transparent px-4 py-2 text-gray-600 placeholder-gray-600  outline-none ring-tangerine-400/40 placeholder:text-sm focus:border-tangerine-400 focus:outline-none focus:ring-2 disabled:bg-gray-200 disabled:text-gray-400 "
-                id="profile.last_name"
+                id="role"
                 type={"text"}
                 placeholder={user?.user_type ?? ""}
                 disabled={true}
@@ -446,12 +497,15 @@ const UserValidateModal = (props: {
                 />
               </div>
               <div className="flex w-[18.4%] flex-col">
-                <InputNumberField
-                  placeholder={user?.address?.zip ?? "Zip Code"}
+
+                <InputField
+                  placeholder={user?.address?.zip ?? "--"}
                   register={register}
-                  label="Zip Code"
+                  type={"text"}
+                  label={"Zip Code"}
                   name="address.zip"
                   disabled={!isEditable}
+                  required
                   isEdit
                 />
               </div>
@@ -527,14 +581,15 @@ const UserValidateModal = (props: {
               </div>
             </Modal>
             {
-              <button
-                type="submit"
-                className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
-                disabled={isLoading}
-                onClick={() => console.log(errors)}
-              >
-                {isLoading ? "Loading..." : "Save"}
-              </button>
+              isEditable && (
+                <button
+                  type="submit"
+                  className="rounded bg-tangerine-500 px-4 py-1 font-medium text-white duration-150 hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Loading..." : "Save"}
+                </button>
+              )
             }
           </div>
         </form>

@@ -442,6 +442,7 @@ export const userRouter = t.router({
         }
 
         let tokenData
+
         if (user.forgotToken) {
           tokenData = await ctx.prisma.forgotPassToken.update({
             where: { id: user.forgotToken.id },

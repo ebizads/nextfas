@@ -183,8 +183,8 @@ export default function DropZone_asset({
       {/* {"DUPLICATES: " + duplicates?.length} */}
       {importedData ? (
         duplicatedAssets.length == 0 ||
-        duplicatedAssets == null ||
-        duplicatedAssets == undefined ? (
+          duplicatedAssets == null ||
+          duplicatedAssets == undefined ? (
           <div className="flex flex-col gap-2 px-4 py-2">
             <div className="flex items-center gap-4 bg-yellow-100 p-4 text-light-secondary">
               <i className="fa-regular fa-circle-exclamation" />

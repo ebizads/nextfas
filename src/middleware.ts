@@ -23,7 +23,6 @@ export async function middleware(request: NextRequest) {
     // raw: true,
   })
 
-  console.log("THIS IS YOUR TOKEN:", token)
   const userAgent = request.headers.get("user-agent") || ""
   const isMobile =
     /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(userAgent)

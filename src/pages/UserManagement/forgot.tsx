@@ -23,6 +23,7 @@ export default function ForgotPassword() {
 
   const [timer, setTimer] = useState(0)
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [sendSuccess, setSendSuccess] = useState(false)
   const [isError, setIsError] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -53,6 +54,8 @@ export default function ForgotPassword() {
       },
       async onSuccess(data) {
         try {
+          // Send the email
+          setLoading(true);
           const res = await sendForgotEmail({
             name: data.name,
             code: data.token,
@@ -75,6 +78,8 @@ export default function ForgotPassword() {
         } catch (e: any) {
           setIsError(true)
           setError(e.message)
+        } finally {
+          setLoading(false)
         }
       },
     })
@@ -169,8 +174,8 @@ export default function ForgotPassword() {
 
                   <button
                     type="submit"
-                    className="rounded bg-tangerine-500 px-4 py-2 font-medium text-white hover:bg-tangerine-400"
-                    disabled={timer !== 0}
+                    className="rounded bg-tangerine-500 px-4 py-2 font-medium text-white hover:bg-tangerine-400 disabled:bg-gray-300 disabled:text-gray-500"
+                    disabled={timer !== 0 || tokenStatus === "loading" || loading}
                   >
                     Send Reset Link
                   </button>

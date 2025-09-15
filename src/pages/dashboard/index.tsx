@@ -165,39 +165,40 @@ const Dashboard = () => {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          position: "top",
-          labels: {
-            usePointStyle: true,
-            pointStyle: "circle",
-            padding: 20,
-            font: {
-              size: 12,
-              family: "'Inter', sans-serif",
-              weight: "normal" as const,
-            },
-            generateLabels: (chart) => {
-              const { data } = chart
-              if (data.labels?.length && data.datasets.length) {
-                return data.labels.map((label, i) => ({
-                  text: label as string,
-                  fillStyle: getColorPalette(i).background,
-                  strokeStyle: getColorPalette(i).border,
-                  lineWidth: 1,
-                  hidden: !chart.isDatasetVisible(0),
-                  index: i,
-                }))
-              }
-              return []
-            },
-          },
-          onClick: (_, legendItem, legend) => {
-            const ci = legend.chart
-            ci.setDatasetVisibility(
-              legendItem.datasetIndex ?? 0,
-              !ci.isDatasetVisible(legendItem.datasetIndex ?? 0)
-            )
-            ci.update()
-          },
+          // position: "top",
+          // labels: {
+          //   usePointStyle: true,
+          //   pointStyle: "circle",
+          //   padding: 20,
+          //   font: {
+          //     size: 12,
+          //     family: "'Inter', sans-serif",
+          //     weight: "normal" as const,
+          //   },
+          //   generateLabels: (chart) => {
+          //     const { data } = chart
+          //     if (data.labels?.length && data.datasets.length) {
+          //       return data.labels.map((label, i) => ({
+          //         text: label as string,
+          //         fillStyle: getColorPalette(i).background,
+          //         strokeStyle: getColorPalette(i).border,
+          //         lineWidth: 1,
+          //         hidden: !chart.isDatasetVisible(0),
+          //         index: i,
+          //       }))
+          //     }
+          //     return []
+          //   },
+          // },
+          // onClick: (_, legendItem, legend) => {
+          //   const ci = legend.chart
+          //   ci.setDatasetVisibility(
+          //     legendItem.datasetIndex ?? 0,
+          //     !ci.isDatasetVisible(legendItem.datasetIndex ?? 0)
+          //   )
+          //   ci.update()
+          // },
+          display: false,
         },
         title: {
           display: true,
@@ -377,11 +378,10 @@ const Dashboard = () => {
                   <button
                     key={type}
                     onClick={() => setChartType(type)}
-                    className={`rounded-md px-3 py-1 text-sm ${
-                      chartType === type
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
+                    className={`rounded-md px-3 py-1 text-sm ${chartType === type
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-100 text-gray-700"
+                      }`}
                   >
                     <i className={`fas fa-chart-${type} mr-1`}></i>
                     {type.charAt(0).toUpperCase() + type.slice(1)}

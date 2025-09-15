@@ -75,7 +75,7 @@ export default function ChangePassword() {
           <div className="flex h-full w-full items-center justify-center">
             <div className="w-[65%] space-y-8">
               <h3 className="text-xl font-bold leading-normal text-tangerine-500 md:text-[2rem]">
-                Change Password
+                New Password
               </h3>
               {submitted ? (
                 <div className="text-green-600">
@@ -132,7 +132,7 @@ export default function ChangePassword() {
                   >
                     {isSubmitting || isLoading
                       ? "Saving..."
-                      : "Change Password"}
+                      : "Save"}
                   </button>
                 </form>
               )}

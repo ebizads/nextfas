@@ -166,8 +166,8 @@ export const CreateActionType = (props: {
                 ? "Updating..."
                 : "Creating..."
               : props.selectedActionType
-              ? "Update Action Type"
-              : "Create Action Type"}
+                ? "Update Action Type"
+                : "Create Action Type"}
           </button>
         </div>
       </form>

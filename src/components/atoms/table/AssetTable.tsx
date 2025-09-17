@@ -333,7 +333,7 @@ const AssetDetailsModal = (props: {
                         id="barcode-show"
                         className={
                           "pointer-events-none absolute top-0 z-0 " +
-                          `w-[${divOpacity}%]`
+                          `w-auto`
                         }
                       />
                     </div>
@@ -356,7 +356,7 @@ const AssetDetailsModal = (props: {
                   )}
                 </section>
                 <br></br>
-                <section className="relative">
+                {/* <section className="relative">
                   <div className="relative flex h-[185.14px] w-[195.2px] flex-col justify-center border-2 border-tangerine-300 p-2">
                     {!genQRcode && (
                       <button
@@ -392,7 +392,7 @@ const AssetDetailsModal = (props: {
                       <i className="fa-solid fa-print" />
                     </button>
                   )}
-                </section>
+                </section> */}
               </section>
             </div>
           </div>
@@ -522,7 +522,7 @@ export const AssetDeleteModal = (props: {
             <button
               className="rounded-sm bg-red-500 px-5 py-1 text-neutral-50 hover:bg-red-600"
               onClick={() => handleDelete()}
-              // disabled={isLoading}
+            // disabled={isLoading}
             >
               Yes, delete record/s
             </button>
@@ -584,9 +584,8 @@ const AssetTable = (props: {
 
   return (
     <div
-      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${
-        minimize ? "xl:w-[88vw]" : "xl:w-full"
-      } relative border shadow-md sm:rounded-lg`}
+      className={`max-h-[62vh] max-w-[90vw] overflow-x-auto ${minimize ? "xl:w-[88vw]" : "xl:w-full"
+        } relative border shadow-md sm:rounded-lg`}
     >
       {/* <pre>{JSON.stringify(props.rows, null, 2)}</pre> */}
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 ">
@@ -629,11 +628,10 @@ const AssetTable = (props: {
             .map((row, idx) => (
               <tr
                 key={row?.id ?? idx}
-                className={`border-b hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-600 ${
-                  !row?.ViewerList.some((user) => user.id == session?.user?.id)
-                    ? "bg-[#F7F6FE] font-semibold text-black"
-                    : "bg-white dark:bg-gray-800"
-                }`}
+                className={`border-b hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-600 ${!row?.ViewerList.some((user) => user.id == session?.user?.id)
+                  ? "bg-[#F7F6FE] font-semibold text-black"
+                  : "bg-white dark:bg-gray-800"
+                  }`}
               >
                 {showCheckboxes && (
                   <td className="w-4 p-2">
@@ -657,9 +655,8 @@ const AssetTable = (props: {
                   .map((col) => (
                     <td
                       key={col.value}
-                      className={`max-w-[10rem] cursor-pointer truncate py-2 px-6 ${
-                        col.value == "status" && "capitalize"
-                      }`}
+                      className={`max-w-[10rem] cursor-pointer truncate py-2 px-6 ${col.value == "status" && "capitalize"
+                        }`}
                       onClick={() => {
                         setOpenModalDesc(true)
                         setSelectedAsset(null)
@@ -673,8 +670,8 @@ const AssetTable = (props: {
                       {col.value == "typeId"
                         ? row?.type?.name
                         : col.value == "actionTypeId"
-                        ? row?.actionType?.name
-                        : getProperty(col.value, row)}
+                          ? row?.actionType?.name
+                          : getProperty(col.value, row)}
                     </td>
                   ))}
                 {/* <td className="max-w-[10rem] space-x-2 text-center">

@@ -320,6 +320,7 @@ export const assetRouter = t.router({
           include: {
             type: true, // Added type relation
             actionType: true, // Added actionType relation
+            ViewerList: true,
             // department: {
             //   include: {
             //     location: true,

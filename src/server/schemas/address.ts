@@ -24,13 +24,16 @@ export const AddressCreateInput = z.object({
   baranggay: z.string().nullish(),
 })
 
-export const AddressEditInput = z.object({
-  street: z.string().nullish(),
-  city: z.string().nullish(),
-  state: z.string().nullish(),
-  zip: z.string().nullish(),
-  country: z.string().nullish(),
-  baranggay: z.string().nullish(),
-  region: z.string().nullish(),
-  province: z.string().nullish(),
-})
+export const AddressEditInput = z
+  .object({
+    street: z.string().nullish(),
+    city: z.string().nullish(),
+    state: z.string().nullish(),
+    zip: z.string().nullish(),
+    country: z.string().nullish(),
+    baranggay: z.string().nullish(),
+    region: z.string().nullish(),
+    province: z.string().nullish(),
+  })
+  .optional()
+  .nullish()

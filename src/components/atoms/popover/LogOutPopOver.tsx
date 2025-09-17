@@ -85,7 +85,7 @@ const LogOutPopOver = (props: {
               <i className="fa-solid fa-shield-keyhole" />
               <span>Change Password</span>
             </button>
-            <button
+            {/* <button
               onClick={() => {
                 setValidate(true)
                 setIsCounter(0)
@@ -94,7 +94,7 @@ const LogOutPopOver = (props: {
             >
               <i className="fa-solid fa-check" />
               <span>Validate User</span>
-            </button>
+            </button> */}
           </div>
         </Popover.Dropdown>
       </Popover>

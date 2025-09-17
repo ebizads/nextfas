@@ -18,12 +18,18 @@ export default async function sendForgotEmail(
 
     // 2. Create a transporter using Ethereal SMTP
     const transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
-      port: 587,
-      secure: false, // true for 465, false for other ports
+      // host: "smtp.ethereal.email",
+      // port: 587,
+      // secure: false, // true for 465, false for other ports
+      // auth: {
+      //   user: testAccount.user,
+      //   pass: testAccount.pass,
+      // },
+      port: 465,
+      service: "gmail",
       auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
+        user: process.env.SMTP_SENDER_EMAIL,
+        pass: process.env.SMTP_SENDER_PASSWORD,
       },
     })
 

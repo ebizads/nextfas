@@ -35,6 +35,23 @@ export const userRouter = t.router({
 
     return user
   }),
+  findOneValidate: authedProcedure
+    .input(z.number())
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          id: input,
+        },
+        include: {
+          address: true,
+          profile: true,
+        },
+      })
+
+      console.log(user, "check input")
+
+      return user
+    }),
 
   findAll: authedProcedure
     .input(
@@ -425,6 +442,7 @@ export const userRouter = t.router({
         }
 
         let tokenData
+
         if (user.forgotToken) {
           tokenData = await ctx.prisma.forgotPassToken.update({
             where: { id: user.forgotToken.id },

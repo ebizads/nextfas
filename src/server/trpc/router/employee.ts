@@ -607,14 +607,14 @@ export const employeeRouter = t.router({
         create: {
           ...rest,
           employee_id: env.NEXT_PUBLIC_CLIENT_EMPLOYEE_ID + empId + employee_id,
-          address: {
-            connectOrCreate: {
-              where: {
-                id: 0,
-              },
-              create: address,
-            },
-          },
+          // address: {
+          //   connectOrCreate: {
+          //     where: {
+          //       id: 0,
+          //     },
+          //     create: address,
+          //   },
+          // },
           profile: {
             connectOrCreate: {
               where: {
@@ -626,7 +626,7 @@ export const employeeRouter = t.router({
         },
         update: {
           ...rest,
-          address: { update: address },
+          // address: { update: address },
           profile: { update: profile },
         },
       })
@@ -666,9 +666,9 @@ export const employeeRouter = t.router({
               profile: {
                 update: profile,
               },
-              address: {
-                update: address,
-              },
+              // address: {
+              //   update: address,
+              // },
             },
           })
 

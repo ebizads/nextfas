@@ -12,7 +12,7 @@ export function setForgotEmailData(
       <div>
         <p>Good day, ${name}!</p>
         <br>
-        <p>You have requested a new password for the FAS account associated with your email.</p>
+        <p>You have requested a new password for the Activos associated with your email.</p>
         <p>No changes have been made to your account yet.</p>
         <br>
         <p>You can reset your password by clicking the link below that will expire on ${new Date(

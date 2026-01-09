@@ -53,7 +53,7 @@ const ChangePassModal = (props: {
   if (Boolean(user?.passwordAge)) {
     dayNow = Number(
       (dateNow.getTime() - (user?.passwordAge?.getTime() ?? 0)) /
-        (1000 * 60 * 60 * 24)
+      (1000 * 60 * 60 * 24)
     )
   }
 
@@ -276,7 +276,7 @@ const ChangePassModal = (props: {
               className="text-dark-primary rounded-md  bg-tangerine-300 px-6 py-2 font-medium outline-none hover:bg-tangerine-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-tangerine-200"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Saving..." : "Change"}
+              {isSubmitting ? "Saving..." : "Save"}
             </button>
           </div>
         </form>

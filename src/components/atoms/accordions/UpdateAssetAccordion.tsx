@@ -32,16 +32,16 @@ export const FormErrorMessage = (props: {
 
 const UpdateAssetAccordion = () => {
   const { mutate, isLoading, error } = trpc.asset.update.useMutation({
-    onSuccess() {
-      console.log("successfully updated")
+    async onSuccess() {
       setTimeout(function () {
         setIsLoading(false)
         reset()
-        setTypeId(null)
-        setCompanyId(null)
-        setDepartmentId(null)
-        setSelectedAsset(null)
+        console.log("successfully updated")
       }, 3000)
+      setTypeId(null)
+      setCompanyId(null)
+      setDepartmentId(null)
+      setSelectedAsset(null)
       router.push("/assets")
     },
     onError(error) {
@@ -209,7 +209,7 @@ const UpdateAssetAccordion = () => {
     } else {
       console.log("Submitting: ", selectedAsset?.id)
       console.log("Type Id: ", form_data?.typeId)
-
+      setIsLoading(true)
       mutate({ ...form_data, id: selectedAsset?.id ?? 0 })
 
       // ticketTable.mutate({ addedById});

@@ -659,7 +659,7 @@ const AssetTable = (props: {
                         }`}
                       onClick={() => {
                         setOpenModalDesc(true)
-                        setSelectedAsset(null)
+                        // setSelectedAsset(null)
                         setSelectedAsset(row)
                         addViewer({
                           assetId: row?.id ?? 0,
